@@ -18,14 +18,25 @@ One host. No Kubernetes. No model account required.
 
 ## Start the quest
 
-Requires **Go 1.26+**; developed with Go 1.27.1. `make check` also needs Python 3
-for the public-source guard. Dependency downloads contact the Go module proxy.
+**macOS or Linux: install and run in four commands. No Go or model account needed.**
 
 ```sh
 git clone https://github.com/spfuzzylink/questlock.git
 cd questlock
-make quest
+./scripts/install.sh
+./bin/questlock quest
 ```
+
+The installer selects your OS/CPU, verifies the release checksum, and puts one
+executable in `bin/`. It needs `curl`, `tar`, and `sha256sum` or `shasum`; it uses no
+sudo and changes no shell settings. The demo cleans up its temporary state.
+
+[Download without Git](https://github.com/spfuzzylink/questlock/releases) ·
+[Installation, requirements, and updates](docs/installation.md)
+
+Developing the source? Install **Go 1.26+** and run `make quest` instead. The
+installer downloads the version in `VERSION`; a source build runs your checkout.
+`make check` also needs Python 3 and a C toolchain for Go's race detector.
 
 **Quest 001: keep a stale worker from rewriting the present.**
 
@@ -62,14 +73,25 @@ The guarantee is deliberately narrow: a publish is accepted only when its expect
 version matches. Artifact content, its current pointer, the successful retry
 receipt, and the journal entry commit in the same SQLite transaction.
 
+## Where it fits
+
+Use it for shared agent notes, competing text-artifact updates, recovering a
+publish after a lost response, or separating small experiments into scopes.
+It also provides a runnable way to study stale workers and broker crashes on
+one machine. Your code supplies the agent integration and conflict resolution.
+
+See [five concrete use cases and an integration sketch](docs/use-cases.md) for
+the implemented primitives, the work each integration requires, and the limits.
+
 ## Run your own local broker
 
+After installing (or running `make build`), start a persistent broker:
+
 ```sh
-make build
 umask 077
 mkdir -p .questlock
-./bin/questlock token create --agent writer-a --scope weekend > .questlock/writer-a.token
-./bin/questlock token create --agent writer-b --scope weekend > .questlock/writer-b.token
+(set -C; ./bin/questlock token create --agent writer-a --scope weekend > .questlock/writer-a.token)
+(set -C; ./bin/questlock token create --agent writer-b --scope weekend > .questlock/writer-b.token)
 ./bin/questlock serve
 ```
 
@@ -77,7 +99,7 @@ The default address is `127.0.0.1:8080`; state lives in `.questlock/state.db`.
 Create each agent once. Restarting with the same database preserves credentials,
 artifact versions, successful operation receipts, and the journal.
 
-In another terminal, from this repository:
+To try the Go client example, install Go and open another terminal in this repository:
 
 ```sh
 export QUESTLOCK_TOKEN="$(cat .questlock/writer-a.token)"
@@ -149,7 +171,7 @@ questlock/
   examples/publish/   Minimal compilable integration
   deploy/quadlet/     Rootless Linux service definition
   docs/               Architecture, API, deployment, validation
-  scripts/            Public-source guard
+  scripts/            Installer, release packaging, public-source guard
   assets/             Repository artwork
 ```
 

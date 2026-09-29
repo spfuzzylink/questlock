@@ -33,7 +33,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-24.04
+            target: linux/amd64
+            suffix: linux_amd64
+          - os: ubuntu-24.04-arm
+            target: linux/arm64
+            suffix: linux_arm64
+          - os: macos-15-intel
+            target: darwin/amd64
+            suffix: darwin_amd64
+          - os: macos-15
+            target: darwin/arm64
+            suffix: darwin_arm64
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -48,9 +60,66 @@ jobs:
         run: go vet ./...
       - name: Test with race detector
         run: go test -race ./...
-      - name: Build static binary
+      - name: Test installer and archive boundaries
+        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Build release archive
         env:
-          CGO_ENABLED: '0'
-        run: go build -trimpath -buildvcs=false -o bin/questlock ./cmd/questlock
-      - name: Exercise compiled recovery demo
-        run: ./bin/questlock demo
+          PACKAGE_TARGET: ${{ matrix.target }}
+        run: python3 scripts/package.py --target "$PACKAGE_TARGET"
+      - name: Verify and exercise the packaged executable
+        env:
+          PACKAGE_SUFFIX: ${{ matrix.suffix }}
+        run: |
+          cd dist
+          if command -v sha256sum >/dev/null; then
+            sha256sum -c checksums.txt
+          else
+            shasum -a 256 -c checksums.txt
+          fi
+          mkdir unpacked
+          tar -xzf "questlock_$(cat ../VERSION)_${PACKAGE_SUFFIX}.tar.gz" -C unpacked
+          test "$(unpacked/questlock version)" = "$(cat ../VERSION)"
+          unpacked/questlock --help
+          unpacked/questlock quest
+      - name: Retain tested archive for tagged release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: questlock-${{ matrix.suffix }}
+          path: dist/*.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+  release:
+    name: Publish tested experimental release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [public-source, go]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Validate release tag
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: test "$RELEASE_TAG" = "v$(cat VERSION)"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: questlock-*
+          path: dist
+          merge-multiple: true
+      - name: Create checksum manifest
+        run: |
+          cd dist
+          test "$(find . -maxdepth 1 -name '*.tar.gz' | wc -l)" -eq 4
+          sha256sum *.tar.gz > checksums.txt
+      - name: Publish archives from successful platform jobs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: >-
+          gh release create "$RELEASE_TAG" dist/*.tar.gz dist/checksums.txt
+          --verify-tag --prerelease --title "Questlock ${RELEASE_TAG}"
+          --notes-file docs/release-notes.md

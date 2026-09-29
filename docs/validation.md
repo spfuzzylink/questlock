@@ -84,6 +84,25 @@ working tree if they remain in history. A separate Gitleaks 8.30.1 scan reported
 in the existing Git history and the staged-source snapshot. These are pattern
 checks, not a proof of complete secrecy or anonymity.
 
+## Packaging checks
+
+The release installer and archive builder were tested locally before publication.
+All 37 Python tests passed: 21 publication-guard regressions, 14 installer tests,
+and two archive-boundary tests. Installer cases cover failed downloads, checksum
+mismatches, malformed/duplicate manifest entries, unsupported targets, unsafe
+archive members, symlink destinations, and preserving an existing executable.
+
+A macOS arm64 archive was built, its metadata and executable permissions checked,
+and its extracted binary passed the full recovery quest without the Go toolchain
+in its runtime path. Archive ownership is normalized so workstation user names
+and filesystem paths are not carried in tar metadata. Release builds use baseline
+CPU targets and disable cgo.
+
+The expanded CI workflow runs the packaged executable on native Linux and macOS
+runners for both amd64 and arm64. The release job depends on all four successful
+platform jobs and the source/history guard. Downloaded-release validation is
+recorded with the release once the assets are published.
+
 ## Practical limits
 
 No host power cut, disk loss/corruption, network partition, malicious kernel

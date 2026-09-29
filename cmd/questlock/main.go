@@ -18,7 +18,7 @@ import (
 	"github.com/spfuzzylink/questlock/internal/store"
 )
 
-const version = "0.1.0"
+var version = "0.1.0" // Release builds set this from VERSION using -ldflags.
 const defaultDB = ".questlock/state.db"
 
 func main() {

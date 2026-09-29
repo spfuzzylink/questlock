@@ -1,4 +1,5 @@
 /bin/
+/dist/
 /.questlock/
 *.db
 *.db-wal
@@ -8,6 +9,8 @@
 .env.*
 .DS_Store
 coverage.out
+__pycache__/
+*.py[cod]
 *.log
 
 # Preserve exclusions for pre-rename local state.
