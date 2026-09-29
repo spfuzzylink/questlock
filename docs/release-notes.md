@@ -33,6 +33,26 @@ Shared notes, handoffs, and generated reports are integration candidates, not
 bundled agent-framework integrations. Clients must handle conflicts and preserve
 their pending request for recovery.
 
+## Who this could help
+
+- **Research teams:** detect a delayed agent trying to replace newer shared
+  findings or handoff notes, so the caller can reconcile the conflict.
+- **Support automation teams:** catch conflicting edits when several agents
+  prepare the same case summary. This controls publication, not the correctness
+  of the summary or actions taken in a support system.
+- **AI evaluation teams:** coordinate updates to a shared text report and recover
+  the original successful publish result after its response is lost.
+- **Platform builders:** try a small local service for version checks and retry
+  receipts before deciding whether their workload needs more infrastructure.
+
+The potential benefit is fewer silent overwrites and a definite result for an
+exact retry of a successful publish. These are proposed applications of the
+tested storage behavior; there are no production customer or ROI claims.
+Agent integration, conflict resolution, output validation, and operational
+controls remain the caller's responsibility. See the
+[use-case notes](https://github.com/spfuzzylink/questlock/blob/main/docs/use-cases.md)
+for workflow details, pilot checks, and limits.
+
 This is not an agent sandbox, fleet scheduler, lease/fencing service, vector
 database, or production HA system. It cannot make external tool side effects
 exactly-once or establish multi-host scalability. Read `SECURITY.md` for boundaries.

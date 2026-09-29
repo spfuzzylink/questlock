@@ -9,6 +9,43 @@ framework integrations or claims of production adoption. The shipped pieces are
 the HTTP API, Go client, scoped credentials, version checks, successful-operation
 receipts, publication journal, and process-failure quest.
 
+## Who this could help
+
+The useful outcome is a shared artifact whose newer version is not silently
+replaced by an update based on an older version, with a recoverable result when
+a publish response is lost. These are candidate team workflows to evaluate:
+
+| Team | Concrete pain | What Questlock could help with | Integration still needed |
+| --- | --- | --- | --- |
+| Research and knowledge-tool teams | An agent finishes using notes that another worker has already updated. | Keep the newer shared handoff notes current and surface the stale update for reconciliation. | Connect note reads and publishes to the API; merge, discard, or regenerate conflicting work. |
+| Support automation teams | Two assistants prepare competing versions of the same case summary. | Reject a stale replacement of the shared summary draft before the application chooses what to use. | Connect the support system, validate drafts, and implement review and reconciliation. Ticket updates and customer messages remain outside Questlock. |
+| AI evaluation teams | A summary publish times out after it may have committed. | Recover the original accepted summary by retrying the saved request, without publishing another version for that operation. | Persist the intended request and operation ID, validate report content, and decide when to retry. |
+| Platform teams and homelab builders | Worker failures and restart behavior are difficult to reproduce and inspect. | Exercise the process-failure quest and inspect accepted, conflicting, and replayed publishes in a scoped journal. | Connect representative workers, instrument the workload, and operate the host; Questlock supplies no fleet scheduler. |
+
+These outcomes depend on workers using the publishing API and handling its
+responses. They are not adoption claims or evidence of reduced operating cost,
+better model output, or production readiness.
+
+### What to measure in a small pilot
+
+- **Observed stale-write rejections:** count `version_conflict` events and inspect
+  which competing updates caused them. Decide whether rejected work should be
+  discarded, recomputed, or reconciled; a high conflict count alone is not proof
+  of useful work saved.
+- **Retry correctness:** deliberately lose a publish response, retry the saved
+  request, and verify the original artifact is returned with `replayed: true`
+  without that retry creating a new version or restoring an older head.
+- **Conflict-resolution effort:** instrument the application to count reruns,
+  reconciliation attempts, and manual reviews, along with time spent resolving
+  them. Questlock does not measure or automate that work.
+- **Storage growth:** record database size and growth in artifact versions,
+  successful-operation receipts, and journal events over the pilot. Include
+  rejected attempts and replays; they also create journal entries. There are no
+  built-in quotas or automatic retention.
+
+Start with a bounded workload and use these observations to decide whether the
+publishing boundary is worth the integration and operating effort for that team.
+
 ## 1. Shared agent notes and handoffs
 
 Two research workers update `notes/handoff.md`. Each reads the current version

@@ -80,8 +80,9 @@ publish after a lost response, or separating small experiments into scopes.
 It also provides a runnable way to study stale workers and broker crashes on
 one machine. Your code supplies the agent integration and conflict resolution.
 
-See [five concrete use cases and an integration sketch](docs/use-cases.md) for
-the implemented primitives, the work each integration requires, and the limits.
+See [who this could help and why](docs/use-cases.md#who-this-could-help) for
+research, support automation, evaluation, and platform workflows. The notes cover
+the potential benefit, integration work, pilot checks, and technical limits.
 
 ## Run your own local broker
 
