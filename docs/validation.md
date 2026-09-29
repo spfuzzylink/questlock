@@ -95,5 +95,12 @@ These workers are deterministic fixtures. No LLM provider or agent framework was
 needed to exercise the storage boundary. CAS does not establish task ownership
 or prevent an authorized worker from deliberately publishing incorrect content.
 
-The GitHub Actions workflow is included for future publication. Remote GitHub CI
-has not run for this local repository.
+## Published CI
+
+The [first published CI run](https://github.com/spfuzzylink/questlock/actions/runs/36504998094)
+passed for commit `6586b79` on 2026-09-28. Both `ubuntu-latest` and
+`macos-latest` passed vet, race tests, the compiled build, and the recovery quest.
+The separate public-source and full-history guard job passed as well.
+
+See [GitHub Actions](https://github.com/spfuzzylink/questlock/actions) for later
+commits and runner changes.
