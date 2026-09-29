@@ -2,15 +2,22 @@
 
 ![Questlock — keep a stale worker from rewriting the present](assets/questlock-banner.svg)
 
-**A small publishing gate for AI agents that share state.**
+**Keep stale agents from overwriting newer shared work.**
 
-[Start the quest](#start-the-quest) · [Security](#security-and-your-machine) · [Architecture](docs/architecture.md) · [Deploy](docs/deployment.md)
+[![CI](https://github.com/spfuzzylink/questlock/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/spfuzzylink/questlock/actions/workflows/ci.yml)
+
+[Run the demo](#start-the-quest) · [Download](#download-a-binary) · [Fork Questlock](https://github.com/spfuzzylink/questlock/fork) · [Contribute](CONTRIBUTING.md)
+
+[Ask a question](https://github.com/spfuzzylink/questlock/discussions/categories/q-a) · [Security](SECURITY.md) · [Architecture](docs/architecture.md)
 
 </div>
 
 An agent stalls. Another takes over and finishes. The original wakes up with a
-confident, outdated write. **Questlock makes it prove which version it read before
-allowing that write to become shared state.**
+confident, outdated write. **Questlock checks its expected version before accepting
+the update. An exact retry of a successful publish recovers its original receipt.**
+
+An experimental Go + SQLite broker for cooperating agents. It controls publication
+of shared text artifacts; it does not run or sandbox the agents.
 
 The quest theme is a little weekend motivation. Underneath it: a compiled Go
 broker, a Go client library, SQLite transactions, and concrete failure tests.
@@ -33,6 +40,22 @@ sudo and changes no shell settings. The demo cleans up its temporary state.
 
 [Download without Git](https://github.com/spfuzzylink/questlock/releases) ·
 [Installation, requirements, and updates](docs/installation.md)
+
+### Download a binary
+
+The current experimental release is **v0.1.1**. Choose your operating system and
+CPU; x86-64 covers 64-bit Intel and AMD processors. No Go installation is needed.
+
+| System | ARM64 | x86-64 (Intel / AMD) |
+| --- | --- | --- |
+| macOS 13+ | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.1.1/questlock_0.1.1_darwin_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.1.1/questlock_0.1.1_darwin_amd64.tar.gz) |
+| Linux | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.1.1/questlock_0.1.1_linux_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.1.1/questlock_0.1.1_linux_amd64.tar.gz) |
+
+Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.1.1/checksums.txt)
+before extracting, then run `./questlock quest`. The installer above performs the
+checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.1.1).
+
+### Explore the failure case
 
 Developing the source? Install **Go 1.26+** and run `make quest` instead. The
 installer downloads the version in `VERSION`; a source build runs your checkout.
@@ -192,6 +215,15 @@ Podman and systemd/Quadlet; see the verification record for versions and limits.
 SQLite serializes writes. This prototype has no fleet scheduler, replication,
 quotas, automatic retention, or demonstrated multi-host scale. Versions and audit
 history grow over time. Process-crash tests do not establish power-loss durability.
+
+## Bring your own failure case
+
+Run the quest, then [fork Questlock](https://github.com/spfuzzylink/questlock/fork)
+to explore a failure case or add a small integration example. Reproducible bugs,
+missing concurrency or recovery tests, and clearer installation notes are useful
+contributions. [Start here](CONTRIBUTING.md), or
+[open an issue](https://github.com/spfuzzylink/questlock/issues/new) with what you
+tried and what happened. Discuss larger changes before starting them.
 
 Questlock's own code is [MIT licensed](LICENSE). Bundled dependencies retain their
 original terms; [third-party notices](THIRD_PARTY_NOTICES.md) ship with the archives
