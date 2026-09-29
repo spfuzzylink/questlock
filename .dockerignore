@@ -1,0 +1,16 @@
+.git
+.github
+.agent-fence
+bin
+work
+coverage*
+*.out
+.DS_Store
+.env
+.env.*
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/*.token
+**/*.key
+**/*.pem

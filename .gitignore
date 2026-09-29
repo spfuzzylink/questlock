@@ -1,0 +1,11 @@
+/bin/
+/.agent-fence/
+*.db
+*.db-wal
+*.db-shm
+*.token
+.env
+.env.*
+.DS_Store
+coverage.out
+*.log
