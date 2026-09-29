@@ -1,4 +1,4 @@
-module github.com/spfuzzylink/agent-fence
+module github.com/spfuzzylink/questlock
 
 go 1.26.0
 

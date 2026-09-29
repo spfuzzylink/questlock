@@ -1,5 +1,5 @@
 /bin/
-/.agent-fence/
+/.questlock/
 *.db
 *.db-wal
 *.db-shm
@@ -9,3 +9,16 @@
 .DS_Store
 coverage.out
 *.log
+
+# Preserve exclusions for pre-rename local state.
+/.agent-fence/
+*.key
+*.pem
+*.p12
+*.pfx
+*.sqlite*
+/secrets/
+/credentials/
+
+# Workstation-only authentication helpers and local settings.
+/.local/

@@ -11,8 +11,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/spfuzzylink/agent-fence/internal/store"
-	"github.com/spfuzzylink/agent-fence/protocol"
+	"github.com/spfuzzylink/questlock/internal/store"
+	"github.com/spfuzzylink/questlock/protocol"
 )
 
 // MaxRequestBytes includes space for JSON's worst-case escaping and metadata.

@@ -11,9 +11,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/spfuzzylink/agent-fence/internal/httpapi"
-	"github.com/spfuzzylink/agent-fence/internal/store"
-	"github.com/spfuzzylink/agent-fence/protocol"
+	"github.com/spfuzzylink/questlock/internal/httpapi"
+	"github.com/spfuzzylink/questlock/internal/store"
+	"github.com/spfuzzylink/questlock/protocol"
 )
 
 func setup(t *testing.T) (*store.Store, http.Handler, string) {

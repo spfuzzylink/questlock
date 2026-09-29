@@ -11,10 +11,10 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/spfuzzylink/agent-fence/client"
-	"github.com/spfuzzylink/agent-fence/internal/httpapi"
-	"github.com/spfuzzylink/agent-fence/internal/store"
-	"github.com/spfuzzylink/agent-fence/protocol"
+	"github.com/spfuzzylink/questlock/client"
+	"github.com/spfuzzylink/questlock/internal/httpapi"
+	"github.com/spfuzzylink/questlock/internal/store"
+	"github.com/spfuzzylink/questlock/protocol"
 )
 
 func newClient(t *testing.T, baseURL string) *client.Client {
@@ -27,13 +27,18 @@ func newClient(t *testing.T, baseURL string) *client.Client {
 }
 
 func TestURLValidation(t *testing.T) {
-	for _, baseURL := range []string{"", "/relative", "ftp://localhost", "http://", "http://user:pass@localhost", "http://localhost?token=x", "http://localhost?", "http://localhost#anchor", "http://localhost#", "http://[::1"} {
+	for _, baseURL := range []string{"", "/relative", "ftp://localhost", "http://", "http://user:pass@localhost", "http://localhost?token=x", "http://localhost?", "http://localhost#anchor", "http://localhost#", "http://[::1", "http://localhost:8080", "http://example.com", "http://192.0.2.1", "http://0.0.0.0:8080", "http://[::]:8080", "http://[2001:db8::1]", "http://127.1", "http://127.0.0.1.example.com"} {
 		if _, err := client.New(baseURL, "token"); err == nil {
 			t.Errorf("accepted invalid base URL %q", baseURL)
 		}
 	}
+	for _, baseURL := range []string{"http://127.0.0.1:8080", "http://127.0.0.2", "http://[::1]:8080", "http://[::ffff:127.0.0.1]", "https://example.com", "https://192.0.2.1"} {
+		if _, err := client.New(baseURL, "token"); err != nil {
+			t.Errorf("rejected permitted base URL %q: %v", baseURL, err)
+		}
+	}
 	for _, token := range []string{"", "bearer token", "secret\n"} {
-		if _, err := client.New("http://localhost:7777", token); err == nil {
+		if _, err := client.New("http://127.0.0.1:7777", token); err == nil {
 			t.Errorf("accepted invalid bearer token")
 		}
 	}

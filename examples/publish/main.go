@@ -1,4 +1,4 @@
-// Run against a local broker: AGENT_FENCE_TOKEN=... go run ./examples/publish
+// Run against a local broker: QUESTLOCK_TOKEN=... go run ./examples/publish
 package main
 
 import (
@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/spfuzzylink/agent-fence/client"
-	"github.com/spfuzzylink/agent-fence/protocol"
+	"github.com/spfuzzylink/questlock/client"
+	"github.com/spfuzzylink/questlock/protocol"
 )
 
 func main() {
@@ -21,11 +21,11 @@ func main() {
 }
 
 func run() error {
-	base := os.Getenv("AGENT_FENCE_URL")
+	base := os.Getenv("QUESTLOCK_URL")
 	if base == "" {
 		base = "http://127.0.0.1:8080"
 	}
-	c, err := client.New(base, os.Getenv("AGENT_FENCE_TOKEN"))
+	c, err := client.New(base, os.Getenv("QUESTLOCK_TOKEN"))
 	if err != nil {
 		return err
 	}

@@ -16,7 +16,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/spfuzzylink/agent-fence/protocol"
+	"github.com/spfuzzylink/questlock/protocol"
 )
 
 var testContext = context.Background()

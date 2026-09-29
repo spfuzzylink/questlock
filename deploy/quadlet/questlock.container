@@ -1,18 +1,18 @@
 [Unit]
-Description=Agent Fence local artifact broker
+Description=Questlock local artifact broker
 Documentation=https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
 StartLimitIntervalSec=60
 StartLimitBurst=5
 
 [Container]
-Image=localhost/agent-fence:dev
+Image=localhost/questlock:dev
 Pull=never
-ContainerName=agent-fence
-Exec=serve --db /data/fence.db --listen 0.0.0.0:8080
+ContainerName=questlock
+Exec=serve --db /data/state.db --listen 0.0.0.0:8080 --allow-remote-http
 PublishPort=127.0.0.1:8080:8080
 # Only the broker and trusted, offline provisioning containers get this volume.
 # U maps ownership to the image's non-root UID; Z applies a private SELinux label.
-Volume=agent-fence-data:/data:Z,U
+Volume=questlock-data:/data:Z,U
 User=65532:65532
 ReadOnly=true
 ReadOnlyTmpfs=false

@@ -1,27 +1,37 @@
-# Agent Fence
+<div align="center">
 
-**A small publishing gate for agents that share state.**
+![Questlock — keep a stale worker from rewriting the present](assets/questlock-banner.svg)
 
-An agent stalls. Another finishes the work. The first wakes up with an outdated
-result. Agent Fence rejects that stale publish and keeps a durable record of why.
+**A small publishing gate for AI agents that share state.**
 
-This is a weekend storage experiment: a compiled Go service, a Go client library,
-and SQLite on one host. No model provider or Kubernetes installation is required.
+[Start the quest](#start-the-quest) · [Security](#security-and-your-machine) · [Architecture](docs/architecture.md) · [Deploy](docs/deployment.md)
 
-## Try the failure case
+</div>
 
-Requires Go 1.26 or later. Developed and tested with Go 1.27.1.
+An agent stalls. Another takes over and finishes. The original wakes up with a
+confident, outdated write. **Questlock makes it prove which version it read before
+allowing that write to become shared state.**
+
+The quest theme is a little weekend motivation. Underneath it: a compiled Go
+broker, a Go client library, SQLite transactions, and concrete failure tests.
+One host. No Kubernetes. No model account required.
+
+## Start the quest
+
+Requires **Go 1.26+**; developed with Go 1.27.1. `make check` also needs Python 3
+for the public-source guard. Dependency downloads contact the Go module proxy.
 
 ```sh
-make build
-./bin/agent-fence demo
+git clone https://github.com/spfuzzylink/questlock.git
+cd questlock
+make quest
 ```
 
-The demo launches real server and worker subprocesses. It kills a worker after it
-saves its intended write, publishes a newer result, restarts the stale worker,
-then hard-kills and restarts the broker. It verifies the conflict, the surviving
-artifact, the original retry receipt, and the journal. All demo state is temporary.
-The workers are deterministic fixtures; this tests storage behavior without an LLM.
+**Quest 001: keep a stale worker from rewriting the present.**
+
+The executable launches real broker and worker subprocesses in temporary state.
+It kills a worker after it saves its intended write, lets another publish, resumes
+the stale request, then hard-kills and restarts the broker.
 
 ```text
 PASS  Created shared artifact at version 1
@@ -33,138 +43,131 @@ PASS  Retried the acknowledged operation; original result returned without versi
 PASS  Durable journal contains 2 accepted, 1 rejected, and 1 replayed publish
 ```
 
-## Run on localhost
+These are deterministic test workers, not a live LLM swarm. The quest runs through
+the same HTTP API and storage engine used by real clients. Temporary state is
+removed when it finishes, including its generated fixture credentials.
+
+## What is implemented
+
+| Quest | Status | Concrete behavior |
+| --- | --- | --- |
+| Guard the gate | Implemented | A credential grants access to one shared scope. |
+| Reject the stale challenger | Implemented | Compare-and-swap rejects outdated writes with HTTP 409. |
+| Recover the lost reply | Implemented | An exact retry recovers the original successful result. |
+| Survive the restart | Tested | Acknowledged data and receipts survive broker process kills. |
+| Leave a trace | Implemented | Accepted, conflicting, and replayed publishes enter a durable journal. |
+| Open a second gate | Future experiment | Multi-host coordination, placement, and failure recovery. |
+
+The guarantee is deliberately narrow: a publish is accepted only when its expected
+version matches. Artifact content, its current pointer, the successful retry
+receipt, and the journal entry commit in the same SQLite transaction.
+
+## Run your own local broker
 
 ```sh
 make build
 umask 077
-mkdir -p .agent-fence
-./bin/agent-fence token create --agent writer-a --scope weekend > .agent-fence/writer-a.token
-./bin/agent-fence token create --agent writer-b --scope weekend > .agent-fence/writer-b.token
-./bin/agent-fence serve
+mkdir -p .questlock
+./bin/questlock token create --agent writer-a --scope weekend > .questlock/writer-a.token
+./bin/questlock token create --agent writer-b --scope weekend > .questlock/writer-b.token
+./bin/questlock serve
 ```
 
-The server listens on `127.0.0.1:8080` and uses `.agent-fence/fence.db`. Restarting
-it with the same database preserves tokens, versions, receipts, and journal entries.
-Create each agent only once. Revoked agent names cannot be reused; issue a new name
-when rotating a token so historical receipts retain their identity.
+The default address is `127.0.0.1:8080`; state lives in `.questlock/state.db`.
+Create each agent once. Restarting with the same database preserves credentials,
+artifact versions, successful operation receipts, and the journal.
 
 In another terminal, from this repository:
 
 ```sh
-export AGENT_FENCE_TOKEN="$(cat .agent-fence/writer-a.token)"
+export QUESTLOCK_TOKEN="$(cat .questlock/writer-a.token)"
 go run ./examples/publish
+unset QUESTLOCK_TOKEN
 ```
 
-That example reads the current version, publishes an artifact, and repeats the
-same request to recover its original result. Use the library in an existing agent
-loop; keep its token and any pending request in that worker's private scratch space.
+The [compilable client example](examples/publish/main.go) reads the current
+version, publishes, and retries the exact request. For crash recovery, a worker
+must save its intended request in its own private scratch space before publishing.
+On a timeout, reuse that request and operation ID. On a conflict, re-read and
+reconcile instead of blindly advancing the expected version.
 
-```go
-c, err := client.New("http://127.0.0.1:8080", token)
-// Check err, then persist this request before first publication if crash recovery
-// matters. An operation ID belongs to one agent and one exact successful request.
-result, err := c.Publish(ctx, protocol.PublishRequest{
-    Key:             "memory/summary.txt",
-    ExpectedVersion: 0, // 0 creates a missing artifact; otherwise use the last read version.
-    OperationID:     "task-42-publish-1",
-    Content:         "A result ready to share.",
-})
-```
-
-Full compilable example: [`examples/publish`](examples/publish/main.go).
-Revoke a worker using the local operator CLI:
+Revoke an agent through the trusted local operator CLI:
 
 ```sh
-./bin/agent-fence token revoke --agent writer-a
+./bin/questlock token revoke --agent writer-a
 ```
 
-## What the boundary actually does
+Revoked agent names cannot be reused. Give a replacement credential a new agent
+name so old audit records and retry receipts keep their original meaning.
 
-Each token is tied to one agent and one shared workspace (called a **scope**).
-The server derives the scope from the credential; clients cannot choose another
-scope in a publish request. Agents in the same scope can read and publish its
-artifacts. Provision separate scopes for separate trust boundaries.
+## Security and your machine
+
+Questlock is designed to keep this experiment's access small and explicit:
+
+- **Local by default.** The server binds to literal loopback. Any other bind
+  requires `--allow-remote-http`. The Podman recipe uses that flag inside the
+  container and publishes only `127.0.0.1` on the host.
+- **Credentials stay on the intended connection.** The Go client accepts plaintext
+  HTTP only for literal loopback IPs; other endpoints require HTTPS. It rejects
+  redirects and ignores environment proxy settings for its authenticated traffic.
+- **One scope per credential.** The server chooses the scope from a random token,
+  stores only its SHA-256 digest, and rechecks revocation inside the write transaction.
+- **No host-file access API.** Artifact keys are logical names stored in SQLite.
+  There is no shell execution, filesystem browsing, model call, or telemetry in
+  the broker. The demo's child processes receive a small explicit environment,
+  excluding the parent shell's cloud/API credentials.
+- **Private state and bounded input.** New state directories use `0700`; database
+  files use `0600`. Artifact text is capped at 1 MiB, requests and responses are
+  bounded, and the service applies HTTP timeouts.
+- **Separate the worker from the vault.** Only the broker and trusted operator
+  provisioning containers receive its persistent volume. Never give an agent the
+  database, host secrets, container-engine socket, or the broker's OS credentials.
+- **Keep private files out of releases.** Git ignores state, tokens, environment
+  files, logs, keys, and binaries. Container builds copy an explicit source allowlist.
+  A tracked-source/history guard runs in CI. Publication also receives a dedicated
+  secret scan; scanners reduce risk but cannot prove the absence of every secret.
+
+**This is not an agent execution sandbox or a complete safety system.** A permitted
+worker can deliberately fetch the current version and publish bad content. CAS
+does not validate reasoning, establish task ownership, or fence external tool
+effects. Configure worker OS/network isolation separately. The trusted host
+operator can read and change the database.
+
+Read the [security model and reporting guidance](SECURITY.md) before exposing it
+beyond a local experiment. Never post credentials, private databases, or sensitive
+artifact content in issues or logs.
+
+## Project map
 
 ```text
-worker A ─┐                   ┌─ immutable artifact versions
-          ├─ authenticated ── broker ─ SQLite transaction
-worker B ─┘      HTTP          └─ current pointer + retry receipt + journal
+questlock/
+  cmd/questlock/       CLI and real process-failure quest
+  client/             Public Go client library
+  protocol/           Shared JSON types
+  internal/httpapi/   Authenticated HTTP boundary
+  internal/store/     SQLite transactions, scopes, versions, receipts
+  examples/publish/   Minimal compilable integration
+  deploy/quadlet/     Rootless Linux service definition
+  docs/               Architecture, API, deployment, validation
+  scripts/            Public-source guard
+  assets/             Repository artwork
 ```
 
-- **Compare-and-swap:** a publish succeeds only if `expected_version` matches the
-  current version. Conflicts return HTTP 409 without changing the artifact.
-- **Durable retry receipts:** repeating a successful request with the same agent
-  and operation ID returns its original result, even if later versions exist.
-  Reusing that ID with different content, key, or expected version returns 409.
-- **Atomic storage:** artifact content, current pointer, successful receipt, and
-  audit entry commit in one SQLite transaction. Content is stored inside SQLite;
-  there is no separate filesystem write that could get ahead of the database.
-- **Scoped access:** random bearer tokens are stored as SHA-256 digests. The broker
-  checks revocation again inside the publication transaction.
-- **Inspectable history:** valid authenticated publish attempts record acceptance,
-  version/operation conflicts, and successful retries. Invalid input and failed
-  authentication are rejected before this journal; it is not a complete access log.
-
-A rejected request has no successful receipt. Corrected work should use a fresh
-operation ID. On a timeout or lost response, resend the exact original request;
-do not invent a new ID or automatically update the expected version.
-
-## HTTP API
-
-All `/v1/` routes require `Authorization: Bearer <token>`. Responses are JSON.
-
-| Method | Route | Behavior |
-| --- | --- | --- |
-| GET | `/healthz` | Process liveness; unauthenticated, not a database readiness probe |
-| POST | `/v1/artifact` | Publish `{key, expected_version, operation_id, content}` |
-| GET | `/v1/artifact?key=memory%2Fsummary.txt` | Read current artifact and its version |
-| GET | `/v1/artifacts` | Metadata for the first 1,000 current keys in sorted order; content is empty |
-| GET | `/v1/audit?limit=100` | Latest scoped events, newest first; maximum 1,000 |
-
-Artifact content is UTF-8 text, at most 1 MiB per version. Keys are logical paths,
-up to 512 bytes, with no parent/dot/empty components. They are never resolved as
-host filesystem paths. There is no delete, retention, historical-content API, or
-list pagination in this version. Immutable versions remain in the database.
-
-## Deployment and limits
-
-See [Podman + systemd/Quadlet deployment](docs/DEPLOYMENT.md) for a rootless Linux
-service with a persistent broker-only volume, localhost port binding, restart
-policy, and a publish/restart/read smoke test. The `Containerfile` also builds
-with Docker. Plain Go works on macOS and Linux.
-
-The control applies only to publishes through the broker. Workers must not have
-the database volume, the broker's host credentials, or an alternative path to
-mutate shared state. Scope enforcement is a service permission boundary, not an
-OS sandbox for arbitrary agent code. The container recipe isolates the broker;
-worker filesystem/network isolation must be configured separately.
-
-A worker with a valid token can deliberately read the latest version and submit
-bad content. Version checks prevent stale updates; they do not validate reasoning
-or revoke task ownership on reassignment. Task leases/generation fencing are
-future experiments. Neither this service nor a client library makes arbitrary
-tool calls exactly-once.
-
-This is one host, one broker, and a local SQLite database with WAL and FULL
-synchronization. Acknowledged transactions survive the process-crash tests; host
-power loss still depends on filesystem/device durability. SQLite serializes
-writes. There is no fleet scheduler, replication, high availability, quota, or
-claim of demonstrated multi-host scale. Version and audit storage grow over time.
-Use a trusted loopback/network path; add TLS before crossing an untrusted network.
-
-## Verify and develop
+[Architecture](docs/architecture.md) · [HTTP API](docs/api.md) ·
+[Deployment](docs/deployment.md) · [Verification record](docs/validation.md)
 
 ```sh
 make check
-make demo
+make quest
 ```
 
-Tests cover process-level competing writers, exact retry behavior, atomic rollback,
-revocation and scope isolation, payload validation, HTTP errors, and worker/broker
-crash recovery. CI builds on Linux and macOS and runs the Go race detector.
+The tests cover competing writer processes, scope isolation, revocation, atomic
+rollback, missing/malformed content, lost responses, replay after newer versions,
+and worker/broker crashes. Linux deployment has also been exercised with rootless
+Podman and systemd/Quadlet; see the verification record for versions and limits.
 
-The next experiment is adding another machine and measuring where coordination,
-placement, and failure recovery force the architecture to change.
+SQLite serializes writes. This prototype has no fleet scheduler, replication,
+quotas, automatic retention, or demonstrated multi-host scale. Versions and audit
+history grow over time. Process-crash tests do not establish power-loss durability.
 
-MIT licensed. Built out of curiosity.
+MIT licensed. Built out of curiosity, one quest at a time.

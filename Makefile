@@ -1,19 +1,22 @@
 GO ?= go
 
-.PHONY: build test check demo run
+.PHONY: build test check quest demo run
 
 build:
-	$(GO) build -trimpath -o bin/agent-fence ./cmd/agent-fence
+	$(GO) build -trimpath -o bin/questlock ./cmd/questlock
 
 test:
 	$(GO) test -race ./...
 
 check:
+	python3 scripts/check-public-source.py
 	$(GO) vet ./...
 	$(GO) test -race ./...
 
-demo: build
-	./bin/agent-fence demo
+quest: build
+	./bin/questlock quest
+
+demo: quest
 
 run: build
-	./bin/agent-fence serve
+	./bin/questlock serve

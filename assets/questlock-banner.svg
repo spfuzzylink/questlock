@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
+  <title id="title">Questlock — protect the shared state</title>
+  <desc id="desc">A violet gate sigil beside the Questlock name on a dark background. Quest 001: keep a stale worker from rewriting the present.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#080c19"/><stop offset="1" stop-color="#15122d"/></linearGradient>
+    <linearGradient id="edge" x2="1" y2="1"><stop stop-color="#93f9e5"/><stop offset="1" stop-color="#9d7dff"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#7780ba" stroke-opacity=".08"/></pattern>
+  </defs>
+  <rect width="1200" height="320" rx="20" fill="url(#bg)"/>
+  <rect x="1" y="1" width="1198" height="318" rx="19" fill="none" stroke="#373454"/>
+  <rect x="20" y="20" width="1160" height="280" rx="12" fill="url(#grid)"/>
+  <g transform="translate(142 154)">
+    <path d="M0-88 76-44V44L0 88-76 44V-44Z" fill="#15152e" stroke="url(#edge)" stroke-width="2"/>
+    <path d="M0-70 60-35V35L0 70-60 35V-35Z" fill="none" stroke="#8270c5" stroke-opacity=".45"/>
+    <path d="M-24-10V-30a24 24 0 0 1 48 0V-10" fill="none" stroke="#a8fbe7" stroke-width="5"/>
+    <rect x="-36" y="-10" width="72" height="52" rx="8" fill="#1e2540" stroke="url(#edge)" stroke-width="3"/>
+    <circle cy="11" r="6" fill="#b5a5ff"/><path d="M0 13V26" stroke="#b5a5ff" stroke-width="4"/>
+    <path d="M-95 0H-84M84 0H95M0-107V-96M0 96V107" stroke="#6d718f" stroke-width="2"/>
+  </g>
+  <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+    <text x="280" y="69" font-size="13" letter-spacing="3" fill="#99e6d5">QUEST 001 / PUBLIC PROTOTYPE</text>
+    <text x="276" y="144" font-size="65" font-weight="700" letter-spacing="5" fill="#f4f3ff">QUESTLOCK</text>
+    <text x="280" y="188" font-size="19" fill="#cbc6e2">Keep a stale worker from rewriting the present.</text>
+    <path d="M280 214H1122" stroke="#36324f"/>
+    <text x="280" y="246" font-size="13" letter-spacing="1" fill="#aaa5c0">SCOPED ACCESS</text>
+    <text x="480" y="246" font-size="13" letter-spacing="1" fill="#aaa5c0">VERSION CHECKS</text>
+    <text x="690" y="246" font-size="13" letter-spacing="1" fill="#aaa5c0">DURABLE RETRIES</text>
+    <text x="930" y="246" font-size="13" letter-spacing="1" fill="#aaa5c0">ONE HOST</text>
+    <text x="280" y="282" font-size="11" letter-spacing="1" fill="#827c9e">GO + SQLITE + PODMAN + SYSTEMD · BUILT OUT OF CURIOSITY</text>
+  </g>
+</svg>

@@ -14,21 +14,23 @@ import (
 	"strings"
 	"time"
 
-	"github.com/spfuzzylink/agent-fence/client"
-	"github.com/spfuzzylink/agent-fence/internal/store"
-	"github.com/spfuzzylink/agent-fence/protocol"
+	"github.com/spfuzzylink/questlock/client"
+	"github.com/spfuzzylink/questlock/internal/store"
+	"github.com/spfuzzylink/questlock/protocol"
 )
 
 // demo uses real subprocesses and a temporary on-disk database. The intentionally
 // stalled worker persists its intended write, is killed, and resumes that stale
 // request after another worker has published. It also hard-kills the broker.
 func demo() error {
-	dir, err := os.MkdirTemp("", "agent-fence-demo-")
+	fmt.Println("QUEST 001 — Keep a stale worker from rewriting the present")
+	fmt.Println("Challenge: worker crash → newer write → stale retry → broker crash")
+	dir, err := os.MkdirTemp("", "questlock-demo-")
 	if err != nil {
 		return err
 	}
 	defer os.RemoveAll(dir)
-	db := filepath.Join(dir, "fence.db")
+	db := filepath.Join(dir, "state.db")
 	s, err := store.Open(db)
 	if err != nil {
 		return err
@@ -68,7 +70,7 @@ func demo() error {
 
 	snapshot := filepath.Join(dir, "worker-a.json")
 	worker := exec.Command(exe, "_demo-worker", "snapshot", snapshot)
-	worker.Env = append(os.Environ(), "AF_DEMO_URL="+baseURL, "AF_DEMO_TOKEN="+tokenA)
+	worker.Env = demoEnvironment("QUESTLOCK_DEMO_URL="+baseURL, "QUESTLOCK_DEMO_TOKEN="+tokenA)
 	worker.Stderr = os.Stderr
 	out, err := worker.StdoutPipe()
 	if err != nil {
@@ -149,7 +151,7 @@ func demo() error {
 		return fmt.Errorf("unexpected durable journal: %v", outcomes)
 	}
 	fmt.Println("PASS  Durable journal contains 2 accepted, 1 rejected, and 1 replayed publish")
-	fmt.Println("Demo complete. Temporary state removed; no model API or credentials required.")
+	fmt.Println("QUEST CLEARED — seven checks passed. Temporary state removed; no model API required.")
 	return nil
 }
 
@@ -157,7 +159,7 @@ func demoWorker(args []string) error {
 	if len(args) != 2 {
 		return errors.New("invalid internal demo invocation")
 	}
-	c, err := client.New(os.Getenv("AF_DEMO_URL"), os.Getenv("AF_DEMO_TOKEN"))
+	c, err := client.New(os.Getenv("QUESTLOCK_DEMO_URL"), os.Getenv("QUESTLOCK_DEMO_TOKEN"))
 	if err != nil {
 		return err
 	}
@@ -200,6 +202,7 @@ func demoWorker(args []string) error {
 
 func startDemoServer(exe, db string) (*exec.Cmd, string, error) {
 	cmd := exec.Command(exe, "serve", "--db", db, "--listen", "127.0.0.1:0")
+	cmd.Env = demoEnvironment()
 	pipe, err := cmd.StderrPipe()
 	if err != nil {
 		return nil, "", err
@@ -211,8 +214,8 @@ func startDemoServer(exe, db string) (*exec.Cmd, string, error) {
 	go func() {
 		scanner := bufio.NewScanner(pipe)
 		for scanner.Scan() {
-			if strings.HasPrefix(scanner.Text(), "Agent Fence listening on ") {
-				ready <- strings.TrimPrefix(scanner.Text(), "Agent Fence listening on ")
+			if strings.HasPrefix(scanner.Text(), "Questlock listening on ") {
+				ready <- strings.TrimPrefix(scanner.Text(), "Questlock listening on ")
 				return
 			}
 		}
@@ -249,4 +252,16 @@ func stopDemoProcess(cmd *exec.Cmd) {
 		_ = cmd.Process.Kill()
 		_ = cmd.Wait()
 	}
+}
+
+// demoEnvironment deliberately excludes the parent shell's cloud/API credentials.
+// Only the Go test child selector and race-runtime options accompany fixtures.
+func demoEnvironment(extra ...string) []string {
+	env := []string{"PATH=/usr/bin:/bin", "LANG=C"}
+	for _, key := range []string{"QUESTLOCK_TEST_PROCESS", "GORACE"} {
+		if value, ok := os.LookupEnv(key); ok {
+			env = append(env, key+"="+value)
+		}
+	}
+	return append(env, extra...)
 }

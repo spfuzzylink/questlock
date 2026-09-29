@@ -1,16 +1,19 @@
-.git
-.github
-.agent-fence
-bin
-work
-coverage*
-*.out
-.DS_Store
-.env
-.env.*
-**/*.db
-**/*.db-shm
-**/*.db-wal
-**/*.token
-**/*.key
-**/*.pem
+# Exclude the checkout by default. Only build inputs may enter the context.
+**
+!go.mod
+!go.sum
+!LICENSE
+!cmd/
+!cmd/questlock/
+!cmd/questlock/*.go
+!internal/
+!internal/store/
+!internal/store/*.go
+!internal/httpapi/
+!internal/httpapi/*.go
+!client/
+!client/*.go
+!protocol/
+!protocol/*.go
+# Runtime builds do not need tests or their fixtures.
+**/*_test.go

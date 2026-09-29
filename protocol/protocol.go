@@ -1,4 +1,4 @@
-// Package protocol defines the JSON contract between Agent Fence and its clients.
+// Package protocol defines the JSON contract between Questlock and its clients.
 package protocol
 
 const MaxContentBytes = 1 << 20

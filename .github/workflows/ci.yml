@@ -13,6 +13,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  public-source:
+    name: Public source and history
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Test publication guard
+        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Inspect tracked source and full reachable history
+        run: python3 scripts/check-public-source.py
   go:
     name: Go / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -22,10 +35,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: actions/setup-go@v7
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
         with:
           go-version: '1.27.1'
           cache-dependency-path: go.sum
@@ -38,4 +51,6 @@ jobs:
       - name: Build static binary
         env:
           CGO_ENABLED: '0'
-        run: go build -trimpath -buildvcs=false -o bin/agent-fence ./cmd/agent-fence
+        run: go build -trimpath -buildvcs=false -o bin/questlock ./cmd/questlock
+      - name: Exercise compiled recovery demo
+        run: ./bin/questlock demo

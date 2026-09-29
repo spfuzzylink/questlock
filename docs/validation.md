@@ -12,11 +12,11 @@ Executed successfully:
 ```sh
 go vet ./...
 go test -race -count=1 ./...
-go build -trimpath -o bin/agent-fence ./cmd/agent-fence
-./bin/agent-fence demo
+go build -trimpath -buildvcs=false -o bin/questlock ./cmd/questlock
+./bin/questlock quest
 ```
 
-The test suite passed for `client`, `cmd/agent-fence`, `internal/httpapi`, and
+The test suite passed for `client`, `cmd/questlock`, `internal/httpapi`, and
 `internal/store`. The protocol and example packages compiled with the module.
 
 Observed behavior:
@@ -36,6 +36,11 @@ Observed behavior:
   `current_version: 3` in the replay journal event.
 - Scope isolation, forged principals, token revocation, path validation, size
   limits, required fields, malformed UTF-8, and client redirect handling passed.
+- Plaintext remote URLs were rejected. HTTPS certificate validation remained on,
+  an environment-proxy trap received no credential traffic, and unsafe listener
+  addresses were rejected before database creation or network binding.
+- Quest subprocesses did not inherit cloud or GitHub credential environment
+  variables from the parent process.
 
 A separate native localhost service also accepted and returned a real artifact.
 The compilable Go example published through it and recovered the same version
@@ -44,8 +49,9 @@ on retry.
 ## Linux deployment
 
 The Containerfile was built under rootless Podman 6.1.2 in a dedicated Linux arm64
-virtual machine with cgroup v2 and SELinux enabled. The documented Quadlet service was generated and
-started through the unprivileged user's systemd manager.
+virtual machine with cgroup v2 and SELinux enabled. The VM had no host-folder
+shares. The documented Quadlet service was generated and started through the
+unprivileged user's systemd manager.
 
 Executed successfully: non-root token provisioning, health check, publication,
 stale-write rejection, service restart, persistent read, identical retry replay,
@@ -56,12 +62,27 @@ dropped capabilities, no-new-privileges, a broker-only persistent volume, loopba
 port publication, and limits of 256 MiB memory, one CPU, and 128 processes.
 
 The final source was rebuilt, the service restarted, and the persisted artifact
-read again. All seven compiled `demo` checks also passed inside the read-only
+read again. All seven compiled `quest` checks also passed inside the read-only
 Linux container with a 64 MiB `/tmp`. The disposable service and VM were stopped
 after verification.
 
 Verified local container image ID:
-`7eb477c636b3e452fbd5071291800c0b605879781681b278382ca798cf7670e2`.
+`5d29406e1e6737cdfc087df35f49a6a742df166ac20e72d615aecd4715eb7b23`.
+
+The image's builder source tree contained only the production Go allowlist and
+compiled binary. No host state, credentials, Git internals, tests, or documentation
+entered that tree. Credential-bearing curl calls used stdin rather than putting
+the bearer token in the command argument list.
+
+## Publication checks
+
+The public-source guard and its 21 regression tests passed. It inspected tracked
+working files, staged blobs, and reachable history/metadata without reading the
+host's unrelated directories. Ignored `.local/` helpers stay outside the scan;
+force-added helpers are rejected by path, including after removal from the
+working tree if they remain in history. A separate Gitleaks 8.30.1 scan reported no leaks
+in the existing Git history and the staged-source snapshot. These are pattern
+checks, not a proof of complete secrecy or anonymity.
 
 ## Practical limits
 
