@@ -1,0 +1,203 @@
+name: Experimental container
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Published experimental release tag (vX.Y.Z)
+        required: true
+        default: v0.1.1
+        type: string
+  # release:published is suppressed when the CI release uses GITHUB_TOKEN.
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: questlock-ghcr-publication
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    if: >-
+      github.repository == 'spfuzzylink/questlock' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_repository.full_name == 'spfuzzylink/questlock' &&
+        startsWith(github.event.workflow_run.head_branch, 'v')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+      version: ${{ steps.release.outputs.version }}
+      commit: ${{ steps.release.outputs.commit }}
+      created: ${{ steps.release.outputs.created }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Resolve a published release to an immutable source commit
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.version || github.event.workflow_run.head_branch }}
+          CI_COMMIT: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || '' }}
+        run: python3 scripts/container_release.py resolve --tag "$RELEASE_TAG" --expected-commit "$CI_COMMIT"
+
+  native:
+    name: Native container / ${{ matrix.arch }}
+    needs: resolve
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: amd64
+            machine: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+            machine: aarch64
+    env:
+      RELEASE_TAG: ${{ needs.resolve.outputs.tag }}
+      RELEASE_VERSION: ${{ needs.resolve.outputs.version }}
+      RELEASE_COMMIT: ${{ needs.resolve.outputs.commit }}
+      RELEASE_CREATED: ${{ needs.resolve.outputs.created }}
+      RELEASE_ARCH: ${{ matrix.arch }}
+      EXPECTED_MACHINE: ${{ matrix.machine }}
+      IMAGE: ghcr.io/spfuzzylink/questlock
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Check out the exact released source for notice verification
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ needs.resolve.outputs.commit }}
+          path: release-source
+          persist-credentials: false
+      - name: Verify native runner and released binary inputs
+        run: |
+          test "$(uname -s)" = Linux
+          test "$(uname -m)" = "$EXPECTED_MACHINE"
+          python3 -m unittest discover -s scripts -p 'test_container_release.py' -v
+          python3 scripts/container_release.py prepare --tag "$RELEASE_TAG" --commit "$RELEASE_COMMIT" --arch "$RELEASE_ARCH" --source release-source --output container-context
+      - name: Build the minimal non-root image without rebuilding the binary
+        run: |
+          docker build --network=none --file Containerfile.release \
+            --build-arg "VERSION=$RELEASE_TAG" --build-arg "REVISION=$RELEASE_COMMIT" \
+            --build-arg "CREATED=$RELEASE_CREATED" \
+            --tag "$IMAGE:$RELEASE_TAG-$RELEASE_ARCH" container-context
+      - name: Smoke-test the image on its native CPU before publication
+        run: |
+          image="$IMAGE:$RELEASE_TAG-$RELEASE_ARCH"
+          test "$(docker image inspect --format '{{.Architecture}}' "$image")" = "$RELEASE_ARCH"
+          test "$(docker image inspect --format '{{.Config.User}}' "$image")" = '65532:65532'
+          test "$(docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges --memory=256m --cpus=1 --pids-limit=128 "$image" version)" = "$RELEASE_VERSION"
+          docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges --memory=256m --cpus=1 --pids-limit=128 "$image" --help
+          # Exercise the image's actual /data ownership without a tmpfs overlay.
+          # This disposable token is never printed, persisted, or published.
+          docker run --rm --network=none --cap-drop=ALL --security-opt=no-new-privileges \
+            --memory=256m --cpus=1 --pids-limit=128 "$image" \
+            token create --agent container-smoke --scope smoke --db /data/ownership-test.db >/dev/null
+          docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+            --memory=256m --cpus=1 --pids-limit=128 \
+            --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" quest
+      - name: Export only the image that passed its native smoke test
+        run: |
+          mkdir tested-image
+          docker image save --output "tested-image/questlock-$RELEASE_ARCH.tar" "$IMAGE:$RELEASE_TAG-$RELEASE_ARCH"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tested-container-${{ matrix.arch }}
+          path: tested-image/*.tar
+          if-no-files-found: error
+          retention-days: 3
+
+  publish:
+    name: Publish both tested architectures
+    needs: [resolve, native]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    env:
+      RELEASE_TAG: ${{ needs.resolve.outputs.tag }}
+      RELEASE_COMMIT: ${{ needs.resolve.outputs.commit }}
+      IMAGE: ghcr.io/spfuzzylink/questlock
+    steps:
+      - name: Isolate runner registry configuration
+        run: printf 'DOCKER_CONFIG=%s/questlock-docker-auth\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: tested-container-*
+          path: tested-images
+          merge-multiple: true
+      - name: Load the two tested images and verify their source labels
+        run: |
+          test "$(find tested-images -maxdepth 1 -type f -name '*.tar' | wc -l)" -eq 2
+          for arch in amd64 arm64; do
+            docker image load --input "tested-images/questlock-$arch.tar"
+            image="$IMAGE:$RELEASE_TAG-$arch"
+            test "$(docker image inspect --format '{{.Architecture}}' "$image")" = "$arch"
+            test "$(docker image inspect --format '{{.Os}}' "$image")" = linux
+            test "$(docker image inspect --format '{{.Config.User}}' "$image")" = '65532:65532'
+            test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.source"}}' "$image")" = https://github.com/spfuzzylink/questlock
+            test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$image")" = "$RELEASE_COMMIT"
+          done
+      - name: Authenticate with the built-in repository token
+        env:
+          GHCR_TOKEN: ${{ github.token }}
+          REGISTRY_USER: ${{ github.actor }}
+        run: |
+          install -d -m 0700 "$DOCKER_CONFIG"
+          printf '%s' "$GHCR_TOKEN" | docker login ghcr.io --username "$REGISTRY_USER" --password-stdin
+      - name: Publish a single multi-platform manifest under experimental tags
+        run: |
+          for arch in amd64 arm64; do
+            docker push "$IMAGE:$RELEASE_TAG-$arch"
+            docker image inspect --format '{{index .RepoDigests 0}}' "$IMAGE:$RELEASE_TAG-$arch" > "$arch.digest"
+          done
+          docker buildx imagetools create --tag "$IMAGE:$RELEASE_TAG" --tag "$IMAGE:experimental" \
+            "$(cat amd64.digest)" "$(cat arm64.digest)"
+          docker buildx imagetools inspect "$IMAGE:$RELEASE_TAG"
+          docker buildx imagetools inspect --raw "$IMAGE:$RELEASE_TAG" > published-manifest.json
+          python3 - <<'PY'
+          import json
+          with open("published-manifest.json") as stream:
+              manifests = json.load(stream)["manifests"]
+          platforms = {(item["platform"]["os"], item["platform"]["architecture"]) for item in manifests}
+          assert len(manifests) == 2 and platforms == {("linux", "amd64"), ("linux", "arm64")}, "Published index does not contain exactly the two tested Linux architectures"
+          print("Verified both native architectures in the published manifest.")
+          PY
+      - name: Report publication and check anonymous access
+        env:
+          ANONYMOUS_CONFIG: ${{ runner.temp }}/questlock-docker-anonymous
+        run: |
+          install -d -m 0700 "$ANONYMOUS_CONFIG"
+          {
+            echo '## Experimental GHCR image published'
+            echo "Version: \`$IMAGE:$RELEASE_TAG\`"
+            echo "Moving experimental tag: \`$IMAGE:experimental\`"
+            echo "Source commit: \`$RELEASE_COMMIT\`"
+            if docker --config "$ANONYMOUS_CONFIG" manifest inspect "$IMAGE:$RELEASE_TAG" >/dev/null 2>&1; then
+              echo 'Anonymous access: verified (public).'
+            else
+              echo 'Anonymous access: not yet available. The first GHCR publication may be private.'
+              echo 'Set package visibility to Public once, then verify anonymous pulling before advertising it.'
+              echo 'Package settings: https://github.com/users/spfuzzylink/packages/container/questlock/settings'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove runner registry credentials
+        if: always()
+        run: |
+          if [ -n "${DOCKER_CONFIG:-}" ]; then
+            docker logout ghcr.io >/dev/null 2>&1 || true
+            rm -rf "$DOCKER_CONFIG"
+          fi
