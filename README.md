@@ -242,6 +242,8 @@ contributions. [Start here](CONTRIBUTING.md), or
 [open an issue](https://github.com/spfuzzylink/questlock/issues/new) with what you
 tried and what happened. Discuss larger changes before starting them.
 
+Community discussion: [r/coolgithubprojects](https://www.reddit.com/r/coolgithubprojects/comments/1wsyenb/experimental_gosqlite_broker_for_shared_agent/).
+
 Questlock's own code is [MIT licensed](LICENSE). Bundled dependencies retain their
 original terms; [third-party notices](THIRD_PARTY_NOTICES.md) ship with the archives
 and container image. Built out of curiosity, one quest at a time.
