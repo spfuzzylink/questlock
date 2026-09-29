@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TARGETS = ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64")
 PUBLIC_FILES = (
     "LICENSE", "THIRD_PARTY_NOTICES.md", "README.md", "CONTRIBUTING.md", "SECURITY.md", "VERSION",
-    "docs/installation.md", "docs/use-cases.md", "docs/api.md",
+    "docs/installation.md", "docs/containers.md", "docs/use-cases.md", "docs/api.md",
     "docs/architecture.md", "docs/deployment.md", "docs/validation.md",
 )
 

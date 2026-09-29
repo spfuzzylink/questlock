@@ -38,9 +38,13 @@ covers host configuration problems.
 
 ## Build and provision
 
+To use the published GitHub Packages image, follow the
+[container guide](containers.md#run-a-persistent-broker) in place of the build
+command below, then continue with the same volume and provisioning steps.
+
 The multi-stage `Containerfile` builds the Go binary and puts it in a scratch
 image. Its copy instructions and `.dockerignore` allow only Go build inputs and
-the license: local state, credentials, Git history, docs, and unrelated checkout
+license notices: local state, credentials, Git history, docs, and unrelated checkout
 files do not enter the image build. It also works with
 `docker build -f Containerfile`; the remaining service instructions use Podman.
 

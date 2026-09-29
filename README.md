@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/spfuzzylink/questlock/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/spfuzzylink/questlock/actions/workflows/ci.yml)
 
-[Run the demo](#start-the-quest) · [Download](#download-a-binary) · [Fork Questlock](https://github.com/spfuzzylink/questlock/fork) · [Contribute](CONTRIBUTING.md)
+[Run the demo](#start-the-quest) · [Download](#download-a-binary) · [Container](#try-the-container) · [Fork Questlock](https://github.com/spfuzzylink/questlock/fork) · [Contribute](CONTRIBUTING.md)
 
 [Ask a question](https://github.com/spfuzzylink/questlock/discussions/categories/q-a) · [Security](SECURITY.md) · [Architecture](docs/architecture.md)
 
@@ -54,6 +54,23 @@ CPU; x86-64 covers 64-bit Intel and AMD processors. No Go installation is needed
 Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.1.1/checksums.txt)
 before extracting, then run `./questlock quest`. The installer above performs the
 checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.1.1).
+
+### Try the container
+
+The public [GitHub Packages image](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
+supports Linux ARM64 and x86-64. With Podman running:
+
+```sh
+podman run --rm --network none --read-only \
+  --cap-drop all --security-opt no-new-privileges \
+  --memory 256m --cpus 1 --pids-limit 128 \
+  --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
+  ghcr.io/spfuzzylink/questlock:v0.1.1 quest
+```
+
+Use `docker` in place of `podman` if preferred. The image pulls without a registry
+login; the demo then runs with networking disabled and no host folders or ports
+shared. [Container usage, persistent deployment, and updates](docs/containers.md).
 
 ### Explore the failure case
 
