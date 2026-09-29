@@ -1,7 +1,12 @@
-# Questlock 0.1.0 — Quest 001
+# Questlock 0.1.1 — dependency notices included
 
 A small Go + SQLite publishing gate for cooperating agents that share text state.
-This is an experimental first release for one host.
+This is an experimental release for one host.
+
+Version 0.1.1 adds the license notices for code included from Go and third-party
+dependencies to the binary archives and container image. Questlock's own code
+remains MIT licensed; dependencies retain their original licenses. Runtime
+behavior is unchanged from 0.1.0. See `THIRD_PARTY_NOTICES.md`.
 
 ## Try it
 

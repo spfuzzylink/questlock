@@ -5,7 +5,7 @@ set -eu
 questlock_script_dir=$(CDPATH= cd -P "$(dirname "$0")" && pwd)
 questlock_repo_dir=$(CDPATH= cd -P "$questlock_script_dir/.." && pwd)
 questlock_install_dir="$questlock_repo_dir/bin"
-questlock_version=0.1.0
+questlock_version=0.1.1
 if [ -r "$questlock_repo_dir/VERSION" ]; then
   questlock_version=$(cat "$questlock_repo_dir/VERSION")
 fi
@@ -19,7 +19,7 @@ questlock_usage() {
   cat <<'USAGE'
 Usage: sh scripts/install.sh [--version vX.Y.Z] [--dir DIRECTORY]
 
-Install the pinned release from VERSION (default 0.1.0) into this repo's bin/.
+Install the pinned release from VERSION (default 0.1.1) into this repo's bin/.
 Supported platforms: macOS and Linux, amd64 and arm64. No sudo is used.
 An optional destination directory may contain spaces; quote it in your shell.
 

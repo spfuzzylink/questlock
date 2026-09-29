@@ -44,14 +44,14 @@ separate runtime validation.
 For example, on Linux x86-64, from the download directory:
 
 ```sh
-sha256sum questlock_0.1.0_linux_amd64.tar.gz
+sha256sum questlock_0.1.1_linux_amd64.tar.gz
 ```
 
 On macOS use `shasum -a 256` instead. Compare the result with the **matching
 filename's entry** in `checksums.txt` before extracting. Then:
 
 ```sh
-tar -xzf questlock_0.1.0_linux_amd64.tar.gz
+tar -xzf questlock_0.1.1_linux_amd64.tar.gz
 ./questlock version
 ./questlock quest
 ```
@@ -105,7 +105,7 @@ service with resource limits and automatic restart.
 ## Updates and removal
 
 Stop a broker before replacing its binary. From an updated checkout, rerun
-`./scripts/install.sh` to install the version in `VERSION`; `--version v0.1.0`
+`./scripts/install.sh` to install the version in `VERSION`; `--version v0.1.1`
 selects a specific published release. `--dir PATH` selects a different installation
 directory. Nothing is added to `PATH` automatically.
 

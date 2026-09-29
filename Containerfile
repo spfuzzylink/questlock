@@ -13,6 +13,7 @@ RUN mkdir -p /out/data && chmod 0700 /out/data
 
 FROM scratch
 COPY LICENSE /LICENSE
+COPY THIRD_PARTY_NOTICES.md /THIRD_PARTY_NOTICES.md
 COPY --from=build /src/bin/questlock /usr/local/bin/questlock
 COPY --from=build --chown=65532:65532 /out/data /data
 USER 65532:65532

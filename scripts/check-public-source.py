@@ -11,6 +11,7 @@ text are never printed. Keep the checkout complete: shallow history is rejected.
 """
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -53,6 +54,13 @@ HOME_PATTERNS = [
     re.compile(rb"[A-Za-z]:[\\/]" + b"Users" + rb"[\\/][A-Za-z0-9_. -]+[\\/]")
 ]
 EMAIL = re.compile(rb"[A-Za-z0-9._%+\[\]-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
+# Exact, reviewed third-party notice documents contain upstream public copyright
+# emails. Keep old digests when regenerating notices: reachable historical blobs
+# are immutable and remain subject to this guard. This only permits those email
+# addresses; credentials, home paths, and configured private strings still fail.
+REVIEWED_PUBLIC_NOTICE_SHA256 = frozenset({
+    "dba84d51f9acb52be9d6494effa48069be60ac4731b805fe16f2c4259f028cb2",
+})
 
 
 class CheckError(Exception):
@@ -95,7 +103,8 @@ def content_issues(data, forbidden=()):
     issues = {name for name, pattern in PATTERNS if pattern.search(data)}
     if any(pattern.search(data) for pattern in HOME_PATTERNS):
         issues.add("absolute home-directory path")
-    if any(not public_email(match.group()) for match in EMAIL.finditer(data)):
+    reviewed_notice = hashlib.sha256(data).hexdigest() in REVIEWED_PUBLIC_NOTICE_SHA256
+    if not reviewed_notice and any(not public_email(match.group()) for match in EMAIL.finditer(data)):
         issues.add("email address outside public/example allowlist")
     if forbidden:
         text = data.decode("utf-8", errors="replace").casefold()

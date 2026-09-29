@@ -3,6 +3,7 @@
 !go.mod
 !go.sum
 !LICENSE
+!THIRD_PARTY_NOTICES.md
 !cmd/
 !cmd/questlock/
 !cmd/questlock/*.go

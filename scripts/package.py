@@ -12,12 +12,13 @@ import subprocess
 import tarfile
 import tempfile
 import os
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS = ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64")
 PUBLIC_FILES = (
-    "LICENSE", "README.md", "SECURITY.md", "VERSION",
+    "LICENSE", "THIRD_PARTY_NOTICES.md", "README.md", "SECURITY.md", "VERSION",
     "docs/installation.md", "docs/use-cases.md", "docs/api.md",
     "docs/architecture.md", "docs/deployment.md", "docs/validation.md",
 )
@@ -59,6 +60,8 @@ def main():
     version = (ROOT / "VERSION").read_text().strip()
     if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version):
         parser.error("VERSION must contain a plain semantic version such as 0.1.0")
+    # A dependency/toolchain change must not silently ship stale legal notices.
+    subprocess.run([sys.executable, str(ROOT / "scripts/generate-notices.py"), "--check"], cwd=ROOT, check=True)
     documents = {name: public_file(ROOT, name) for name in PUBLIC_FILES}
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     dirty = subprocess.run(["git", "diff", "--quiet", "HEAD"], cwd=ROOT).returncode != 0
@@ -70,7 +73,7 @@ def main():
         with tempfile.TemporaryDirectory(prefix="questlock-package-") as temp:
             binary = Path(temp) / "questlock"
             env = dict(os.environ, CGO_ENABLED="0", GOOS=goos, GOARCH=goarch,
-                       GOAMD64="v1", GOARM64="v8.0", GOFLAGS="", GOWORK="off")
+                       GOAMD64="v1", GOARM64="v8.0", GOFLAGS="", GOWORK="off", GOEXPERIMENT="")
             subprocess.run([
                 "go", "build", "-mod=readonly", "-trimpath", "-buildvcs=false",
                 "-ldflags", "-s -w -X main.version=" + version,

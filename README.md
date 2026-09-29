@@ -193,4 +193,6 @@ SQLite serializes writes. This prototype has no fleet scheduler, replication,
 quotas, automatic retention, or demonstrated multi-host scale. Versions and audit
 history grow over time. Process-crash tests do not establish power-loss durability.
 
-MIT licensed. Built out of curiosity, one quest at a time.
+Questlock's own code is [MIT licensed](LICENSE). Bundled dependencies retain their
+original terms; [third-party notices](THIRD_PARTY_NOTICES.md) ship with the archives
+and container image. Built out of curiosity, one quest at a time.

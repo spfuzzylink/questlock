@@ -13,6 +13,15 @@ spec.loader.exec_module(package)
 
 
 class PackageTests(unittest.TestCase):
+    def test_release_allowlist_preserves_third_party_notices_verbatim(self):
+        self.assertIn("THIRD_PARTY_NOTICES.md", package.PUBLIC_FILES)
+        notice = package.public_file(package.ROOT, "THIRD_PARTY_NOTICES.md")
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "release.tar.gz"
+            package.archive(output, b"binary fixture", {"THIRD_PARTY_NOTICES.md": notice}, {"version": "0.1.1"})
+            with tarfile.open(output) as bundle:
+                self.assertEqual(bundle.extractfile("THIRD_PARTY_NOTICES.md").read(), notice)
+
     def test_archive_has_only_explicit_inputs_and_normalized_ownership(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

@@ -1,5 +1,6 @@
-"""Regression tests use only disposable Git repositories and synthetic data."""
+"""Use disposable Git repositories, synthetic secrets, and reviewed public notices."""
 
+import hashlib
 import importlib.util
 import json
 import os
@@ -8,12 +9,14 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 SCRIPT = Path(__file__).with_name("check-public-source.py").resolve()
 SPEC = importlib.util.spec_from_file_location("public_source_guard", SCRIPT)
 GUARD = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(GUARD)
+NOTICES = SCRIPT.parent.parent / "THIRD_PARTY_NOTICES.md"
 
 
 class PatternTests(unittest.TestCase):
@@ -48,6 +51,32 @@ class PatternTests(unittest.TestCase):
     def test_guard_and_tests_do_not_contain_matching_fixture_literals(self):
         for path in (SCRIPT, Path(__file__)):
             self.assertEqual(GUARD.content_issues(path.read_bytes()), set())
+
+    def test_reviewed_notices_allow_only_exact_document_emails(self):
+        data = NOTICES.read_bytes()
+        self.assertIn(hashlib.sha256(data).hexdigest(), GUARD.REVIEWED_PUBLIC_NOTICE_SHA256)
+        self.assertTrue(any(not GUARD.public_email(m.group()) for m in GUARD.EMAIL.finditer(data)))
+        self.assertEqual(GUARD.content_issues(data), set())
+        self.assertIn("email address outside public/example allowlist", GUARD.content_issues(data + b"\n"))
+        unrelated = b"fixture.author" + b"@" + b"private.invalid"
+        self.assertIn("email address outside public/example allowlist", GUARD.content_issues(data + unrelated))
+
+    def test_reviewed_notice_hash_never_skips_other_content_checks(self):
+        data = NOTICES.read_bytes()
+        self.assertIn("configured private string", GUARD.content_issues(data, ("copyright",)))
+        fixtures = (
+            (b"ghp" + b"_" + b"A" * 36, "GitHub credential"),
+            (b"/" + b"Users" + b"/fictional/repo", "absolute home-directory path"),
+            (b"SQLite format 3" + bytes([0]), "SQLite database content"),
+        )
+        for content, issue in fixtures:
+            with self.subTest(issue=issue):
+                candidate = data + content
+                # Even a mistakenly reviewed digest must not disable unrelated
+                # credential, home-path, or database-content checks.
+                digests = GUARD.REVIEWED_PUBLIC_NOTICE_SHA256 | {hashlib.sha256(candidate).hexdigest()}
+                with patch.object(GUARD, "REVIEWED_PUBLIC_NOTICE_SHA256", digests):
+                    self.assertIn(issue, GUARD.content_issues(candidate))
 
 
 class RepositoryTests(unittest.TestCase):
@@ -96,6 +125,25 @@ class RepositoryTests(unittest.TestCase):
         output = self.check()
         self.assertIn("1 tracked paths", output)
         self.assertNotIn("local.token", output)
+
+    def test_reviewed_notices_pass_in_index_worktree_and_deleted_history(self):
+        (self.repo / NOTICES.name).write_bytes(NOTICES.read_bytes())
+        self.git("add", NOTICES.name)
+        self.check()
+        self.git("commit", "-m", "Add reviewed public notices")
+        self.git("rm", NOTICES.name)
+        self.git("commit", "-m", "Remove reviewed public notices")
+        self.check()
+
+    def test_changed_notice_blob_is_rejected_after_deletion(self):
+        (self.repo / NOTICES.name).write_bytes(NOTICES.read_bytes() + b"\n")
+        self.git("add", NOTICES.name)
+        self.git("commit", "-m", "Changed notice fixture")
+        self.git("rm", NOTICES.name)
+        self.git("commit", "-m", "Remove changed notice fixture")
+        output = self.check(1)
+        self.assertIn("history", output)
+        self.assertIn("email address outside public/example allowlist", output)
 
     def test_current_working_changes_are_checked(self):
         secret = "ghp" + "_" + "A" * 36
