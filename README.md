@@ -294,6 +294,15 @@ tried and what happened. Discuss larger changes before starting them.
 
 Community discussion: [r/coolgithubprojects](https://www.reddit.com/r/coolgithubprojects/comments/1wsyenb/experimental_gosqlite_broker_for_shared_agent/).
 
+## Credit and license
+
+Questlock was created and is maintained by
+[@spfuzzylink](https://github.com/spfuzzylink), with community contributions.
 Questlock's own code is [MIT licensed](LICENSE). Bundled dependencies retain their
 original terms; [third-party notices](THIRD_PARTY_NOTICES.md) ship with the archives
-and container image. Built out of curiosity, one quest at a time.
+and container image.
+
+[Attribution](ATTRIBUTION.md) separates required license notices from optional
+visible credit. [Brand guidance](BRANDING.md) explains how to identify upstream
+Questlock and independent forks or services. Built out of curiosity, one quest
+at a time.

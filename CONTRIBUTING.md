@@ -53,9 +53,13 @@ files, keys, and private examples out of Git. Report security issues according t
 [SECURITY.md](SECURITY.md); do not publish an exploit with credentials or private
 data in a public issue.
 
-Contributions to Questlock's own code use its [MIT license](LICENSE). Preserve
-third-party attribution. Dependency or toolchain changes also require reviewing
-and regenerating [third-party notices](THIRD_PARTY_NOTICES.md).
+Contributions to Questlock's own code use its [MIT license](LICENSE). Contributors
+retain their own copyright interests; no copyright assignment is requested.
+See [attribution guidance](ATTRIBUTION.md) for existing license-notice requirements
+and optional visible credit, and [brand guidance](BRANDING.md) for identifying
+independent forks or services. Preserve third-party attribution. Dependency or
+toolchain changes also require reviewing and regenerating
+[third-party notices](THIRD_PARTY_NOTICES.md).
 
 For releases, container publication, documentation upkeep, and client rollout,
 follow the [owner maintenance checklist](docs/maintenance.md).
