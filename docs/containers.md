@@ -23,6 +23,27 @@ without container networking, host mounts, published ports, or a model account.
 Its writable temporary state disappears when the container exits. Look for seven
 `PASS` lines and `QUEST CLEARED`.
 
+## Run the offline model quest
+
+Use the same isolated container settings to exercise bounded model workflows:
+
+```sh
+podman run --rm --network none --read-only \
+  --cap-drop all --security-opt no-new-privileges \
+  --memory 256m --cpus 1 --pids-limit 128 \
+  --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
+  ghcr.io/spfuzzylink/questlock:v0.2.0 model quest
+```
+
+Look for six `PASS` lines and `QUEST CLEARED`. This quest starts a real local HTTP
+broker with temporary SQLite state and uses a deterministic model fixture. It
+needs no API key, model download, provider credits, or separate broker. The six
+checks cover exact result reuse, bounded context, preflight cost rejection,
+concurrent task admission, restart/revision behavior, and shared budgets with an
+unknown provider outcome. Fixture token counts and dollar rates demonstrate
+correctness; they are not measured provider savings. See the
+[model architecture and scenario details](model-architecture.md).
+
 ## Run a persistent broker
 
 The command above is a disposable demo. A persistent broker needs its own named
@@ -50,7 +71,8 @@ host port automatically. Keep any explicit host binding on `127.0.0.1`.
   OCI labels identify the release and source commit. `/BUILDINFO.json`, `/LICENSE`,
   and `/THIRD_PARTY_NOTICES.md` accompany the binary.
 - Native Linux ARM64 and x86-64 runners check the binary version, non-root user,
-  writable data directory, and full recovery quest before publication. See the
+  writable data directory, seven recovery checks, and six offline model checks
+  before publication. Both quests run from the image's packaged executable. See the
   [container workflow](https://github.com/spfuzzylink/questlock/actions/workflows/container.yml).
 
 The broker runs as UID/GID 65532. Containers are an operating environment, not a

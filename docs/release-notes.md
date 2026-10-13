@@ -22,6 +22,8 @@ generation, and reuses an explicitly approved, complete, fresh result.
 - Installable Codex and Claude Code skills from the same portable executable.
 - Three simple and three complex offline scenarios, plus the original stale
   worker/restart/retry quest. All use temporary state.
+- System and task-lifecycle diagrams with editable draw.io source, showing
+  shared-storage ownership, result reuse, and budget/recovery boundaries.
 - macOS 13+ and Linux ARM64/x86-64 archives, checksum manifest, docs, example
   specs, and a TLS trust bundle in the Linux container image.
 

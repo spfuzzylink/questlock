@@ -26,9 +26,9 @@ electricity, and hardware remain costs.
 ## Why this boundary
 
 The useful question is: **does this exact approved task need another paid call?**
-A universal provider router answers a different operational question: which
-upstream should serve a request? Questlock can use a router later while retaining
-its own task freshness, coordination, and budget accounting.
+Task admission and provider routing compose naturally: Questlock keeps approved
+context, freshness, coordination, and budget state around the selected provider
+path. A future OpenRouter adapter would connect that path to its model ecosystem.
 
 | Architectural choice | Benefit | Tradeoff and decision |
 | --- | --- | --- |
@@ -43,6 +43,45 @@ Model selection remains explicit in the spec. Choosing the cheapest model or
 silently falling back to another model can change answer quality, tokenization,
 pricing, and the meaning of an existing result. Add such choices only with a
 task-specific evaluation and a fingerprinted policy.
+
+## Editable architecture diagrams
+
+The [two-page draw.io source](diagrams/model-workflows.drawio) contains native,
+editable shapes, labels, and connectors in uncompressed XML. The SVG views below
+show the same labels and relationships for reading on GitHub and in release
+archives. They use plain SVG text without scripts, external assets, or
+`foreignObject` labels.
+
+### System boundaries
+
+![Questlock system boundaries: cooperating workers own the Go Runner and model credentials, call direct OpenAI or Claude APIs or local loopback Ollama, and share scoped HTTP access to one broker-owned SQLite database. Jobs, publication receipts, and the optional API USD day ledger are separate stored records.](diagrams/model-system.svg)
+
+### Task lifecycle
+
+![Questlock task lifecycle: eligible stored-answer reuse skips counting and generation; otherwise a worker claims ownership before preflight and reservation. Unknown outcomes retain reservations and prevent automatic generation retries. Known results are published and settled separately; incomplete or limit-violating results cannot be reused, and a settled overrun freezes the UTC-day ledger.](diagrams/model-lifecycle.svg)
+
+### Edit and refresh the views
+
+1. Download `diagrams/model-workflows.drawio`. Open [app.diagrams.net](https://app.diagrams.net/)
+   and use **File → Open From → Device**, or open the file in draw.io Desktop.
+   The [draw.io opening guide](https://www.drawio.com/docs/manual/open-diagram-file/)
+   covers the supported file locations.
+2. Select **System boundaries** or **Task lifecycle** in the page tabs. Edit the
+   source shapes and connectors, keep labels as plain text, and save the `.drawio`
+   file as uncompressed XML.
+3. Refresh each corresponding SVG with **File → Export as → SVG**, selecting the
+   current page. Use compatible SVG text settings; see the
+   [SVG export guide](https://www.drawio.com/docs/manual/export/export-to-svg/).
+   Save the pages as `model-system.svg` and `model-lifecycle.svg` in this folder.
+4. If no export CLI is available, the editor export works. When maintaining SVG
+   XML manually, update its labels, shape geometry, and connector paths alongside
+   the source; a source-file edit alone does not refresh either view. Render both
+   SVGs and compare them with both source pages before committing.
+
+Preserve the worker/broker ownership boundary and the separate job/ledger CAS
+updates when editing. Keep the lifecycle order and its conservative stop paths
+consistent with `inference/runner.go` and `inference/budget.go`. The Mermaid view
+below remains a compact plain-text description.
 
 ## How a request moves through the system
 
@@ -178,11 +217,14 @@ the provider adapter.
 
 ## OpenRouter inspiration and possible add-on
 
-OpenRouter's common API is a useful composition point. It already offers
-opt-in exact response caching with TTL and free cache hits, and its documented
-concurrent cache misses can produce separately billed requests because it does
-not coalesce them. Plain response caching therefore is not a uniqueness claim
-for Questlock. [OpenRouter response caching](https://openrouter.ai/docs/guides/features/response-caching).
+**OpenRouter routes the model. Questlock coordinates the work.**
+
+OpenRouter's common API is a useful composition point, with model access,
+provider routing, and caching that deserve attribution. Its opt-in exact response
+cache already provides TTL-based result reuse. Questlock's intended add-on role
+centers on approved task snapshots, shared admission, durable state, and budget
+coordination; completed-answer caching itself is an established capability.
+[OpenRouter response caching](https://openrouter.ai/docs/guides/features/response-caching).
 
 Its prompt-caching guidance describes sticking related requests to a provider
 to improve cache reuse, while supporting fallbacks and explicit provider order.

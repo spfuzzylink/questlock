@@ -45,6 +45,18 @@ The worker must retain the request before sending it if it wants to recover afte
 a crash. A fresh ID after a lost response can create a second effect. A rejected
 request has no successful receipt; corrected work should use a fresh operation ID.
 
+## Model-task coordination
+
+The Go inference Runner builds on this publication boundary to claim exact
+model tasks, save results, and coordinate optional shared API budget reservations.
+Workers call the selected model provider; the broker owns the database and
+receives no provider API key. Job claims and the daily budget ledger use separate
+CAS publications, rather than one multi-key transaction.
+
+See the [system-boundary and task-lifecycle diagrams](model-architecture.md#editable-architecture-diagrams)
+for SVG views and a two-page editable draw.io source. The same guide retains a
+Mermaid request-flow view and explains reuse, uncertain outcomes, and settlement.
+
 ## What grows next
 
 SQLite serializes writers. Each scope's artifact and journal history grow without

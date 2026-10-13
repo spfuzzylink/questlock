@@ -98,6 +98,7 @@ jobs:
           image="$IMAGE:$RELEASE_TAG-$RELEASE_ARCH"
           test "$(docker image inspect --format '{{.Architecture}}' "$image")" = "$RELEASE_ARCH"
           test "$(docker image inspect --format '{{.Config.User}}' "$image")" = '65532:65532'
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.licenses"}}' "$image")" = MIT
           test "$(docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges --memory=256m --cpus=1 --pids-limit=128 "$image" version)" = "$RELEASE_VERSION"
           docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges --memory=256m --cpus=1 --pids-limit=128 "$image" --help
           # Exercise the image's actual /data ownership without a tmpfs overlay.
@@ -153,6 +154,7 @@ jobs:
             test "$(docker image inspect --format '{{.Config.User}}' "$image")" = '65532:65532'
             test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.source"}}' "$image")" = https://github.com/spfuzzylink/questlock
             test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$image")" = "$RELEASE_COMMIT"
+            test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.licenses"}}' "$image")" = MIT
           done
       - name: Authenticate with the built-in repository token
         env:

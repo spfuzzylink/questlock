@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1300" viewBox="0 0 1000 1300" role="img" aria-labelledby="title desc">
+<title id="title">Questlock model workflows</title><desc id="desc">System boundaries for Questlock bounded model workflows. Each cooperating worker owns a Go Runner, its approved task and provider credentials. The Runner calls direct OpenAI or Claude APIs, or literal-loopback Ollama with installed local weights. Workers use authenticated scoped HTTP to a trusted broker; only that broker owns SQLite. Job records, publication receipts and an optional shared API dollar ledger are durable state. Job claims and budget updates are separate compare-and-swap publications.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#596a86"/></marker></defs>
+<rect width="1000" height="1300" fill="#f8fafc"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="40" y="46" font-size="30" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="40" dy="0">Questlock model workflows</tspan></text>
+<text x="40" y="83" font-size="19" text-anchor="start" fill="#34445e"><tspan x="40" dy="0">Workers call models. One trusted broker owns the shared state.</tspan></text>
+<rect x="40" y="125" width="920" height="590" rx="10" fill="#ffffff" stroke="#8395b2" stroke-width="2" stroke-dasharray="8 6"/>
+<rect x="40" y="765" width="920" height="440" rx="10" fill="#e8f6f3" stroke="#277f75" stroke-width="2" stroke-dasharray="8 6"/>
+<rect x="80" y="955" width="840" height="205" rx="10" fill="#f5fbf9" stroke="#277f75" stroke-width="2" stroke-dasharray="8 6"/>
+<path d="M500 273L500 315" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M500 445L500 480L225 480L225 525" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M500 445L500 480L500 480L500 525" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M500 445L500 480L775 480L775 525" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M80 380L55 380L55 860L80 860" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M500 905L500 955" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="58" y="154" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="58" dy="0">WORKER A, WORKER B, ...</tspan></text>
+<text x="58" y="182" font-size="19" text-anchor="start" fill="#34445e"><tspan x="58" dy="0">Repeat this boundary per cooperating worker; provider keys stay here.</tspan></text>
+<rect x="80" y="185" width="840" height="88" rx="10" fill="#eff3f7" stroke="#7b8a9c" stroke-width="2"/>
+<text x="98" y="214" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="98" dy="0">Explicit approved task</tspan></text>
+<text x="98" y="242" font-size="19" text-anchor="start" fill="#34445e"><tspan x="98" dy="0">Revision + whole required/optional context + model + input/output limits</tspan></text>
+<rect x="80" y="315" width="840" height="130" rx="10" fill="#f1edff" stroke="#8063ba" stroke-width="2"/>
+<text x="98" y="344" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="98" dy="0">Go inference.Runner / questlock model</tspan></text>
+<text x="98" y="372" font-size="19" text-anchor="start" fill="#34445e"><tspan x="98" dy="0">Plan + fingerprint -&gt; read/reuse or claim -&gt; preflight -&gt; reserve -&gt; generate</tspan><tspan x="98" dy="23">Worker owns provider calls, usage checks, result publication and settlement.</tspan><tspan x="98" dy="23">The broker receives a scoped credential; it never receives the provider key.</tspan></text>
+<rect x="100" y="525" width="250" height="135" rx="10" fill="#eaf1ff" stroke="#5778b8" stroke-width="2"/>
+<text x="118" y="554" font-size="19" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="118" dy="0">OpenAI Responses</tspan></text>
+<text x="118" y="582" font-size="18" text-anchor="start" fill="#34445e"><tspan x="118" dy="0">Direct cloud API</tspan><tspan x="118" dy="23">Input count + generation</tspan><tspan x="118" dy="23">Worker-owned API key</tspan></text>
+<rect x="375" y="525" width="250" height="135" rx="10" fill="#eaf1ff" stroke="#5778b8" stroke-width="2"/>
+<text x="393" y="554" font-size="19" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="393" dy="0">Claude Messages</tspan></text>
+<text x="393" y="582" font-size="18" text-anchor="start" fill="#34445e"><tspan x="393" dy="0">Direct cloud API</tspan><tspan x="393" dy="23">Input count + generation</tspan><tspan x="393" dy="23">Worker-owned API key</tspan></text>
+<rect x="650" y="525" width="250" height="135" rx="10" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="668" y="554" font-size="19" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="668" dy="0">Local Ollama</tspan></text>
+<text x="668" y="582" font-size="18" text-anchor="start" fill="#34445e"><tspan x="668" dy="0">Installed local weights</tspan><tspan x="668" dy="23">Literal loopback only</tspan><tspan x="668" dy="23">No provider API key</tspan><tspan x="668" dy="23">No USD policy fields</tspan></text>
+<text x="58" y="794" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="58" dy="0">TRUSTED BROKER HOST</tspan></text>
+<rect x="80" y="815" width="840" height="90" rx="10" fill="#e8f6f3" stroke="#277f75" stroke-width="2"/>
+<text x="98" y="844" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="98" dy="0">Authenticated scoped HTTP API</tspan></text>
+<text x="98" y="872" font-size="19" text-anchor="start" fill="#34445e"><tspan x="98" dy="0">Token determines scope; workers share HTTP access, never the database volume.</tspan></text>
+<text x="98" y="984" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="98" dy="0">Broker-owned local SQLite</tspan></text>
+<rect x="100" y="1010" width="240" height="125" rx="10" fill="#f5fbf9" stroke="#277f75" stroke-width="2"/>
+<text x="118" y="1039" font-size="19" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="118" dy="0">Job records + results</tspan></text>
+<text x="118" y="1067" font-size="18" text-anchor="start" fill="#34445e"><tspan x="118" dy="0">Exact task fingerprint</tspan><tspan x="118" dy="23">State + response + usage</tspan><tspan x="118" dy="23">Reuse survives restart</tspan></text>
+<rect x="380" y="1010" width="240" height="125" rx="10" fill="#f5fbf9" stroke="#277f75" stroke-width="2"/>
+<text x="398" y="1039" font-size="19" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="398" dy="0">Publication records</tspan></text>
+<text x="398" y="1067" font-size="18" text-anchor="start" fill="#34445e"><tspan x="398" dy="0">Versions + current head</tspan><tspan x="398" dy="23">Exact-operation receipts</tspan><tspan x="398" dy="23">Durable publish journal</tspan></text>
+<rect x="660" y="1010" width="240" height="125" rx="10" fill="#f5fbf9" stroke="#277f75" stroke-width="2"/>
+<text x="678" y="1039" font-size="19" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="678" dy="0">Shared API USD ledger</tspan></text>
+<text x="678" y="1067" font-size="18" text-anchor="start" fill="#34445e"><tspan x="678" dy="0">Optional; scope + UTC day</tspan><tspan x="678" dy="23">Reserve -&gt; settle / freeze</tspan><tspan x="678" dy="23">Separate job/ledger CAS</tspan></text>
+<rect x="200.0" y="484" width="600" height="29" fill="#ffffff"/>
+<text x="500" y="505" font-size="18" text-anchor="middle" fill="#34445e"><tspan x="500" dy="0">Selected adapter; no silent provider fallback</tspan></text>
+<text x="80" y="741" font-size="19" text-anchor="start" fill="#34445e"><tspan x="80" dy="0">Scoped HTTP reads and CAS publications</tspan></text>
+<rect x="200.0" y="915" width="600" height="29" fill="#e8f6f3"/>
+<text x="500" y="936" font-size="18" text-anchor="middle" fill="#34445e"><tspan x="500" dy="0">One transaction per accepted artifact publication</tspan></text>
+<text x="40" y="1240" font-size="18" text-anchor="start" fill="#34445e"><tspan x="40" dy="0">Claims and the daily ledger are separate CAS updates, not one multi-key transaction.</tspan></text>
+<text x="40" y="1268" font-size="18" text-anchor="start" fill="#34445e"><tspan x="40" dy="0">Local jobs use a separate scope without USD fields; hardware, power and time still cost resources.</tspan></text>
+</g>
+</svg>

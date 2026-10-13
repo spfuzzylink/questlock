@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="2020" viewBox="0 0 1000 2020" role="img" aria-labelledby="title desc">
+<title id="title">One exact task: reuse, claim, or stop</title><desc id="desc">Task lifecycle for the Go Runner. It plans and fingerprints the approved task, reads its exact job record, and reuses only an explicitly opted-in complete fresh result before any token count or generation. Otherwise it claims ownership before preflight and optional API budget reservation. Pending, uncertain or competing claims stop generation. Known results are classified, published and separately settled; incomplete and limit-violating results cannot be reused. Unknown outcomes retain reservations. A successful settlement of measured cost above the reservation freezes the scope ledger for that UTC day. Publication or settlement failure requires inspection, not automatic regeneration.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#596a86"/></marker></defs>
+<rect width="1000" height="2020" fill="#f8fafc"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="40" y="46" font-size="30" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="40" dy="0">One exact task: reuse, claim, or stop</tspan></text>
+<text x="40" y="83" font-size="19" text-anchor="start" fill="#34445e"><tspan x="40" dy="0">The winning worker owns the call. Uncertain work never turns into an automatic retry.</tspan></text>
+<path d="M310 225L310 280" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M310 400L310 480" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M310 605L310 685" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M310 810L310 890" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M310 1045L310 1125" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M310 1220L310 1300" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M310 1425L310 1505" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M310 1680L310 1760" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M560 315L630 315" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M560 370L595 370L595 535L630 535" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M560 570L630 570" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M560 742L630 742" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M560 930L595 930L595 815L630 815" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M560 965L630 965" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M560 1173L630 1173" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M560 1363L630 1363" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5"/>
+<path d="M560 1570L630 1570" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5"/>
+<path d="M560 1640L595 1640L595 1790L630 1790" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="60" y="125" width="500" height="100" rx="10" fill="#f1edff" stroke="#8063ba" stroke-width="2"/>
+<text x="78" y="154" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="78" dy="0">1. Plan + fingerprint the request</tspan></text>
+<text x="78" y="182" font-size="19" text-anchor="start" fill="#34445e"><tspan x="78" dy="0">Approved revision + whole context + explicit model</tspan><tspan x="78" dy="23">Effective request + provider identity define the key.</tspan></text>
+<rect x="60" y="280" width="500" height="120" rx="10" fill="#f1edff" stroke="#8063ba" stroke-width="2"/>
+<text x="78" y="309" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="78" dy="0">2. Read the exact job record</tspan></text>
+<text x="78" y="337" font-size="19" text-anchor="start" fill="#34445e"><tspan x="78" dy="0">Validate stored schema, fingerprint and state.</tspan><tspan x="78" dy="23">Reuse requires complete output + positive TTL,</tspan><tspan x="78" dy="23">fresh under both saved and current caller TTLs.</tspan></text>
+<rect x="630" y="270" width="330" height="155" rx="10" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="648" y="299" font-size="20" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="648" dy="0">Complete, fresh, opted-in</tspan></text>
+<text x="648" y="327" font-size="18" text-anchor="start" fill="#34445e"><tspan x="648" dy="0">Return the durable stored answer.</tspan><tspan x="648" dy="23">Skip Count and Generate.</tspan><tspan x="648" dy="23">New generation usage = 0.</tspan><tspan x="648" dy="23">Keep original usage separately.</tspan></text>
+<rect x="630" y="485" width="330" height="145" rx="10" fill="#fff3e7" stroke="#b96b28" stroke-width="2"/>
+<text x="648" y="514" font-size="20" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="648" dy="0">Pending / uncertain / CAS loser</tspan></text>
+<text x="648" y="542" font-size="18" text-anchor="start" fill="#34445e"><tspan x="648" dy="0">Stop with ErrInFlight.</tspan><tspan x="648" dy="23">No automatic generation retry.</tspan><tspan x="648" dy="23">Inspect before revising the task.</tspan></text>
+<rect x="60" y="480" width="500" height="125" rx="10" fill="#f1edff" stroke="#8063ba" stroke-width="2"/>
+<text x="78" y="509" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="78" dy="0">3. Claim ownership with CAS</tspan></text>
+<text x="78" y="537" font-size="19" text-anchor="start" fill="#34445e"><tspan x="78" dy="0">Publish a durable pending job first.</tspan><tspan x="78" dy="23">Only the winning worker continues.</tspan><tspan x="78" dy="23">A claim never expires into a fresh generation.</tspan></text>
+<rect x="60" y="685" width="500" height="125" rx="10" fill="#f1edff" stroke="#8063ba" stroke-width="2"/>
+<text x="78" y="714" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="78" dy="0">4. Owner preflight</tspan></text>
+<text x="78" y="742" font-size="19" text-anchor="start" fill="#34445e"><tspan x="78" dy="0">API input count or conservative local estimate.</tspan><tspan x="78" dy="23">Check input cap + configured cost maximum.</tspan><tspan x="78" dy="23">Cost bound uses configured token allowances.</tspan></text>
+<rect x="630" y="690" width="330" height="150" rx="10" fill="#fff3e7" stroke="#b96b28" stroke-width="2"/>
+<text x="648" y="719" font-size="20" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="648" dy="0">Preflight / budget rejected</tspan></text>
+<text x="648" y="747" font-size="18" text-anchor="start" fill="#34445e"><tspan x="648" dy="0">Store blocked; no Generate call.</tspan><tspan x="648" dy="23">Safe to retry before generation.</tspan><tspan x="648" dy="23">If that state write fails,</tspan><tspan x="648" dy="23">the pending claim still blocks.</tspan></text>
+<rect x="60" y="890" width="500" height="155" rx="10" fill="#e8f6f3" stroke="#277f75" stroke-width="2"/>
+<text x="78" y="919" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="78" dy="0">5. Reserve optional API day budget</tspan></text>
+<text x="78" y="947" font-size="19" text-anchor="start" fill="#34445e"><tspan x="78" dy="0">Ledger reservation is a separate CAS update.</tspan><tspan x="78" dy="23">Persist its identity in the pending job</tspan><tspan x="78" dy="23">before calling Generate.</tspan><tspan x="78" dy="23">Local jobs omit USD fields and settlement.</tspan></text>
+<rect x="630" y="915" width="330" height="120" rx="10" fill="#fff3e7" stroke="#b96b28" stroke-width="2"/>
+<text x="648" y="944" font-size="20" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="648" dy="0">Reservation linkage failed</tspan></text>
+<text x="648" y="972" font-size="18" text-anchor="start" fill="#34445e"><tspan x="648" dy="0">Keep reservation + pending claim.</tspan><tspan x="648" dy="23">Do not Generate.</tspan><tspan x="648" dy="23">Inspect the retained state.</tspan></text>
+<rect x="60" y="1125" width="500" height="95" rx="10" fill="#f1edff" stroke="#8063ba" stroke-width="2"/>
+<text x="78" y="1154" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="78" dy="0">6. Generate + validate usage</tspan></text>
+<text x="78" y="1182" font-size="19" text-anchor="start" fill="#34445e"><tspan x="78" dy="0">Use the selected explicit provider and model.</tspan><tspan x="78" dy="23">Continue only with known, valid usage.</tspan></text>
+<rect x="630" y="1110" width="330" height="170" rx="10" fill="#fff3e7" stroke="#b96b28" stroke-width="2"/>
+<text x="648" y="1139" font-size="20" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="648" dy="0">Generation / usage uncertain</tspan></text>
+<text x="648" y="1167" font-size="18" text-anchor="start" fill="#34445e"><tspan x="648" dy="0">Keep claim + any reservation.</tspan><tspan x="648" dy="23">No automatic generation retry.</tspan><tspan x="648" dy="23">Inspect upstream outcome before</tspan><tspan x="648" dy="23">deliberately changing revision.</tspan><tspan x="648" dy="23">A new revision can repeat a charge.</tspan></text>
+<rect x="60" y="1300" width="500" height="125" rx="10" fill="#f1edff" stroke="#8063ba" stroke-width="2"/>
+<text x="78" y="1329" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="78" dy="0">7. Classify the known response</tspan></text>
+<text x="78" y="1357" font-size="19" text-anchor="start" fill="#34445e"><tspan x="78" dy="0">Check completion + observed token/cost caps.</tspan><tspan x="78" dy="23">Set complete, incomplete, or limit_exceeded.</tspan><tspan x="78" dy="23">Keep reported usage for API settlement.</tspan></text>
+<rect x="630" y="1320" width="330" height="145" rx="10" fill="#fff3e7" stroke="#b96b28" stroke-width="2"/>
+<text x="648" y="1349" font-size="20" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="648" dy="0">Incomplete / limit violation</tspan></text>
+<text x="648" y="1377" font-size="18" text-anchor="start" fill="#34445e"><tspan x="648" dy="0">Retain output for inspection.</tspan><tspan x="648" dy="23">Never eligible for result reuse.</tspan><tspan x="648" dy="23">Known usage still settles.</tspan><tspan x="648" dy="23">Changing revision needs review.</tspan></text>
+<rect x="60" y="1505" width="500" height="175" rx="10" fill="#e8f6f3" stroke="#277f75" stroke-width="2"/>
+<text x="78" y="1534" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="78" dy="0">8. Publish result; settle API usage</tspan></text>
+<text x="78" y="1562" font-size="19" text-anchor="start" fill="#34445e"><tspan x="78" dy="0">Job result: CAS + exact-operation receipt.</tspan><tspan x="78" dy="23">Day ledger settlement: separate CAS update.</tspan><tspan x="78" dy="23">Attempt settlement even if publication fails.</tspan><tspan x="78" dy="23">Local jobs have no USD settlement.</tspan><tspan x="78" dy="23">Settlement failure: stop scope and reconcile.</tspan></text>
+<rect x="630" y="1510" width="330" height="155" rx="10" fill="#fff3e7" stroke="#b96b28" stroke-width="2"/>
+<text x="648" y="1539" font-size="20" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="648" dy="0">Known cost &gt; reservation</tspan></text>
+<text x="648" y="1567" font-size="18" text-anchor="start" fill="#34445e"><tspan x="648" dy="0">Successful settlement freezes</tspan><tspan x="648" dy="23">this scope's UTC-day ledger.</tspan><tspan x="648" dy="23">Stop new budgeted calls that day.</tspan><tspan x="648" dy="23">If settlement fails, stop scope.</tspan></text>
+<rect x="60" y="1760" width="500" height="125" rx="10" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="78" y="1789" font-size="22" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="78" dy="0">9. Return status + usage</tspan></text>
+<text x="78" y="1817" font-size="19" text-anchor="start" fill="#34445e"><tspan x="78" dy="0">Use text only after successful exit,</tspan><tspan x="78" dy="23">response.complete and durable = true.</tspan><tspan x="78" dy="23">Fresh results keep this-run generation usage.</tspan></text>
+<rect x="630" y="1740" width="330" height="150" rx="10" fill="#fff3e7" stroke="#b96b28" stroke-width="2"/>
+<text x="648" y="1769" font-size="20" text-anchor="start" fill="#18243b" font-weight="700"><tspan x="648" dy="0">Result publication failed</tspan></text>
+<text x="648" y="1797" font-size="18" text-anchor="start" fill="#34445e"><tspan x="648" dy="0">Known answer remains available.</tspan><tspan x="648" dy="23">durable = false + an error.</tspan><tspan x="648" dy="23">Do not regenerate automatically;</tspan><tspan x="648" dy="23">inspect the stored job.</tspan></text>
+<rect x="80.0" y="424" width="460" height="29" fill="#f8fafc"/>
+<text x="310" y="445" font-size="18" text-anchor="middle" fill="#34445e"><tspan x="310" dy="0">Absent, expired, reuse off, or blocked</tspan></text>
+<rect x="80.0" y="629" width="460" height="29" fill="#f8fafc"/>
+<text x="310" y="650" font-size="18" text-anchor="middle" fill="#34445e"><tspan x="310" dy="0">Owner only</tspan></text>
+<rect x="80.0" y="834" width="460" height="29" fill="#f8fafc"/>
+<text x="310" y="855" font-size="18" text-anchor="middle" fill="#34445e"><tspan x="310" dy="0">Within configured policy</tspan></text>
+<rect x="80.0" y="1069" width="460" height="29" fill="#f8fafc"/>
+<text x="310" y="1090" font-size="18" text-anchor="middle" fill="#34445e"><tspan x="310" dy="0">Required reservation identity persisted</tspan></text>
+<rect x="80.0" y="1244" width="460" height="29" fill="#f8fafc"/>
+<text x="310" y="1265" font-size="18" text-anchor="middle" fill="#34445e"><tspan x="310" dy="0">Known response + valid counters</tspan></text>
+<rect x="80.0" y="1449" width="460" height="29" fill="#f8fafc"/>
+<text x="310" y="1470" font-size="18" text-anchor="middle" fill="#34445e"><tspan x="310" dy="0">All known result states</tspan></text>
+<rect x="80.0" y="1704" width="460" height="29" fill="#f8fafc"/>
+<text x="310" y="1725" font-size="18" text-anchor="middle" fill="#34445e"><tspan x="310" dy="0">Publication + settlement confirmed</tspan></text>
+<text x="40" y="1932" font-size="18" text-anchor="start" fill="#34445e"><tspan x="40" dy="0">Solid arrows: execution paths. Dashed links: outcome rules applied to the same known result.</tspan></text>
+<text x="40" y="1960" font-size="18" text-anchor="start" fill="#34445e"><tspan x="40" dy="0">Budget admission coordinates participating workers; prices or upstream usage can overrun the bound.</tspan></text>
+<text x="40" y="1988" font-size="18" text-anchor="start" fill="#34445e"><tspan x="40" dy="0">Stored-answer reuse skips new generation; fresh work and local hardware still consume resources.</tspan></text>
+</g>
+</svg>

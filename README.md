@@ -52,20 +52,22 @@ Cloud generation needs the selected provider's API key. Reuse can avoid a comple
 repeated generation; provider prompt caching can reduce eligible input cost.
 These controls apply to tasks routed through Questlock. They do not train the
 model, replace an entire Codex/Claude session, or remove provider credit limits.
-The architecture guide compares OpenRouter composition and states the storage,
+The architecture guide describes OpenRouter composition and states the storage,
 count-estimate, price, and billing limits. Live savings remain to be measured.
 
-### OpenRouter gets credit
+### A companion layer for the OpenRouter ecosystem
 
 OpenRouter is a strong common interface for models, routing, and provider caching.
 Its response cache already makes identical completed requests reusable.
+**OpenRouter routes the model. Questlock coordinates the work.**
 **OpenRouter is the switchboard. Questlock helps keep a swarm from running up duplicate tabs.**
 
-Questlock's focused advantage is coordinating a shared task **before** a model
-call, including simultaneous workers and uncertain outcomes. The two can
-complement each other; a supported OpenRouter adapter remains future work.
-[The comparison and sources](docs/model-architecture.md#openrouter-inspiration-and-possible-add-on) ·
-[Claims and measurable value](docs/positioning.md)
+Questlock's intended add-on role is bounded context, shared task admission,
+durable results, and budget coordination around the provider-routing layer.
+A supported OpenRouter adapter remains future work; this release runs the direct
+OpenAI, Claude, and local Ollama adapters described above.
+[Add-on architecture and sources](docs/model-architecture.md#openrouter-inspiration-and-possible-add-on) ·
+[Positioning and reproducible evidence](docs/positioning.md)
 
 ## Start the quest
 

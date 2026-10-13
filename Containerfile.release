@@ -6,7 +6,8 @@ ARG VERSION
 ARG REVISION
 ARG CREATED
 LABEL org.opencontainers.image.title="Questlock" \
-      org.opencontainers.image.description="Experimental single-host publishing controls for cooperating agent workers" \
+      org.opencontainers.image.description="Bounded model workflows and versioned shared state for cooperating agent workers" \
+      org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.source="https://github.com/spfuzzylink/questlock" \
       org.opencontainers.image.url="https://github.com/spfuzzylink/questlock" \
       org.opencontainers.image.version="${VERSION}" \

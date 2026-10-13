@@ -1,20 +1,27 @@
-# Less repeat work, more room for useful models
+# Questlock: a companion layer for model routing
 
 Developers pay for repeated context and duplicate generations while several
 agents work on the same task. Questlock coordinates a bounded task in shared
 storage before starting the paid call.
 
-**OpenRouter is the switchboard. Questlock helps keep a swarm from running up duplicate tabs.**
+**OpenRouter routes the model. Questlock coordinates the work.**
 
 OpenRouter deserves credit for the common provider interface, model access,
-routing, and prompt-cache guidance that inform this architecture. It already has
-an exact response cache, so caching a completed answer is not a Questlock
-invention. Its documentation describes concurrent identical cache misses as
-separate billed calls. Questlock's participating workers first claim a task in
-shared storage, so one launches generation while the others defer.
+routing, and prompt-cache guidance that inform this architecture. Its exact
+response cache is part of that foundation. Questlock's intended add-on role brings
+approved context, task admission, durable reuse, and budget coordination around
+the selected provider path. Participating workers claim a task in shared storage
+before generation, while related workers can recover the same valid result.
 [OpenRouter response caching](https://openrouter.ai/docs/guides/features/response-caching).
 
-## What we can claim
+**OpenRouter is the switchboard. Questlock helps keep a swarm from running up duplicate tabs.**
+
+Use “companion layer” or “planned OpenRouter add-on” in launch copy. Version 0.2.0
+supports direct OpenAI, Claude, and local Ollama adapters; an OpenRouter plugin
+or adapter is not selectable yet. The integration needs a tested contract for
+counting, routing policy, output limits, and billed usage before it can ship.
+
+## Evidence developers can reproduce
 
 | Task | Questlock's useful behavior | Evidence |
 | --- | --- | --- |
@@ -36,19 +43,16 @@ that is personalization through data, not automatic weight training or a copy
 of a person's brain. Hardware, electricity, runtime, and quality limits remain.
 [Local setup and evidence](local-models.md).
 
-## Where OpenRouter is stronger
+## Complementary by design
 
-OpenRouter offers a broad model catalog and managed provider-routing experience.
-Questlock currently has direct OpenAI, Claude, and local Ollama adapters, one broker host, and
-single-turn text tasks. It does not supply a full chat/session proxy, streaming,
-tool execution, provider billing, or an implemented OpenRouter adapter.
-The natural combined design is Questlock's task planning/claims/budget state
-around a capability-aware router adapter, after counting and usage semantics
-are defined and tested. See [the architecture decision](model-architecture.md).
+The natural combined design places Questlock's task planning, claims, receipts,
+and budget state around a capability-aware OpenRouter adapter. OpenRouter supplies
+the model-access and provider-routing layer. See
+[the add-on architecture](model-architecture.md#openrouter-inspiration-and-possible-add-on).
 
-“Better” is therefore specific: Questlock provides durable pre-call coordination
-for cooperating workers sharing a task. It is not a universal replacement for
-OpenRouter. We make no claim of infinite fresh usage, guaranteed near-zero total
-bills, measured customer savings, or patent novelty. The code and six scenarios
-are the starting evidence; the next evidence should be live quality and invoice
-comparisons for a repeated engineering workflow.
+The current boundary is one broker host and bounded single-turn text tasks.
+Streaming, native agent tools, full sessions, router integration, and invoice
+reconciliation are separate work. The next evidence should be live quality and
+invoice comparisons for a repeated engineering workflow. Keep public copy tied
+to executed checks: no infinite fresh usage, guaranteed near-zero total bills,
+unmeasured customer savings, or patent-novelty claims.
