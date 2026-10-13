@@ -8,6 +8,7 @@ COPY cmd/ ./cmd/
 COPY internal/ ./internal/
 COPY client/ ./client/
 COPY protocol/ ./protocol/
+COPY inference/ ./inference/
 RUN CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags="-s -w" -o bin/questlock ./cmd/questlock
 RUN mkdir -p /out/data && chmod 0700 /out/data
 
@@ -15,6 +16,8 @@ FROM scratch
 COPY LICENSE /LICENSE
 COPY THIRD_PARTY_NOTICES.md /THIRD_PARTY_NOTICES.md
 COPY --from=build /src/bin/questlock /usr/local/bin/questlock
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=build /usr/share/doc/ca-certificates/copyright /CA_CERTIFICATES_COPYRIGHT
 COPY --from=build --chown=65532:65532 /out/data /data
 USER 65532:65532
 WORKDIR /data

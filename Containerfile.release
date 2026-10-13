@@ -1,3 +1,5 @@
+# TLS trust for explicit model calls; the executable remains the verified archive binary.
+FROM docker.io/library/golang:1.27.1-bookworm AS trust
 # The workflow supplies only verified files from a published release archive.
 FROM scratch
 ARG VERSION
@@ -11,6 +13,8 @@ LABEL org.opencontainers.image.title="Questlock" \
       org.opencontainers.image.revision="${REVISION}" \
       org.opencontainers.image.created="${CREATED}"
 COPY --chmod=0755 questlock /usr/local/bin/questlock
+COPY --from=trust /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=trust /usr/share/doc/ca-certificates/copyright /CA_CERTIFICATES_COPYRIGHT
 COPY LICENSE /LICENSE
 COPY THIRD_PARTY_NOTICES.md /THIRD_PARTY_NOTICES.md
 COPY BUILDINFO.json /BUILDINFO.json

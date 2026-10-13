@@ -1,0 +1,37 @@
+{
+  "task": "questlock-engineering-handoff",
+  "revision": "example-change-001",
+  "provider": "anthropic",
+  "model": "claude-sonnet-4-5",
+  "instructions": "Write an engineering handoff in at most six short bullets. Cover the change, evidence, remaining risk, and next action. Use only the supplied facts; say when verification is missing.",
+  "input": "Prepare the handoff for this exact change snapshot. Do not repeat archival planning discussion.",
+  "context": [
+    {
+      "id": "preferences",
+      "text": "Prefer Go for core logic. Use clear, concise prose. Preserve working features. Make routine implementation choices autonomously. Verify concrete changes before publication.",
+      "required": true,
+      "stable": true
+    },
+    {
+      "id": "changed-files",
+      "text": "Current snapshot: cmd/questlock/model.go adds strict spec parsing and bounded plan/run commands. inference/ builds whole-context requests and coordinates result reuse. Provider adapters support direct OpenAI and Anthropic APIs. Live provider billing verification has not been performed.",
+      "required": true
+    },
+    {
+      "id": "validation",
+      "text": "Expected local verification: CLI parsing tests, provider fake-server tests, and the offline six-scenario model quest. Report only checks confirmed by the caller.",
+      "priority": 20
+    },
+    {
+      "id": "archived-notes",
+      "text": "Archival planning notes from an earlier discussion: consider a broad model gateway, compare several vendors, investigate provider selection policy, and evaluate whether a local model could handle future workloads. That discussion also covered building a dashboard, automatically importing all historical conversations, training a custom model, adding streaming, supporting agent tools, making a global proxy, and integrating more billing services. None of those ideas describes the current implementation. The old notes repeated the same design alternatives across several meetings, recorded preferences that may have changed, and described unverified savings targets. Keep this material optional so it can be omitted as one complete chunk when it does not fit. The current changed-file summary and current verification evidence take precedence over these older ideas.",
+      "priority": 5,
+      "stable": true
+    }
+  ],
+  "max_context_bytes": 900,
+  "max_input_tokens": 2048,
+  "max_output_tokens": 320,
+  "cache_mode": "prefix",
+  "reuse_for_seconds": 3600
+}

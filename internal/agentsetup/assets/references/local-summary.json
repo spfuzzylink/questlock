@@ -1,0 +1,18 @@
+{
+  "task": "local-engineering-summary",
+  "revision": "example-approved-snapshot-v1",
+  "provider": "ollama",
+  "model": "qwen3.5:4b",
+  "instructions": "Summarize the supplied engineering snapshot in at most six concise bullets. Cover changes, confirmed verification, remaining risks, and next action. Use only supplied facts. Do not invent facts or repeat the background.",
+  "input": "Prepare a handoff from this exact approved snapshot.",
+  "context": [
+    {"id": "approved-memory", "text": "Approved preferences: prefer Go for core logic; use spfuzzylink/ for new branches; preserve published versions and working features; write clear, concise prose. The caller must replace these preferences if they are not the user's approved choices.", "required": true, "stable": true},
+    {"id": "current-facts", "text": "Example only: replace this chunk with current changed files, confirmed verification results, and the next action before running.", "required": true},
+    {"id": "older-notes", "text": "Earlier plans are optional and may be omitted. They do not establish current verification or implementation facts.", "priority": 1, "stable": true}
+  ],
+  "max_context_bytes": 2048,
+  "max_input_tokens": 12000,
+  "max_output_tokens": 512,
+  "cache_mode": "default",
+  "reuse_for_seconds": 0
+}
