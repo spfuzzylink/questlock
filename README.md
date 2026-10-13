@@ -1,6 +1,6 @@
 <div align="center">
 
-![Questlock — keep a stale worker from rewriting the present](assets/questlock-banner.svg)
+![Questlock — shared state, less repeated model work](assets/questlock-banner.svg)
 
 **Coordinate shared agent work before paying for it again.**
 
