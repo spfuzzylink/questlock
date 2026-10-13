@@ -1,6 +1,6 @@
 <div align="center">
 
-![Questlock — shared state, less repeated model work](assets/questlock-banner.svg)
+![Questlock — shared state, less repeated model work](assets/questlock-evolution.svg)
 
 **Coordinate shared agent work before paying for it again.**
 
