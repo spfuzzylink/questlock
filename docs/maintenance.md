@@ -24,6 +24,9 @@ run and their source commit; a successful build is not evidence of publication.
 - Require all four native CI targets: Darwin and Linux, each on AMD64 and ARM64.
   Verify each archive's checksum, version, help, recovery quest, and model quest;
   retain the tested archives rather than rebuilding them in the publication job.
+- Require the source-container CI job too. It builds through `.dockerignore` and
+  runs both quests without a network and with a read-only root filesystem. Keep
+  Go source and embedded skill assets in the build context as the project evolves.
 - Check `BUILDINFO.json` for the exact commit, version, target, and clean source,
   and compare archive license/notices against that released source. Use the
   explicit `scripts/package.py` allowlist; inspect newly included documents.
@@ -46,6 +49,9 @@ run and their source commit; a successful build is not evidence of publication.
 - Keep [architecture](model-architecture.md) prose, editable `.drawio` sources,
   exported diagrams, and packaged document links consistent with the code.
   Reopen the source and inspect each export after changes; ship matching files.
+- Keep creator credit and [attribution guidance](../ATTRIBUTION.md) in future
+  archives. Follow [brand guidance](../BRANDING.md); requested visible credit is
+  optional, and neither document changes the MIT license.
 - Report observed calls, token categories, latency, output quality, and actual
   charges with the provider/model and snapshot. Label fixture results as fixtures.
 - Follow [positioning](positioning.md): OpenRouter needs a future capability-aware

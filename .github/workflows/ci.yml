@@ -90,10 +90,53 @@ jobs:
           path: dist/*.tar.gz
           if-no-files-found: error
           retention-days: 7
+  source-container:
+    name: Build and exercise source container
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Verify Docker excludes local state and metadata
+        run: |
+          mkdir -p .local
+          for path in .local/context-private.txt cmd/.DS_Store cmd/questlock/.context-private.go \
+            internal/store/context-private.db internal/agentsetup/assets/context-private.json; do
+            test ! -e "$path"
+            printf 'private build-context fixture\n' > "$path"
+          done
+          docker build --file - . <<'CONTEXT_CHECK'
+          FROM docker.io/library/golang:1.27.1-bookworm
+          COPY . /context/
+          RUN test ! -e /context/.local/context-private.txt \
+            && test ! -e /context/cmd/.DS_Store \
+            && test ! -e /context/cmd/questlock/.context-private.go \
+            && test ! -e /context/internal/store/context-private.db \
+            && test ! -e /context/internal/agentsetup/assets/context-private.json \
+            && test -f /context/inference/runner.go \
+            && test -f /context/internal/agentsetup/assets/SKILL.md \
+            && test -f /context/internal/agentsetup/assets/scripts/run.sh \
+            && test -f /context/ATTRIBUTION.md
+          CONTEXT_CHECK
+      - name: Build from the actual filtered checkout context
+        run: docker build --file Containerfile --tag questlock-source:ci .
+      - name: Verify source image metadata and offline scenarios
+        run: |
+          image=questlock-source:ci
+          test "$(docker image inspect --format '{{.Config.User}}' "$image")" = '65532:65532'
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.authors"}}' "$image")" = '@spfuzzylink (https://github.com/spfuzzylink)'
+          test "$(docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges --memory=256m --cpus=1 --pids-limit=128 "$image" version)" = "$(cat VERSION)"
+          docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+            --memory=256m --cpus=1 --pids-limit=128 \
+            --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" quest
+          docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+            --memory=256m --cpus=1 --pids-limit=128 \
+            --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" model quest
   release:
     name: Publish tested experimental release
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [public-source, go]
+    needs: [public-source, go, source-container]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
