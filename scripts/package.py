@@ -21,6 +21,9 @@ PUBLIC_FILES = (
     "LICENSE", "THIRD_PARTY_NOTICES.md", "README.md", "CONTRIBUTING.md", "SECURITY.md", "VERSION",
     "docs/installation.md", "docs/containers.md", "docs/use-cases.md", "docs/api.md",
     "docs/architecture.md", "docs/deployment.md", "docs/validation.md",
+    "docs/model-workflows.md", "docs/model-architecture.md", "docs/positioning.md", "docs/local-models.md",
+    "examples/model-workflows/openai-handoff.json", "examples/model-workflows/claude-handoff.json",
+    "examples/model-workflows/local-handoff.json",
 )
 
 

@@ -1,9 +1,9 @@
 # Run the published container
 
 The experimental image is available from [GitHub Packages](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
-as `ghcr.io/spfuzzylink/questlock:v0.1.1`, with native Linux ARM64 and x86-64 images.
+as `ghcr.io/spfuzzylink/questlock:v0.2.0`, with native Linux ARM64 and x86-64 images.
 Podman and Docker select the matching CPU image. On macOS, the container engine
-runs Linux in its own VM; native macOS binaries remain available from [Releases](https://github.com/spfuzzylink/questlock/releases/tag/v0.1.1).
+runs Linux in its own VM; native macOS binaries remain available from [Releases](https://github.com/spfuzzylink/questlock/releases/tag/v0.2.0).
 
 ## Run the recovery quest
 
@@ -14,7 +14,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.1.1 quest
+  ghcr.io/spfuzzylink/questlock:v0.2.0 quest
 ```
 
 The same command works with `docker` in place of `podman`. Pulling the public
@@ -31,8 +31,8 @@ Follow the [rootless Podman deployment guide](deployment.md). Replace its initia
 image-build command with:
 
 ```sh
-podman pull ghcr.io/spfuzzylink/questlock:v0.1.1
-podman tag ghcr.io/spfuzzylink/questlock:v0.1.1 localhost/questlock:dev
+podman pull ghcr.io/spfuzzylink/questlock:v0.2.0
+podman tag ghcr.io/spfuzzylink/questlock:v0.2.0 localhost/questlock:dev
 ```
 
 Then continue with the volume, credential provisioning, and Quadlet steps in that
@@ -42,7 +42,7 @@ host port automatically. Keep any explicit host binding on `127.0.0.1`.
 
 ## Tags, updates, and provenance
 
-- `v0.1.1` identifies this experimental release; `experimental` is a moving tag
+- `v0.2.0` identifies this experimental release; `experimental` is a moving tag
   for subsequent experimental publications. Neither implies a stable API.
 - Registry tags can change. For a repeatable deployment, record the image digest
   shown by `podman images --digests` and use the corresponding digest reference.
@@ -59,7 +59,7 @@ claim that Questlock sandboxes agents. Read the [security boundaries](../SECURIT
 ## Publishing a later image
 
 Repository maintainers can run **Actions → Experimental container → Run workflow**
-with a published release tag such as `v0.1.1`. Successful CI for future version
+with a published release tag such as `v0.2.0`. Successful CI for future version
 tags also triggers the workflow. Only the final publication job has package-write
 permission, using GitHub's built-in job token.
 

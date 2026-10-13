@@ -123,3 +123,40 @@ The separate public-source and full-history guard job passed as well.
 
 See [GitHub Actions](https://github.com/spfuzzylink/questlock/actions) for later
 commits and runner changes.
+
+## 0.2.0 model workflow validation — 2026-10-12
+
+Native environment: macOS ARM64, Go 1.27.1. All Go packages passed vet and race
+checks, and all 54 Python publication/packaging regressions passed. Both the
+original process-failure quest and the six-case model quest are included in
+native release CI; the model fixture uses real authenticated HTTP and SQLite.
+OpenAI/Claude provider tests use bounded fake HTTP endpoints, not paid inference.
+
+Independent release review found and verified fixes for count underestimation,
+nonreusable usage/cost violations, reservation settlement and freeze after a
+failed result publication, and keeping a known answer available when its durable
+publication fails. Installer tests cover independent temp homes, CODEX_HOME,
+idempotence, customized-skill preservation, explicit replacement, symlinks,
+embedded examples, and protected-token helper behavior.
+
+The local path was exercised with real Ollama 0.40.3 and installed Qwen3.5 4B
+weights, with `OLLAMA_NO_CLOUD=1` and a literal loopback endpoint. The installed
+Codex skill generated a release-candidate handoff: runtime-reported 366 input
+tokens and 135 output tokens. The installed Claude skill submitted that exact
+snapshot again and recovered the identical durable answer: zero new generation
+tokens, original 366/135 usage reported separately as avoided local computation.
+These are executed local counters, not cloud invoice savings or a quality score.
+The draft still required factual review, like any generated engineering summary.
+
+Codex CLI 0.160.1 and Claude Code 2.1.287 each returned their expected connection
+check text through the local Ollama service. This verifies basic local model
+turns, not every native tool, repository task, UI path, or foreground app session.
+The stock Codex `--oss` probe emitted model-catalog/telemetry warnings before
+succeeding; a dedicated local catalog/profile was then configured. Claude Code
+reported its custom-model catalog warning before its successful result.
+
+No live OpenAI or Anthropic API generation was executed because their separate
+API credentials were unavailable. Their compatibility is fixture-tested; live
+model availability, pricing, production billing, and broader output quality
+remain to be evaluated. Local inference needs no hosted generation credits,
+but consumes hardware, memory, power, and time.

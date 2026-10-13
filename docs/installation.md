@@ -44,14 +44,14 @@ separate runtime validation.
 For example, on Linux x86-64, from the download directory:
 
 ```sh
-sha256sum questlock_0.1.1_linux_amd64.tar.gz
+sha256sum questlock_0.2.0_linux_amd64.tar.gz
 ```
 
 On macOS use `shasum -a 256` instead. Compare the result with the **matching
 filename's entry** in `checksums.txt` before extracting. Then:
 
 ```sh
-tar -xzf questlock_0.1.1_linux_amd64.tar.gz
+tar -xzf questlock_0.2.0_linux_amd64.tar.gz
 ./questlock version
 ./questlock quest
 ```
@@ -102,10 +102,41 @@ when you installed a prebuilt broker. See [use cases](use-cases.md) for integrat
 ideas, and [rootless Podman + Quadlet](deployment.md) for a persistent Linux user
 service with resource limits and automatic restart.
 
+## Install the model workflow into Codex and Claude Code
+
+From a downloaded or built Questlock binary:
+
+```sh
+./questlock model install --agents codex,claude
+"$HOME/.local/bin/questlock" model quest
+```
+
+When using the checkout installer, use `./bin/questlock model install` instead.
+The command defaults to both agents and copies the **same running executable**
+to `~/.local/bin/questlock`. Its embedded, self-contained skill goes into
+`~/.codex/skills/questlock` and `~/.claude/skills/questlock`. If `CODEX_HOME` is
+set, the Codex skill uses `$CODEX_HOME/skills/questlock` instead. No source
+checkout, Python runtime, API credential, or running assistant is needed for
+installation. `--agents codex` or `--agents claude` selects just one skill.
+
+Identical installations are idempotent. A differing existing Questlock skill
+is preserved unless you explicitly pass `--replace`; that flag replaces its
+whole contents, so save any custom edits first. Installation refuses symlink
+files or directories at its destinations. It does not start a broker, install
+Claude Code, add to `PATH`, or change either assistant's model defaults. Client
+discovery can require opening a new chat/session.
+
+The installed skill uses `sh scripts/run.sh plan|run|quest` from its own
+directory. The helper resolves `QUESTLOCK_BIN` or `~/.local/bin/questlock` and,
+only for `run`, loads `QUESTLOCK_TOKEN` from `QUESTLOCK_TOKEN_FILE` or
+`~/.local/share/questlock/agent-workflows/worker.token`. Provider keys still
+belong in the environment. See [bounded model workflows](model-workflows.md)
+for task selection, fresh broker setup, cost limits, and live-run requirements.
+
 ## Updates and removal
 
 Stop a broker before replacing its binary. From an updated checkout, rerun
-`./scripts/install.sh` to install the version in `VERSION`; `--version v0.1.1`
+`./scripts/install.sh` to install the version in `VERSION`; `--version v0.2.0`
 selects a specific published release. `--dir PATH` selects a different installation
 directory. Nothing is added to `PATH` automatically.
 

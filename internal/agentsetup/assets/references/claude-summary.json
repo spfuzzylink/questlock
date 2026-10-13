@@ -1,0 +1,18 @@
+{
+  "task": "engineering-summary",
+  "revision": "example-snapshot-v1",
+  "provider": "claude",
+  "model": "claude-sonnet-4-5",
+  "instructions": "Summarize the supplied engineering snapshot in six concise bullets. Cover changes, confirmed verification, remaining risks, and next action. Do not invent facts.",
+  "input": "Prepare a handoff from this fixed snapshot.",
+  "context": [
+    {"id": "preferences", "text": "Write clear, concise prose and preserve the user's approved implementation constraints.", "required": true, "stable": true},
+    {"id": "current-facts", "text": "Example only: the caller must replace this chunk with current changed files and confirmed verification facts before running.", "required": true},
+    {"id": "older-notes", "text": "Earlier plans are optional and may be omitted. They do not establish current verification or implementation facts.", "priority": 1, "stable": true}
+  ],
+  "max_context_bytes": 2048,
+  "max_input_tokens": 2048,
+  "max_output_tokens": 320,
+  "cache_mode": "prefix",
+  "reuse_for_seconds": 0
+}

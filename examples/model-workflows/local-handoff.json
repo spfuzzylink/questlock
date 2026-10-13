@@ -1,0 +1,37 @@
+{
+  "task": "questlock-local-engineering-handoff",
+  "revision": "example-local-change-001",
+  "provider": "ollama",
+  "model": "qwen3.5:4b",
+  "instructions": "Write an engineering handoff in at most six short bullets. Cover the change, confirmed verification, remaining risk, and next action. Use only the supplied facts. Say when verification is missing. Do not repeat the background.",
+  "input": "Prepare the handoff for this exact approved change snapshot.",
+  "context": [
+    {
+      "id": "preferences",
+      "text": "Approved preferences: prefer Go for core logic; use spfuzzylink/ for new branches; preserve published versions and working features; write clear, concise prose; make routine implementation choices autonomously; verify concrete changes before publication.",
+      "required": true,
+      "stable": true
+    },
+    {
+      "id": "changed-files",
+      "text": "Example snapshot: Questlock now supports bounded local text generation through an installed Ollama model. It reuses the existing HTTP broker and versioned SQLite artifacts. Replace this example with the caller's actual changed files before a real handoff.",
+      "required": true
+    },
+    {
+      "id": "validation",
+      "text": "The caller must replace this chunk with checks actually run and their results. Do not claim live validation, release publication, or a cost saving from this example alone.",
+      "priority": 20
+    },
+    {
+      "id": "archived-notes",
+      "text": "Earlier planning considered broad model gateways, dashboards, and automatic conversation imports. Those ideas are background and do not establish current implementation, validation, or model quality. Keep them optional and omit them when current facts and constraints fill the context cap. Earlier planning considered broad model gateways, dashboards, and automatic conversation imports. Those ideas are background and do not establish current implementation, validation, or model quality. Keep them optional and omit them when current facts and constraints fill the context cap. Earlier planning considered broad model gateways, dashboards, and automatic conversation imports. Those ideas are background and do not establish current implementation, validation, or model quality. Keep them optional and omit them when current facts and constraints fill the context cap. Earlier planning considered broad model gateways, dashboards, and automatic conversation imports. Those ideas are background and do not establish current implementation, validation, or model quality. Keep them optional and omit them when current facts and constraints fill the context cap.",
+      "priority": 5,
+      "stable": true
+    }
+  ],
+  "max_context_bytes": 1024,
+  "max_input_tokens": 12000,
+  "max_output_tokens": 512,
+  "cache_mode": "default",
+  "reuse_for_seconds": 3600
+}

@@ -2,7 +2,7 @@
 
 ![Questlock — keep a stale worker from rewriting the present](assets/questlock-banner.svg)
 
-**Keep stale agents from overwriting newer shared work.**
+**Coordinate shared agent work before paying for it again.**
 
 [![CI](https://github.com/spfuzzylink/questlock/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/spfuzzylink/questlock/actions/workflows/ci.yml)
 
@@ -21,7 +21,51 @@ of shared text artifacts; it does not run or sandbox the agents.
 
 The quest theme is a little weekend motivation. Underneath it: a compiled Go
 broker, a Go client library, SQLite transactions, and concrete failure tests.
-One host. No Kubernetes. No model account required.
+One host. No Kubernetes. Offline demos need no model account.
+
+## Reduce repeated model work
+
+Two workers ask for the same approved handoff. One model call should be enough.
+Questlock now offers a Go `inference` library and a bounded model-task CLI for
+**OpenAI Responses, Anthropic Claude Messages, and local Ollama models**. The worker plans whole context
+chunks, checks token and configured cost allowances, claims the task in shared
+storage, and saves the completed answer for explicitly opted-in reuse.
+
+```sh
+./bin/questlock model quest
+./bin/questlock model plan --spec examples/model-workflows/openai-handoff.json
+./bin/questlock model install --agents codex,claude
+```
+
+The model quest runs **three simple and three complex scenarios offline**, with
+real authenticated HTTP/SQLite coordination and deterministic model fixtures.
+It demonstrates 20 simultaneous workers starting one generation, reuse after a
+broker restart, context reduction, preflight rejection, and an unknown outcome
+retaining its budget reservation. No API key or paid call is needed for this demo.
+
+[Local models without provider token bills](docs/local-models.md) ·
+[What, why, and how](docs/model-architecture.md) ·
+[Setup, Codex/Claude skills, and model specs](docs/model-workflows.md)
+
+Local Ollama generation needs installed local weights and no provider API key.
+Cloud generation needs the selected provider's API key. Reuse can avoid a complete
+repeated generation; provider prompt caching can reduce eligible input cost.
+These controls apply to tasks routed through Questlock. They do not train the
+model, replace an entire Codex/Claude session, or remove provider credit limits.
+The architecture guide compares OpenRouter composition and states the storage,
+count-estimate, price, and billing limits. Live savings remain to be measured.
+
+### OpenRouter gets credit
+
+OpenRouter is a strong common interface for models, routing, and provider caching.
+Its response cache already makes identical completed requests reusable.
+**OpenRouter is the switchboard. Questlock helps keep a swarm from running up duplicate tabs.**
+
+Questlock's focused advantage is coordinating a shared task **before** a model
+call, including simultaneous workers and uncertain outcomes. The two can
+complement each other; a supported OpenRouter adapter remains future work.
+[The comparison and sources](docs/model-architecture.md#openrouter-inspiration-and-possible-add-on) ·
+[Claims and measurable value](docs/positioning.md)
 
 ## Start the quest
 
@@ -43,17 +87,17 @@ sudo and changes no shell settings. The demo cleans up its temporary state.
 
 ### Download a binary
 
-The current experimental release is **v0.1.1**. Choose your operating system and
+The current experimental release is **v0.2.0**. Choose your operating system and
 CPU; x86-64 covers 64-bit Intel and AMD processors. No Go installation is needed.
 
 | System | ARM64 | x86-64 (Intel / AMD) |
 | --- | --- | --- |
-| macOS 13+ | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.1.1/questlock_0.1.1_darwin_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.1.1/questlock_0.1.1_darwin_amd64.tar.gz) |
-| Linux | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.1.1/questlock_0.1.1_linux_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.1.1/questlock_0.1.1_linux_amd64.tar.gz) |
+| macOS 13+ | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.2.0/questlock_0.2.0_darwin_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.2.0/questlock_0.2.0_darwin_amd64.tar.gz) |
+| Linux | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.2.0/questlock_0.2.0_linux_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.2.0/questlock_0.2.0_linux_amd64.tar.gz) |
 
-Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.1.1/checksums.txt)
+Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.2.0/checksums.txt)
 before extracting, then run `./questlock quest`. The installer above performs the
-checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.1.1).
+checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.2.0).
 
 ### Try the container
 
@@ -65,7 +109,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.1.1 quest
+  ghcr.io/spfuzzylink/questlock:v0.2.0 quest
 ```
 
 Use `docker` in place of `podman` if preferred. The image pulls without a registry
@@ -117,8 +161,10 @@ receipt, and the journal entry commit in the same SQLite transaction.
 
 Use it for shared agent notes, competing text-artifact updates, recovering a
 publish after a lost response, or separating small experiments into scopes.
-It also provides a runnable way to study stale workers and broker crashes on
-one machine. Your code supplies the agent integration and conflict resolution.
+It also provides runnable ways to study stale workers, broker crashes, and
+shared model-task coordination on one machine. The model workflow supplies a
+CLI/Go integration for bounded text tasks; other agent integrations and conflict
+resolution remain application responsibilities.
 
 See [who this could help and why](docs/use-cases.md#who-this-could-help) for
 research, support automation, evaluation, and platform workflows. The notes cover
@@ -177,7 +223,7 @@ Questlock is designed to keep this experiment's access small and explicit:
   stores only its SHA-256 digest, and rechecks revocation inside the write transaction.
 - **No host-file access API.** Artifact keys are logical names stored in SQLite.
   There is no shell execution, filesystem browsing, model call, or telemetry in
-  the broker. The demo's child processes receive a small explicit environment,
+  the broker. Explicit model CLI workers call providers with their own API keys. The demo's child processes receive a small explicit environment,
   excluding the parent shell's cloud/API credentials.
 - **Private state and bounded input.** New state directories use `0700`; database
   files use `0600`. Artifact text is capped at 1 MiB, requests and responses are
@@ -206,6 +252,7 @@ artifact content in issues or logs.
 questlock/
   cmd/questlock/       CLI and real process-failure quest
   client/             Public Go client library
+  inference/          Context planning, provider adapters, shared claims/budgets
   protocol/           Shared JSON types
   internal/httpapi/   Authenticated HTTP boundary
   internal/store/     SQLite transactions, scopes, versions, receipts
@@ -222,6 +269,7 @@ questlock/
 ```sh
 make check
 make quest
+./bin/questlock model quest
 ```
 
 The tests cover competing writer processes, scope isolation, revocation, atomic
