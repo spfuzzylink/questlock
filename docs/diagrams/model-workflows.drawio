@@ -167,7 +167,7 @@
         <mxCell id="note-3" value="Claims and the daily ledger are separate CAS updates, not one multi-key transaction." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=18;align=left;fontColor=#34445e;" vertex="1" parent="1">
           <mxGeometry x="40" y="1219" width="920" height="29" as="geometry" />
         </mxCell>
-        <mxCell id="note-4" value="Local jobs use a separate scope without USD fields; hardware, power and time still cost resources." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=18;align=left;fontColor=#34445e;" vertex="1" parent="1">
+        <mxCell id="note-4" value="Local jobs skip API USD ledgers; hardware, power and time still cost resources." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=18;align=left;fontColor=#34445e;" vertex="1" parent="1">
           <mxGeometry x="40" y="1247" width="920" height="29" as="geometry" />
         </mxCell>
       </root>
@@ -253,7 +253,7 @@
         <mxCell id="reserve-title" value="5. Reserve optional API day budget" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=22;fontStyle=1;fontColor=#18243b;" vertex="1" parent="reserve" connectable="0">
           <mxGeometry x="18" y="9" width="464" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="reserve-body" value="Ledger reservation is a separate CAS update.&#10;Persist its identity in the pending job&#10;before calling Generate.&#10;Local jobs omit USD fields and settlement." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=19;" vertex="1" parent="reserve" connectable="0">
+        <mxCell id="reserve-body" value="Ledger reservation is a separate CAS update.&#10;Persist its identity in the pending job&#10;before calling Generate.&#10;Local jobs bypass the API USD ledger." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=19;" vertex="1" parent="reserve" connectable="0">
           <mxGeometry x="18" y="38" width="464" height="113" as="geometry" />
         </mxCell>
         <mxCell id="reservation_note" value="" style="rounded=1;arcSize=10;html=0;whiteSpace=wrap;fillColor=#fff3e7;strokeColor=#b96b28;strokeWidth=2;" vertex="1" parent="1">
@@ -307,7 +307,7 @@
         <mxCell id="publish-title" value="8. Publish result; settle API usage" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=22;fontStyle=1;fontColor=#18243b;" vertex="1" parent="publish" connectable="0">
           <mxGeometry x="18" y="9" width="464" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="publish-body" value="Job result: CAS + exact-operation receipt.&#10;Day ledger settlement: separate CAS update.&#10;Attempt settlement even if publication fails.&#10;Local jobs have no USD settlement.&#10;Settlement failure: stop scope and reconcile." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=19;" vertex="1" parent="publish" connectable="0">
+        <mxCell id="publish-body" value="Job result: CAS + exact-operation receipt.&#10;Day ledger settlement: separate CAS update.&#10;Attempt settlement even if publication fails.&#10;Local jobs have no USD settlement.&#10;Settlement failure: stop paid work; reconcile." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=19;" vertex="1" parent="publish" connectable="0">
           <mxGeometry x="18" y="38" width="464" height="133" as="geometry" />
         </mxCell>
         <mxCell id="overrun" value="" style="rounded=1;arcSize=10;html=0;whiteSpace=wrap;fillColor=#fff3e7;strokeColor=#b96b28;strokeWidth=2;" vertex="1" parent="1">
@@ -316,7 +316,7 @@
         <mxCell id="overrun-title" value="Known cost &gt; reservation" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=20;fontStyle=1;fontColor=#18243b;" vertex="1" parent="overrun" connectable="0">
           <mxGeometry x="18" y="9" width="294" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="overrun-body" value="Successful settlement freezes&#10;this scope's UTC-day ledger.&#10;Stop new budgeted calls that day.&#10;If settlement fails, stop scope." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=18;" vertex="1" parent="overrun" connectable="0">
+        <mxCell id="overrun-body" value="Successful settlement freezes&#10;this scope's API UTC-day ledger.&#10;Stop new budgeted calls that day.&#10;If settlement fails, stop paid work." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;resizable=0;connectable=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontColor=#34445e;spacing=0;fontSize=18;" vertex="1" parent="overrun" connectable="0">
           <mxGeometry x="18" y="38" width="294" height="113" as="geometry" />
         </mxCell>
         <mxCell id="return" value="" style="rounded=1;arcSize=10;html=0;whiteSpace=wrap;fillColor=#e8f7ee;strokeColor=#278461;strokeWidth=2;" vertex="1" parent="1">

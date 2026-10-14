@@ -17,8 +17,10 @@ before generation, while related workers can recover the same valid result.
 **OpenRouter is the switchboard. Questlock helps keep a swarm from running up duplicate tabs.**
 
 Use “companion layer” or “planned OpenRouter add-on” in launch copy. Version 0.2.0
-supports direct OpenAI, Claude, and local Ollama adapters; an OpenRouter plugin
-or adapter is not selectable yet. The integration needs a tested contract for
+introduced direct OpenAI, Claude, and local Ollama adapters. The **unpublished
+v0.3.0 candidate** adds measurements, optional Langfuse observability, evaluation,
+and explicit local-first Go/MCP delegation; an OpenRouter plugin or adapter is
+not selectable yet. The integration needs a tested contract for
 counting, routing policy, output limits, and billed usage before it can ship.
 
 ## Evidence developers can reproduce
@@ -29,7 +31,8 @@ counting, routing policy, output limits, and billed usage before it can ship.
 | Twenty workers request that snapshot together | Claim it before generation so one worker calls the provider | Channel-controlled HTTP/SQLite scenario: one generation, nineteen workers defer. |
 | Irrelevant historical material fills the prompt | Select whole optional context chunks under a byte allowance, preserving required context | Demo keeps 212 of 794 context bytes. These bytes are not a measured token-saving percentage. |
 | A response is lost or a broker restarts | Retain receipts, completed results, and uncertain claims | Restart/reuse scenario and unknown-outcome reservation test. |
-| A task has bounded requirements | Choose a suitable smaller model and explicit output/reasoning limits | Direct adapters accept an explicit model; quality and real bill effects require a representative live evaluation. |
+| A task has bounded requirements | Declare a model, output/reasoning limits, and task checks | The local live suite qualified neither 64/256-token configuration; the worker withheld a failed extraction. Passing reuse counters did not make answers correct. |
+| Developers need to inspect a repeated task | Separate Runner phases, current usage, historical timing, and optional metadata export | [v0.3.0 measured observations](measurements-v0.3.0.md); [content-free Langfuse contract](inference-observability.md), with actual-server CI proof pending. |
 
 The cheapest repeated generation is the one you can safely skip. A high volume
 of unchanged snapshot reads can have **zero additional model-generation cost**.
@@ -51,8 +54,16 @@ the model-access and provider-routing layer. See
 [the add-on architecture](model-architecture.md#openrouter-inspiration-and-possible-add-on).
 
 The current boundary is one broker host and bounded single-turn text tasks.
-Streaming, native agent tools, full sessions, router integration, and invoice
-reconciliation are separate work. The next evidence should be live quality and
-invoice comparisons for a repeated engineering workflow. Keep public copy tied
+Local content streaming and a bounded MCP delegation tool are implemented in
+the candidate. Native agent-tool orchestration, full-session interception,
+router integration, and invoice reconciliation remain separate work. The
+developer-facing aim is faster, affordable, measurable repeat tasks; the next
+evidence should qualify representative task quality under controlled settings
+and measure invoice effects for paid work. Keep public copy tied
 to executed checks: no infinite fresh usage, guaranteed near-zero total bills,
 unmeasured customer savings, or patent-novelty claims.
+
+The surrounding hosted assistant chat keeps its model, allowance, and billing.
+Questlock neither trains weights nor selects models automatically. An explicit
+quality-gated escalation is a declared policy, with at most one next tier after
+a confirmed complete durable answer fails its checks; uncertain outcomes stop.

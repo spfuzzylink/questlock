@@ -7,14 +7,14 @@ if [ ! -x "$questlock_bin" ]; then
   exit 1
 fi
 if [ "$#" -eq 0 ]; then
-  echo 'Usage: sh scripts/run.sh plan|run|quest [flags]' >&2
+  echo 'Usage: sh scripts/run.sh plan|run|quest|worker-run|worker-serve [flags]' >&2
   exit 2
 fi
 questlock_command=$1
 shift
 case "$questlock_command" in
   plan|quest) ;;
-  run)
+  run|worker-run|worker-serve)
     if [ -z "${QUESTLOCK_TOKEN:-}" ]; then
       questlock_token_file=${QUESTLOCK_TOKEN_FILE:-"$HOME/.local/share/questlock/agent-workflows/worker.token"}
       if [ ! -r "$questlock_token_file" ]; then
@@ -31,8 +31,12 @@ case "$questlock_command" in
     fi
     ;;
   *)
-    echo 'Usage: sh scripts/run.sh plan|run|quest [flags]' >&2
+    echo 'Usage: sh scripts/run.sh plan|run|quest|worker-run|worker-serve [flags]' >&2
     exit 2
     ;;
+esac
+case "$questlock_command" in
+  worker-run) exec "$questlock_bin" worker run "$@" ;;
+  worker-serve) exec "$questlock_bin" worker serve "$@" ;;
 esac
 exec "$questlock_bin" model "$questlock_command" "$@"

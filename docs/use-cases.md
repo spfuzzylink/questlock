@@ -5,9 +5,11 @@ and need to detect stale updates or recover the result of an uncertain publish.
 It runs on one trusted host and stores UTF-8 artifacts of up to 1 MiB each.
 
 The workflows below are plausible integration patterns, not bundled agent
-framework integrations or claims of production adoption. The shipped pieces are
-the HTTP API, Go client, scoped credentials, version checks, successful-operation
-receipts, publication journal, and process-failure quest.
+framework integrations or claims of production adoption. The published foundation
+is the HTTP API, Go client, scoped credentials, version checks, successful-operation
+receipts, publication journal, and process-failure quest, plus bounded inference.
+The **unpublished v0.3.0 candidate** adds an actual Go/MCP delegation worker,
+evaluation, current-run measurement, and optional content-free Langfuse export.
 
 ## Who this could help
 
@@ -166,14 +168,41 @@ publication, and exact retry. Its request stays in memory; add private durable
 intent storage to recover across a real worker restart. See the
 [HTTP API](api.md) for the full request and error contract.
 
+## 6. Measurable bounded tasks for a coding assistant
+
+An assistant can prepare an approved extraction, handoff, or summary request from
+current supplied facts, name its local model and resource limits, and declare
+deterministic task checks. `worker run` or the sole MCP `questlock_delegate` tool
+executes that request; identical valid snapshots retain normal durable reuse.
+
+**Implemented in the candidate:** bounded local-first generation, at most one
+explicit escalation after a confirmed complete durable quality failure, withheld
+failed answers, and current-run measurements. Unknown, incomplete, budget, or
+provider/accounting-error outcomes stop. Hosted escalation additionally requires
+process permission, explicit prices, and per-call/daily caps. The MCP worker
+offers no shell, workspace edit, or file-discovery tools.
+
+**Your evaluation:** qualify a model on the actual task, supply approved context,
+update revision when facts change, and review passing output. The
+[local v0.3.0 observations](measurements-v0.3.0.md) qualified neither suite
+configuration, and the worker withheld a failed feature extraction. Durable
+reuse did not turn those outputs into approved answers. Read [delegation](delegation.md)
+and [measurement limits](inference-observability.md) before using the worker.
+
+The surrounding hosted chat keeps its existing model and billing. OpenRouter is
+a future companion adapter; automatic model choice and full-session interception
+are outside this candidate.
+
 ## When another component is needed
 
 - **Task ownership or worker leases:** a version check does not grant a worker
   exclusive ownership or stop an old worker from running. A permitted worker
   can fetch the latest version and publish again.
-- **Agent execution safety:** Questlock does not restrict shell commands, model
-  access, host files, or network calls. It does not judge whether content is safe
-  or correct, and the trusted host operator can inspect or alter the database.
+- **Agent execution safety:** the broker does not sandbox arbitrary workers'
+  shell commands, model access, host files, or network calls. The bounded MCP
+  worker exposes a narrower request-file interface, but its declared checks
+  do not judge general safety or correctness. The trusted host operator can
+  inspect or alter the database.
 - **Large or binary artifacts:** content is limited to 1 MiB of UTF-8 text. This
   is not an object store or a binary transfer service.
 - **Fleet management or high availability:** there is no scheduler, replication,
@@ -182,6 +211,8 @@ intent storage to recover across a real worker restart. See the
   without quotas or automatic retention. Lists are capped and have no pagination;
   the API does not expose a general historical-content browser.
 
-The current experiment is a narrow publishing boundary. Its value is making
-stale writes and uncertain publication results explicit, so the worker can handle
-them deliberately.
+The publishing boundary makes stale writes and uncertain results explicit.
+Bounded inference builds on it to avoid repeating an eligible task and to expose
+resource use; the candidate's worker returns only answers passing declared checks.
+Those checks and measured reuse remain task-specific, rather than a guarantee of
+general model quality.

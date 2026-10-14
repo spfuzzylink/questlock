@@ -27,6 +27,12 @@ run and their source commit; a successful build is not evidence of publication.
 - Require the source-container CI job too. It builds through `.dockerignore` and
   runs both quests without a network and with a read-only root filesystem. Keep
   Go source and embedded skill assets in the build context as the project evolves.
+- Require the reusable self-hosted Langfuse CI job for the release source. Its
+  disposable v4.59.0 stack needs Docker/Compose and enough memory/CPU for six
+  services. Use `scripts/langfuse/run.py` for config, startup, smoke reads, service
+  state, and cleanup so ambient credentials, proxies, contexts, or service URLs
+  cannot redirect the check. An OTLP acknowledgement alone does not prove the
+  observed spans, exclusive usage buckets, or scores were stored correctly.
 - Check `BUILDINFO.json` for the exact commit, version, target, and clean source,
   and compare archive license/notices against that released source. Use the
   explicit `scripts/package.py` allowlist; inspect newly included documents.
@@ -54,10 +60,19 @@ run and their source commit; a successful build is not evidence of publication.
   optional, and neither document changes the MIT license.
 - Report observed calls, token categories, latency, output quality, and actual
   charges with the provider/model and snapshot. Label fixture results as fixtures.
+  Keep failed cases visible: the [v0.3.0 observations](measurements-v0.3.0.md)
+  qualified neither configuration. Reuse is evidence of avoided generation,
+  not evidence that the reused answer passed its task checks. Keep candidate
+  wording until tags, archives, CI, and publication are confirmed.
 - Follow [positioning](positioning.md): OpenRouter needs a future capability-aware
   adapter; compatible generation alone does not supply counting or usage semantics.
   Questlock cannot bypass credits, rate limits, or hosted assistant allowances.
   Local inference has hardware costs. Promise neither infinite usage nor novelty.
+- Keep [runtime observability](inference-observability.md) and [delegation](delegation.md)
+  descriptions aligned with the implementation: streaming time is client-observed,
+  current metrics are not durable identity, MCP telemetry is silent best effort,
+  and only a known complete durable quality failure permits the explicit next tier.
+  Validated local jobs skip API USD accounting without consuming or clearing it.
 
 ## Client configuration rollout
 

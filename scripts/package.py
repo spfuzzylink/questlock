@@ -20,11 +20,14 @@ TARGETS = ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64")
 PUBLIC_FILES = (
     "LICENSE", "ATTRIBUTION.md", "BRANDING.md", "THIRD_PARTY_NOTICES.md",
     "README.md", "CONTRIBUTING.md", "SECURITY.md", "VERSION",
-    "assets/questlock-banner.svg", "assets/questlock-evolution.svg", "docs/release-notes.md",
+    "assets/questlock-banner.svg", "assets/questlock-evolution.svg", "assets/questlock-v0.3.0.svg", "docs/release-notes.md",
     "docs/installation.md", "docs/containers.md", "docs/use-cases.md", "docs/api.md",
     "docs/architecture.md", "docs/deployment.md", "docs/validation.md", "docs/maintenance.md",
     "docs/model-workflows.md", "docs/model-architecture.md", "docs/positioning.md", "docs/local-models.md",
+    "docs/inference-observability.md", "docs/delegation.md", "docs/measurements-v0.3.0.md",
     "docs/diagrams/model-workflows.drawio", "docs/diagrams/model-system.svg", "docs/diagrams/model-lifecycle.svg",
+    "docs/diagrams/inference-runtime.drawio", "docs/diagrams/inference-runtime.svg",
+    "evaluation/fixtures/quickstart.json",
     "examples/model-workflows/openai-handoff.json", "examples/model-workflows/claude-handoff.json",
     "examples/model-workflows/local-handoff.json",
 )

@@ -28,8 +28,11 @@ func modelCommand(args []string) error {
 
 func modelCommandIO(args []string, output, helpOutput io.Writer) error {
 	if len(args) == 1 && (args[0] == "help" || args[0] == "-h" || args[0] == "--help") {
-		_, err := fmt.Fprintln(helpOutput, "Usage: questlock model plan --spec PATH\n       questlock model run --spec PATH [--broker http://127.0.0.1:8080] [--api-base-url URL] [--timeout 2m]\n       questlock model quest\n       questlock model install [--agents codex,claude] [--replace]")
+		_, err := fmt.Fprintln(helpOutput, "Usage: questlock model plan --spec PATH\n       questlock model run --spec PATH [--broker http://127.0.0.1:8080] [--api-base-url URL] [--timeout 2m]\n       questlock model evaluate [--suite PATH] [--live --broker URL] [--report PATH] [--langfuse]\n       questlock model quest\n       questlock model install [--agents codex,claude] [--replace]")
 		return err
+	}
+	if len(args) != 0 && args[0] == "evaluate" {
+		return modelEvaluateCommand(args[1:], output, helpOutput)
 	}
 	if len(args) != 0 && args[0] == "install" {
 		return modelInstallCommand(args[1:], output, helpOutput)
@@ -45,7 +48,7 @@ func modelCommandIO(args []string, output, helpOutput io.Writer) error {
 		return modelQuestIO(output)
 	}
 	if len(args) == 0 || (args[0] != "plan" && args[0] != "run") {
-		return errors.New("use model plan, model run, model quest, or model install; use model --help")
+		return errors.New("use model plan, model run, model evaluate, model quest, or model install; use model --help")
 	}
 	command := args[0]
 	f := flag.NewFlagSet("model "+command, flag.ContinueOnError)
@@ -55,10 +58,14 @@ func modelCommandIO(args []string, output, helpOutput io.Writer) error {
 	specPath := f.String("spec", "", "path to a UTF-8 JSON task spec (maximum 1MiB)")
 	var brokerURL, apiBaseURL *string
 	var timeout *time.Duration
+	var langfuse *bool
+	var langfuseTimeout *time.Duration
 	if command == "run" {
 		brokerURL = f.String("broker", "http://127.0.0.1:8080", "Questlock broker URL")
 		apiBaseURL = f.String("api-base-url", "", "provider API base URL; empty uses its official API or local Ollama on 127.0.0.1:11434")
 		timeout = f.Duration("timeout", 2*time.Minute, "positive time limit for the entire run")
+		langfuse = f.Bool("langfuse", false, "export metadata to explicitly configured Langfuse after inference")
+		langfuseTimeout = f.Duration("langfuse-timeout", 2*time.Second, "bounded timeout per Langfuse request (1ms..5s)")
 	}
 	f.Usage = func() {
 		f.SetOutput(helpOutput)
@@ -94,57 +101,37 @@ func modelCommandIO(args []string, output, helpOutput io.Writer) error {
 	if command == "plan" {
 		return writeModelJSON(output, plan)
 	}
-	token := os.Getenv("QUESTLOCK_TOKEN")
-	if token == "" {
-		return errors.New("QUESTLOCK_TOKEN is required for model run")
-	}
-	var keyName string
-	switch spec.Provider {
-	case "openai":
-		keyName = "OPENAI_API_KEY"
-	case "anthropic", "claude":
-		keyName = "ANTHROPIC_API_KEY"
-	case "ollama":
-		// An installed local model uses no provider API credential.
-	default:
-		return errors.New("model provider must be openai, anthropic, claude, or ollama")
-	}
-	var apiKey string
-	if keyName != "" {
-		apiKey = os.Getenv(keyName)
-		if apiKey == "" {
-			return errors.New(keyName + " is required for model run")
-		}
-	}
-	broker, err := client.New(*brokerURL, token)
+	exporter, err := langfuseFromEnvironment(*langfuse, *langfuseTimeout)
 	if err != nil {
-		return redactModelError(err, token, apiKey)
+		return err
+	}
+	broker, token, err := modelBroker(*brokerURL)
+	if err != nil {
+		return err
 	}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	ctx, cancel := context.WithTimeout(ctx, *timeout)
 	defer cancel()
-	var provider inference.Provider
-	if spec.Provider == "ollama" {
-		provider, err = inference.NewOllamaProviderContext(ctx, *apiBaseURL, spec.Model)
-	} else {
-		provider, err = inference.NewHTTPProvider(spec.Provider, apiKey, *apiBaseURL)
-	}
+	setupStarted := time.Now()
+	provider, err := configuredProvider(ctx, spec, *apiBaseURL)
+	setupEnded := time.Now()
 	if err != nil {
-		return redactModelError(err, token, apiKey)
+		return redactModelError(err, token)
 	}
-	runner := inference.Runner{Broker: broker, Provider: provider}
+	runner := &preparedRunner{runner: inference.Runner{Broker: broker, Provider: provider}, setupStart: setupStarted, setupEnd: setupEnded}
 	result, err := runner.Run(ctx, spec)
 	// A known paid answer can be returned even if publication, output, or budget
 	// settlement fails. Preserve inspection usage; the command remains nonzero.
 	// Callers must check successful exit, response.complete, and durable.
-	if result.Fingerprint != "" {
+	if result.Fingerprint != "" || result.Measurement != nil {
 		if writeErr := writeModelJSON(output, result); writeErr != nil {
 			return writeErr
 		}
 	}
+	exportTelemetry(exporter, []telemetryRecord{{execution: observation(spec, result)}}, helpOutput)
 	if err != nil {
-		return redactModelError(err, token, apiKey)
+		return redactModelError(err, token, os.Getenv("OPENAI_API_KEY"), os.Getenv("ANTHROPIC_API_KEY"))
 	}
 	return nil
 }

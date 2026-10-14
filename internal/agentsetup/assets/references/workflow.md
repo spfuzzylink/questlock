@@ -1,6 +1,6 @@
 # Task snapshot and local setup
 
-The skill runs independently of the source checkout. Its helper uses `QUESTLOCK_BIN`, defaulting to `$HOME/.local/bin/questlock`. Call it with `sh scripts/run.sh plan|run|quest` from the skill directory. Set `QUESTLOCK_TOKEN` or `QUESTLOCK_TOKEN_FILE`; only `run` reads the default token file `$HOME/.local/share/questlock/agent-workflows/worker.token`. Ollama uses no provider key. Use `OPENAI_API_KEY` for OpenAI and `ANTHROPIC_API_KEY` for Claude. Load keys using the user's existing secret mechanism; never print them.
+The skill runs independently of the source checkout. Its helper uses `QUESTLOCK_BIN`, defaulting to `$HOME/.local/bin/questlock`. Call it with `sh scripts/run.sh plan|run|quest|worker-run|worker-serve` from the skill directory. Set `QUESTLOCK_TOKEN` or `QUESTLOCK_TOKEN_FILE`; live commands read the default token file `$HOME/.local/share/questlock/agent-workflows/worker.token`. Ollama uses no provider key. Use `OPENAI_API_KEY` for OpenAI and `ANTHROPIC_API_KEY` for Claude. Load keys using the user's existing secret mechanism; never print them.
 
 For a fresh local broker, provision once in a foreground shell:
 
@@ -29,6 +29,7 @@ Specs are UTF-8 JSON objects, maximum 1MiB, with no unknown fields or trailing c
 | `cache_mode` | `default`, or `prefix` for supported API explicit caching. Claude marks a stable prefix for 5-minute ephemeral caching; minimum cache lengths apply. Local Ollama requires `default`. |
 | `reuse_for_seconds` | 0–86,400; default 0 disables completed-result reuse. Use a TTL only for a valid fixed snapshot. |
 | `reasoning_effort` | Optional OpenAI setting, model-specific support; Claude rejects it. Omit unless deliberately selected. |
+| `stream` | Optional `true` for local Ollama client-observed first-content/output timing; APIs reject it. Omit or use `false` for legacy non-streaming identity. |
 | `prices` | API-only optional explicit USD per million tokens: `input_per_million`, `cache_read_per_million`, `cache_write_per_million`, `output_per_million`. Never assume fixture/current prices. Omit for Ollama. |
 | `max_cost_usd`, `daily_budget_usd` | API-only optional positive caps, require accurate explicit prices. Daily ledger covers cooperating workers in one broker scope per UTC day. Omit for Ollama. |
 
@@ -38,7 +39,7 @@ The full prepared prompt cannot exceed 512KiB. Stable chunks form the prefix; ch
 
 Use [local-summary.json](local-summary.json) when provider credits must not be involved. Install Ollama separately, start its local server with cloud disabled, and pull a local model such as `qwen3.5:4b`. Questlock does not download models or start Ollama. The default endpoint is `http://127.0.0.1:11434`; an override must be a literal loopback HTTP address. Names or metadata indicating a cloud model are rejected. Missing or incompatible local models fail without a paid fallback. The installed model digest is part of result identity, so updating weights invalidates old reuse.
 
-Use a dedicated broker scope such as `local-workflows` and a separate token file. This can share the same broker/database with API workers, while keeping dollar ledgers out of local jobs:
+Use a dedicated broker scope such as `local-workflows` and a separate token file to isolate task permissions. This can share the same broker/database with API workers. Validated local jobs neither consume nor clear API dollar ledgers, and can continue while paid admission is frozen:
 
 ```sh
 umask 077

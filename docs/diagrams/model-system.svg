@@ -51,6 +51,6 @@
 <rect x="200.0" y="915" width="600" height="29" fill="#e8f6f3"/>
 <text x="500" y="936" font-size="18" text-anchor="middle" fill="#34445e"><tspan x="500" dy="0">One transaction per accepted artifact publication</tspan></text>
 <text x="40" y="1240" font-size="18" text-anchor="start" fill="#34445e"><tspan x="40" dy="0">Claims and the daily ledger are separate CAS updates, not one multi-key transaction.</tspan></text>
-<text x="40" y="1268" font-size="18" text-anchor="start" fill="#34445e"><tspan x="40" dy="0">Local jobs use a separate scope without USD fields; hardware, power and time still cost resources.</tspan></text>
+<text x="40" y="1268" font-size="18" text-anchor="start" fill="#34445e"><tspan x="40" dy="0">Local jobs skip API USD ledgers; hardware, power and time still cost resources.</tspan></text>
 </g>
 </svg>

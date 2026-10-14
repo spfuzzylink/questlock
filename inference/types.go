@@ -12,6 +12,7 @@ import (
 // Spec is an explicit snapshot of a task. Reuse is opt-in and should only be
 // enabled for tasks whose answer remains valid for the supplied revision.
 type Spec struct {
+	Stream          bool          `json:"stream,omitempty"` // Optional local Ollama content streaming.
 	Task            string        `json:"task"`
 	Revision        string        `json:"revision"`
 	Provider        string        `json:"provider"`
@@ -42,6 +43,7 @@ type ContextItem struct {
 // Prefix contains approved instructions and stable reference material; Input
 // contains changing reference material and the user's task.
 type Request struct {
+	Stream          bool   `json:"stream,omitempty"`
 	Provider        string `json:"provider"`
 	Model           string `json:"model"`
 	ReasoningEffort string `json:"reasoning_effort,omitempty"`
@@ -74,12 +76,13 @@ type Usage struct {
 }
 
 type Response struct {
-	ID         string `json:"id"`
-	Model      string `json:"model"`
-	Text       string `json:"text"`
-	Complete   bool   `json:"complete"`
-	StopReason string `json:"stop_reason"`
-	Usage      Usage  `json:"usage"`
+	Timing     *GenerationTiming `json:"timing,omitempty"`
+	ID         string            `json:"id"`
+	Model      string            `json:"model"`
+	Text       string            `json:"text"`
+	Complete   bool              `json:"complete"`
+	StopReason string            `json:"stop_reason"`
+	Usage      Usage             `json:"usage"`
 }
 
 // Prices are explicit USD per million tokens, not a built-in or live price list.
@@ -92,17 +95,19 @@ type Prices struct {
 }
 
 type Result struct {
-	Fingerprint     string    `json:"fingerprint"`
-	Response        Response  `json:"response"`
-	Reused          bool      `json:"reused"`
-	Durable         bool      `json:"durable"`
-	GenerationUsage Usage     `json:"generation_usage"`
-	ThisRunUsage    Usage     `json:"this_run_usage"`
-	AvoidedUsage    Usage     `json:"avoided_usage"`
-	CostUSD         *float64  `json:"cost_usd,omitempty"`
-	AvoidedCostUSD  *float64  `json:"avoided_cost_usd,omitempty"`
-	CreatedAt       time.Time `json:"created_at"`
-	ExpiresAt       time.Time `json:"expires_at"`
+	GenerationTiming *GenerationTiming `json:"generation_timing,omitempty"`
+	Measurement      *Measurement      `json:"measurement,omitempty"`
+	Fingerprint      string            `json:"fingerprint"`
+	Response         Response          `json:"response"`
+	Reused           bool              `json:"reused"`
+	Durable          bool              `json:"durable"`
+	GenerationUsage  Usage             `json:"generation_usage"`
+	ThisRunUsage     Usage             `json:"this_run_usage"`
+	AvoidedUsage     Usage             `json:"avoided_usage"`
+	CostUSD          *float64          `json:"cost_usd,omitempty"`
+	AvoidedCostUSD   *float64          `json:"avoided_cost_usd,omitempty"`
+	CreatedAt        time.Time         `json:"created_at"`
+	ExpiresAt        time.Time         `json:"expires_at"`
 }
 
 type Broker interface {

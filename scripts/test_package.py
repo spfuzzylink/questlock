@@ -13,6 +13,35 @@ spec.loader.exec_module(package)
 
 
 class PackageTests(unittest.TestCase):
+    def test_inference_release_material_is_packaged_without_private_inputs(self):
+        required = {
+            "docs/inference-observability.md", "docs/delegation.md", "docs/measurements-v0.3.0.md",
+            "assets/questlock-v0.3.0.svg",
+            "docs/diagrams/inference-runtime.drawio", "docs/diagrams/inference-runtime.svg",
+            "evaluation/fixtures/quickstart.json",
+        }
+        self.assertTrue(required.issubset(package.PUBLIC_FILES))
+        self.assertEqual(len(package.PUBLIC_FILES), len(set(package.PUBLIC_FILES)))
+        self.assertEqual(package.TARGETS, ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64"))
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for name in package.PUBLIC_FILES:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(("public fixture: " + name).encode())
+            for name in ("scripts/langfuse/private.env", "scripts/langfuse/request.json",
+                         "evaluation/fixtures/private-request.json", "evaluation/fixtures/nested/quickstart.json"):
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("private fixture never packaged")
+            documents = {name: package.public_file(root, name) for name in package.PUBLIC_FILES}
+            output = root / "release.tar.gz"
+            package.archive(output, b"binary fixture", documents, {"version": "0.3.0"})
+            with tarfile.open(output) as bundle:
+                self.assertEqual(set(bundle.getnames()), {"questlock", "BUILDINFO.json", *package.PUBLIC_FILES})
+                for name in required:
+                    self.assertEqual(bundle.extractfile(name).read(), documents[name])
+
     def test_release_allowlist_preserves_third_party_notices_verbatim(self):
         self.assertIn("THIRD_PARTY_NOTICES.md", package.PUBLIC_FILES)
         notice = package.public_file(package.ROOT, "THIRD_PARTY_NOTICES.md")

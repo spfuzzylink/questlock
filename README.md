@@ -1,6 +1,6 @@
 <div align="center">
 
-![Questlock — shared state, less repeated model work](assets/questlock-evolution.svg)
+![Questlock — delegate, measure, reuse](assets/questlock-v0.3.0.svg)
 
 **Coordinate shared agent work before paying for it again.**
 
@@ -53,7 +53,42 @@ repeated generation; provider prompt caching can reduce eligible input cost.
 These controls apply to tasks routed through Questlock. They do not train the
 model, replace an entire Codex/Claude session, or remove provider credit limits.
 The architecture guide describes OpenRouter composition and states the storage,
-count-estimate, price, and billing limits. Live savings remain to be measured.
+count-estimate, price, and billing limits. Live local measurements now show exact reuse and quality failures; see [the actual evidence](docs/measurements-v0.3.0.md). These are not invoice savings or a model ranking.
+
+### Delegate, measure, and check the result
+
+The **unreleased v0.3.0 candidate** adds a bounded local worker for Codex and Claude,
+optional metadata observability for Langfuse, and a six-case evaluation command.
+You declare the task snapshot, resource limits, and deterministic acceptance
+checks. Only a confirmed passing tier exposes an approved answer. One explicitly
+configured next tier may run after a known quality failure; uncertain calls stop.
+
+```sh
+./bin/questlock model evaluate                 # offline fixtures, including failures
+./bin/questlock worker run --request approved-task.json --broker http://127.0.0.1:8080
+./bin/questlock worker serve --workspace "$HOME/questlock-workspace"
+```
+
+The worker needs a scoped broker credential and installed local weights. Its MCP
+interface reads only the named approved request file and admits one active task.
+It makes bounded delegation available to an agent; it does not reroute a whole
+hosted chat. Langfuse export is opt-in and carries usage, timing, outcome, and
+check scores without prompts or answer text.
+
+Streaming Ollama jobs measure client-observed first content and output intervals.
+Each invocation has separate phase timings; an exact reuse reports zero new
+usage and no new generation timing. These distinguish faster retrieval from
+faster inference, and explicit price estimates from provider invoices.
+
+**Our first real local run rejected both configurations.** The six-case suite
+passed 4/6 checks with one cap and 3/6 with another. All 12 exact repeats avoided
+new generation, but reuse preserved the wrong answers too. The evaluator selected
+neither configuration, and a failing worker withheld its answer. This is why
+quality checks accompany cost measurements.
+
+[Delegation and MCP setup](docs/delegation.md) ·
+[Langfuse, timings, and evaluation](docs/inference-observability.md) ·
+[Actual local measurements and limits](docs/measurements-v0.3.0.md)
 
 ### A companion layer for the OpenRouter ecosystem
 
@@ -255,6 +290,10 @@ questlock/
   cmd/questlock/       CLI and real process-failure quest
   client/             Public Go client library
   inference/          Context planning, provider adapters, shared claims/budgets
+  delegation/         Explicit local-first policy and deterministic quality gates
+  evaluation/         Six-case comparisons with fresh/reuse measurements
+  observability/      Optional content-free Langfuse OTLP metadata and scores
+  worker/             Bounded MCP stdio tool for approved request files
   protocol/           Shared JSON types
   internal/httpapi/   Authenticated HTTP boundary
   internal/store/     SQLite transactions, scopes, versions, receipts

@@ -6,7 +6,7 @@ on:
       version:
         description: Published experimental release tag (vX.Y.Z)
         required: true
-        default: v0.2.0
+        default: v0.3.0
         type: string
   # release:published is suppressed when the CI release uses GITHUB_TOKEN.
   workflow_run:
@@ -112,6 +112,37 @@ jobs:
           docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
             --memory=256m --cpus=1 --pids-limit=128 \
             --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" model quest
+          # Older immutable releases predate these commands and retain their smoke contract.
+          if python3 -c 'import sys; sys.exit(tuple(map(int, sys.argv[1].split("."))) < (0, 3, 0))' "$RELEASE_VERSION"; then
+            docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+              --memory=256m --cpus=1 --pids-limit=128 \
+              --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" model evaluate > evaluation.json
+            python3 - <<'PY'
+          import json
+          with open("evaluation.json") as stream:
+              report = json.load(stream)
+          assert report["mode"] == "fixture" and report["selection"]["configuration_id"] == "balanced-256"
+          assert report["selection"]["scope"] == "simulated_fixture_suite_only"
+          rows = {(row["configuration_id"], row["case_id"]): row for row in report["results"]}
+          assert len(rows) == len(report["results"]) == 12
+          assert {key for key, row in rows.items() if not row["eligible"]} == {("compact-64", "incident-handoff"), ("compact-64", "release-readiness")}
+          assert all(row["first"]["timing_source"] == "simulated_fixture" for row in rows.values())
+          incomplete = rows["compact-64", "incident-handoff"]
+          assert not incomplete["first"]["complete"] and incomplete["first"]["error_category"] == "incomplete" and "reuse" not in incomplete
+          wrong = rows["compact-64", "release-readiness"]
+          assert not wrong["first"]["quality_passed"] and not wrong["reuse"]["quality_passed"]
+          reuses = [row for row in rows.values() if "reuse" in row]
+          assert len(reuses) == 11
+          for row in reuses:
+              reuse = row["reuse"]
+              assert reuse["reused"] and reuse["complete"] and reuse["durable"]
+              assert all(value == 0 for value in reuse["this_run_usage"].values())
+              assert reuse["avoided_usage"] == row["first"]["this_run_usage"] and reuse["output_sha256"] == row["first"]["output_sha256"]
+          print("Verified embedded offline evaluation in the released image.")
+          PY
+            docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+              --memory=256m --cpus=1 --pids-limit=128 "$image" worker --help 2>&1 | grep -F 'questlock worker serve'
+          fi
       - name: Export only the image that passed its native smoke test
         run: |
           mkdir tested-image

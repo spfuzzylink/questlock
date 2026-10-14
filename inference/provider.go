@@ -133,6 +133,9 @@ func isLoopbackHost(host string) bool {
 func (p *HTTPProvider) Identity() string { return p.provider + ":" + p.baseURL }
 
 func (p *HTTPProvider) validate(req Request, generating bool) error {
+	if req.Stream {
+		return errors.New("stream measurements are supported only by the local Ollama adapter")
+	}
 	if req.Provider != "" {
 		provider, err := canonicalProvider(req.Provider)
 		if err != nil || provider != p.provider {

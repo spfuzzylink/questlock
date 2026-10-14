@@ -66,7 +66,7 @@ func BuildPlan(s Spec) (Plan, error) {
 	if provider == "anthropic" {
 		provider = "claude"
 	}
-	p.Request = Request{Provider: provider, Model: s.Model, ReasoningEffort: s.ReasoningEffort, Prefix: prefix, Input: input, MaxOutputTokens: s.MaxOutputTokens, CacheMode: mode}
+	p.Request = Request{Stream: s.Stream, Provider: provider, Model: s.Model, ReasoningEffort: s.ReasoningEffort, Prefix: prefix, Input: input, MaxOutputTokens: s.MaxOutputTokens, CacheMode: mode}
 	if provider == "ollama" {
 		p.Request.ContextWindow = s.MaxInputTokens + s.MaxOutputTokens + 512
 	}
@@ -87,6 +87,9 @@ func renderChunk(c ContextItem) string {
 }
 
 func validateSpec(s Spec) error {
+	if s.Stream && s.Provider != "ollama" {
+		return errors.New("stream measurements are supported only by the local Ollama adapter")
+	}
 	for _, v := range []string{s.Task, s.Revision, s.Model} {
 		if !validID(v, 128) {
 			return errors.New("task, revision, and model must be nonempty identifiers of at most 128 bytes")

@@ -17,11 +17,19 @@ The final source-provenance section also preserves legal comment blocks from sel
 | Module | Version | Production targets |
 | --- | --- | --- |
 | `github.com/dustin/go-humanize` | `v1.0.1` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
+| `github.com/google/jsonschema-go` | `v0.4.3` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
 | `github.com/google/uuid` | `v1.6.0` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
 | `github.com/mattn/go-isatty` | `v0.0.24` | darwin/amd64, darwin/arm64 |
+| `github.com/modelcontextprotocol/go-sdk` | `v1.8.0` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
 | `github.com/ncruces/go-strftime` | `v1.0.0` | darwin/amd64, darwin/arm64 |
 | `github.com/remyoudompheng/bigfft` | `v0.0.0-20230129092748-24d4a6f8daec` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
+| `github.com/segmentio/asm` | `v1.1.3` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
+| `github.com/segmentio/encoding` | `v0.5.4` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
+| `github.com/yosida95/uritemplate/v3` | `v3.0.2` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
+| `golang.org/x/oauth2` | `v0.35.0` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
+| `golang.org/x/sync` | `v0.23.0` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
 | `golang.org/x/sys` | `v0.48.0` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
+| `golang.org/x/time` | `v0.15.0` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
 | `modernc.org/libc` | `v1.77.1` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
 | `modernc.org/mathutil` | `v1.7.1` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
 | `modernc.org/memory` | `v1.12.1` | darwin/amd64, darwin/arm64, linux/amd64, linux/arm64 |
@@ -352,6 +360,34 @@ SOFTWARE.
 <http://www.opensource.org/licenses/mit-license.php>
 ```
 
+## `github.com/google/jsonschema-go@v0.4.3`
+
+### `LICENSE`
+
+```text
+MIT License
+
+Copyright (c) 2025 JSON Schema Go Project Authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ## `github.com/google/uuid@v1.6.0`
 
 ### `LICENSE`
@@ -400,6 +436,290 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
+## `github.com/modelcontextprotocol/go-sdk@v1.8.0`
+
+### `LICENSE`
+
+```text
+The MCP project is undergoing a licensing transition from the MIT License to the Apache License, Version 2.0 ("Apache-2.0"). All new code and specification contributions to the project are licensed under Apache-2.0. Documentation contributions (excluding specifications) are licensed under CC-BY-4.0.
+
+Contributions for which relicensing consent has been obtained are licensed under Apache-2.0. Contributions made by authors who originally licensed their work under the MIT License and who have not yet granted explicit permission to relicense remain licensed under the MIT License.
+
+No rights beyond those granted by the applicable original license are conveyed for such contributions.
+
+---
+
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright
+      owner or by an individual or Legal Entity authorized to submit on behalf
+      of the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+---
+
+MIT License
+
+Copyright (c) 2024-2025 Model Context Protocol a Series of LF Projects, LLC.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Creative Commons Attribution 4.0 International (CC-BY-4.0)
+
+Documentation in this project (excluding specifications) is licensed under
+CC-BY-4.0. See https://creativecommons.org/licenses/by/4.0/legalcode for
+the full license text.
+```
+
+### `copyright_test.go`
+
+```text
+// Copyright 2025 The Go MCP SDK Authors. All rights reserved.
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file.
+
+package gosdk
+
+import (
+	"fmt"
+	"go/parser"
+	"go/token"
+	"io/fs"
+	"path/filepath"
+	"regexp"
+	"strings"
+	"testing"
+)
+
+func TestCopyrightHeaders(t *testing.T) {
+	var re = regexp.MustCompile(`Copyright \d{4} The Go MCP SDK Authors. All rights reserved.
+Use of this source code is governed by (the license\n|an MIT-style\nlicense )that can be found in the LICENSE file.`)
+
+	err := filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Skip directories starting with "." or "_", and testdata directories.
+		if d.IsDir() && d.Name() != "." &&
+			(strings.HasPrefix(d.Name(), ".") ||
+				strings.HasPrefix(d.Name(), "_") ||
+				filepath.Base(d.Name()) == "testdata") {
+
+			return filepath.SkipDir
+		}
+
+		// Skip non-go files.
+		if !strings.HasSuffix(path, ".go") {
+			return nil
+		}
+
+		// Check the copyright header.
+		f, err := parser.ParseFile(token.NewFileSet(), path, nil, parser.ParseComments|parser.PackageClauseOnly)
+		if err != nil {
+			return fmt.Errorf("parsing %s: %v", path, err)
+		}
+		if len(f.Comments) == 0 {
+			t.Errorf("File %s must start with a copyright header matching %s", path, re)
+		} else if !re.MatchString(f.Comments[0].Text()) {
+			t.Errorf("Header comment for %s does not match expected copyright header.\ngot:\n%s\nwant matching:%s", path, f.Comments[0].Text(), re)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
 ```
 
 ## `github.com/ncruces/go-strftime@v1.0.0`
@@ -464,7 +784,251 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
+## `github.com/segmentio/asm@v1.1.3`
+
+### `LICENSE`
+
+```text
+MIT License
+
+Copyright (c) 2021 Segment
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+## `github.com/segmentio/encoding@v0.5.4`
+
+### `LICENSE`
+
+```text
+MIT License
+
+Copyright (c) 2019 Segment.io, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+## `github.com/yosida95/uritemplate/v3@v3.0.2`
+
+### `LICENSE`
+
+```text
+Copyright (C) 2016, Kohei YOSHIDA <https://yosida95.com/>. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the copyright holder nor the names of its
+      contributors may be used to endorse or promote products derived from
+      this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```
+
+## `golang.org/x/oauth2@v0.35.0`
+
+### `LICENSE`
+
+```text
+Copyright 2009 The Go Authors.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google LLC nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```
+
+## `golang.org/x/sync@v0.23.0`
+
+### `LICENSE`
+
+```text
+Copyright 2009 The Go Authors.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google LLC nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```
+
+### `PATENTS`
+
+```text
+Additional IP Rights Grant (Patents)
+
+"This implementation" means the copyrightable works distributed by
+Google as part of the Go project.
+
+Google hereby grants to You a perpetual, worldwide, non-exclusive,
+no-charge, royalty-free, irrevocable (except as stated in this section)
+patent license to make, have made, use, offer to sell, sell, import,
+transfer and otherwise run, modify and propagate the contents of this
+implementation of Go, where such license applies only to those patent
+claims, both currently owned or controlled by Google and acquired in
+the future, licensable by Google that are necessarily infringed by this
+implementation of Go.  This grant does not include claims that would be
+infringed only as a consequence of further modification of this
+implementation.  If you or your agent or exclusive licensee institute or
+order or agree to the institution of patent litigation against any
+entity (including a cross-claim or counterclaim in a lawsuit) alleging
+that this implementation of Go or any code incorporated within this
+implementation of Go constitutes direct or contributory patent
+infringement, or inducement of patent infringement, then any patent
+rights granted to you under this License for this implementation of Go
+shall terminate as of the date such litigation is filed.
+```
+
 ## `golang.org/x/sys@v0.48.0`
+
+### `LICENSE`
+
+```text
+Copyright 2009 The Go Authors.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google LLC nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```
+
+### `PATENTS`
+
+```text
+Additional IP Rights Grant (Patents)
+
+"This implementation" means the copyrightable works distributed by
+Google as part of the Go project.
+
+Google hereby grants to You a perpetual, worldwide, non-exclusive,
+no-charge, royalty-free, irrevocable (except as stated in this section)
+patent license to make, have made, use, offer to sell, sell, import,
+transfer and otherwise run, modify and propagate the contents of this
+implementation of Go, where such license applies only to those patent
+claims, both currently owned or controlled by Google and acquired in
+the future, licensable by Google that are necessarily infringed by this
+implementation of Go.  This grant does not include claims that would be
+infringed only as a consequence of further modification of this
+implementation.  If you or your agent or exclusive licensee institute or
+order or agree to the institution of patent litigation against any
+entity (including a cross-claim or counterclaim in a lawsuit) alleging
+that this implementation of Go or any code incorporated within this
+implementation of Go constitutes direct or contributory patent
+infringement, or inducement of patent infringement, then any patent
+rights granted to you under this License for this implementation of Go
+shall terminate as of the date such litigation is filed.
+```
+
+## `golang.org/x/time@v0.15.0`
 
 ### `LICENSE`
 
@@ -1066,7 +1630,7 @@ uncontaminated with licensed code from other projects.
 
 ### Go toolchain and standard library
 
-Source files: `src/bufio/bufio.go`, `src/bytes/buffer.go`, `src/bytes/bytes.go`, `src/compress/flate/deflate.go`, `src/compress/flate/huffman_bit_writer.go`, `src/compress/flate/huffman_code.go`, `src/compress/flate/inflate.go`, `src/compress/flate/token.go`, `src/compress/gzip/gunzip.go`, `src/container/list/list.go`, `src/crypto/aes/aes.go`, `src/crypto/cipher/cbc.go`, `src/crypto/cipher/ctr.go`, `src/crypto/hmac/hmac.go`, `src/crypto/internal/fips140/aes/aes.go`, `src/crypto/internal/fips140/aes/aes_generic.go`, `src/crypto/internal/fips140/aes/const.go`, `src/crypto/internal/fips140/hmac/hmac.go`, `src/crypto/internal/fips140/rsa/pkcs1v15.go`, `src/crypto/internal/fips140/sha256/sha256.go`, `src/crypto/internal/fips140/sha256/sha256block.go`, `src/crypto/internal/fips140/sha512/sha512.go`, `src/crypto/internal/fips140/sha512/sha512block.go`, `src/crypto/internal/fips140/subtle/constant_time.go`, `src/crypto/md5/md5.go`, `src/crypto/rc4/rc4.go`, `src/crypto/rsa/pkcs1v15.go`, `src/crypto/rsa/rsa.go`, `src/crypto/sha1/sha1.go`, `src/crypto/sha1/sha1block.go`, `src/crypto/sha256/sha256.go`, `src/crypto/sha512/sha512.go`, `src/crypto/subtle/constant_time.go`, `src/crypto/tls/alert.go`, `src/crypto/tls/common.go`, `src/crypto/tls/handshake_client.go`, `src/crypto/tls/handshake_messages.go`, `src/crypto/tls/handshake_server.go`, `src/crypto/tls/prf.go`, `src/crypto/tls/tls.go`, `src/crypto/x509/x509.go`, `src/encoding/asn1/asn1.go`, `src/encoding/asn1/common.go`, `src/encoding/asn1/marshal.go`, `src/encoding/base64/base64.go`, `src/encoding/binary/binary.go`, `src/encoding/hex/hex.go`, `src/encoding/pem/pem.go`, `src/flag/flag.go`, `src/fmt/doc.go`, `src/fmt/format.go`, `src/fmt/print.go`, `src/hash/crc32/crc32.go`, `src/hash/hash.go`, `src/internal/poll/fd_posix.go`, `src/internal/poll/sockopt.go`, `src/internal/reflectlite/type.go`, `src/internal/reflectlite/value.go`, `src/internal/runtime/atomic/atomic_amd64.go`, `src/internal/strconv/atob.go`, `src/internal/strconv/atof.go`, `src/internal/strconv/atoi.go`, `src/internal/strconv/decimal.go`, `src/internal/strconv/ftoa.go`, `src/internal/strconv/itoa.go`, `src/io/io.go`, `src/io/ioutil/ioutil.go`, `src/io/pipe.go`, `src/log/log.go`, `src/math/abs.go`, `src/math/asin.go`, `src/math/atan.go`, `src/math/atan2.go`, `src/math/big/arith.go`, `src/math/big/doc.go`, `src/math/big/int.go`, `src/math/big/nat.go`, `src/math/big/natdiv.go`, `src/math/big/natmul.go`, `src/math/bits.go`, `src/math/cbrt.go`, `src/math/const.go`, `src/math/exp.go`, `src/math/floor.go`, `src/math/frexp.go`, `src/math/ldexp.go`, `src/math/log.go`, `src/math/log10.go`, `src/math/modf.go`, `src/math/pow.go`, `src/math/pow10.go`, `src/math/rand/exp.go`, `src/math/rand/normal.go`, `src/math/rand/rand.go`, `src/math/rand/rng.go`, `src/math/rand/v2/exp.go`, `src/math/rand/v2/normal.go`, `src/math/rand/v2/rand.go`, `src/math/rand/v2/zipf.go`, `src/math/rand/zipf.go`, `src/math/sinh.go`, `src/math/sqrt.go`, `src/math/tanh.go`, `src/math/unsafe.go`, `src/net/dnsclient.go`, `src/net/dnsclient_unix.go`, `src/net/dnsconfig_unix.go`, `src/net/fd_unix.go`, `src/net/hosts.go`, `src/net/http/client.go`, `src/net/http/cookie.go`, `src/net/http/fs.go`, `src/net/http/internal/chunked.go`, `src/net/http/request.go`, `src/net/http/response.go`, `src/net/http/servemux121.go`, `src/net/http/server.go`, `src/net/http/status.go`, `src/net/http/transfer.go`, `src/net/ip.go`, `src/net/ipsock.go`, `src/net/ipsock_posix.go`, `src/net/net.go`, `src/net/parse.go`, `src/net/port_unix.go`, `src/net/sock_bsd.go`, `src/net/sock_linux.go`, `src/net/sock_posix.go`, `src/net/sockopt_posix.go`, `src/net/tcpsock.go`, `src/net/tcpsock_posix.go`, `src/net/tcpsockopt_darwin.go`, `src/net/tcpsockopt_posix.go`, `src/net/tcpsockopt_unix.go`, `src/net/udpsock.go`, `src/net/udpsock_posix.go`, `src/net/unixsock.go`, `src/net/unixsock_posix.go`, `src/net/url/url.go`, `src/os/dir_darwin.go`, `src/os/dir_unix.go`, `src/os/error.go`, `src/os/exec.go`, `src/os/exec/exec.go`, `src/os/exec_posix.go`, `src/os/exec_unix.go`, `src/os/file.go`, `src/os/file_posix.go`, `src/os/file_unix.go`, `src/os/getwd.go`, `src/os/path.go`, `src/os/pipe_unix.go`, `src/os/proc.go`, `src/os/stat_darwin.go`, `src/os/stat_linux.go`, `src/os/sys_bsd.go`, `src/os/sys_linux.go`, `src/os/types.go`, `src/os/types_unix.go`, `src/path/filepath/path.go`, `src/path/path.go`, `src/reflect/deepequal.go`, `src/reflect/type.go`, `src/reflect/value.go`, `src/regexp/regexp.go`, `src/runtime/asm_amd64.s`, `src/runtime/atomic_pointer.go`, `src/runtime/cgocall.go`, `src/runtime/debug.go`, `src/runtime/extern.go`, `src/runtime/mbitmap.go`, `src/runtime/mcache.go`, `src/runtime/mcentral.go`, `src/runtime/mfinal.go`, `src/runtime/mfixalloc.go`, `src/runtime/mgc.go`, `src/runtime/mgcmark.go`, `src/runtime/mgcsweep.go`, `src/runtime/mgcwork.go`, `src/runtime/mheap.go`, `src/runtime/mprof.go`, `src/runtime/msize.go`, `src/runtime/mstats.go`, `src/runtime/os_darwin.go`, `src/runtime/os_linux.go`, `src/runtime/os_linux_generic.go`, `src/runtime/print.go`, `src/runtime/rt0_darwin_amd64.s`, `src/runtime/rt0_linux_amd64.s`, `src/runtime/runtime.go`, `src/runtime/runtime1.go`, `src/runtime/runtime2.go`, `src/runtime/select.go`, `src/runtime/sema.go`, `src/runtime/signal_darwin.go`, `src/runtime/sigqueue.go`, `src/runtime/sigtab_linux_generic.go`, `src/runtime/slice.go`, `src/runtime/sys_darwin_amd64.s`, `src/runtime/sys_linux_amd64.s`, `src/runtime/time.go`, `src/runtime/traceback.go`, `src/runtime/type.go`, `src/runtime/write_err.go`, `src/sort/sort.go`, `src/strconv/bytealg.go`, `src/strconv/quote.go`, `src/strings/reader.go`, `src/strings/strings.go`, `src/sync/mutex.go`, `src/sync/once.go`, `src/sync/rwmutex.go`, `src/syscall/asm_darwin_amd64.s`, `src/syscall/asm_linux_amd64.s`, `src/syscall/dirent.go`, `src/syscall/exec_unix.go`, `src/syscall/syscall.go`, `src/syscall/syscall_bsd.go`, `src/syscall/syscall_darwin_amd64.go`, `src/syscall/syscall_linux.go`, `src/syscall/syscall_linux_amd64.go`, `src/syscall/syscall_unix.go`, `src/testing/benchmark.go`, `src/testing/example.go`, `src/testing/testing.go`, `src/time/sleep.go`, `src/time/tick.go`, `src/time/time.go`, `src/time/zoneinfo_read.go`, `src/time/zoneinfo_unix.go`, `src/unicode/casetables.go`, `src/unicode/digit.go`, `src/unicode/letter.go`, `src/unicode/utf8/utf8.go`, `src/unsafe/unsafe.go`, `src/vendor/golang.org/x/net/dns/dnsmessage/message.go`.
+Source files: `src/bufio/bufio.go`, `src/bytes/buffer.go`, `src/bytes/bytes.go`, `src/compress/flate/deflate.go`, `src/compress/flate/huffman_bit_writer.go`, `src/compress/flate/huffman_code.go`, `src/compress/flate/inflate.go`, `src/compress/flate/token.go`, `src/compress/gzip/gunzip.go`, `src/container/list/list.go`, `src/crypto/aes/aes.go`, `src/crypto/cipher/cbc.go`, `src/crypto/cipher/ctr.go`, `src/crypto/hmac/hmac.go`, `src/crypto/internal/fips140/aes/aes.go`, `src/crypto/internal/fips140/aes/aes_generic.go`, `src/crypto/internal/fips140/aes/const.go`, `src/crypto/internal/fips140/hmac/hmac.go`, `src/crypto/internal/fips140/rsa/pkcs1v15.go`, `src/crypto/internal/fips140/sha256/sha256.go`, `src/crypto/internal/fips140/sha256/sha256block.go`, `src/crypto/internal/fips140/sha512/sha512.go`, `src/crypto/internal/fips140/sha512/sha512block.go`, `src/crypto/internal/fips140/subtle/constant_time.go`, `src/crypto/md5/md5.go`, `src/crypto/rc4/rc4.go`, `src/crypto/rsa/pkcs1v15.go`, `src/crypto/rsa/rsa.go`, `src/crypto/sha1/sha1.go`, `src/crypto/sha1/sha1block.go`, `src/crypto/sha256/sha256.go`, `src/crypto/sha512/sha512.go`, `src/crypto/subtle/constant_time.go`, `src/crypto/tls/alert.go`, `src/crypto/tls/common.go`, `src/crypto/tls/handshake_client.go`, `src/crypto/tls/handshake_messages.go`, `src/crypto/tls/handshake_server.go`, `src/crypto/tls/prf.go`, `src/crypto/tls/tls.go`, `src/crypto/x509/x509.go`, `src/encoding/asn1/asn1.go`, `src/encoding/asn1/common.go`, `src/encoding/asn1/marshal.go`, `src/encoding/base64/base64.go`, `src/encoding/binary/binary.go`, `src/encoding/gob/decode.go`, `src/encoding/gob/decoder.go`, `src/encoding/gob/doc.go`, `src/encoding/gob/encode.go`, `src/encoding/gob/encoder.go`, `src/encoding/gob/error.go`, `src/encoding/gob/type.go`, `src/encoding/hex/hex.go`, `src/encoding/pem/pem.go`, `src/flag/flag.go`, `src/fmt/doc.go`, `src/fmt/format.go`, `src/fmt/print.go`, `src/hash/crc32/crc32.go`, `src/hash/hash.go`, `src/internal/poll/fd_posix.go`, `src/internal/poll/sockopt.go`, `src/internal/reflectlite/type.go`, `src/internal/reflectlite/value.go`, `src/internal/runtime/atomic/atomic_amd64.go`, `src/internal/strconv/atob.go`, `src/internal/strconv/atof.go`, `src/internal/strconv/atoi.go`, `src/internal/strconv/decimal.go`, `src/internal/strconv/ftoa.go`, `src/internal/strconv/itoa.go`, `src/io/io.go`, `src/io/ioutil/ioutil.go`, `src/io/pipe.go`, `src/log/log.go`, `src/math/abs.go`, `src/math/asin.go`, `src/math/atan.go`, `src/math/atan2.go`, `src/math/big/arith.go`, `src/math/big/doc.go`, `src/math/big/int.go`, `src/math/big/nat.go`, `src/math/big/natdiv.go`, `src/math/big/natmul.go`, `src/math/bits.go`, `src/math/cbrt.go`, `src/math/const.go`, `src/math/exp.go`, `src/math/floor.go`, `src/math/frexp.go`, `src/math/ldexp.go`, `src/math/log.go`, `src/math/log10.go`, `src/math/modf.go`, `src/math/pow.go`, `src/math/pow10.go`, `src/math/rand/exp.go`, `src/math/rand/normal.go`, `src/math/rand/rand.go`, `src/math/rand/rng.go`, `src/math/rand/v2/exp.go`, `src/math/rand/v2/normal.go`, `src/math/rand/v2/rand.go`, `src/math/rand/v2/zipf.go`, `src/math/rand/zipf.go`, `src/math/sinh.go`, `src/math/sqrt.go`, `src/math/tanh.go`, `src/math/unsafe.go`, `src/net/dnsclient.go`, `src/net/dnsclient_unix.go`, `src/net/dnsconfig_unix.go`, `src/net/fd_unix.go`, `src/net/hosts.go`, `src/net/http/client.go`, `src/net/http/cookie.go`, `src/net/http/fs.go`, `src/net/http/internal/chunked.go`, `src/net/http/request.go`, `src/net/http/response.go`, `src/net/http/servemux121.go`, `src/net/http/server.go`, `src/net/http/status.go`, `src/net/http/transfer.go`, `src/net/ip.go`, `src/net/ipsock.go`, `src/net/ipsock_posix.go`, `src/net/net.go`, `src/net/parse.go`, `src/net/port_unix.go`, `src/net/sock_bsd.go`, `src/net/sock_linux.go`, `src/net/sock_posix.go`, `src/net/sockopt_posix.go`, `src/net/tcpsock.go`, `src/net/tcpsock_posix.go`, `src/net/tcpsockopt_darwin.go`, `src/net/tcpsockopt_posix.go`, `src/net/tcpsockopt_unix.go`, `src/net/udpsock.go`, `src/net/udpsock_posix.go`, `src/net/unixsock.go`, `src/net/unixsock_posix.go`, `src/net/url/url.go`, `src/os/dir_darwin.go`, `src/os/dir_unix.go`, `src/os/error.go`, `src/os/exec.go`, `src/os/exec/exec.go`, `src/os/exec_posix.go`, `src/os/exec_unix.go`, `src/os/file.go`, `src/os/file_posix.go`, `src/os/file_unix.go`, `src/os/getwd.go`, `src/os/path.go`, `src/os/pipe_unix.go`, `src/os/proc.go`, `src/os/stat_darwin.go`, `src/os/stat_linux.go`, `src/os/sys_bsd.go`, `src/os/sys_linux.go`, `src/os/types.go`, `src/os/types_unix.go`, `src/path/filepath/path.go`, `src/path/path.go`, `src/reflect/deepequal.go`, `src/reflect/type.go`, `src/reflect/value.go`, `src/regexp/regexp.go`, `src/runtime/asm_amd64.s`, `src/runtime/atomic_pointer.go`, `src/runtime/cgocall.go`, `src/runtime/debug.go`, `src/runtime/extern.go`, `src/runtime/mbitmap.go`, `src/runtime/mcache.go`, `src/runtime/mcentral.go`, `src/runtime/mfinal.go`, `src/runtime/mfixalloc.go`, `src/runtime/mgc.go`, `src/runtime/mgcmark.go`, `src/runtime/mgcsweep.go`, `src/runtime/mgcwork.go`, `src/runtime/mheap.go`, `src/runtime/mprof.go`, `src/runtime/msize.go`, `src/runtime/mstats.go`, `src/runtime/os_darwin.go`, `src/runtime/os_linux.go`, `src/runtime/os_linux_generic.go`, `src/runtime/print.go`, `src/runtime/rt0_darwin_amd64.s`, `src/runtime/rt0_linux_amd64.s`, `src/runtime/runtime.go`, `src/runtime/runtime1.go`, `src/runtime/runtime2.go`, `src/runtime/select.go`, `src/runtime/sema.go`, `src/runtime/signal_darwin.go`, `src/runtime/sigqueue.go`, `src/runtime/sigtab_linux_generic.go`, `src/runtime/slice.go`, `src/runtime/sys_darwin_amd64.s`, `src/runtime/sys_linux_amd64.s`, `src/runtime/time.go`, `src/runtime/traceback.go`, `src/runtime/type.go`, `src/runtime/write_err.go`, `src/sort/sort.go`, `src/strconv/bytealg.go`, `src/strconv/quote.go`, `src/strings/reader.go`, `src/strings/strings.go`, `src/sync/mutex.go`, `src/sync/once.go`, `src/sync/rwmutex.go`, `src/syscall/asm_darwin_amd64.s`, `src/syscall/asm_linux_amd64.s`, `src/syscall/dirent.go`, `src/syscall/exec_unix.go`, `src/syscall/syscall.go`, `src/syscall/syscall_bsd.go`, `src/syscall/syscall_darwin_amd64.go`, `src/syscall/syscall_linux.go`, `src/syscall/syscall_linux_amd64.go`, `src/syscall/syscall_unix.go`, `src/testing/benchmark.go`, `src/testing/example.go`, `src/testing/testing.go`, `src/time/sleep.go`, `src/time/tick.go`, `src/time/time.go`, `src/time/zoneinfo_read.go`, `src/time/zoneinfo_unix.go`, `src/unicode/casetables.go`, `src/unicode/digit.go`, `src/unicode/letter.go`, `src/unicode/utf8/utf8.go`, `src/unsafe/unsafe.go`, `src/vendor/golang.org/x/net/dns/dnsmessage/message.go`.
 
 ```text
 // Copyright 2009 The Go Authors. All rights reserved.
@@ -1098,7 +1662,7 @@ Source files: `src/bytes/reader.go`, `src/crypto/internal/fips140/aes/aes_asm.go
 // license that can be found in the LICENSE file.
 ```
 
-Source files: `src/cmp/cmp.go`, `src/crypto/internal/fips140/aes/ctr.go`, `src/crypto/internal/fips140/bigmod/nat_asm.go`, `src/crypto/internal/fips140/mlkem/mlkem768.go`, `src/crypto/mlkem/mlkem.go`, `src/crypto/tls/quic.go`, `src/crypto/x509/oid.go`, `src/encoding/binary/native_endian_little.go`, `src/encoding/json/internal/internal.go`, `src/encoding/json/internal/jsonflags/flags.go`, `src/encoding/json/internal/jsonopts/options.go`, `src/encoding/json/internal/jsonwire/decode.go`, `src/encoding/json/internal/jsonwire/encode.go`, `src/encoding/json/internal/jsonwire/wire.go`, `src/encoding/json/jsontext/doc.go`, `src/encoding/json/jsontext/export.go`, `src/encoding/json/jsontext/options.go`, `src/encoding/json/jsontext/quote.go`, `src/encoding/json/v2/options.go`, `src/encoding/json/v2_options.go`, `src/hash/crc32/gen.go`, `src/internal/abi/compiletype.go`, `src/internal/abi/funcpc.go`, `src/internal/abi/iface.go`, `src/internal/abi/map.go`, `src/internal/abi/stack.go`, `src/internal/abi/stub.s`, `src/internal/abi/switch.go`, `src/internal/abi/symtab.go`, `src/internal/abi/type.go`, `src/internal/bisect/bisect.go`, `src/internal/bytealg/lastindexbyte_generic.go`, `src/internal/chacha8rand/chacha8.go`, `src/internal/chacha8rand/chacha8_amd64.s`, `src/internal/chacha8rand/chacha8_arm64.s`, `src/internal/chacha8rand/chacha8_generic.go`, `src/internal/filepathlite/path_nonwindows.go`, `src/internal/godebugs/table.go`, `src/internal/poll/fd_unixjs.go`, `src/internal/syscall/unix/fcntl_unix.go`, `src/internal/syscall/unix/pidfd_linux.go`, `src/internal/syscall/unix/siginfo_linux.go`, `src/internal/syscall/unix/siginfo_linux_other.go`, `src/internal/sysinfo/cpuinfo_bsd.go`, `src/internal/sysinfo/cpuinfo_linux.go`, `src/internal/trace/tracev2/events.go`, `src/internal/trace/tracev2/spec.go`, `src/io/fs/format.go`, `src/io/fs/readlink.go`, `src/iter/iter.go`, `src/log/internal/internal.go`, `src/math/rand/v2/chacha8.go`, `src/math/rand/v2/pcg.go`, `src/mime/multipart/readmimeheader.go`, `src/net/http/internal/http2/writesched_roundrobin.go`, `src/net/http/mapping.go`, `src/net/http/pattern.go`, `src/net/http/routing_index.go`, `src/net/http/routing_tree.go`, `src/net/mptcpsock_linux.go`, `src/net/mptcpsock_stub.go`, `src/net/netcgo_off.go`, `src/net/netgo_off.go`, `src/net/rlimit_unix.go`, `src/net/tcpsock_unix.go`, `src/os/file_open_unix.go`, `src/os/pidfd_linux.go`, `src/os/pidfd_other.go`, `src/runtime/coro.go`, `src/runtime/fds_unix.go`, `src/runtime/minmax.go`, `src/runtime/os_unix.go`, `src/runtime/pinner.go`, `src/runtime/rand.go`, `src/runtime/security_issetugid.go`, `src/runtime/security_linux.go`, `src/runtime/security_unix.go`, `src/runtime/symtabinl.go`, `src/runtime/tagptr.go`, `src/runtime/test_amd64.go`, `src/runtime/test_amd64.s`, `src/runtime/test_stubs.go`, `src/runtime/trace.go`, `src/runtime/tracebuf.go`, `src/runtime/tracecpu.go`, `src/runtime/traceevent.go`, `src/runtime/tracemap.go`, `src/runtime/traceregion.go`, `src/runtime/traceruntime.go`, `src/runtime/tracestack.go`, `src/runtime/tracestatus.go`, `src/runtime/tracestring.go`, `src/runtime/tracetime.go`, `src/runtime/tracetype.go`, `src/slices/sort.go`, `src/sync/atomic/doc_64.go`, `src/vendor/golang.org/x/sys/cpu/endian_little.go`, `src/vendor/golang.org/x/sys/cpu/runtime_auxv.go`, `src/vendor/golang.org/x/sys/cpu/runtime_auxv_go121.go`.
+Source files: `src/cmp/cmp.go`, `src/crypto/internal/fips140/aes/ctr.go`, `src/crypto/internal/fips140/bigmod/nat_asm.go`, `src/crypto/internal/fips140/mlkem/mlkem768.go`, `src/crypto/mlkem/mlkem.go`, `src/crypto/tls/quic.go`, `src/crypto/x509/oid.go`, `src/encoding/binary/native_endian_little.go`, `src/encoding/json/internal/internal.go`, `src/encoding/json/internal/jsonflags/flags.go`, `src/encoding/json/internal/jsonopts/options.go`, `src/encoding/json/internal/jsonwire/decode.go`, `src/encoding/json/internal/jsonwire/encode.go`, `src/encoding/json/internal/jsonwire/wire.go`, `src/encoding/json/jsontext/doc.go`, `src/encoding/json/jsontext/export.go`, `src/encoding/json/jsontext/options.go`, `src/encoding/json/jsontext/quote.go`, `src/encoding/json/v2/options.go`, `src/encoding/json/v2_options.go`, `src/hash/crc32/gen.go`, `src/internal/abi/compiletype.go`, `src/internal/abi/funcpc.go`, `src/internal/abi/iface.go`, `src/internal/abi/map.go`, `src/internal/abi/stack.go`, `src/internal/abi/stub.s`, `src/internal/abi/switch.go`, `src/internal/abi/symtab.go`, `src/internal/abi/type.go`, `src/internal/bisect/bisect.go`, `src/internal/bytealg/lastindexbyte_generic.go`, `src/internal/chacha8rand/chacha8.go`, `src/internal/chacha8rand/chacha8_amd64.s`, `src/internal/chacha8rand/chacha8_arm64.s`, `src/internal/chacha8rand/chacha8_generic.go`, `src/internal/filepathlite/path_nonwindows.go`, `src/internal/godebugs/table.go`, `src/internal/poll/fd_unixjs.go`, `src/internal/syscall/unix/fcntl_unix.go`, `src/internal/syscall/unix/pidfd_linux.go`, `src/internal/syscall/unix/siginfo_linux.go`, `src/internal/syscall/unix/siginfo_linux_other.go`, `src/internal/sysinfo/cpuinfo_bsd.go`, `src/internal/sysinfo/cpuinfo_linux.go`, `src/internal/trace/tracev2/events.go`, `src/internal/trace/tracev2/spec.go`, `src/io/fs/format.go`, `src/io/fs/readlink.go`, `src/iter/iter.go`, `src/log/internal/internal.go`, `src/log/slog/internal/ignorepc.go`, `src/math/rand/v2/chacha8.go`, `src/math/rand/v2/pcg.go`, `src/mime/multipart/readmimeheader.go`, `src/net/http/internal/http2/writesched_roundrobin.go`, `src/net/http/mapping.go`, `src/net/http/pattern.go`, `src/net/http/routing_index.go`, `src/net/http/routing_tree.go`, `src/net/mptcpsock_linux.go`, `src/net/mptcpsock_stub.go`, `src/net/netcgo_off.go`, `src/net/netgo_off.go`, `src/net/rlimit_unix.go`, `src/net/tcpsock_unix.go`, `src/os/file_open_unix.go`, `src/os/pidfd_linux.go`, `src/os/pidfd_other.go`, `src/runtime/coro.go`, `src/runtime/fds_unix.go`, `src/runtime/minmax.go`, `src/runtime/os_unix.go`, `src/runtime/pinner.go`, `src/runtime/rand.go`, `src/runtime/security_issetugid.go`, `src/runtime/security_linux.go`, `src/runtime/security_unix.go`, `src/runtime/symtabinl.go`, `src/runtime/tagptr.go`, `src/runtime/test_amd64.go`, `src/runtime/test_amd64.s`, `src/runtime/test_stubs.go`, `src/runtime/trace.go`, `src/runtime/tracebuf.go`, `src/runtime/tracecpu.go`, `src/runtime/traceevent.go`, `src/runtime/tracemap.go`, `src/runtime/traceregion.go`, `src/runtime/traceruntime.go`, `src/runtime/tracestack.go`, `src/runtime/tracestatus.go`, `src/runtime/tracestring.go`, `src/runtime/tracetime.go`, `src/runtime/tracetype.go`, `src/slices/sort.go`, `src/sync/atomic/doc_64.go`, `src/vendor/golang.org/x/sys/cpu/endian_little.go`, `src/vendor/golang.org/x/sys/cpu/runtime_auxv.go`, `src/vendor/golang.org/x/sys/cpu/runtime_auxv_go121.go`.
 
 ```text
 // Copyright 2023 The Go Authors. All rights reserved.
@@ -1130,7 +1694,7 @@ Source files: `src/compress/gzip/gzip.go`, `src/crypto/cipher/cfb.go`, `src/cryp
 // license that can be found in the LICENSE file.
 ```
 
-Source files: `src/context/context.go`, `src/crypto/internal/fips140/sha3/hashes.go`, `src/crypto/internal/fips140/sha3/keccakf.go`, `src/crypto/internal/fips140/sha3/sha3.go`, `src/crypto/internal/fips140/sha3/shake.go`, `src/crypto/internal/sysrand/rand_getrandom.go`, `src/internal/goarch/goarch_amd64.go`, `src/internal/goarch/goarch_arm64.go`, `src/internal/runtime/atomic/atomic_arm64.s`, `src/internal/runtime/maps/runtime_hash64.go`, `src/internal/runtime/sys/consts.go`, `src/internal/runtime/sys/nih.go`, `src/internal/syscall/unix/getrandom_linux.go`, `src/internal/syscall/unix/sysnum_linux_amd64.go`, `src/internal/syscall/unix/sysnum_linux_generic.go`, `src/math/big/float.go`, `src/net/http/internal/http2/databuffer.go`, `src/net/http/internal/http2/errors.go`, `src/net/http/internal/http2/flow.go`, `src/net/http/internal/http2/frame.go`, `src/net/http/internal/http2/gotrack.go`, `src/net/http/internal/http2/http2.go`, `src/net/http/internal/http2/pipe.go`, `src/net/http/internal/http2/server.go`, `src/net/http/internal/http2/write.go`, `src/net/http/internal/http2/writesched.go`, `src/os/sticky_bsd.go`, `src/os/sticky_notbsd.go`, `src/os/sys_unix.go`, `src/path/filepath/symlink_unix.go`, `src/regexp/onepass.go`, `src/runtime/alg.go`, `src/runtime/asm.s`, `src/runtime/atomic_arm64.s`, `src/runtime/cgo.go`, `src/runtime/chan.go`, `src/runtime/cputicks.go`, `src/runtime/debug/stubs.go`, `src/runtime/go_tls.h`, `src/runtime/heapdump.go`, `src/runtime/iface.go`, `src/runtime/malloc.go`, `src/runtime/map.go`, `src/runtime/memclr_amd64.s`, `src/runtime/memclr_arm64.s`, `src/runtime/memmove_arm64.s`, `src/runtime/os_darwin_arm64.go`, `src/runtime/os_linux_noauxv.go`, `src/runtime/panic.go`, `src/runtime/proc.go`, `src/runtime/race0.go`, `src/runtime/rdebug.go`, `src/runtime/signal_arm64.go`, `src/runtime/string.go`, `src/runtime/stubs.go`, `src/runtime/stubs2.go`, `src/runtime/symtab.go`, `src/runtime/sys_linux_arm64.s`, `src/runtime/tagptr_64bit.go`, `src/sync/atomic/value.go`, `src/syscall/flock_linux.go`, `src/vendor/golang.org/x/net/http2/hpack/encode.go`, `src/vendor/golang.org/x/net/http2/hpack/hpack.go`, `src/vendor/golang.org/x/net/http2/hpack/huffman.go`, `src/vendor/golang.org/x/net/http2/hpack/tables.go`.
+Source files: `src/context/context.go`, `src/crypto/internal/fips140/sha3/hashes.go`, `src/crypto/internal/fips140/sha3/keccakf.go`, `src/crypto/internal/fips140/sha3/sha3.go`, `src/crypto/internal/fips140/sha3/shake.go`, `src/crypto/internal/sysrand/rand_getrandom.go`, `src/encoding/gob/dec_helpers.go`, `src/encoding/gob/enc_helpers.go`, `src/internal/goarch/goarch_amd64.go`, `src/internal/goarch/goarch_arm64.go`, `src/internal/runtime/atomic/atomic_arm64.s`, `src/internal/runtime/maps/runtime_hash64.go`, `src/internal/runtime/sys/consts.go`, `src/internal/runtime/sys/nih.go`, `src/internal/syscall/unix/getrandom_linux.go`, `src/internal/syscall/unix/sysnum_linux_amd64.go`, `src/internal/syscall/unix/sysnum_linux_generic.go`, `src/math/big/float.go`, `src/net/http/internal/http2/databuffer.go`, `src/net/http/internal/http2/errors.go`, `src/net/http/internal/http2/flow.go`, `src/net/http/internal/http2/frame.go`, `src/net/http/internal/http2/gotrack.go`, `src/net/http/internal/http2/http2.go`, `src/net/http/internal/http2/pipe.go`, `src/net/http/internal/http2/server.go`, `src/net/http/internal/http2/write.go`, `src/net/http/internal/http2/writesched.go`, `src/os/sticky_bsd.go`, `src/os/sticky_notbsd.go`, `src/os/sys_unix.go`, `src/path/filepath/symlink_unix.go`, `src/regexp/onepass.go`, `src/runtime/alg.go`, `src/runtime/asm.s`, `src/runtime/atomic_arm64.s`, `src/runtime/cgo.go`, `src/runtime/chan.go`, `src/runtime/cputicks.go`, `src/runtime/debug/stubs.go`, `src/runtime/go_tls.h`, `src/runtime/heapdump.go`, `src/runtime/iface.go`, `src/runtime/malloc.go`, `src/runtime/map.go`, `src/runtime/memclr_amd64.s`, `src/runtime/memclr_arm64.s`, `src/runtime/memmove_arm64.s`, `src/runtime/os_darwin_arm64.go`, `src/runtime/os_linux_noauxv.go`, `src/runtime/panic.go`, `src/runtime/proc.go`, `src/runtime/race0.go`, `src/runtime/rdebug.go`, `src/runtime/signal_arm64.go`, `src/runtime/string.go`, `src/runtime/stubs.go`, `src/runtime/stubs2.go`, `src/runtime/symtab.go`, `src/runtime/sys_linux_arm64.s`, `src/runtime/tagptr_64bit.go`, `src/sync/atomic/value.go`, `src/syscall/flock_linux.go`, `src/vendor/golang.org/x/net/http2/hpack/encode.go`, `src/vendor/golang.org/x/net/http2/hpack/hpack.go`, `src/vendor/golang.org/x/net/http2/hpack/huffman.go`, `src/vendor/golang.org/x/net/http2/hpack/tables.go`.
 
 ```text
 // Copyright 2014 The Go Authors. All rights reserved.
@@ -1146,7 +1710,7 @@ Source files: `src/crypto/cipher/ofb.go`, `src/crypto/crypto.go`, `src/crypto/de
 // license that can be found in the LICENSE file.
 ```
 
-Source files: `src/crypto/ecdh/ecdh.go`, `src/crypto/ecdh/nist.go`, `src/crypto/ecdh/x25519.go`, `src/crypto/ecdsa/ecdsa_legacy.go`, `src/crypto/ecdsa/notboring.go`, `src/crypto/internal/boring/bbig/big.go`, `src/crypto/internal/fips140/nistec/nistec.go`, `src/crypto/internal/fips140/nistec/p224.go`, `src/crypto/internal/fips140/nistec/p224_sqrt.go`, `src/crypto/internal/fips140/nistec/p256_ordinv.go`, `src/crypto/internal/fips140/nistec/p384.go`, `src/crypto/internal/fips140/nistec/p521.go`, `src/crypto/internal/fips140/sha3/sha3_arm64.s`, `src/crypto/internal/fips140/sha512/sha512block_arm64.go`, `src/crypto/internal/fips140/sha512/sha512block_arm64.s`, `src/crypto/internal/fips140/subtle/xor.go`, `src/crypto/rsa/notboring.go`, `src/crypto/subtle/xor.go`, `src/crypto/tls/cache.go`, `src/encoding/json/v2/arshal_any.go`, `src/encoding/json/v2/intern.go`, `src/errors/join.go`, `src/internal/coverage/rtcov/rtcov.go`, `src/internal/goos/unix.go`, `src/internal/runtime/sys/consts_norace.go`, `src/internal/runtime/syscall/linux/asm_linux_amd64.s`, `src/internal/runtime/syscall/linux/asm_linux_arm64.s`, `src/internal/runtime/syscall/linux/defs_linux_amd64.go`, `src/internal/runtime/syscall/linux/defs_linux_arm64.go`, `src/internal/runtime/syscall/linux/syscall_linux.go`, `src/internal/saferio/io.go`, `src/internal/syscall/unix/constants.go`, `src/internal/syscall/unix/kernel_version_linux.go`, `src/internal/syscall/unix/kernel_version_other.go`, `src/internal/syscall/unix/net_darwin.go`, `src/internal/syscall/unix/pty_darwin.go`, `src/internal/syscall/unix/user_darwin.go`, `src/net/cgo_darwin.go`, `src/net/cgo_unix_syscall.go`, `src/net/dnsconfig.go`, `src/net/http/responsecontroller.go`, `src/runtime/arena.go`, `src/runtime/covercounter.go`, `src/runtime/covermeta.go`, `src/runtime/create_file_unix.go`, `src/runtime/mem.go`, `src/runtime/mgclimit.go`, `src/runtime/os_unix_nonlinux.go`, `src/runtime/retry.go`, `src/runtime/stkframe.go`, `src/runtime/unsafe.go`, `src/slices/zsortanyfunc.go`, `src/slices/zsortordered.go`, `src/sort/zsortfunc.go`, `src/sort/zsortinterface.go`, `src/sync/atomic/type.go`, `src/sync/oncefunc.go`, `src/syscall/rlimit.go`, `src/syscall/rlimit_darwin.go`, `src/syscall/rlimit_stub.go`, `src/testing/newcover.go`, `src/time/format_rfc3339.go`, `src/time/zoneinfo_goroot.go`, `src/vendor/golang.org/x/sys/cpu/parse.go`.
+Source files: `src/crypto/ecdh/ecdh.go`, `src/crypto/ecdh/nist.go`, `src/crypto/ecdh/x25519.go`, `src/crypto/ecdsa/ecdsa_legacy.go`, `src/crypto/ecdsa/notboring.go`, `src/crypto/internal/boring/bbig/big.go`, `src/crypto/internal/fips140/nistec/nistec.go`, `src/crypto/internal/fips140/nistec/p224.go`, `src/crypto/internal/fips140/nistec/p224_sqrt.go`, `src/crypto/internal/fips140/nistec/p256_ordinv.go`, `src/crypto/internal/fips140/nistec/p384.go`, `src/crypto/internal/fips140/nistec/p521.go`, `src/crypto/internal/fips140/sha3/sha3_arm64.s`, `src/crypto/internal/fips140/sha512/sha512block_arm64.go`, `src/crypto/internal/fips140/sha512/sha512block_arm64.s`, `src/crypto/internal/fips140/subtle/xor.go`, `src/crypto/rsa/notboring.go`, `src/crypto/subtle/xor.go`, `src/crypto/tls/cache.go`, `src/encoding/json/v2/arshal_any.go`, `src/encoding/json/v2/intern.go`, `src/errors/join.go`, `src/internal/coverage/rtcov/rtcov.go`, `src/internal/goos/unix.go`, `src/internal/runtime/sys/consts_norace.go`, `src/internal/runtime/syscall/linux/asm_linux_amd64.s`, `src/internal/runtime/syscall/linux/asm_linux_arm64.s`, `src/internal/runtime/syscall/linux/defs_linux_amd64.go`, `src/internal/runtime/syscall/linux/defs_linux_arm64.go`, `src/internal/runtime/syscall/linux/syscall_linux.go`, `src/internal/saferio/io.go`, `src/internal/syscall/unix/constants.go`, `src/internal/syscall/unix/kernel_version_linux.go`, `src/internal/syscall/unix/kernel_version_other.go`, `src/internal/syscall/unix/net_darwin.go`, `src/internal/syscall/unix/pty_darwin.go`, `src/internal/syscall/unix/user_darwin.go`, `src/log/slog/attr.go`, `src/log/slog/doc.go`, `src/log/slog/handler.go`, `src/log/slog/internal/buffer/buffer.go`, `src/log/slog/json_handler.go`, `src/log/slog/level.go`, `src/log/slog/logger.go`, `src/log/slog/record.go`, `src/log/slog/text_handler.go`, `src/log/slog/value.go`, `src/net/cgo_darwin.go`, `src/net/cgo_unix_syscall.go`, `src/net/dnsconfig.go`, `src/net/http/responsecontroller.go`, `src/runtime/arena.go`, `src/runtime/covercounter.go`, `src/runtime/covermeta.go`, `src/runtime/create_file_unix.go`, `src/runtime/mem.go`, `src/runtime/mgclimit.go`, `src/runtime/os_unix_nonlinux.go`, `src/runtime/retry.go`, `src/runtime/stkframe.go`, `src/runtime/unsafe.go`, `src/slices/zsortanyfunc.go`, `src/slices/zsortordered.go`, `src/sort/zsortfunc.go`, `src/sort/zsortinterface.go`, `src/sync/atomic/type.go`, `src/sync/oncefunc.go`, `src/syscall/rlimit.go`, `src/syscall/rlimit_darwin.go`, `src/syscall/rlimit_stub.go`, `src/testing/newcover.go`, `src/time/format_rfc3339.go`, `src/time/zoneinfo_goroot.go`, `src/vendor/golang.org/x/sys/cpu/parse.go`.
 
 ```text
 // Copyright 2022 The Go Authors. All rights reserved.
@@ -1162,7 +1726,7 @@ Source files: `src/crypto/elliptic/params.go`, `src/crypto/internal/fips140/bigm
 // license that can be found in the LICENSE file.
 ```
 
-Source files: `src/crypto/fips140/enforcement.go`, `src/crypto/hpke/aead.go`, `src/crypto/hpke/aead_fips140v1.26.go`, `src/crypto/hpke/kdf.go`, `src/crypto/hpke/kem.go`, `src/crypto/hpke/pq.go`, `src/crypto/internal/constanttime/constant_time.go`, `src/crypto/internal/entropy/v1.0.0/entropy.go`, `src/crypto/internal/entropy/v1.0.0/sha384.go`, `src/crypto/internal/fips140/mldsa/cast.go`, `src/crypto/internal/fips140/mldsa/field.go`, `src/crypto/internal/fips140/mldsa/mldsa.go`, `src/crypto/internal/fips140/mldsa/semiexpanded.go`, `src/crypto/internal/fips140/notpurego.go`, `src/crypto/internal/fips140/sha3/sha3_arm64.go`, `src/crypto/internal/fips140cache/cache.go`, `src/crypto/internal/fips140deps/time/time.go`, `src/crypto/internal/rand/rand.go`, `src/crypto/internal/rand/rand_fips140v1.26.go`, `src/crypto/tls/defaults_fips140.go`, `src/crypto/x509/constraints.go`, `src/internal/abi/bounds.go`, `src/internal/cpu/cpu_x86_darwin.go`, `src/internal/cpu/cpu_x86_other.go`, `src/internal/cpu/datacache_unsupported.go`, `src/internal/cpu/datacache_x86.go`, `src/internal/runtime/atomic/xchg8.go`, `src/internal/runtime/cgroup/cgroup.go`, `src/internal/runtime/cgroup/cgroup_linux.go`, `src/internal/runtime/cgroup/line_reader.go`, `src/internal/runtime/cgroup/runtime.go`, `src/internal/runtime/gc/malloc.go`, `src/internal/runtime/gc/scan.go`, `src/internal/runtime/gc/scan/expand_amd64.go`, `src/internal/runtime/gc/scan/expand_reference.go`, `src/internal/runtime/gc/scan/filter.go`, `src/internal/runtime/gc/scan/filter_amd64.go`, `src/internal/runtime/gc/scan/filter_amd64.s`, `src/internal/runtime/gc/scan/scan_amd64.go`, `src/internal/runtime/gc/scan/scan_amd64.s`, `src/internal/runtime/gc/scan/scan_generic.go`, `src/internal/runtime/gc/scan/scan_go.go`, `src/internal/runtime/gc/scan/scan_reference.go`, `src/internal/runtime/pprof/label/labelset.go`, `src/internal/strconv/deps.go`, `src/internal/strconv/pow10tab.go`, `src/internal/syscall/unix/kernel_version_ge.go`, `src/internal/syscall/unix/renameat_sysnum_linux.go`, `src/internal/syscall/unix/utimes.go`, `src/internal/trace/tracev2/doc.go`, `src/math/big/arith_amd64.s`, `src/math/big/arith_arm64.s`, `src/net/file_posix.go`, `src/net/http/clientconn.go`, `src/net/http/csrf.go`, `src/net/http/internal/http2/writesched_priority_rfc9218.go`, `src/net/sendfile_nonwindows.go`, `src/net/url/encoding_table.go`, `src/os/removeall_unix.go`, `src/runtime/cgroup_linux.go`, `src/runtime/cgroup_stubs.go`, `src/runtime/dit.go`, `src/runtime/fipsbypass.go`, `src/runtime/hexdump.go`, `src/runtime/linkname_shim.go`, `src/runtime/list.go`, `src/runtime/list_manual.go`, `src/runtime/malloc_stubs.go`, `src/runtime/mgcmark_greenteagc.go`, `src/runtime/os_linux64.go`, `src/runtime/preempt_xreg.go`, `src/runtime/runtime_clearenv.go`, `src/runtime/runtime_noclearenv.go`, `src/runtime/secret_nosecret.go`, `src/runtime/set_vma_name_linux.go`, `src/runtime/set_vma_name_stub.go`, `src/runtime/trace/batch.go`, `src/runtime/trace/encoding.go`, `src/runtime/trace/flightrecorder.go`, `src/runtime/trace/recorder.go`, `src/runtime/trace/subscribe.go`, `src/runtime/valgrind0.go`, `src/strconv/number.go`, `src/unique/canonmap.go`, `src/vendor/golang.org/x/crypto/chacha20poly1305/fips140only_go1.26.go`, `src/vendor/golang.org/x/net/dns/dnsmessage/svcb.go`.
+Source files: `src/crypto/fips140/enforcement.go`, `src/crypto/hpke/aead.go`, `src/crypto/hpke/aead_fips140v1.26.go`, `src/crypto/hpke/kdf.go`, `src/crypto/hpke/kem.go`, `src/crypto/hpke/pq.go`, `src/crypto/internal/constanttime/constant_time.go`, `src/crypto/internal/entropy/v1.0.0/entropy.go`, `src/crypto/internal/entropy/v1.0.0/sha384.go`, `src/crypto/internal/fips140/mldsa/cast.go`, `src/crypto/internal/fips140/mldsa/field.go`, `src/crypto/internal/fips140/mldsa/mldsa.go`, `src/crypto/internal/fips140/mldsa/semiexpanded.go`, `src/crypto/internal/fips140/notpurego.go`, `src/crypto/internal/fips140/sha3/sha3_arm64.go`, `src/crypto/internal/fips140cache/cache.go`, `src/crypto/internal/fips140deps/time/time.go`, `src/crypto/internal/rand/rand.go`, `src/crypto/internal/rand/rand_fips140v1.26.go`, `src/crypto/tls/defaults_fips140.go`, `src/crypto/x509/constraints.go`, `src/hash/maphash/hasher.go`, `src/internal/abi/bounds.go`, `src/internal/cpu/cpu_x86_darwin.go`, `src/internal/cpu/cpu_x86_other.go`, `src/internal/cpu/datacache_unsupported.go`, `src/internal/cpu/datacache_x86.go`, `src/internal/runtime/atomic/xchg8.go`, `src/internal/runtime/cgroup/cgroup.go`, `src/internal/runtime/cgroup/cgroup_linux.go`, `src/internal/runtime/cgroup/line_reader.go`, `src/internal/runtime/cgroup/runtime.go`, `src/internal/runtime/gc/malloc.go`, `src/internal/runtime/gc/scan.go`, `src/internal/runtime/gc/scan/expand_amd64.go`, `src/internal/runtime/gc/scan/expand_reference.go`, `src/internal/runtime/gc/scan/filter.go`, `src/internal/runtime/gc/scan/filter_amd64.go`, `src/internal/runtime/gc/scan/filter_amd64.s`, `src/internal/runtime/gc/scan/scan_amd64.go`, `src/internal/runtime/gc/scan/scan_amd64.s`, `src/internal/runtime/gc/scan/scan_generic.go`, `src/internal/runtime/gc/scan/scan_go.go`, `src/internal/runtime/gc/scan/scan_reference.go`, `src/internal/runtime/pprof/label/labelset.go`, `src/internal/strconv/deps.go`, `src/internal/strconv/pow10tab.go`, `src/internal/syscall/unix/kernel_version_ge.go`, `src/internal/syscall/unix/renameat_sysnum_linux.go`, `src/internal/syscall/unix/utimes.go`, `src/internal/trace/tracev2/doc.go`, `src/log/slog/multi_handler.go`, `src/math/big/arith_amd64.s`, `src/math/big/arith_arm64.s`, `src/net/file_posix.go`, `src/net/http/clientconn.go`, `src/net/http/csrf.go`, `src/net/http/internal/http2/writesched_priority_rfc9218.go`, `src/net/sendfile_nonwindows.go`, `src/net/url/encoding_table.go`, `src/os/removeall_unix.go`, `src/runtime/cgroup_linux.go`, `src/runtime/cgroup_stubs.go`, `src/runtime/dit.go`, `src/runtime/fipsbypass.go`, `src/runtime/hexdump.go`, `src/runtime/linkname_shim.go`, `src/runtime/list.go`, `src/runtime/list_manual.go`, `src/runtime/malloc_stubs.go`, `src/runtime/mgcmark_greenteagc.go`, `src/runtime/os_linux64.go`, `src/runtime/preempt_xreg.go`, `src/runtime/runtime_clearenv.go`, `src/runtime/runtime_noclearenv.go`, `src/runtime/secret_nosecret.go`, `src/runtime/set_vma_name_linux.go`, `src/runtime/set_vma_name_stub.go`, `src/runtime/trace/batch.go`, `src/runtime/trace/encoding.go`, `src/runtime/trace/flightrecorder.go`, `src/runtime/trace/recorder.go`, `src/runtime/trace/subscribe.go`, `src/runtime/valgrind0.go`, `src/strconv/number.go`, `src/unique/canonmap.go`, `src/vendor/golang.org/x/crypto/chacha20poly1305/fips140only_go1.26.go`, `src/vendor/golang.org/x/net/dns/dnsmessage/svcb.go`.
 
 ```text
 // Copyright 2025 The Go Authors. All rights reserved.
@@ -1352,7 +1916,7 @@ Source files: `src/crypto/md5/md5block_arm64.s`.
 // derived from crypto/md5/md5block_amd64.s
 ```
 
-Source files: `src/internal/bytealg/equal_generic.go`, `src/internal/oserror/errors.go`, `src/internal/poll/errno_unix.go`, `src/internal/reflectlite/asm.s`, `src/math/bits/bits_errors.go`, `src/math/fma.go`, `src/net/http/clone.go`, `src/os/error_errno.go`, `src/runtime/checkptr.go`, `src/runtime/debuglog.go`, `src/runtime/debuglog_off.go`, `src/runtime/mgcscavenge.go`, `src/runtime/mpagealloc.go`, `src/runtime/mpagealloc_64bit.go`, `src/runtime/mpagecache.go`, `src/runtime/mpallocbits.go`, `src/runtime/mranges.go`, `src/runtime/nbpipe_pipe.go`, `src/runtime/nbpipe_pipe2.go`, `src/runtime/preempt.go`, `src/runtime/sigqueue_note.go`, `src/runtime/stubs_arm64.go`, `src/runtime/time_nofake.go`, `src/sync/poolqueue.go`, `src/syscall/sockcmsg_unix_other.go`, `src/syscall/time_nofake.go`, `src/testing/run_example.go`, `src/vendor/golang.org/x/sys/cpu/byteorder.go`, `src/vendor/golang.org/x/sys/cpu/cpu_linux_noinit.go`, `src/vendor/golang.org/x/sys/cpu/hwcap_linux.go`.
+Source files: `src/hash/maphash/maphash.go`, `src/internal/bytealg/equal_generic.go`, `src/internal/oserror/errors.go`, `src/internal/poll/errno_unix.go`, `src/internal/reflectlite/asm.s`, `src/math/bits/bits_errors.go`, `src/math/fma.go`, `src/net/http/clone.go`, `src/os/error_errno.go`, `src/runtime/checkptr.go`, `src/runtime/debuglog.go`, `src/runtime/debuglog_off.go`, `src/runtime/mgcscavenge.go`, `src/runtime/mpagealloc.go`, `src/runtime/mpagealloc_64bit.go`, `src/runtime/mpagecache.go`, `src/runtime/mpallocbits.go`, `src/runtime/mranges.go`, `src/runtime/nbpipe_pipe.go`, `src/runtime/nbpipe_pipe2.go`, `src/runtime/preempt.go`, `src/runtime/sigqueue_note.go`, `src/runtime/stubs_arm64.go`, `src/runtime/time_nofake.go`, `src/sync/poolqueue.go`, `src/syscall/sockcmsg_unix_other.go`, `src/syscall/time_nofake.go`, `src/testing/run_example.go`, `src/vendor/golang.org/x/sys/cpu/byteorder.go`, `src/vendor/golang.org/x/sys/cpu/cpu_linux_noinit.go`, `src/vendor/golang.org/x/sys/cpu/hwcap_linux.go`.
 
 ```text
 // Copyright 2019 The Go Authors. All rights reserved.
@@ -2672,6 +3236,16 @@ Source files: `src/vendor/golang.org/x/crypto/chacha20/xor.go`.
 
 ### `github.com/dustin/go-humanize@v1.0.1`
 
+### `github.com/google/jsonschema-go@v0.4.3`
+
+Source files: `jsonschema/annotations.go`, `jsonschema/doc.go`, `jsonschema/infer.go`, `jsonschema/json_pointer.go`, `jsonschema/resolve.go`, `jsonschema/schema.go`, `jsonschema/util.go`, `jsonschema/validate.go`.
+
+```text
+// Copyright 2025 The JSON Schema Go Project Authors. All rights reserved.
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file.
+```
+
 ### `github.com/google/uuid@v1.6.0`
 
 Source files: `dce.go`, `doc.go`, `hash.go`, `marshal.go`, `node.go`, `sql.go`, `time.go`, `util.go`, `version1.go`, `version4.go`.
@@ -2716,6 +3290,56 @@ Source files: `version6.go`, `version7.go`.
 
 ### `github.com/mattn/go-isatty@v0.0.24`
 
+### `github.com/modelcontextprotocol/go-sdk@v1.8.0`
+
+Source files: `auth/auth.go`, `auth/client.go`, `internal/util/errors.go`, `jsonrpc/jsonrpc.go`, `mcp/client.go`, `mcp/cmd.go`, `mcp/content.go`, `mcp/event.go`, `mcp/features.go`, `mcp/logging.go`, `mcp/mcp.go`, `mcp/prompt.go`, `mcp/protocol.go`, `mcp/requests.go`, `mcp/resource.go`, `mcp/schema_cache.go`, `mcp/server.go`, `mcp/session.go`, `mcp/shared.go`, `mcp/sse.go`, `mcp/streamable.go`, `mcp/streamable_client.go`, `mcp/streamable_server.go`, `mcp/tool.go`, `mcp/transport.go`, `mcp/util.go`, `oauthex/auth_meta.go`, `oauthex/dcr.go`, `oauthex/oauth2.go`, `oauthex/oauthex.go`, `oauthex/resource_meta.go`.
+
+```text
+// Copyright 2025 The Go MCP SDK Authors. All rights reserved.
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file.
+```
+
+Source files: `auth/authorization_code.go`, `internal/authutil/scopes.go`, `internal/authutil/util.go`.
+
+```text
+// Copyright 2026 The Go MCP SDK Authors. All rights reserved.
+// Use of this source code is governed by the license
+// that can be found in the LICENSE file.
+```
+
+Source files: `auth/shared.go`, `oauthex/audience.go`, `oauthex/client.go`, `oauthex/token_exchange.go`.
+
+```text
+// Copyright 2026 The Go MCP SDK Authors. All rights reserved.
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file.
+```
+
+Source files: `internal/json/json.go`, `internal/mcpgodebug/mcpgodebug.go`, `internal/util/net.go`, `mcp/cache.go`, `mcp/mrtr.go`, `mcp/streamable_headers.go`.
+
+```text
+// Copyright 2025 The Go MCP SDK Authors. All rights reserved.
+// Use of this source code is governed by the license
+// that can be found in the LICENSE file.
+```
+
+Source files: `internal/jsonrpc2/conn.go`, `internal/jsonrpc2/jsonrpc2.go`, `internal/jsonrpc2/messages.go`, `internal/jsonrpc2/wire.go`.
+
+```text
+// Copyright 2018 The Go MCP SDK Authors. All rights reserved.
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file.
+```
+
+Source files: `internal/xcontext/xcontext.go`.
+
+```text
+// Copyright 2019 The Go MCP SDK Authors. All rights reserved.
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file.
+```
+
 ### `github.com/ncruces/go-strftime@v1.0.0`
 
 ### `github.com/remyoudompheng/bigfft@v0.0.0-20230129092748-24d4a6f8daec`
@@ -2728,12 +3352,113 @@ Source files: `arith_decl.go`.
 // license that can be found in the LICENSE file.
 ```
 
+### `github.com/segmentio/asm@v1.1.3`
+
+### `github.com/segmentio/encoding@v0.5.4`
+
+Source files: `json/codec.go`.
+
+```text
+// =============================================================================
+// Copyright 2009 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+```
+
+### `github.com/yosida95/uritemplate/v3@v3.0.2`
+
+Source files: `compile.go`, `equals.go`, `error.go`, `escape.go`, `expression.go`, `machine.go`, `match.go`, `parse.go`, `prog.go`, `uritemplate.go`, `value.go`.
+
+```text
+// Copyright (C) 2016 Kohei YOSHIDA. All rights reserved.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of The BSD 3-Clause License
+// that can be found in the LICENSE file.
+```
+
+### `golang.org/x/oauth2@v0.35.0`
+
+Source files: `internal/doc.go`.
+
+```text
+// Copyright 2017 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+```
+
+Source files: `internal/oauth2.go`, `internal/token.go`, `internal/transport.go`, `oauth2.go`, `token.go`, `transport.go`.
+
+```text
+// Copyright 2014 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+```
+
+Source files: `pkce.go`.
+
+```text
+// Copyright 2023 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+```
+
+### `golang.org/x/sync@v0.23.0`
+
+Source files: `errgroup/errgroup.go`.
+
+```text
+// Copyright 2016 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+```
+
 ### `golang.org/x/sys@v0.48.0`
 
-Source files: `unix/affinity_linux.go`, `unix/aliases.go`, `unix/ioctl_unsigned.go`, `unix/syscall_darwin_libSystem.go`, `unix/syscall_linux_gc.go`.
+Source files: `cpu/asm_darwin_arm64_gc.s`, `cpu/asm_darwin_x86_gc.s`, `cpu/cpu_darwin_x86.go`, `cpu/cpu_other_x86.go`, `cpu/syscall_darwin_arm64_gc.go`, `cpu/syscall_darwin_x86_gc.go`, `unix/vgetrandom_linux.go`, `unix/vgetrandom_unsupported.go`.
+
+```text
+// Copyright 2024 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+```
+
+Source files: `cpu/byteorder.go`, `cpu/cpu_arm64.go`, `cpu/cpu_arm64.s`, `cpu/cpu_gc_arm64.go`, `cpu/cpu_linux_noinit.go`, `cpu/hwcap_linux.go`, `unix/fcntl_darwin.go`, `unix/fdset.go`, `unix/readdirent_getdents.go`, `unix/readdirent_getdirentries.go`, `unix/sockcmsg_unix_other.go`.
+
+```text
+// Copyright 2019 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+```
+
+Source files: `cpu/cpu.go`, `cpu/cpu_gc_x86.go`, `cpu/cpu_gc_x86.s`, `cpu/cpu_linux_arm64.go`, `cpu/cpu_x86.go`, `unix/affinity_linux.go`, `unix/aliases.go`, `unix/ioctl_unsigned.go`, `unix/syscall_darwin_libSystem.go`, `unix/syscall_linux_gc.go`.
 
 ```text
 // Copyright 2018 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+```
+
+Source files: `cpu/cpu_darwin_arm64.go`, `unix/readv_unix.go`.
+
+```text
+// Copyright 2026 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+```
+
+Source files: `cpu/endian_little.go`, `cpu/runtime_auxv.go`, `cpu/runtime_auxv_go121.go`, `unix/mmap_nomremap.go`, `unix/mremap.go`.
+
+```text
+// Copyright 2023 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+```
+
+Source files: `cpu/parse.go`, `cpu/proc_cpuinfo_linux.go`, `unix/syscall_linux_alarm.go`.
+
+```text
+// Copyright 2022 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 ```
@@ -2812,22 +3537,6 @@ Source files: `unix/fcntl.go`.
 // license that can be found in the LICENSE file.
 ```
 
-Source files: `unix/fcntl_darwin.go`, `unix/fdset.go`, `unix/readdirent_getdents.go`, `unix/readdirent_getdirentries.go`, `unix/sockcmsg_unix_other.go`.
-
-```text
-// Copyright 2019 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-```
-
-Source files: `unix/mmap_nomremap.go`, `unix/mremap.go`.
-
-```text
-// Copyright 2023 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-```
-
 Source files: `unix/ptrace_darwin.go`.
 
 ```text
@@ -2840,14 +3549,6 @@ Source files: `unix/race0.go`.
 
 ```text
 // Copyright 2012 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-```
-
-Source files: `unix/readv_unix.go`.
-
-```text
-// Copyright 2026 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 ```
@@ -2868,18 +3569,20 @@ Source files: `unix/syscall_darwin.go`.
 // license that can be found in the LICENSE file.
 ```
 
-Source files: `unix/syscall_linux_alarm.go`.
+### `golang.org/x/time@v0.15.0`
+
+Source files: `rate/rate.go`.
 
 ```text
-// Copyright 2022 The Go Authors. All rights reserved.
+// Copyright 2015 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 ```
 
-Source files: `unix/vgetrandom_linux.go`, `unix/vgetrandom_unsupported.go`.
+Source files: `rate/sometimes.go`.
 
 ```text
-// Copyright 2024 The Go Authors. All rights reserved.
+// Copyright 2022 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 ```

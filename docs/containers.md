@@ -1,9 +1,14 @@
-# Run the published container
+# Run the Questlock container
 
-The experimental image is available from [GitHub Packages](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
-as `ghcr.io/spfuzzylink/questlock:v0.2.0`, with native Linux ARM64 and x86-64 images.
+This guide is prepared for the **unpublished v0.3.0 candidate**. Its image commands
+become available after release/container CI and publication are confirmed.
+The preserved [v0.2.0 release](https://github.com/spfuzzylink/questlock/releases/tag/v0.2.0)
+and `ghcr.io/spfuzzylink/questlock:v0.2.0` remain the historical published path.
+
+The target experimental image in [GitHub Packages](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
+is `ghcr.io/spfuzzylink/questlock:v0.3.0`, with native Linux ARM64 and x86-64 images.
 Podman and Docker select the matching CPU image. On macOS, the container engine
-runs Linux in its own VM; native macOS binaries remain available from [Releases](https://github.com/spfuzzylink/questlock/releases/tag/v0.2.0).
+runs Linux in its own VM; native macOS binaries use the separate release archives.
 
 ## Run the recovery quest
 
@@ -14,7 +19,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.2.0 quest
+  ghcr.io/spfuzzylink/questlock:v0.3.0 quest
 ```
 
 The same command works with `docker` in place of `podman`. Pulling the public
@@ -32,7 +37,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.2.0 model quest
+  ghcr.io/spfuzzylink/questlock:v0.3.0 model quest
 ```
 
 Look for six `PASS` lines and `QUEST CLEARED`. This quest starts a real local HTTP
@@ -52,8 +57,8 @@ Follow the [rootless Podman deployment guide](deployment.md). Replace its initia
 image-build command with:
 
 ```sh
-podman pull ghcr.io/spfuzzylink/questlock:v0.2.0
-podman tag ghcr.io/spfuzzylink/questlock:v0.2.0 localhost/questlock:dev
+podman pull ghcr.io/spfuzzylink/questlock:v0.3.0
+podman tag ghcr.io/spfuzzylink/questlock:v0.3.0 localhost/questlock:dev
 ```
 
 Then continue with the volume, credential provisioning, and Quadlet steps in that
@@ -63,7 +68,7 @@ host port automatically. Keep any explicit host binding on `127.0.0.1`.
 
 ## Tags, updates, and provenance
 
-- `v0.2.0` identifies this experimental release; `experimental` is a moving tag
+- `v0.3.0` is the candidate release tag; `experimental` is a moving tag
   for subsequent experimental publications. Neither implies a stable API.
 - Registry tags can change. For a repeatable deployment, record the image digest
   shown by `podman images --digests` and use the corresponding digest reference.
@@ -81,7 +86,7 @@ claim that Questlock sandboxes agents. Read the [security boundaries](../SECURIT
 ## Publishing a later image
 
 Repository maintainers can run **Actions → Experimental container → Run workflow**
-with a published release tag such as `v0.2.0`. Successful CI for future version
+with a confirmed published release tag. Successful CI for future version
 tags also triggers the workflow. Only the final publication job has package-write
 permission, using GitHub's built-in job token.
 
@@ -89,3 +94,16 @@ GitHub may make a newly created package private initially. Before advertising a
 new package, set its visibility to public in GitHub Packages and verify pulling
 with an empty registry authentication configuration. The workflow reports that
 check; a successful upload alone does not establish anonymous access.
+
+## Model runtime and observability
+
+The broker container owns SQLite state. Run a local model worker on the same
+host as its installed Ollama service and reach the broker through authenticated
+HTTP; `127.0.0.1` inside a container refers to that container. The broker image
+does not bundle model weights or silently switch a local request to a cloud API.
+See [local models](local-models.md) and [delegation](delegation.md).
+
+The optional disposable Langfuse stack is separate from this small broker image.
+It has six content-pinned services, needs substantial local resources, and is
+validated through an isolated wrapper. It needs no hosted Langfuse account.
+Actual-server/CI proof remains pending; see [setup and limits](inference-observability.md#validate-a-self-hosted-endpoint).

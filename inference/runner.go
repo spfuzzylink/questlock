@@ -48,8 +48,47 @@ func (r Runner) now() time.Time {
 	return time.Now().UTC()
 }
 
-func (r Runner) Run(ctx context.Context, s Spec) (Result, error) {
+func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
+	started := time.Now()
+	measurement := &Measurement{StartedAt: started.UTC(), PhaseMS: make(map[string]float64)}
+	defer func() {
+		measurement.EndedAt = time.Now().UTC()
+		measurement.TotalMS = milliseconds(time.Since(started))
+		if measurement.Outcome == "" {
+			switch {
+			case runErr == nil && result.Reused:
+				measurement.Outcome = "reused"
+			case runErr == nil:
+				measurement.Outcome = "complete"
+			case errors.Is(runErr, ErrInFlight):
+				measurement.Outcome = "pending"
+			case errors.Is(runErr, ErrIncomplete):
+				measurement.Outcome = "incomplete"
+			case errors.Is(runErr, ErrBudgetExceeded) && measurement.GenerationCalled:
+				measurement.Outcome = "limit_exceeded"
+			case errors.Is(runErr, ErrBudgetExceeded):
+				measurement.Outcome = "budget_blocked"
+			case measurement.GenerationCalled && !measurement.KnownGenerationUsage:
+				measurement.Outcome = "uncertain"
+			case result.Fingerprint != "" && !result.Durable:
+				measurement.Outcome = "not_durable"
+			default:
+				measurement.Outcome = "error"
+			}
+		}
+		result.Measurement = measurement
+	}()
+	saveState := func(key string, version int64, record jobRecord, state string) {
+		phase := time.Now()
+		r.saveState(key, version, record, state)
+		measurement.PhaseMS["recovery"] += milliseconds(time.Since(phase))
+		if state == "uncertain" {
+			measurement.Outcome = "uncertain"
+		}
+	}
+	phase := time.Now()
 	plan, err := BuildPlan(s)
+	measurement.PhaseMS["plan"] = milliseconds(time.Since(phase))
 	if err != nil {
 		return Result{}, err
 	}
@@ -58,8 +97,13 @@ func (r Runner) Run(ctx context.Context, s Spec) (Result, error) {
 	}
 	digest := sha256.Sum256([]byte(plan.Fingerprint + "\x00" + r.Provider.Identity()))
 	fingerprint := hex.EncodeToString(digest[:])
+	measurement.Fingerprint = fingerprint
+	measurement.ContextBytes, measurement.TotalContextBytes = plan.ContextBytes, plan.TotalContextBytes
+	measurement.SelectedContext, measurement.OmittedContext = len(plan.Selected), len(plan.Omitted)
 	key := "inference/v1/jobs/" + fingerprint
+	phase = time.Now()
 	a, err := r.Broker.Get(ctx, key)
+	measurement.PhaseMS["lookup"] = milliseconds(time.Since(phase))
 	version := int64(0)
 	if err == nil {
 		version = a.Version
@@ -94,7 +138,9 @@ func (r Runner) Run(ctx context.Context, s Spec) (Result, error) {
 		return Result{}, err
 	}
 	record := jobRecord{Schema: 1, Fingerprint: fingerprint, State: "pending", CreatedAt: r.now()}
+	phase = time.Now()
 	a, err = r.publish(ctx, key, version, claimID, record)
+	measurement.PhaseMS["admission"] = milliseconds(time.Since(phase))
 	if err != nil {
 		if brokerCode(err, "version_conflict") {
 			return Result{}, ErrInFlight
@@ -104,48 +150,62 @@ func (r Runner) Run(ctx context.Context, s Spec) (Result, error) {
 	version = a.Version
 	// Count after winning ownership, so simultaneous workers do not even
 	// duplicate the provider token-count request. It performs no generation.
+	phase = time.Now()
 	inputTokens, err := r.Provider.CountInputTokens(ctx, plan.Request)
+	measurement.PhaseMS["preflight"] = milliseconds(time.Since(phase))
 	if err != nil {
-		r.saveState(key, version, record, "blocked")
+		saveState(key, version, record, "blocked")
 		return Result{}, fmt.Errorf("token preflight failed: %w", err)
 	}
 	if inputTokens < 1 || inputTokens > s.MaxInputTokens {
-		r.saveState(key, version, record, "blocked")
+		saveState(key, version, record, "blocked")
 		return Result{}, ErrBudgetExceeded
 	}
 	upper, err := upperCost(inputTokens, s)
 	if err != nil {
-		r.saveState(key, version, record, "blocked")
+		saveState(key, version, record, "blocked")
 		return Result{}, err
 	}
 	if s.MaxCostUSD > 0 && upper > capMicros(s.MaxCostUSD) {
-		r.saveState(key, version, record, "blocked")
+		saveState(key, version, record, "blocked")
 		return Result{}, ErrBudgetExceeded
 	}
+	phase = time.Now()
 	budgetKey, err := r.reserve(ctx, s, claimID, upper)
+	measurement.PhaseMS["reservation"] = milliseconds(time.Since(phase))
 	if err != nil {
-		r.saveState(key, version, record, "blocked")
+		saveState(key, version, record, "blocked")
 		return Result{}, err
 	}
 	record.BudgetKey, record.Reservation, record.ReservedMicros = budgetKey, claimID, upper
 	// Persist the reservation's identity before a paid call. If this write
 	// fails, keep the reservation and pending claim, and do not generate.
 	if budgetKey != "" {
+		phase = time.Now()
 		a, err = r.publish(ctx, key, version, claimID+"-reserved", record)
+		measurement.PhaseMS["reservation"] += milliseconds(time.Since(phase))
 		if err != nil {
 			return Result{}, err
 		}
 		version = a.Version
 	}
+	phase = time.Now()
+	measurement.GenerationCalled = true
+	measurement.GenerationStartedAt = phase.UTC()
 	response, err := r.Provider.Generate(ctx, plan.Request)
+	measurement.GenerationTiming = response.Timing
+	measurement.PhaseMS["generation"] = milliseconds(time.Since(phase))
+	measurement.GenerationEndedAt = time.Now().UTC()
 	if err != nil {
-		r.saveState(key, version, record, "uncertain")
+		saveState(key, version, record, "uncertain")
 		return Result{}, fmt.Errorf("generation outcome uncertain; reservation retained: %w", err)
 	}
 	if err = validateUsage(response.Usage); err != nil {
-		r.saveState(key, version, record, "uncertain")
+		saveState(key, version, record, "uncertain")
 		return Result{}, err
 	}
+	measurement.KnownGenerationUsage = true
+	measurement.GenerationUsage = &response.Usage
 	// Provider counts may be estimates. Validate the actual billable usage
 	// before marking any answer reusable, including when only a per-call cap
 	// was configured. A cached answer must never erase a limit violation.
@@ -154,7 +214,7 @@ func (r Runner) Run(ctx context.Context, s Spec) (Result, error) {
 	if s.Prices != nil {
 		actual, err = costMicros(response.Usage, *s.Prices)
 		if err != nil {
-			r.saveState(key, version, record, "uncertain")
+			saveState(key, version, record, "uncertain")
 			return Result{}, err
 		}
 		if (s.MaxCostUSD > 0 && actual > capMicros(s.MaxCostUSD)) || (budgetKey != "" && actual > upper) {
@@ -177,9 +237,12 @@ func (r Runner) Run(ctx context.Context, s Spec) (Result, error) {
 	}
 	record.CreatedAt = r.now()
 	record.ExpiresAt = record.CreatedAt.Add(time.Duration(s.ReuseForSeconds) * time.Second)
-	result := savedResult(record, s, false)
+	result = savedResult(record, s, false)
 	var publicationError, settlementError error
-	if _, err = r.publish(ctx, key, version, claimID+"-result", record); err != nil {
+	phase = time.Now()
+	_, err = r.publish(ctx, key, version, claimID+"-result", record)
+	measurement.PhaseMS["publication"] = milliseconds(time.Since(phase))
+	if err != nil {
 		result.Durable = false
 		publicationError = fmt.Errorf("result publication failed; answer is available but not confirmed durable; do not regenerate automatically: %w", err)
 	}
@@ -193,7 +256,10 @@ func (r Runner) Run(ctx context.Context, s Spec) (Result, error) {
 			settleCtx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 		}
-		if err = r.settle(settleCtx, budgetKey, claimID, actual); err != nil {
+		phase = time.Now()
+		err = r.settle(settleCtx, budgetKey, claimID, actual)
+		measurement.PhaseMS["settlement"] = milliseconds(time.Since(phase))
+		if err != nil {
 			settlementError = fmt.Errorf("budget settlement not confirmed; stop this scope and inspect its retained reservation: %w", err)
 		}
 	}
@@ -224,8 +290,10 @@ func savedResult(rec jobRecord, s Spec, reused bool) Result {
 		return result
 	}
 	result.Response = *rec.Response
+	result.GenerationTiming = rec.Response.Timing
 	result.GenerationUsage = rec.Response.Usage
 	if reused {
+		result.Response.Timing = nil // Historical timing is not current inference.
 		result.Response.Usage = Usage{}
 		result.AvoidedUsage = rec.Response.Usage
 	} else {
