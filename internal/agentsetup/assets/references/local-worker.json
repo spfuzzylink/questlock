@@ -1,4 +1,5 @@
 {
+  "track_outcome": true,
   "spec": {
     "task": "approved-ticket-extraction",
     "revision": "public-example-1",

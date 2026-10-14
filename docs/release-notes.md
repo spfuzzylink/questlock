@@ -1,3 +1,40 @@
+# Questlock 0.4.0 candidate — explicit human outcomes after checks
+
+**Experimental source candidate; not yet published.** A worker can pass its
+declared checks while a person still has to rewrite the work. This candidate
+separates check success from explicit human acceptance, so cost per accepted
+task can be reported for a declared cohort when its accounting inputs are known.
+
+## New in the candidate
+
+- A Go `outcomes` package using the existing scoped versioned artifact API. No
+  SQLite schema migration or additional storage service is required.
+- Opt-in approved worker request field `track_outcome: true`, recording
+  content-free invocation/attempt metadata, including failed checks and exact
+  zero-new-generation reuse. Tracking failure never retries generation.
+- Explicit `accepted`, `rewritten`, `rejected`, and `reopened` feedback linked to
+  run IDs. Every rewrite clears acceptance; explicit reacceptance identifies the
+  final artifact by SHA-256. Event IDs and expected versions preserve retry and
+  conflict behavior.
+- `outcome record`, `feedback`, `show`, `report`, and `quest` commands. Reports
+  include all recorded cohort attempts and explicit incremental reviewer time,
+  including failed/rejected work, with an optional explicit hourly rate. Missing
+  accounting remains unknown; zero accepted outcomes has no unit-cost result.
+- Three simple and three complex synthetic offline scenarios plus runnable
+  public examples and an editable feedback diagram. They require no model call.
+
+Read the [human outcome guide](outcomes.md), [synthetic examples](../examples/outcomes/README.md),
+and [feedback architecture](diagrams/human-outcomes.drawio). This candidate
+does not monitor edits automatically, authenticate a reviewer's human identity,
+retrain or select models, export human feedback to Langfuse, reconcile invoices,
+or include surrounding hosted-assistant/hardware/unrecorded-work costs.
+
+Publication and validation evidence will be recorded after release review.
+Published v0.3.0 and older archives, tags, and historical observations remain
+available unchanged.
+
+---
+
 # Questlock 0.3.0 — measurable bounded tasks and local delegation
 
 Repeated tasks need observable resource use and an acceptance gate before a

@@ -115,6 +115,7 @@ func tiers(policy Policy) []Tier {
 }
 
 func requestDigest(request Request) string {
+	request.TrackOutcome = false // Accounting opt-in does not change generated work.
 	encoded, _ := json.Marshal(request)
 	digest := sha256.Sum256(encoded)
 	return hex.EncodeToString(digest[:])

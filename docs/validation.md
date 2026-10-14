@@ -1,5 +1,38 @@
 # Validation record
 
+## v0.4.0 candidate observations — 2026-10-14
+
+The source candidate adds operator-reported outcome feedback after declared
+checks. Local `go vet ./...` and `go test -race ./...` passed, as did all 70 Python
+publication/packaging/security regressions and Actionlint. The six new outcome
+scenarios passed with real authenticated HTTP and temporary SQLite. They use
+synthetic cost and effort, make no model calls, and validate acceptance/rewrite
+transitions, receipt replay, inclusive cohort accounting, unknown values, stale
+feedback, and recovery after a broker restart.
+
+Root integration regressions verified that enabling tracking preserves exact
+inference reuse; a stopped token-cap violation can retain its observed passing
+checks and known usage without exposing its answer; and failed outcome
+registration returns its original recovery record without another generation.
+Library tests cover concurrent scoped records, competing feedback, exact retries
+after a lost publication acknowledgement, strict ledger validation, bounds, and
+accounting overflow.
+
+### Using Questlock during development
+
+One bounded extraction of public outcome-contract facts used installed local
+`qwen3.5:4b` through Ollama with explicit JSON/value checks and no paid tier.
+It passed with **81 input / 26 output tokens** and recorded its invocation in the
+existing broker scope. One exact repeat reused the passing result with **zero
+new generation tokens** and recorded a separate invocation. The report showed
+two recorded runs, zero operator-reported acceptances, one missing human-effort
+observation, and `cost_per_accepted_task_usd: null`. Assistant review was not
+recorded as human acceptance. This is a bounded development observation, not an
+invoice saving, a whole-chat token reduction, or a general model-quality result.
+
+Native release archives, tagged CI, and container publication are not yet
+confirmed for this candidate. The published v0.3.0 record below remains intact.
+
 ## v0.3.0 observations — 2026-10-14
 
 Release source: `3727709908d878becfa29281d3fe3fc0d67f556f` (the peeled `v0.3.0`

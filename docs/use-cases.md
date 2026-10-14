@@ -10,6 +10,9 @@ is the HTTP API, Go client, scoped credentials, version checks, successful-opera
 receipts, publication journal, and process-failure quest, plus bounded inference.
 Version **v0.3.0** adds an actual Go/MCP delegation worker,
 evaluation, current-run measurement, and optional content-free Langfuse export.
+The **v0.4.0 experimental source candidate** adds explicit human review events
+and recorded-cohort cost reporting. It does not automatically observe rewrites
+or infer human acceptance from declared checks.
 
 ## Who this could help
 
@@ -39,7 +42,8 @@ better model output, or production readiness.
   without that retry creating a new version or restoring an older head.
 - **Conflict-resolution effort:** instrument the application to count reruns,
   reconciliation attempts, and manual reviews, along with time spent resolving
-  them. Questlock does not measure or automate that work.
+  them. The v0.4.0 candidate can store explicitly reported incremental reviewer
+  minutes through outcome feedback; it does not observe or automate that work.
 - **Storage growth:** record database size and growth in artifact versions,
   successful-operation receipts, and journal events over the pilot. Include
   rejected attempts and replays; they also create journal entries. There are no
@@ -194,6 +198,40 @@ usage counters exclude its prompt, tool, and context tokens; they measure only
 the delegated provider/local generation. OpenRouter is
 a future companion adapter; automatic model choice and full-session interception
 remain future work.
+
+## 7. A passing answer is rewritten by a person
+
+A support-case extraction passes strict JSON and value checks, then a reviewer
+finds an omitted requirement and corrects the final artifact. Counting only the
+passing attempt would hide that correction and its effort.
+
+**Implemented in the v0.4.0 source candidate:** opt-in `track_outcome` worker
+records, explicit accepted/rewritten/rejected/reopened events, final artifact
+digests, and a declared-cohort report. Every rewrite clears prior acceptance,
+including style changes. The reviewer must explicitly reaccept the final
+artifact. Failed and rejected tasks remain in the cohort's recorded cost
+numerator; reused invocations add zero new generation cost. Unknown attempt
+cost, event effort, or hourly rate keeps the combined metric unknown. A task
+with no feedback also has unknown human effort.
+
+**Your integration:** obtain the actual review decision, report incremental
+effort and its reason, choose the cohort before comparing it, and reconcile
+version conflicts. A scope token authorizes artifact access but does not prove a
+human authored an event. The application must supply that identity and review
+boundary. There is no passive editor watcher or model training from these events.
+
+Run `questlock outcome quest` for three simple and three complex synthetic
+scenarios without a model call. The [runnable examples](../examples/outcomes/README.md)
+show a check-passing answer becoming accepted, rewritten, then reaccepted; a
+cohort adds rejected work instead of discarding its cost. Read
+[the outcome accounting guide](outcomes.md) for report fields and limitations.
+
+For a useful pilot, compare the same declared task set across configurations.
+Record failed attempts, corrections, acceptance, and review effort consistently.
+Avoid selecting only successful tasks after seeing the results. Report known
+partial subtotals and missing coverage alongside the current acceptance count.
+Configured model prices are estimates rather than invoice data; surrounding
+hosted-assistant tokens, hardware, and unrecorded work remain outside this report.
 
 ## When another component is needed
 

@@ -17,8 +17,11 @@ class PackageTests(unittest.TestCase):
         required = {
             "docs/inference-observability.md", "docs/delegation.md", "docs/measurements-v0.3.0.md",
             "assets/questlock-v0.3.0.svg",
+            "assets/questlock-v0.4.0.svg",
             "docs/diagrams/inference-runtime.drawio", "docs/diagrams/inference-runtime.svg",
             "evaluation/fixtures/quickstart.json",
+            "docs/outcomes.md", "docs/diagrams/human-outcomes.drawio", "docs/diagrams/human-outcomes.svg",
+            "examples/outcomes/README.md", "examples/outcomes/completed-run.json", "examples/outcomes/accept.json",
         }
         self.assertTrue(required.issubset(package.PUBLIC_FILES))
         self.assertEqual(len(package.PUBLIC_FILES), len(set(package.PUBLIC_FILES)))

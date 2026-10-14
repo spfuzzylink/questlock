@@ -1,0 +1,6 @@
+{
+  "id": "fixture-reject-1",
+  "run_id": "fixture-failed-run-1",
+  "kind": "rejected",
+  "human_minutes": 0.5
+}

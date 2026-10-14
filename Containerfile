@@ -13,6 +13,7 @@ COPY observability/ ./observability/
 COPY evaluation/ ./evaluation/
 COPY delegation/ ./delegation/
 COPY worker/ ./worker/
+COPY outcomes/ ./outcomes/
 RUN CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags="-s -w" -o bin/questlock ./cmd/questlock
 RUN mkdir -p /out/data && chmod 0700 /out/data
 

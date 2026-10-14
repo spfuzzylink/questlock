@@ -73,6 +73,14 @@ func workerCommandIO(args []string, input io.ReadCloser, output, diagnostics io.
 		if err := delegation.Validate(request, *allowPaid); err != nil {
 			return delegation.Result{}, nil, err
 		}
+		var outcomeRunID string
+		if request.TrackOutcome {
+			var err error
+			outcomeRunID, err = newOutcomeRunID()
+			if err != nil {
+				return delegation.Result{}, nil, errors.New("could not allocate outcome run identity; no model call was made")
+			}
+		}
 		ctx, cancel := context.WithTimeout(ctx, *timeout)
 		defer cancel()
 		var records []telemetryRecord
@@ -95,6 +103,9 @@ func workerCommandIO(args []string, input io.ReadCloser, output, diagnostics io.
 		}
 		router := delegation.Router{Factory: factory, AllowPaid: *allowPaid}
 		result, err := router.Run(ctx, request)
+		if request.TrackOutcome {
+			recordWorkerOutcome(ctx, broker, request, &result, outcomeRunID)
+		}
 		return result, records, err
 	}
 	if command == "run" {
@@ -114,6 +125,9 @@ func workerCommandIO(args []string, input io.ReadCloser, output, diagnostics io.
 			}
 		}
 		exportTelemetry(exporter, records, diagnostics)
+		if result.OutcomeTracking != nil && result.OutcomeTracking.Status != "recorded" {
+			return errors.New("outcome registration is unconfirmed; recover outcome_tracking.record without regenerating the model answer")
+		}
 		if runErr != nil {
 			return errors.New("worker did not produce an approved answer; inspect status and retained broker records before retrying")
 		}

@@ -1,0 +1,7 @@
+{
+  "id": "fixture-rewrite-1",
+  "run_id": "fixture-run-1",
+  "kind": "rewritten",
+  "reason": "correctness",
+  "human_minutes": 2
+}

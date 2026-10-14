@@ -8,7 +8,7 @@
         <mxCell id="page-title" value="Questlock inference runtime" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=30;fontColor=#18243b;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="145" y="38" width="1015" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="page-subtitle" value="v0.3.0 candidate · unreleased · Faster, affordable, measurable repeat tasks" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#34445e;fontStyle=0;" vertex="1" parent="1">
+        <mxCell id="page-subtitle" value="v0.3.0 experimental · Faster, affordable, measurable repeat tasks" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#34445e;fontStyle=0;" vertex="1" parent="1">
           <mxGeometry x="145" y="82" width="1015" height="30" as="geometry" />
         </mxCell>
         <mxCell id="footer-gate" value="Delegation escalation: complete + durable + known valid usage + failed checks only." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=18;fontColor=#34445e;fontStyle=0;" vertex="1" parent="1">

@@ -71,6 +71,33 @@ See the [system-boundary and task-lifecycle diagrams](model-architecture.md#edit
 for SVG views and a two-page editable draw.io source. The same guide retains a
 Mermaid request-flow view and explains reuse, uncertain outcomes, and settlement.
 
+## Explicit human outcome records
+
+The **v0.4.0 experimental source candidate** adds an `outcomes` Go package and
+CLI on the same scoped artifact boundary. Opted-in worker requests publish
+content-free invocation and attempt metadata. Reviewers explicitly record
+acceptance, rewriting, rejection, or reopening; check success never implies
+human acceptance. Each event links a run ID and uses an expected version and
+idempotent event ID. A rewrite clears acceptance until a later explicit
+acceptance identifies the final artifact digest.
+
+![Questlock human outcome feedback and cohort reporting](diagrams/human-outcomes.svg)
+
+The diagram has [native editable draw.io source](diagrams/human-outcomes.drawio).
+Outcome JSON uses the existing broker and SQLite transactions, with no schema
+migration or second database. It is application data inside a cooperative scope;
+scope access does not authenticate the reviewer as a person. Apps must obtain
+intentional human decisions and maintain their own identity controls.
+
+The cohort report includes all its recorded attempts and explicit incremental
+review effort, including failed and rejected work, divided by currently accepted
+outcomes when all inputs are known. Missing accounting stays unknown; zero
+accepted outcomes has no unit-cost result. Each task is read at an observed
+version rather than in one atomic cross-task snapshot. Outcome registration is
+separate from inference and never triggers generation retries; tracking failure
+must be recovered through the metadata receipt path. See
+[the feedback guide](outcomes.md) for schema limits, recovery, and cost coverage.
+
 ## What grows next
 
 SQLite serializes writers. Each scope's artifact and journal history grow without

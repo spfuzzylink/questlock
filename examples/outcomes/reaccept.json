@@ -1,0 +1,7 @@
+{
+  "id": "fixture-reaccept-1",
+  "run_id": "fixture-run-1",
+  "kind": "accepted",
+  "final_artifact_sha256": "d9d46ec6bdbd4cd2741109c03fd54947169e4d335d9ded29b92d7cc493e52491",
+  "human_minutes": 0.25
+}

@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mxfile host="app.diagrams.net" type="device" compressed="false">
+  <diagram id="human-outcomes" name="Human outcome feedback">
+    <mxGraphModel dx="1200" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1000" math="0" shadow="0" background="#f8fafc">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Questlock human outcome feedback" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=30;fontColor=#18243b;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="145" y="38" width="1010" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="v0.4.0 candidate · explicit review after declared checks" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#34445e;" vertex="1" parent="1">
+          <mxGeometry x="145" y="82" width="1010" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="sigil" value="" style="shape=hexagon;direction=north;fillColor=#15152e;strokeColor=#9d7dff;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="76" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="shackle" value="" style="ellipse;fillColor=none;strokeColor=#a8fbe7;strokeWidth=4;" vertex="1" parent="1">
+          <mxGeometry x="74" y="48" width="28" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="lock" value="" style="rounded=1;arcSize=20;fillColor=#1e2540;strokeColor=#93f9e5;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="66" y="68" width="44" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="key" value="" style="ellipse;fillColor=#b5a5ff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="84" y="77" width="8" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="stem" value="" style="fillColor=#b5a5ff;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="86" y="83" width="4" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="worker" value="" style="rounded=1;arcSize=10;html=0;fillColor=#e8f7ee;strokeColor=#278461;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="50" y="170" width="500" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-title" value="Worker invocation" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=21;fontColor=#18243b;fontStyle=1;" vertex="1" parent="worker">
+          <mxGeometry x="18" y="15" width="464" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-body" value="Opt in: track_outcome = true&#10;Checks, usage, output digest, run ID&#10;Fresh attempts and zero-generation reuse" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=17;fontColor=#34445e;" vertex="1" parent="worker">
+          <mxGeometry x="18" y="50" width="464" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="langfuse" value="" style="rounded=1;arcSize=10;html=0;fillColor=#f1edff;strokeColor=#8063ba;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="650" y="170" width="500" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="langfuse-title" value="Optional Langfuse copy" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=21;fontColor=#18243b;fontStyle=1;" vertex="1" parent="langfuse">
+          <mxGeometry x="18" y="15" width="464" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="langfuse-body" value="Current generation metadata + check scores&#10;Checks do not establish human acceptance&#10;Human feedback is not exported here" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=17;fontColor=#34445e;" vertex="1" parent="langfuse">
+          <mxGeometry x="18" y="50" width="464" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="broker" value="" style="rounded=1;arcSize=10;html=0;fillColor=#e8f6f3;strokeColor=#277f75;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="250" y="385" width="700" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="broker-title" value="Scoped outcome record · broker + SQLite" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=21;fontColor=#18243b;fontStyle=1;" vertex="1" parent="broker">
+          <mxGeometry x="18" y="15" width="664" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="broker-body" value="Existing versioned artifacts; no schema migration&#10;Run receipts + event IDs + expected versions&#10;No prompts, answers, or final artifact contents" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=17;fontColor=#34445e;" vertex="1" parent="broker">
+          <mxGeometry x="18" y="50" width="664" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="human" value="" style="rounded=1;arcSize=10;html=0;fillColor=#eff3f7;strokeColor=#7b8a9c;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="50" y="630" width="500" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="human-title" value="Explicit human feedback" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=21;fontColor=#18243b;fontStyle=1;" vertex="1" parent="human">
+          <mxGeometry x="18" y="15" width="464" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="human-body" value="Accepted · rewritten · rejected · reopened&#10;Rewrite reason + effort; any rewrite clears acceptance&#10;Reaccept with a final artifact SHA-256" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=17;fontColor=#34445e;" vertex="1" parent="human">
+          <mxGeometry x="18" y="50" width="464" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="report" value="" style="rounded=1;arcSize=10;html=0;fillColor=#eaf1ff;strokeColor=#5778b8;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="650" y="630" width="500" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="report-title" value="Declared cohort report" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=21;fontColor=#18243b;fontStyle=1;" vertex="1" parent="report">
+          <mxGeometry x="18" y="15" width="464" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="report-body" value="All recorded attempt estimates + recorded effort&#10;Divide by currently human-accepted outcomes&#10;Missing cost, effort, or rate remains visible" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=17;fontColor=#34445e;" vertex="1" parent="report">
+          <mxGeometry x="18" y="50" width="464" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-broker" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#596a86;strokeWidth=2;exitX=0.5;exitY=1;entryX=0.25;entryY=0;" edge="1" parent="1" source="worker" target="broker">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="350" />
+              <mxPoint x="425" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="worker-lf" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#596a86;strokeWidth=2;exitX=1;exitY=0.5;entryX=0;entryY=0.5;dashed=1;dashPattern=7 5;" edge="1" parent="1" source="worker" target="langfuse">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="broker-human" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#596a86;strokeWidth=2;exitX=0.25;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="broker" target="human">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="425" y="590" />
+              <mxPoint x="300" y="590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="human-feedback" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#596a86;strokeWidth=2;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="human" target="broker">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="25" y="707.5" />
+              <mxPoint x="25" y="462.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="broker-report" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#596a86;strokeWidth=2;exitX=0.75;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="broker" target="report">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="775" y="590" />
+              <mxPoint x="900" y="590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="footer-0" value="All recorded cohort attempts count, including failed and rejected work." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=18;fontColor=#34445e;" vertex="1" parent="1">
+          <mxGeometry x="50" y="870" width="1100" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="footer-1" value="Unknown cost or effort stays unknown. Zero accepted outcomes has no unit cost." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=18;fontColor=#34445e;" vertex="1" parent="1">
+          <mxGeometry x="50" y="901" width="1100" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="footer-2" value="Scoped metadata only; no passive edit watching, model training, or invoice reconciliation." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=18;fontColor=#34445e;" vertex="1" parent="1">
+          <mxGeometry x="50" y="932" width="1100" height="27" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
