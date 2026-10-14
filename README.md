@@ -1,6 +1,6 @@
 <div align="center">
 
-![Questlock — delegate, measure, reuse](assets/questlock-v0.3.0.svg)
+![Questlock — measure acceptance and rework](assets/questlock-v0.4.0.svg)
 
 **Coordinate shared agent work before paying for it again.**
 
@@ -96,6 +96,29 @@ self-hosted Langfuse CI contract also passed actual metadata readback. See the
 [Delegation and MCP setup](docs/delegation.md) ·
 [Langfuse, timings, and evaluation](docs/inference-observability.md) ·
 [Actual local measurements and limits](docs/measurements-v0.3.0.md)
+
+### Count the work a person actually accepts
+
+A check-passing answer can still need a rewrite. The **v0.4.0 experimental source
+candidate** adds explicit human outcome feedback, separate from worker checks.
+Opted-in invocations record content-free attempt metadata in the existing scoped
+broker. A reviewer can accept, rewrite, reject, or reopen the work; every rewrite
+clears acceptance until the reviewer explicitly accepts the final artifact again.
+
+```sh
+./bin/questlock outcome quest                  # six synthetic offline scenarios
+```
+
+The cohort report counts all recorded attempts, including failed and rejected
+work, alongside explicit reviewer time and an hourly rate. Cost per currently
+accepted outcome stays unknown when required accounting is missing, and is
+undefined with no accepted outcomes. These are configured estimates for recorded
+work, not invoices or whole-chat costs. No editor watching, automatic acceptance,
+model training, or human-feedback export is implied.
+
+[What, why, and how human feedback works](docs/outcomes.md) ·
+[Synthetic examples](examples/outcomes/README.md) ·
+[Editable feedback diagram](docs/diagrams/human-outcomes.drawio)
 
 ### A companion layer for the OpenRouter ecosystem
 

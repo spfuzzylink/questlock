@@ -55,6 +55,9 @@ delegation/**
 !worker/
 worker/**
 !worker/*.go
+!outcomes/
+outcomes/**
+!outcomes/*.go
 !client/
 client/**
 !client/*.go

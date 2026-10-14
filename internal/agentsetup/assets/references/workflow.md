@@ -56,6 +56,16 @@ Ollama preflight estimates the prepared UTF-8 bytes, model template/system bytes
 
 ## Review output and recovery
 
+For the bounded worker on v0.4.0+, `track_outcome: true` records content-free
+attempt accounting without changing generation identity. It does not watch an
+editor or infer acceptance. Use `questlock outcome show`, explicit versioned
+`outcome feedback`, and `outcome report --cohort PATH` to connect later operator
+acceptance, rewrites, and reported effort. Read the packaged `docs/outcomes.md`
+for fields and examples. A failed registration returns exact recovery metadata;
+reconcile that record instead of regenerating. Missing cost, human minutes,
+valuation rate, or an accepted denominator leaves the applicable metric null.
+No human acceptance event may be invented from a check or assistant review.
+
 `plan` is offline and includes full prompt text. Inspect what will be sent and whether necessary context was omitted. Treat plan files as sensitive task data. `run` accepts `--broker`, `--api-base-url`, and positive `--timeout` (default 2 minutes). Keys belong only in environment variables, never flags or JSON.
 
 Result JSON reports original `generation_usage`, actual `this_run_usage`, and `avoided_usage` for completed-result reuse. Input usage includes uncached tokens, cache reads, and cache writes; reasoning is already part of output. A prompt-cache discount is a provider outcome, not a guaranteed Questlock result hit. A known paid answer may still have inspection JSON when publication or settlement fails; `durable: false` means it was not durably stored. First incomplete responses also retain inspection JSON but exit nonzero. Require successful exit, `response.complete: true`, and `durable: true` before using text as an approved answer.

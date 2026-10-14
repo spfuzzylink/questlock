@@ -8,14 +8,16 @@ import (
 
 	"github.com/spfuzzylink/questlock/evaluation"
 	"github.com/spfuzzylink/questlock/inference"
+	"github.com/spfuzzylink/questlock/outcomes"
 )
 
 // Request.Spec supplies approved task, revision, prompt and context only.
 // Every model and resource setting comes from the explicit tier templates.
 type Request struct {
-	Spec   inference.Spec     `json:"spec"`
-	Policy Policy             `json:"policy"`
-	Checks []evaluation.Check `json:"checks"`
+	TrackOutcome bool               `json:"track_outcome,omitempty"` // Opt-in shared accounting; excluded from generation identity.
+	Spec         inference.Spec     `json:"spec"`
+	Policy       Policy             `json:"policy"`
+	Checks       []evaluation.Check `json:"checks"`
 }
 
 type Policy struct {
@@ -51,9 +53,21 @@ type Attempt struct {
 }
 
 type Result struct {
-	RequestSHA256 string              `json:"request_sha256"`
-	Attempts      []Attempt           `json:"attempts"`
-	SelectedTier  string              `json:"selected_tier,omitempty"`
-	Response      *inference.Response `json:"response,omitempty"` // Only a passing answer is exposed.
-	Status        string              `json:"status"`             // completed, quality_failed, stopped
+	OutcomeTracking *OutcomeTracking    `json:"outcome_tracking,omitempty"`
+	RequestSHA256   string              `json:"request_sha256"`
+	Attempts        []Attempt           `json:"attempts"`
+	SelectedTier    string              `json:"selected_tier,omitempty"`
+	Response        *inference.Response `json:"response,omitempty"` // Only a passing answer is exposed.
+	Status          string              `json:"status"`             // completed, quality_failed, stopped
+}
+
+// OutcomeTracking is separate from answer quality. Registration failure never
+// changes a checked answer or authorizes another model call. Record is returned
+// on failure so the exact metadata can be reconciled without regenerating text.
+type OutcomeTracking struct {
+	Status  string            `json:"status"` // recorded or failed
+	RunID   string            `json:"run_id"`
+	Task    outcomes.Task     `json:"task"`
+	Receipt *outcomes.Receipt `json:"receipt,omitempty"`
+	Record  *outcomes.Run     `json:"record,omitempty"`
 }

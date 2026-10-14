@@ -22,6 +22,20 @@ and explicit local-first Go/MCP delegation; an OpenRouter plugin or adapter is
 not selectable yet. The integration needs a tested contract for
 counting, routing policy, output limits, and billed usage before it can ship.
 
+The **v0.4.0 experimental source candidate** adds explicit downstream human
+feedback. It makes check success and human acceptance separate measurements,
+with versioned acceptance/rewriting/rejection/reopening events and a declared
+cohort report. Every rewrite removes an outcome from the accepted denominator
+until explicit reacceptance. The numerator retains all recorded attempts and
+reported human effort, including failed and rejected work. Missing accounting
+stays unknown. See [what this measures and excludes](outcomes.md).
+
+Use “cost per currently human-accepted outcome in the recorded cohort” only when
+those human signals and required cost/effort inputs are present. Use “cost per
+check-passing attempt” for declared-check observations alone. Neither phrase
+establishes invoice savings or total business cost; the report does not watch
+editor rewrites automatically or infer a person's acceptance.
+
 ## Evidence developers can reproduce
 
 | Task | Questlock's useful behavior | Evidence |

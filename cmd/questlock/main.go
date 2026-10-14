@@ -18,7 +18,7 @@ import (
 	"github.com/spfuzzylink/questlock/internal/store"
 )
 
-var version = "0.3.0" // Release builds set this from VERSION using -ldflags.
+var version = "0.4.0" // Release builds set this from VERSION using -ldflags.
 const defaultDB = ".questlock/state.db"
 
 func main() {
@@ -40,6 +40,8 @@ Usage:
   questlock model evaluate [--suite PATH] [--live --broker URL] [--report PATH]
   questlock worker run --request PATH [--broker URL] [--allow-paid]
   questlock worker serve --workspace ROOT [--broker URL] [--allow-paid]
+  questlock outcome record|feedback|show|report [flags]
+  questlock outcome quest
   questlock model quest
   questlock model install [--agents codex,claude] [--replace]
   questlock quest
@@ -67,6 +69,8 @@ func run(args []string) error {
 		return nil
 	case "worker":
 		return workerCommand(args[1:])
+	case "outcome":
+		return outcomeCommand(args[1:])
 	case "serve":
 		return serve(args[1:])
 	case "token":

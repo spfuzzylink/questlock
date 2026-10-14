@@ -1,0 +1,27 @@
+{
+  "id": "fixture-unknown-run-1",
+  "request_digest": "f2cdb20109174b6a9d1cca71670364c89b625b524ac40d23964656846b6b1e0a",
+  "status": "stopped",
+  "attempts": [
+    {
+      "tier_id": "synthetic-direct",
+      "fingerprint": "bfe4284316570cf4690f969808e463cd4bc7e99353fd1e98f1ddf6af07d2924b",
+      "output_sha256": "51a0ffdd4c6c29548d2579106ac719b706dd8e19d02ef8428039eada88135bbf",
+      "check_passed": false,
+      "complete": false,
+      "durable": false,
+      "reused": false,
+      "generation_called": true,
+      "usage_known": false,
+      "usage": {
+        "input_tokens": 0,
+        "uncached_input_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "output_tokens": 0
+      },
+      "estimated_cost_usd": null,
+      "cost_basis": "unknown"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="title desc">
+<title id="title">Questlock human outcome feedback</title>
+<desc id="desc">Unreleased v0.4.0 candidate. Opted-in worker attempts record content-free metadata in existing scoped broker artifacts. Explicit human feedback can accept, rewrite, reject, or reopen work. Rewrites clear acceptance until explicit reacceptance. A cohort report includes all recorded attempts and explicit reviewer effort; unknown accounting remains unknown. Langfuse check scores remain separate from human acceptance.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#596a86"/></marker></defs>
+<rect width="1200" height="1000" fill="#f8fafc"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<polygon points="88,30 126,51 126,93 88,114 50,93 50,51" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<ellipse cx="88" cy="65" rx="14" ry="17" fill="none" stroke="#a8fbe7" stroke-width="4"/>
+<rect x="66" y="68" width="44" height="32" rx="6" fill="#1e2540" stroke="#93f9e5" stroke-width="2"/>
+<circle cx="88" cy="81" r="4" fill="#b5a5ff"/>
+<path d="M88 83V93" stroke="#b5a5ff" stroke-width="4"/>
+<path d="M300 315V350H425V385" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M550 242.5H650" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" stroke-dasharray="7 5"/>
+<path d="M425 540V590H300V630" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M50 707.5H25V462.5H250" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M775 540V590H900V630" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="145" y="68" font-size="30" fill="#18243b" font-weight="700">Questlock human outcome feedback</text>
+<text x="145" y="101" font-size="19" fill="#34445e">v0.4.0 candidate · explicit review after declared checks</text>
+<rect x="50" y="170" width="500" height="145" rx="10" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="68" y="206" font-size="21" fill="#18243b" font-weight="700">Worker invocation</text>
+<text x="68" y="237" font-size="17" fill="#34445e">Opt in: track_outcome = true</text>
+<text x="68" y="260" font-size="17" fill="#34445e">Checks, usage, output digest, run ID</text>
+<text x="68" y="283" font-size="17" fill="#34445e">Fresh attempts and zero-generation reuse</text>
+<rect x="650" y="170" width="500" height="145" rx="10" fill="#f1edff" stroke="#8063ba" stroke-width="2"/>
+<text x="668" y="206" font-size="21" fill="#18243b" font-weight="700">Optional Langfuse copy</text>
+<text x="668" y="237" font-size="17" fill="#34445e">Current generation metadata + check scores</text>
+<text x="668" y="260" font-size="17" fill="#34445e">Checks do not establish human acceptance</text>
+<text x="668" y="283" font-size="17" fill="#34445e">Human feedback is not exported here</text>
+<rect x="250" y="385" width="700" height="155" rx="10" fill="#e8f6f3" stroke="#277f75" stroke-width="2"/>
+<text x="268" y="421" font-size="21" fill="#18243b" font-weight="700">Scoped outcome record · broker + SQLite</text>
+<text x="268" y="452" font-size="17" fill="#34445e">Existing versioned artifacts; no schema migration</text>
+<text x="268" y="475" font-size="17" fill="#34445e">Run receipts + event IDs + expected versions</text>
+<text x="268" y="498" font-size="17" fill="#34445e">No prompts, answers, or final artifact contents</text>
+<rect x="50" y="630" width="500" height="155" rx="10" fill="#eff3f7" stroke="#7b8a9c" stroke-width="2"/>
+<text x="68" y="666" font-size="21" fill="#18243b" font-weight="700">Explicit human feedback</text>
+<text x="68" y="697" font-size="17" fill="#34445e">Accepted · rewritten · rejected · reopened</text>
+<text x="68" y="720" font-size="17" fill="#34445e">Rewrite reason + effort; any rewrite clears acceptance</text>
+<text x="68" y="743" font-size="17" fill="#34445e">Reaccept with a final artifact SHA-256</text>
+<rect x="650" y="630" width="500" height="155" rx="10" fill="#eaf1ff" stroke="#5778b8" stroke-width="2"/>
+<text x="668" y="666" font-size="21" fill="#18243b" font-weight="700">Declared cohort report</text>
+<text x="668" y="697" font-size="17" fill="#34445e">All recorded attempt estimates + recorded effort</text>
+<text x="668" y="720" font-size="17" fill="#34445e">Divide by currently human-accepted outcomes</text>
+<text x="668" y="743" font-size="17" fill="#34445e">Missing cost, effort, or rate remains visible</text>
+<text x="50" y="888" font-size="18" fill="#34445e">All recorded cohort attempts count, including failed and rejected work.</text>
+<text x="50" y="919" font-size="18" fill="#34445e">Unknown cost or effort stays unknown. Zero accepted outcomes has no unit cost.</text>
+<text x="50" y="950" font-size="18" fill="#34445e">Scoped metadata only; no passive edit watching, model training, or invoice reconciliation.</text>
+</g>
+</svg>

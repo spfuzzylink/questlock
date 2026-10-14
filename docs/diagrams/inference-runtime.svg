@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1100" viewBox="0 0 1200 1100" role="img" aria-labelledby="title desc">
 <title id="title">Questlock inference runtime</title>
-<desc id="desc">Unreleased v0.3.0 candidate architecture. Explicit approved snapshots enter the Go inference runtime through CLI or MCP. The runtime calls local Ollama or direct hosted adapters and coordinates durable state with the broker. Optional local-first delegation permits one explicit escalation only after a complete durable known-usage answer fails checks. Current-run measurements, answer delivery, and content-free optional Langfuse export remain distinct.</desc>
+<desc id="desc">Published v0.3.0 experimental architecture. Explicit approved snapshots enter the Go inference runtime through CLI or MCP. The runtime calls local Ollama or direct hosted adapters and coordinates durable state with the broker. Optional local-first delegation permits one explicit escalation only after a complete durable known-usage answer fails checks. Current-run measurements, answer delivery, and content-free optional Langfuse export remain distinct.</desc>
 <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#596a86"/></marker></defs>
 <rect width="1200" height="1100" fill="#f8fafc"/>
 <g font-family="Arial, Helvetica, sans-serif">
@@ -18,7 +18,7 @@
 <path d="M250 432.5L25 432.5L25 910L50 910" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <path d="M950 432.5L1175 432.5L1175 910L1150 910" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" stroke-dasharray="7 5"/>
 <text x="145" y="68" font-size="30" fill="#18243b" font-weight="700">Questlock inference runtime</text>
-<text x="145" y="101" font-size="19" fill="#34445e">v0.3.0 candidate · unreleased · Faster, affordable, measurable repeat tasks</text>
+<text x="145" y="101" font-size="19" fill="#34445e">v0.3.0 experimental · Faster, affordable, measurable repeat tasks</text>
 <text x="50" y="1030" font-size="18" fill="#34445e">Delegation escalation: complete + durable + known valid usage + failed checks only.</text>
 <text x="50" y="1061" font-size="18" fill="#34445e">Unknown, incomplete, error, and budget outcomes stop. OpenRouter adapter remains future work.</text>
 <rect x="50" y="170" width="500" height="115" rx="10" fill="#eff3f7" stroke="#7b8a9c" stroke-width="2"/>

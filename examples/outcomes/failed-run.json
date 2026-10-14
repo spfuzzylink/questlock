@@ -1,0 +1,27 @@
+{
+  "id": "fixture-failed-run-1",
+  "request_digest": "b552ef79084e7029094be051d1574bb843cdf303c5c77805314474faa3c21326",
+  "status": "quality_failed",
+  "attempts": [
+    {
+      "tier_id": "synthetic-direct",
+      "fingerprint": "ea3b66784c449f1d9dc3e9cd858f6c5161beeeb7e156d4d76df72b0b8c86c84e",
+      "output_sha256": "187d54d37e499a90fb3efc7ec0a0faeae5c13c1f601dcab7b053fa499221f01c",
+      "check_passed": false,
+      "complete": true,
+      "durable": true,
+      "reused": false,
+      "generation_called": true,
+      "usage_known": true,
+      "usage": {
+        "input_tokens": 120,
+        "uncached_input_tokens": 120,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "output_tokens": 10
+      },
+      "estimated_cost_usd": 0.004,
+      "cost_basis": "caller_estimate"
+    }
+  ]
+}

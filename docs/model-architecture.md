@@ -1,6 +1,7 @@
 # Model cost-control architecture: what, why, how
 
-This guide describes **v0.3.0**. Published releases and their historical
+This guide describes the published **v0.3.0** runtime and the **v0.4.0 experimental
+source candidate** for explicit human feedback. Published releases and their historical
 validation remain available; see the [current evidence](validation.md#v030-observations--2026-10-14).
 
 Questlock coordinates an approved model task before anyone pays to generate it.
@@ -26,6 +27,13 @@ The [measurement record](measurements-v0.3.0.md) shows one passing bounded MCP
 extraction and working durable reuse, while neither broader suite configuration
 met every declared quality gate. Reuse preserves an
 answer; it does not improve its quality.
+
+The v0.4.0 candidate adds [human outcome feedback](outcomes.md). A passing check
+and human acceptance have separate records. The existing broker stores opted-in
+invocations, attempt metadata, and explicit review events; every rewrite clears
+acceptance until explicit reacceptance. A declared cohort report includes failed
+and rejected work in its recorded cost numerator and exposes missing accounting.
+This adds no SQLite schema, passive editor monitoring, or model training.
 
 This release controls requests that use the Runner. Its usage counters cover
 delegated provider/local generation and exclude the surrounding hosted assistant's
@@ -74,6 +82,11 @@ archives. They use plain SVG text without scripts, external assets, or
 The [inference runtime SVG](diagrams/inference-runtime.svg) and its
 [native editable source](diagrams/inference-runtime.drawio) show the v0.3.0 CLI/MCP,
 measurement, delegation, and optional export boundaries together.
+
+The [human feedback SVG](diagrams/human-outcomes.svg) and its
+[editable source](diagrams/human-outcomes.drawio) show the separate review loop,
+versioned outcome records, and cohort accounting boundary. Langfuse's declared
+check scores remain distinct from explicit human acceptance.
 
 ### System boundaries
 
@@ -211,6 +224,13 @@ artifacts. All workers in a scope can read and write every artifact in that
 scope, including results and ledgers. These are application controls for trusted,
 cooperating workers; provider credentials can still be used outside Questlock.
 Keep price and daily-budget policy consistent across those workers.
+
+Optional outcome records also live in this scope as versioned application JSON.
+Their event IDs and expected versions use the same durable receipt and conflict
+behavior. A scope credential authorizes access; it does not prove a person made
+a review decision. The calling application must obtain that explicit decision.
+Reports read each selected task at a stated version; they do not take an atomic
+snapshot across a whole cohort while reviewers continue to write.
 
 Only the broker owns the local SQLite data volume. WAL and transactional
 publication preserve acknowledged artifact writes through the tested process

@@ -102,3 +102,25 @@ its web process to `0.0.0.0` inside the container and publishes only
 does not populate or clean up your own Langfuse project.
 
 Questlock's developer-facing direction is faster, affordable, measurable repeat tasks through a small Go runtime. Langfuse observability and an actual bounded worker are the new pieces here. A capability-aware OpenRouter companion adapter remains future work. Questlock does not intercept a full assistant session, train a model, bypass paid limits, or choose models automatically.
+
+## Checks and human acceptance are separate measurements
+
+The **v0.4.0 experimental source candidate** adds a separate
+[human outcome feedback loop](outcomes.md). An opted-in worker records its
+content-free attempts; a reviewer explicitly supplies acceptance, rewrite,
+rejection, or reopening events. Passing `questlock.quality` checks does not
+populate this human-acceptance state. Every rewrite clears acceptance until a
+later explicit acceptance identifies the final artifact digest.
+
+A cohort report includes all its recorded attempts, including failures and
+rejected work, with known generation-cost estimates and explicitly reported
+incremental review effort. Unknown cost or event effort, a missing hourly rate,
+or no currently accepted outcomes prevents a complete cost-per-accepted-task
+number. Reports include each task's observed version and do not atomically freeze
+the entire cohort. Model token counters and configured prices remain estimates
+for delegated work, separate from surrounding hosted-assistant tokens and invoices.
+
+Human feedback stays in Questlock's scoped broker artifacts. The existing
+content-free Langfuse export is unchanged; no new review event, reviewer
+identity, artifact content, or human acceptance score is exported. There is no
+passive editor watcher or automated human-acceptance inference.

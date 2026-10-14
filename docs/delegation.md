@@ -1,6 +1,7 @@
 # Bounded local-first delegation
 
-This describes **v0.3.0**. The `delegation` Go package and `questlock worker` execute one approved request through local Ollama, with at most one explicitly configured escalation tier. They let a coding assistant delegate a fixed extraction, handoff, or summary while keeping context, models, reuse, budgets, and acceptance checks reviewable.
+The published **v0.3.0** runtime and the **v0.4.0 experimental source candidate**
+share this execution contract. The `delegation` Go package and `questlock worker` execute one approved request through local Ollama, with at most one explicitly configured escalation tier. They let a coding assistant delegate a fixed extraction, handoff, or summary while keeping context, models, reuse, budgets, and declared checks reviewable.
 
 The surrounding assistant prepares the request and reviews the passing answer. The worker provides no shell execution, workspace editing, file discovery, model training, whole-session proxy, or automatic model selection. A supported OpenRouter adapter remains future work. Questlock measures the
 delegated generation; it excludes the surrounding hosted assistant's prompt,
@@ -175,6 +176,28 @@ opt-in; its endpoint and keys are not part of the approved task file.
 | Pending/unknown usage, incomplete output, cap violation, cancellation, provider error, publication error, or settlement error | Stop the policy; no escalation or automatic generation retry. |
 
 Quality checks support JSON validity/equality and literal contains/not-contains tests. Passing them proves only those expectations. A truncated local answer does not authorize a larger tier, even if that tier has more output allowance.
+
+## Opt in to downstream outcome tracking
+
+The v0.4.0 candidate accepts `"track_outcome": true` at the top level of the
+approved request. It records content-free invocation and attempt metadata in
+the worker's existing broker scope and adds `outcome_tracking` to the result.
+Each invocation receives a run ID, including an exact reuse; reuse records zero
+new generation usage and cost rather than charging the original result again.
+Omitting the flag preserves the untracked workflow.
+
+Registration does not turn a passed check into human acceptance. The reviewer
+uses explicit `outcome feedback` events to accept, rewrite, reject, or reopen
+the work. A rewrite clears acceptance even when the reason is style; a later
+acceptance identifies the final artifact by SHA-256. An agent must not invent a
+human decision to make its metrics look better.
+
+If registration is unavailable, the result reports that failure independently
+of the generated answer. No generation is retried to repair outcome metadata.
+The [outcome guide](outcomes.md) covers receipt recovery, scoped access, cohort
+cost coverage, and the distinction between caller-reported records and automatic
+worker linkage. Langfuse's existing quality score still describes declared
+checks; human feedback is not exported to Langfuse in this candidate.
 
 The request digest and tier ID derive stable job identity. Repeating the same approved request preserves normal snapshot reuse and uncertainty rules; the router never changes a revision to force generation. Update the approved revision when facts change. Review retained broker records before deliberately creating a new attempt after an uncertain outcome.
 
