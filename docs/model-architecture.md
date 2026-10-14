@@ -1,7 +1,7 @@
 # Model cost-control architecture: what, why, how
 
-This guide describes the **unpublished v0.3.0 candidate**. Published releases and
-their historical validation remain available; new CI/publication proof is pending.
+This guide describes **v0.3.0**. Published releases and their historical
+validation remain available; see the [current evidence](validation.md#v030-observations--2026-10-14).
 
 Questlock coordinates an approved model task before anyone pays to generate it.
 The first customer use case is a developer or small team repeatedly asking for
@@ -20,13 +20,16 @@ provider-credit path, [the model workflow guide](model-workflows.md) for API set
 spec examples, and [the broker architecture](architecture.md) for storage and
 publication semantics.
 
-The candidate adds [current-run measurements and optional Langfuse export](inference-observability.md),
+Version 0.3.0 adds [current-run measurements and optional Langfuse export](inference-observability.md),
 [explicit local-first Go/MCP delegation](delegation.md), and bounded evaluation.
-The [local measurement record](measurements-v0.3.0.md) shows working durable reuse
-but no configuration meeting every declared quality gate. Reuse preserves an
+The [measurement record](measurements-v0.3.0.md) shows one passing bounded MCP
+extraction and working durable reuse, while neither broader suite configuration
+met every declared quality gate. Reuse preserves an
 answer; it does not improve its quality.
 
-This release controls requests that use the Runner. It does not remove a
+This release controls requests that use the Runner. Its usage counters cover
+delegated provider/local generation and exclude the surrounding hosted assistant's
+prompt, tool, and context tokens. It does not remove a
 provider's credit requirement or alter a subscription's limits. A remembered
 task snapshot is application data, not additional training of the model. Local
 inference instead runs installed weights on the user's hardware; time,

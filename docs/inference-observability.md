@@ -1,6 +1,6 @@
 # Measurable bounded inference
 
-This describes the **unreleased v0.3.0 candidate**. It adds current-run measurements, optional Langfuse export, and a bounded evaluation command. The [local measurement record](measurements-v0.3.0.md) shows exact reuse working while neither tested configuration qualified on task checks. Those observations are not a statistically reliable benchmark; actual-server Langfuse proof remains pending.
+Version **v0.3.0** adds current-run measurements, optional Langfuse export, and a bounded evaluation command. The [measurement record](measurements-v0.3.0.md) shows one passing MCP extraction, exact reuse, and quality failures in the broader local suite. The self-hosted Langfuse CI contract passed actual metadata readback. These observations are task-specific, not a statistically reliable benchmark.
 
 Repeated handoffs and fixed-snapshot summaries should be faster and more affordable when their completed answer can be reused. Measurements make that behavior inspectable: distinguish a fresh generation from a broker lookup, record the context admitted, and compare explicit output caps against declared task checks. [Bounded delegation](delegation.md) uses the same runtime.
 
@@ -10,7 +10,9 @@ The diagram is [editable in diagrams.net](diagrams/inference-runtime.drawio). Th
 
 ## Read the measurements correctly
 
-`model run` returns a `measurement` for this invocation. `total_ms` covers the Runner call; `phase_ms` separates planning, lookup, admission, preflight, reservation, generation, publication, settlement, and recovery where those phases occurred. CLI provider setup is reported separately as `provider_setup_ms`. Completion and durability describe protocol state, not answer quality.
+`model run` returns a `measurement` for this invocation. `total_ms` covers the Runner call; `phase_ms` separates planning, lookup, admission, preflight, reservation, generation, publication, settlement, and recovery where those phases occurred. CLI provider setup is reported separately as `provider_setup_ms`. Completion and durability describe protocol state, not answer quality. Usage
+covers the delegated provider or local generation and excludes the surrounding
+hosted assistant's prompt, tool, and context tokens.
 
 | Field or outcome | Meaning |
 | --- | --- |
@@ -38,7 +40,9 @@ questlock model run --spec "$HOME/questlock-workspace/task.json" \
 
 The timeout defaults to two seconds per HTTP request and must be 1ms–5s. Output JSON reaches stdout before export; acknowledgement status and trace/span IDs go to stderr. Export failure cannot alter the result or retry generation. An acknowledgement proves endpoint acceptance, not dashboard visibility. Live evaluation and delegation can also attach a numeric `questlock.quality` score derived only from their declared checks.
 
-Each fresh attempted generation exports one `questlock.run` root and one `questlock.generate` child. Reuse exports one root, zero new usage, and no generation child. The narrow schema includes allowlisted outcomes, model/provider identifiers, fingerprint, context counts, timing, and usage. It has no prompt, answer, task/revision labels, user/session identity, raw errors, credentials, or endpoint URL. Telemetry is off unless explicitly enabled.
+Each fresh attempted generation exports one `questlock.run` root and one `questlock.generate` child. Reuse exports one root, zero new usage, and no generation child. The narrow schema includes allowlisted outcomes, model/provider identifiers, fingerprint, context counts, timing, and usage. It has no prompt, answer, task/revision labels, user/session identity, raw errors, credentials, or endpoint URL. Telemetry is off unless explicitly enabled. For your own dashboard, provision a
+Langfuse project and supply its endpoint and keys; Questlock does not create a
+project or connect to a user dashboard automatically.
 
 Input/cache and output/reasoning buckets are exclusive in Langfuse: uncached input, cache reads, and cache writes sum to input; visible output plus reasoning sum to output. Reasoning is never charged twice. Only the generation child uses Langfuse generation usage/cost fields; root usage/cost numbers remain metadata. Local Ollama export explicitly records zero provider token charges, while hardware, electricity, memory, and runtime still cost resources. Hosted USD and avoided USD use caller-supplied prices and reported usage; they are estimates, not invoices or proven savings. Missing cost or usage is unknown.
 
@@ -86,6 +90,15 @@ From a checkout with Go meeting the module minimum and Docker on `PATH`, use a n
 
 Preparation refuses existing paths and does not print credentials. The wrapper requires the generated, owned, mode-0600 regular file and isolates each operation from ambient database, Langfuse, provider, proxy, Docker-context, and Go settings. Docker operations default to `unix:///var/run/docker.sock`; for another local daemon, add `--docker-socket unix:///absolute/path/to/local/docker.sock` to each Docker operation. Remote Docker contexts are unsupported. The fixed `config` operation validates quietly, `up` waits for health, and `down` removes the disposable volumes.
 
-The smoke command sends deterministic metadata fixtures, then reads observations and scores back to check span relationships, exclusive token buckets, content-free fields, estimate/local-zero costs, and zero-new-usage reuse. It calls no model. Actual-server and CI proof are pending for this candidate; fake-server tests alone do not establish the live contract.
+The smoke command sends deterministic metadata fixtures, then reads observations
+and scores back to check span relationships, exclusive token buckets, content-free
+fields, estimate/local-zero costs, zero-new-usage reuse, client-observed streaming
+timing, and root quality scores. It calls no model. The
+[actual self-hosted CI run](https://github.com/spfuzzylink/questlock/actions/runs/38632010394)
+passed this readback contract against Langfuse v4.59.0; see the
+[validation record](validation.md#v030-observations--2026-10-14). The stack binds
+its web process to `0.0.0.0` inside the container and publishes only
+`127.0.0.1:3000` on the host. CI removes its disposable services and volumes; this
+does not populate or clean up your own Langfuse project.
 
 Questlock's developer-facing direction is faster, affordable, measurable repeat tasks through a small Go runtime. Langfuse observability and an actual bounded worker are the new pieces here. A capability-aware OpenRouter companion adapter remains future work. Questlock does not intercept a full assistant session, train a model, bypass paid limits, or choose models automatically.

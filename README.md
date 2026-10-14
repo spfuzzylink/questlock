@@ -57,7 +57,7 @@ count-estimate, price, and billing limits. Live local measurements now show exac
 
 ### Delegate, measure, and check the result
 
-The **unreleased v0.3.0 candidate** adds a bounded local worker for Codex and Claude,
+**v0.3.0** adds a bounded local worker for Codex and Claude,
 optional metadata observability for Langfuse, and a six-case evaluation command.
 You declare the task snapshot, resource limits, and deterministic acceptance
 checks. Only a confirmed passing tier exposes an approved answer. One explicitly
@@ -72,7 +72,9 @@ configured next tier may run after a known quality failure; uncertain calls stop
 The worker needs a scoped broker credential and installed local weights. Its MCP
 interface reads only the named approved request file and admits one active task.
 It makes bounded delegation available to an agent; it does not reroute a whole
-hosted chat. Langfuse export is opt-in and carries usage, timing, outcome, and
+hosted chat. These usage counters cover the delegated generation and exclude
+the surrounding hosted assistant's prompt, tool, and context tokens. Langfuse
+export is opt-in and carries model metadata, usage, timing, outcome, and declared
 check scores without prompts or answer text.
 
 Streaming Ollama jobs measure client-observed first content and output intervals.
@@ -85,6 +87,11 @@ passed 4/6 checks with one cap and 3/6 with another. All 12 exact repeats avoide
 new generation, but reuse preserved the wrong answers too. The evaluator selected
 neither configuration, and a failing worker withheld its answer. This is why
 quality checks accompany cost measurements.
+
+A separate bounded MCP ticket extraction passed strict JSON and exact-value checks
+with 58 input / 21 output tokens; its exact repeat made no new generation. The
+self-hosted Langfuse CI contract also passed actual metadata readback. See the
+[measurement record](docs/measurements-v0.3.0.md) for timings, scope, and limits.
 
 [Delegation and MCP setup](docs/delegation.md) ·
 [Langfuse, timings, and evaluation](docs/inference-observability.md) ·
@@ -124,17 +131,19 @@ sudo and changes no shell settings. The demo cleans up its temporary state.
 
 ### Download a binary
 
-The current experimental release is **v0.2.0**. Choose your operating system and
+The current experimental release is **v0.3.0**. Choose your operating system and
 CPU; x86-64 covers 64-bit Intel and AMD processors. No Go installation is needed.
 
 | System | ARM64 | x86-64 (Intel / AMD) |
 | --- | --- | --- |
-| macOS 13+ | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.2.0/questlock_0.2.0_darwin_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.2.0/questlock_0.2.0_darwin_amd64.tar.gz) |
-| Linux | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.2.0/questlock_0.2.0_linux_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.2.0/questlock_0.2.0_linux_amd64.tar.gz) |
+| macOS 13+ | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.3.0/questlock_0.3.0_darwin_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.3.0/questlock_0.3.0_darwin_amd64.tar.gz) |
+| Linux | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.3.0/questlock_0.3.0_linux_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.3.0/questlock_0.3.0_linux_amd64.tar.gz) |
 
-Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.2.0/checksums.txt)
+Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.3.0/checksums.txt)
 before extracting, then run `./questlock quest`. The installer above performs the
-checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.2.0).
+checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.3.0).
+[Older releases](https://github.com/spfuzzylink/questlock/releases), including
+v0.2.0, remain available.
 
 ### Try the container
 
@@ -146,7 +155,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.2.0 quest
+  ghcr.io/spfuzzylink/questlock:v0.3.0 quest
 ```
 
 Use `docker` in place of `podman` if preferred. The image pulls without a registry

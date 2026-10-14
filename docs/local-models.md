@@ -1,8 +1,8 @@
 # Local models: routine work without provider credits
 
-This guide includes the **unpublished v0.3.0 candidate**. New worker, evaluation,
-and streaming-measurement commands require a source build until release assets
-are confirmed.
+This guide covers **v0.3.0**, including the bounded worker, evaluation, and
+streaming-measurement commands. Install a [release binary](installation.md) or
+build the source.
 
 Use Questlock's `ollama` provider to run a bounded handoff, repository summary,
 or extraction on installed local model weights. Accepted local requests need no
@@ -180,7 +180,9 @@ keep that distinction visible without exporting prompt or answer content.
 ## Use the coding clients themselves with local inference
 
 A Questlock skill makes its bounded subtask local. A surrounding hosted Codex or
-Claude session still consumes that session's normal allowance. To move the
+Claude session still consumes that session's normal allowance. Questlock's usage
+counters exclude the surrounding hosted assistant's prompt, tool, and context
+tokens. To move the
 coding client's own model turns to local weights, use its native Ollama
 integration as a separate session choice.
 

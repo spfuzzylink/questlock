@@ -1,6 +1,6 @@
-# v0.3.0 candidate: local measurements
+# v0.3.0: observed measurements
 
-Observed on 2026-10-14 against the **unpublished v0.3.0 candidate**. These are bounded local observations, not a statistically reliable benchmark or a general model recommendation. No generated answer text, private paths, credentials, or model digests are included.
+Observed on 2026-10-14 against the **v0.3.0 release source**. These are bounded local observations, not a statistically reliable benchmark or a general model recommendation. No generated answer text, private paths, credentials, or model digests are included.
 
 The runtime completed and durably stored all twelve fresh evaluation results, then reused all twelve exact snapshots with zero new generation usage and unchanged output hashes. **Neither configuration passed every declared quality gate.** The evaluation returned no eligible selection and exited with status 1. Reliable storage and reuse did not make these answers correct.
 
@@ -27,11 +27,14 @@ One exact repeat in the same private test scope took **27.584 ms** through MCP,
 returned the passing saved result, and reported **zero current input/output
 tokens** with `generation_called: false`. There was no paid tier, escalation,
 or generation retry. This is one accepted extraction and one reuse observation,
-not a general speedup, semantic reasoning test, or invoice saving.
+not a general speedup, semantic reasoning test, or invoice saving. The usage
+counts cover this delegated local generation and exclude the surrounding hosted
+assistant's prompt, tool, and context tokens. Request preparation and result
+review can still consume that assistant's normal allowance.
 
 The official Go MCP SDK negotiated protocol `2026-07-28` and discovered the sole
-`questlock_delegate` tool. Complete candidate Codex settings were parsed by the
-native CLI in isolation; Claude Code connected to the candidate worker in an
+`questlock_delegate` tool. Complete staged Codex settings were parsed by the
+native CLI in isolation; Claude Code connected to the worker in an
 isolated profile. Those checks did not modify active client configuration or
 reroute an existing hosted chat.
 
@@ -74,6 +77,33 @@ A local-only public-feature extraction request also failed its declared quality 
 
 `strict-json` passed. `exact-public-feature-facts` failed at `/quality_checks_scope` and `/reuse_generation_spans`. No failed text was exposed as an approved answer and no generation was retried. This validates the guard's refusal for that request; it does not qualify the local model or establish the quality of future tasks.
 
+## Actual self-hosted Langfuse readback
+
+The [self-hosted CI run](https://github.com/spfuzzylink/questlock/actions/runs/38632010394)
+passed all seven jobs, including the reusable Langfuse v4.59.0 contract. The smoke
+check exported deterministic metadata fixtures and read the stored observations
+and scores back from the real service. It verified:
+
+- Three roots and two generation children with the expected parent relationships.
+- Exclusive normalized input/cache and output/reasoning buckets, with no duplicate
+  generation usage or cost on roots.
+- Explicit caller-estimated cost, zero local provider charges, and zero new usage
+  on snapshot reuse, with original/avoided usage retained separately.
+- Client-observed streamed first-content and output-content timing fields.
+- Root-attached declared-check quality scores of `1`, `1`, and `0`.
+- Content-free allowlisted metadata without prompt or answer fields.
+
+These fixtures made no model calls and measured no paid charges. This establishes
+the metadata ingestion/readback contract, separately from the local model quality
+results above. CI used and cleaned up a disposable project and service stack;
+no user dashboard was populated. Your own export requires an explicit Langfuse
+project, endpoint, keys, and opt-in. See the [setup contract](inference-observability.md)
+and [release-source evidence](validation.md#v030-observations--2026-10-14).
+
 ## Remaining evidence
 
-The self-hosted Langfuse actual-server/CI contract is still pending. Its deterministic metadata fixtures validate observability separately from model quality. Live OpenAI/Anthropic quality, paid-account costs, representative engineering tasks, repeated controlled measurements, and end-to-end hosted assistant behavior remain unevaluated for this candidate. Questlock delegation does not change the surrounding hosted chat's model or allowance.
+Live OpenAI/Anthropic quality, paid-account costs, representative engineering
+tasks, repeated controlled measurements, and end-to-end hosted assistant behavior
+remain unevaluated for v0.3.0. Questlock delegation does not change the surrounding
+hosted chat's model or allowance. Its counters measure only the delegated
+provider/local generation, excluding that chat's prompt, tool, and context tokens.

@@ -1,20 +1,25 @@
-# Questlock 0.3.0 candidate — measurable bounded tasks and local delegation
+# Questlock 0.3.0 — measurable bounded tasks and local delegation
 
 Repeated tasks need observable resource use and an acceptance gate before a
-worker returns generated text. This **unpublished candidate** adds current-run
-measurements, optional content-free Langfuse export, deterministic evaluation,
-and a Go/MCP worker with an explicit local-first policy. Published 0.2.0 and older
-releases remain available; passing local checks is not evidence of publication.
+worker returns generated text. Version **0.3.0** adds current-run measurements,
+optional content-free Langfuse export, deterministic evaluation, and a Go/MCP
+worker with an explicit local-first policy. Published 0.2.0 and older releases
+remain available.
 
-## New in the candidate
+[Release and downloads](https://github.com/spfuzzylink/questlock/releases/tag/v0.3.0) ·
+[Installation](installation.md) · [Container](containers.md) ·
+[Validation record](validation.md#v030-observations--2026-10-14)
+
+## New in 0.3.0
 
 - Per-invocation Runner phase metrics, separate from durable result identity and
   historical generation timing. Optional local Ollama streaming observes first
   and last content arrival; reuse has no fresh generation or TTFT.
-- Opt-in Langfuse metadata export: one root plus one generation child for a fresh
-  attempt, one root with zero new usage for reuse, exclusive cache/reasoning token
-  buckets, and optional declared-check scores. Export failures never retry a model
-  call. MCP uses a silent bounded best-effort queue that can drop telemetry.
+- Opt-in Langfuse model metadata export: one root plus one generation child for a
+  fresh attempt, one root with zero new usage for reuse, exclusive cache/reasoning
+  token buckets, and optional declared-check scores. No prompt or answer text is
+  exported. Export failures never retry a model call. MCP uses a silent bounded
+  best-effort queue that can drop telemetry.
 - `model evaluate` with three simple and three complex public cases, explicit
   configurations, private reports, and separate fixture/live modes. A report's
   selection changes no model or future routing policy.
@@ -28,36 +33,60 @@ releases remain available; passing local checks is not evidence of publication.
 - Local Ollama work neither consumes nor clears the API dollar ledger; it can
   continue when paid admission is frozen. Hardware and runtime costs remain.
 - An isolated disposable Langfuse v4.59.0 stack with six content-pinned service
-  images and a reusable required CI contract. Actual-server/CI proof is pending.
+  images and a reusable required CI contract. Actual API readback verified three
+  roots, two generation children, exclusive usage/cost fields, streaming timing,
+  content-free metadata, and root quality scores `1/1/0`.
 
-## Try the candidate from source
+## Try it
+
+After extracting your platform's archive:
+
+```sh
+./questlock model quest
+./questlock model evaluate
+./questlock model install --agents codex,claude
+```
+
+Both demo commands use simulated public fixtures and need no model account.
+The worker needs an existing authenticated broker, an approved request, and
+installed local weights. See [measurements and Langfuse setup](inference-observability.md),
+[bounded delegation and native MCP registration](delegation.md), and the
+[installation guide](installation.md).
+
+To build the code you checked out instead, run:
 
 ```sh
 go build -trimpath -o bin/questlock ./cmd/questlock
-./bin/questlock model evaluate
 ./bin/questlock worker run --request "$HOME/questlock-workspace/approved-task.json"
 ```
 
-Default evaluation uses simulated public fixtures and needs no model account.
-The worker command needs an existing authenticated broker, approved request,
-and installed local weights. See [measurements and Langfuse setup](inference-observability.md),
-[bounded delegation](delegation.md), and the [installation guide](installation.md).
-
 ## Observed result and release limits
 
-The live local suite completed twelve fresh durable generations and twelve
-exact reuses with zero new generation usage. `compact-64` passed 4/6 task checks;
-`balanced-256` passed 3/6. No configuration qualified, so the live evaluation
-exited 1. A separate worker extraction withheld its failed answer, including on
-exact reuse. These observations demonstrate measured reuse and the quality guard,
-not general local-model quality, a reliable latency ranking, or invoice savings.
+A bounded MCP ticket extraction passed strict JSON and exact-value checks with
+58 input / 21 output tokens. One exact MCP repeat returned the saved passing
+result with zero new usage and no generation. The SDK calls took 5,524.343 ms and
+27.584 ms respectively, including transport/provider setup; these are two
+observations, not a general speedup or invoice saving.
+
+The broader live local suite completed twelve fresh durable generations and
+twelve exact reuses with zero new generation usage. `compact-64` passed 4/6 task
+checks; `balanced-256` passed 3/6. No configuration qualified, so the live
+evaluation exited 1. A separate feature extraction withheld its failed answer,
+including on exact reuse. These observations demonstrate measured reuse and the
+quality guard, not general local-model quality or a reliable latency ranking.
 See the [content-free measurement record](measurements-v0.3.0.md).
+
+The usage counters cover delegated provider/local generation and exclude the
+surrounding hosted assistant's prompt, tool, and context tokens. Request
+preparation and result review can still consume its normal allowance. Langfuse
+export needs an explicit project, endpoint, and keys; the CI stack uses a separate
+disposable project and cleans it up.
 
 Direct OpenAI, Anthropic, and local Ollama remain supported. A capability-aware
 OpenRouter companion adapter is future work. Questlock does not train models,
 choose them automatically, replace an entire hosted chat, or bypass paid limits.
-Publication requires the native archive, source-container, publication guard,
-and self-hosted Langfuse CI gates to pass for the release source.
+Native archive and container publication evidence is recorded in the
+[validation record](validation.md#v030-observations--2026-10-14).
 
 ---
 
