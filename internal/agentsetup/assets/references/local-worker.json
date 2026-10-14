@@ -1,0 +1,26 @@
+{
+  "spec": {
+    "task": "approved-ticket-extraction",
+    "revision": "public-example-1",
+    "instructions": "Return only a JSON object with issue and deadline strings. Copy the supplied values exactly.",
+    "input": "Ticket OPS-17 must be completed on 2030-04-03."
+  },
+  "policy": {
+    "local": {
+      "id": "local-bounded",
+      "spec": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "max_context_bytes": 8192,
+        "max_input_tokens": 8192,
+        "max_output_tokens": 256,
+        "reuse_for_seconds": 3600,
+        "stream": true
+      }
+    }
+  },
+  "checks": [
+    { "id": "strict-json", "kind": "json_valid" },
+    { "id": "expected-values", "kind": "json_equals", "expected": { "issue": "OPS-17", "deadline": "2030-04-03" } }
+  ]
+}

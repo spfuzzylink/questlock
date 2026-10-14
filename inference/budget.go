@@ -19,6 +19,12 @@ type budgetLedger struct {
 }
 
 func (r Runner) reserve(ctx context.Context, s Spec, id string, amount int64) (string, error) {
+	// Validated local Ollama has no provider token charge and cannot fall back
+	// to a cloud model. It neither consumes nor clears the API dollar ledger.
+	// A paid scope can therefore keep doing local work after an API overrun.
+	if s.Provider == "ollama" && s.Prices == nil && s.DailyBudgetUSD == 0 && s.MaxCostUSD == 0 {
+		return "", nil
+	}
 	key := "inference/v1/budget/" + r.now().Format("2006-01-02")
 	for attempt := 0; attempt < 32; attempt++ {
 		a, err := r.Broker.Get(ctx, key)

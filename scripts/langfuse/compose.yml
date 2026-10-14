@@ -1,0 +1,172 @@
+# Disposable integration validation, adapted from the upstream v4.59.0 compose:
+# https://github.com/langfuse/langfuse/blob/v4.59.0/docker-compose.yml
+# Every image is content pinned. Only the web API is published, on loopback.
+# Generate a private environment with prepare.py; this is not a production stack.
+x-runtime: &runtime
+  restart: "no"
+  logging:
+    driver: json-file
+    options:
+      max-size: 5m
+      max-file: "2"
+
+x-langfuse-environment: &langfuse-environment
+  # Docker injects HOSTNAME=container ID. Both the worker and Next.js standalone
+  # server use it as their bind address, which otherwise excludes loopback.
+  # Only the web port is published, and that remains host-loopback-only.
+  # https://langfuse.com/faq/all/debug-docker-deployment
+  HOSTNAME: 0.0.0.0
+  NEXTAUTH_URL: http://127.0.0.1:3000
+  DATABASE_URL: ${DATABASE_URL:?private environment required}
+  SALT: ${SALT:?private environment required}
+  ENCRYPTION_KEY: ${ENCRYPTION_KEY:?private environment required}
+  TELEMETRY_ENABLED: "false"
+  LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "false"
+  LANGFUSE_IN_APP_AGENT_ENABLED: "false"
+  CLICKHOUSE_MIGRATION_URL: clickhouse://clickhouse:9000
+  CLICKHOUSE_URL: http://clickhouse:8123
+  CLICKHOUSE_USER: questlock
+  CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:?private environment required}
+  CLICKHOUSE_CLUSTER_ENABLED: "false"
+  LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+  LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
+  LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: ${MINIO_ROOT_USER:?private environment required}
+  LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:?private environment required}
+  LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://minio:9000
+  LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+  LANGFUSE_S3_EVENT_UPLOAD_PREFIX: events/
+  LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse
+  LANGFUSE_S3_MEDIA_UPLOAD_REGION: auto
+  LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: ${MINIO_ROOT_USER:?private environment required}
+  LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:?private environment required}
+  LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://minio:9000
+  LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+  LANGFUSE_S3_BATCH_EXPORT_ENABLED: "false"
+  LANGFUSE_INGESTION_QUEUE_DELAY_MS: "100"
+  LANGFUSE_INGESTION_CLICKHOUSE_WRITE_INTERVAL_MS: "1000"
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  REDIS_AUTH: ${REDIS_AUTH:?private environment required}
+  REDIS_TLS_ENABLED: "false"
+
+x-langfuse-dependencies: &langfuse-dependencies
+  postgres:
+    condition: service_healthy
+  minio:
+    condition: service_healthy
+  redis:
+    condition: service_healthy
+  clickhouse:
+    condition: service_healthy
+
+services:
+  langfuse-web:
+    <<: *runtime
+    image: docker.io/langfuse/langfuse:4.59.0@sha256:48ecae32cd74d3a567588602c144de0ec626daf32dc5f2e831a03cebd0bb2d34
+    mem_limit: 3g
+    cpus: 2
+    depends_on: *langfuse-dependencies
+    ports: ["127.0.0.1:3000:3000"]
+    environment:
+      <<: *langfuse-environment
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?private environment required}
+      AUTH_DISABLE_SIGNUP: "true"
+      LANGFUSE_INIT_ORG_ID: ${LANGFUSE_INIT_ORG_ID:?private environment required}
+      LANGFUSE_INIT_ORG_NAME: Questlock disposable validation
+      LANGFUSE_INIT_PROJECT_ID: ${LANGFUSE_INIT_PROJECT_ID:?private environment required}
+      LANGFUSE_INIT_PROJECT_NAME: Questlock metadata contract
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:?private environment required}
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_SECRET_KEY:?private environment required}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/public/health?failIfDatabaseUnavailable=true').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 30s
+
+  langfuse-worker:
+    <<: *runtime
+    image: docker.io/langfuse/langfuse-worker:4.59.0@sha256:246a3a0fab57810734080d302492aa99d7ed0b6acc909c84b58832074b564175
+    mem_limit: 2g
+    cpus: 1.5
+    depends_on: *langfuse-dependencies
+    environment: *langfuse-environment
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3030/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 30s
+
+  postgres:
+    <<: *runtime
+    image: docker.io/library/postgres:16.11-alpine@sha256:4327b9fd295502f326f44153a1045a7170ddbfffed1c3829798328556cfd09e2
+    mem_limit: 512m
+    cpus: 0.5
+    environment:
+      POSTGRES_USER: questlock
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?private environment required}
+      POSTGRES_DB: questlock
+    volumes: ["postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "questlock", "-d", "questlock"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  clickhouse:
+    <<: *runtime
+    image: docker.io/clickhouse/clickhouse-server:26.4@sha256:c7796a1335d14385c052f10061cf719f4a368a908432ec25980860b1333e9ccd
+    mem_limit: 2g
+    cpus: 2
+    user: "101:101"
+    environment:
+      CLICKHOUSE_DB: default
+      CLICKHOUSE_USER: questlock
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:?private environment required}
+    volumes: ["clickhouse:/var/lib/clickhouse", "clickhouse-logs:/var/log/clickhouse-server"]
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8123/ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  redis:
+    <<: *runtime
+    image: docker.io/library/redis:7.2.11-alpine@sha256:1a34bdba051ecd8a58ec8a3cc460acef697a1605e918149cc53d920673c1a0a7
+    mem_limit: 256m
+    cpus: 0.5
+    environment:
+      REDIS_AUTH: ${REDIS_AUTH:?private environment required}
+    command: ["sh", "-c", "exec redis-server --requirepass \"$$REDIS_AUTH\" --maxmemory 128mb --maxmemory-policy noeviction"]
+    volumes: ["redis:/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=\"$$REDIS_AUTH\" redis-cli ping | grep -q PONG"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  minio:
+    <<: *runtime
+    # Content pin of the MinIO image used by upstream's official compose.
+    image: cgr.dev/chainguard/minio@sha256:2136d593beacf4461187035eca949fe49abd589d5079735025c711ca58fee0c8
+    mem_limit: 512m
+    cpus: 0.5
+    entrypoint: sh
+    command: ["-c", "mkdir -p /data/langfuse && exec minio server --address ':9000' /data"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?private environment required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?private environment required}
+    volumes: ["minio:/data"]
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  postgres:
+  clickhouse:
+  clickhouse-logs:
+  redis:
+  minio:

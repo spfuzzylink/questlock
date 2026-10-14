@@ -1,0 +1,46 @@
+name: Langfuse self-hosted contract
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: langfuse-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  langfuse:
+    name: Langfuse v4.59.0 live metadata and scores
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      LANGFUSE_ENV_FILE: /tmp/questlock-langfuse-${{ github.run_id }}-${{ github.run_attempt }}.env
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version: '1.27.1'
+          cache-dependency-path: go.sum
+      - name: Generate private disposable credentials
+        run: python3 scripts/langfuse/prepare.py "$LANGFUSE_ENV_FILE"
+      - name: Start pinned local-only Langfuse stack
+        run: |
+          python3 scripts/langfuse/run.py --env-file "$LANGFUSE_ENV_FILE" config
+          python3 scripts/langfuse/run.py --env-file "$LANGFUSE_ENV_FILE" up
+      - name: Verify acknowledged metadata through real read APIs
+        run: python3 scripts/langfuse/run.py --env-file "$LANGFUSE_ENV_FILE" smoke
+      - name: Report bounded service state on failure
+        if: failure()
+        run: python3 scripts/langfuse/run.py --env-file "$LANGFUSE_ENV_FILE" diagnose
+      - name: Remove services, volumes, and private credentials
+        if: always()
+        run: |
+          if test -f "$LANGFUSE_ENV_FILE"; then
+            trap 'rm -f "$LANGFUSE_ENV_FILE"' EXIT
+            python3 scripts/langfuse/run.py --env-file "$LANGFUSE_ENV_FILE" down
+          fi

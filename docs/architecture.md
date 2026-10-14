@@ -53,6 +53,20 @@ Workers call the selected model provider; the broker owns the database and
 receives no provider API key. Job claims and the daily budget ledger use separate
 CAS publications, rather than one multi-key transaction.
 
+The **unpublished v0.3.0 candidate** adds current-run phase/usage measurements,
+optional local content-stream timing, explicit evaluation checks, and a bounded
+stdio MCP worker. The worker reads only an approved request inside its declared
+workspace and can run at most one explicit escalation after a confirmed complete,
+durable, valid-known-usage answer fails the checks. It provides no shell/file-edit
+tools or full-session proxy. Hosted escalation requires process permission and
+explicit prices/caps; validated local work leaves the paid ledger untouched.
+
+Optional Langfuse receives allowlisted content-free metadata after execution,
+without changing durable results or triggering generation retries. Invocation
+metrics do not enter job identity; original streaming timing remains historical
+response data. See the [runtime architecture and export contract](inference-observability.md),
+[delegation boundary](delegation.md), and [local measurements](measurements-v0.3.0.md).
+
 See the [system-boundary and task-lifecycle diagrams](model-architecture.md#editable-architecture-diagrams)
 for SVG views and a two-page editable draw.io source. The same guide retains a
 Mermaid request-flow view and explains reuse, uncertain outcomes, and settlement.

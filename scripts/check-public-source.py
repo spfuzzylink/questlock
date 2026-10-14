@@ -61,6 +61,7 @@ EMAIL = re.compile(rb"[A-Za-z0-9._%+\[\]-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 REVIEWED_PUBLIC_NOTICE_SHA256 = frozenset({
     "dba84d51f9acb52be9d6494effa48069be60ac4731b805fe16f2c4259f028cb2",
     "0b89e9c8634e08215a6c3e0f2a4a033c9a1694bc5897c296f2670b0bcf315c00",
+    "6f08764e5e10798efb674a778d7b16ace350766ac48ed9c7a3087878afd38745",
 })
 
 

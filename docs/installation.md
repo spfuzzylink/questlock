@@ -1,5 +1,10 @@
 # Install and try Questlock
 
+This guide is prepared for **v0.3.0, currently unpublished**. New features require
+the source build below until its archives are confirmed. The preserved published
+v0.2.0 remains installable with `./scripts/install.sh --version v0.2.0`; the default
+installer and v0.3.0 archive examples below require publication of those assets.
+
 ## From a checkout, without Go
 
 On macOS or Linux:
@@ -44,14 +49,14 @@ separate runtime validation.
 For example, on Linux x86-64, from the download directory:
 
 ```sh
-sha256sum questlock_0.2.0_linux_amd64.tar.gz
+sha256sum questlock_0.3.0_linux_amd64.tar.gz
 ```
 
 On macOS use `shasum -a 256` instead. Compare the result with the **matching
 filename's entry** in `checksums.txt` before extracting. Then:
 
 ```sh
-tar -xzf questlock_0.2.0_linux_amd64.tar.gz
+tar -xzf questlock_0.3.0_linux_amd64.tar.gz
 ./questlock version
 ./questlock quest
 ```
@@ -126,12 +131,20 @@ files or directories at its destinations. It does not start a broker, install
 Claude Code, add to `PATH`, or change either assistant's model defaults. Client
 discovery can require opening a new chat/session.
 
-The installed skill uses `sh scripts/run.sh plan|run|quest` from its own
+The installed skill uses `sh scripts/run.sh plan|run|quest|worker-run|worker-serve` from its own
 directory. The helper resolves `QUESTLOCK_BIN` or `~/.local/bin/questlock` and,
-only for `run`, loads `QUESTLOCK_TOKEN` from `QUESTLOCK_TOKEN_FILE` or
+for `run`, `worker-run`, or `worker-serve`, loads `QUESTLOCK_TOKEN` from `QUESTLOCK_TOKEN_FILE` or
 `~/.local/share/questlock/agent-workflows/worker.token`. Provider keys still
 belong in the environment. See [bounded model workflows](model-workflows.md)
 for task selection, fresh broker setup, cost limits, and live-run requirements.
+
+The installed candidate includes an explicit local worker request template.
+See [bounded delegation](delegation.md) before registering `worker serve` as a
+stdio MCP server. `model evaluate` and optional `--langfuse` are documented in
+[runtime observability](inference-observability.md). Local generation needs
+installed Ollama weights; Langfuse export needs opt-in keys/endpoint. Installing
+Questlock creates neither provider accounts nor a Langfuse service and leaves
+the surrounding hosted assistant's model and allowance unchanged.
 
 ## Updates and removal
 
@@ -156,5 +169,6 @@ ownership. It never packages `.local/`, tokens, databases, or the checkout itsel
 
 CI runs each platform's packaged binary on a matching native runner. A `vX.Y.Z`
 tag matching `VERSION` publishes an experimental GitHub release only after all
-four platform jobs and the publication guard pass. Publishing uses a separate
+four platform jobs, source-container checks, the publication guard, and the
+reusable self-hosted Langfuse contract pass. Publishing uses a separate
 job with `contents: write`; build/test jobs keep read-only permissions.

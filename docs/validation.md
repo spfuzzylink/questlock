@@ -1,5 +1,32 @@
 # Validation record
 
+## v0.3.0 candidate observations — 2026-10-14
+
+Version 0.3.0 is not yet published. The local live evaluation used installed
+`qwen3.5:4b` through Ollama on an Apple M5 host. All twelve fresh generations had
+complete, durable, known, bounded usage; twelve exact reuses skipped generation,
+reported zero new usage, and retained the same output hashes. Neither tested
+configuration met every quality gate: the 64-token cap passed 4/6 cases and the
+256-token cap passed 3/6. The CLI correctly returned no eligible selection and
+exited 1. A worker extraction also returned `quality_failed` and withheld its
+failed answer on both the fresh call and exact reuse.
+
+The [measurement record](measurements-v0.3.0.md) contains content-free counters,
+timings, environment, and failed check IDs. Model warmth, cache state, and load
+were uncontrolled. The results establish these observed protocol and guard
+outcomes, not a reliable latency benchmark, a general model ranking, or invoices.
+
+The new source includes regressions for current-run versus historical timing,
+bounded local streaming, exclusive observability buckets, exporter failures,
+strict evaluation gates, cancellation, concurrent `worker_busy`, workspace
+paths, explicit escalation, and local work preserving a frozen API ledger.
+The disposable self-hosted Langfuse contract is a required reusable CI gate;
+actual-server/CI proof remains pending. Record final native, packaging, and CI
+results against the concrete release commit before publication. Passing a fake
+HTTP exporter test alone does not prove dashboard/API ingestion.
+
+## Historical prototype record — 2026-09-28
+
 Verified locally on 2026-09-28. This records executed checks rather than planned
 capabilities. It is a prototype validation, not a production certification.
 

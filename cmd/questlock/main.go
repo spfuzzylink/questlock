@@ -18,7 +18,7 @@ import (
 	"github.com/spfuzzylink/questlock/internal/store"
 )
 
-var version = "0.2.0" // Release builds set this from VERSION using -ldflags.
+var version = "0.3.0" // Release builds set this from VERSION using -ldflags.
 const defaultDB = ".questlock/state.db"
 
 func main() {
@@ -37,6 +37,9 @@ Usage:
   questlock token revoke --agent NAME [--db PATH]
   questlock model plan --spec PATH
   questlock model run --spec PATH [--broker http://127.0.0.1:8080] [--timeout 2m]
+  questlock model evaluate [--suite PATH] [--live --broker URL] [--report PATH]
+  questlock worker run --request PATH [--broker URL] [--allow-paid]
+  questlock worker serve --workspace ROOT [--broker URL] [--allow-paid]
   questlock model quest
   questlock model install [--agents codex,claude] [--replace]
   questlock quest
@@ -62,6 +65,8 @@ func run(args []string) error {
 	case "version":
 		fmt.Println(version)
 		return nil
+	case "worker":
+		return workerCommand(args[1:])
 	case "serve":
 		return serve(args[1:])
 	case "token":

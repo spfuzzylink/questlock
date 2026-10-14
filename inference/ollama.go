@@ -1,6 +1,7 @@
 package inference
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"crypto/sha256"
@@ -9,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime"
 	"net"
 	"net/http"
 	"net/url"
@@ -34,6 +36,25 @@ type ollamaMetadata struct {
 	template      string
 	system        string
 	contextLength int64
+}
+
+const (
+	maxOllamaStreamFrameBytes = 1 << 20
+	maxOllamaStreamFrames     = 131072
+)
+
+type ollamaGenerationFrame struct {
+	Model                 string          `json:"model"`
+	CreatedAt             string          `json:"created_at"`
+	Response              string          `json:"response"`
+	Thinking              string          `json:"thinking"`
+	Done                  *bool           `json:"done"`
+	DoneReason            string          `json:"done_reason"`
+	PromptEvalCount       *int64          `json:"prompt_eval_count"`
+	PromptEvalCachedCount *int64          `json:"prompt_eval_cached_count"`
+	EvalCount             *int64          `json:"eval_count"`
+	ToolCalls             json.RawMessage `json:"tool_calls"`
+	Error                 json.RawMessage `json:"error"`
 }
 
 // NewOllamaProvider checks that model is already installed and advertises
@@ -113,6 +134,10 @@ func canonicalOllamaModel(model string) string {
 func (p *OllamaProvider) Identity() string {
 	return "ollama:" + p.baseURL + ":" + p.model + "@" + p.digest
 }
+
+// ModelDigest exposes the installed weights identity without endpoint, prompt,
+// template or system content. It performs no inference or metadata request.
+func (p *OllamaProvider) ModelDigest() string { return p.digest }
 
 func (p *OllamaProvider) inspect(ctx context.Context) (ollamaMetadata, error) {
 	var tags map[string]any
@@ -305,6 +330,7 @@ func ollamaInputEstimate(req Request, metadata ollamaMetadata) (int64, error) {
 }
 
 func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, error) {
+	started := time.Now()
 	if err := p.validate(req); err != nil {
 		return Response{}, err
 	}
@@ -325,36 +351,39 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 			NumPredict int64 `json:"num_predict"`
 			NumCtx     int64 `json:"num_ctx"`
 		} `json:"options"`
-	}{Model: p.model, System: req.Prefix, Prompt: req.Input}
+	}{Model: p.model, System: req.Prefix, Prompt: req.Input, Stream: req.Stream}
 	body.Options.NumPredict, body.Options.NumCtx = req.MaxOutputTokens, req.ContextWindow
-	var raw struct {
-		Model                 string          `json:"model"`
-		CreatedAt             string          `json:"created_at"`
-		Response              string          `json:"response"`
-		Thinking              string          `json:"thinking"`
-		Done                  *bool           `json:"done"`
-		DoneReason            string          `json:"done_reason"`
-		PromptEvalCount       *int64          `json:"prompt_eval_count"`
-		PromptEvalCachedCount *int64          `json:"prompt_eval_cached_count"`
-		EvalCount             *int64          `json:"eval_count"`
-		ToolCalls             json.RawMessage `json:"tool_calls"`
-		Error                 json.RawMessage `json:"error"`
+	var raw ollamaGenerationFrame
+	var timing *GenerationTiming
+	if req.Stream {
+		raw, timing, err = p.requestStream(ctx, body, started)
+	} else {
+		err = p.request(ctx, http.MethodPost, "/api/generate", body, &raw)
 	}
-	if err = p.request(ctx, http.MethodPost, "/api/generate", body, &raw); err != nil {
-		return Response{}, err
+	// Timing can survive an uncertain stream. Unvalidated content and usage
+	// cannot: the Runner retains the claim rather than treating a partial answer
+	// as a complete response or retrying generation.
+	failure := func(err error) (Response, error) {
+		if timing != nil {
+			timing.OutputMS = nil
+		}
+		return Response{Timing: timing}, err
+	}
+	if err != nil {
+		return failure(err)
 	}
 	if raw.PromptEvalCount == nil || raw.EvalCount == nil {
-		return Response{}, errors.New("Ollama response is missing token usage")
+		return failure(errors.New("Ollama response is missing token usage"))
 	}
 	u := Usage{InputTokens: *raw.PromptEvalCount, OutputTokens: *raw.EvalCount}
 	if raw.PromptEvalCachedCount != nil {
 		u.CacheReadTokens = *raw.PromptEvalCachedCount
 	}
 	if u.InputTokens < 1 || !validTokenCount(u.InputTokens) || !validTokenCount(u.CacheReadTokens) || u.CacheReadTokens > u.InputTokens || !validTokenCount(u.OutputTokens) {
-		return Response{}, errors.New("Ollama response contains invalid token usage")
+		return failure(errors.New("Ollama response contains invalid token usage"))
 	}
 	u.UncachedInputTokens = u.InputTokens - u.CacheReadTokens
-	result := Response{Model: raw.Model, Text: raw.Response, Usage: u, Complete: raw.Done != nil && *raw.Done && raw.DoneReason == "stop" && raw.Response != "" && canonicalOllamaModel(raw.Model) == p.model && !nonNullJSON(raw.Error) && !nonNullJSON(raw.ToolCalls) && raw.Thinking == ""}
+	result := Response{Model: raw.Model, Text: raw.Response, Usage: u, Timing: timing, Complete: raw.Done != nil && *raw.Done && raw.DoneReason == "stop" && raw.Response != "" && canonicalOllamaModel(raw.Model) == p.model && !nonNullJSON(raw.Error) && !nonNullJSON(raw.ToolCalls) && raw.Thinking == ""}
 	switch raw.DoneReason {
 	case "stop", "length", "load":
 		result.StopReason = raw.DoneReason
@@ -380,9 +409,122 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 	// Catch an alias changed during inference before storing its output under
 	// the constructor's model digest. Rechecking metadata performs no generation.
 	if _, err = p.inspect(ctx); err != nil {
-		return Response{}, err
+		return failure(err)
 	}
 	return result, nil
+}
+
+// requestStream consumes one bounded NDJSON response without exposing chunks
+// as approved output. FirstTokenMS is time from Generate entry to the first
+// nonempty content chunk observed by this client, including metadata/network
+// overhead. OutputMS is the first-to-last content-chunk interval. Neither is
+// server-only compute time, token throughput, or time to the first reasoning
+// token. Empty metadata/terminal chunks do not start or extend that interval.
+func (p *OllamaProvider) requestStream(ctx context.Context, payload any, started time.Time) (ollamaGenerationFrame, *GenerationTiming, error) {
+	timing := &GenerationTiming{Streaming: true, Basis: "client_observed_content_chunks"}
+	failure := func(err error) (ollamaGenerationFrame, *GenerationTiming, error) {
+		return ollamaGenerationFrame{}, timing, err
+	}
+	body, err := json.Marshal(payload)
+	if err != nil || len(body) > maxProviderRequestBytes {
+		return failure(errors.New("cannot encode bounded Ollama stream request"))
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, p.baseURL+"/api/generate", bytes.NewReader(body))
+	if err != nil {
+		return failure(errors.New("cannot create Ollama stream request"))
+	}
+	req.GetBody = nil
+	req.Header.Set("Accept", "application/x-ndjson")
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := p.client.Do(req)
+	if err != nil {
+		return failure(ollamaStreamError(ctx, err))
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return failure(fmt.Errorf("Ollama returned HTTP %d", resp.StatusCode))
+	}
+	contentType, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+	if err != nil || contentType != "application/x-ndjson" {
+		return failure(errors.New("Ollama stream requires application/x-ndjson"))
+	}
+	if resp.ContentLength > maxProviderResponseBytes {
+		return failure(errors.New("Ollama stream exceeds the byte limit"))
+	}
+	limited := &io.LimitedReader{R: resp.Body, N: maxProviderResponseBytes + 1}
+	scanner := bufio.NewScanner(limited)
+	scanner.Buffer(make([]byte, 4096), maxOllamaStreamFrameBytes)
+	var output strings.Builder
+	var final ollamaGenerationFrame
+	var first, last time.Time
+	frames := 0
+	for scanner.Scan() {
+		frames++
+		if limited.N < 1 || frames > maxOllamaStreamFrames {
+			return failure(errors.New("Ollama stream exceeds the byte or frame limit"))
+		}
+		data := scanner.Bytes()
+		if len(bytes.TrimSpace(data)) == 0 || !utf8.Valid(data) {
+			return failure(errors.New("Ollama stream contains an invalid frame"))
+		}
+		if final.Done != nil {
+			return failure(errors.New("Ollama stream contains data after its final frame"))
+		}
+		var frame ollamaGenerationFrame
+		if json.Unmarshal(data, &frame) != nil || frame.Done == nil {
+			return failure(errors.New("Ollama stream contains an invalid frame"))
+		}
+		if nonNullJSON(frame.Error) {
+			return failure(errors.New("Ollama stream reported a generation error"))
+		}
+		if !validOllamaModel(frame.Model) || canonicalOllamaModel(frame.Model) != p.model {
+			return failure(errors.New("Ollama stream model does not match the installed snapshot"))
+		}
+		if frame.Thinking != "" || nonNullJSON(frame.ToolCalls) {
+			return failure(errors.New("Ollama stream returned unsupported output"))
+		}
+		if frame.Response != "" {
+			observed := time.Now()
+			if first.IsZero() {
+				first = observed
+				ms := float64(observed.Sub(started)) / float64(time.Millisecond)
+				timing.FirstTokenMS = &ms
+			}
+			last = observed
+			if output.Len()+len(frame.Response) > maxProviderResponseBytes {
+				return failure(errors.New("Ollama stream output exceeds the byte limit"))
+			}
+			output.WriteString(frame.Response)
+		}
+		if *frame.Done {
+			final = frame
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return failure(ollamaStreamError(ctx, err))
+	}
+	if limited.N < 1 {
+		return failure(errors.New("Ollama stream exceeds the byte limit"))
+	}
+	if final.Done == nil {
+		return failure(errors.New("Ollama stream ended without a final frame"))
+	}
+	final.Response = output.String()
+	if !first.IsZero() {
+		ms := float64(last.Sub(first)) / float64(time.Millisecond)
+		timing.OutputMS = &ms
+	}
+	return final, timing, nil
+}
+
+func ollamaStreamError(ctx context.Context, err error) error {
+	if ctx.Err() != nil {
+		return fmt.Errorf("Ollama stream interrupted: %w", ctx.Err())
+	}
+	if errors.Is(err, context.DeadlineExceeded) {
+		return fmt.Errorf("Ollama stream timed out: %w", context.DeadlineExceeded)
+	}
+	return errors.New("Ollama stream could not be read or exceeded its frame limit")
 }
 
 func (p *OllamaProvider) request(ctx context.Context, method, path string, payload, result any) error {

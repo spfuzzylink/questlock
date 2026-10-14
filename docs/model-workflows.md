@@ -1,8 +1,11 @@
 # Bounded model workflows
 
+This guide includes the **unpublished v0.3.0 candidate**. Build the checkout for
+new evaluation, observability, and worker commands until release assets are confirmed.
+
 Repeated handoffs, change summaries, and draft release notes often resend yesterday's discussion and regenerate an answer someone already requested. Questlock now makes those small, explicit jobs reproducible: keep necessary context, bound the response, and reuse a completed answer for the same task snapshot.
 
-The adapters support direct OpenAI Responses requests and Anthropic Claude Messages requests. Specs use `provider: "openai"` or `provider: "anthropic"`; `"claude"` is an alias for Anthropic. Each request is a single text-generation turn. Pick a provider/model that meets the quality bar for the task, and review its result before acting on it.
+The adapters support direct OpenAI Responses, Anthropic Claude Messages, and installed local Ollama weights. Specs use `provider: "openai"`, `provider: "anthropic"` (`"claude"` is an alias), or `provider: "ollama"`. Each request is a single text-generation turn. Pick an explicit provider/model that meets the task's quality bar, and review its result before acting on it.
 
 Questlock uses the instructions and context you supply. It does not train a model on your work or automatically read past conversations. It cannot bypass provider credits, billing, rate limits, or a Codex/Claude subscription limit. Direct API requests use provider API billing; the surrounding coding assistant can still consume its own plan allowance.
 
@@ -38,7 +41,7 @@ questlock model run --spec handoff.json --broker http://127.0.0.1:8080 --timeout
 questlock model run --spec examples/model-workflows/claude-handoff.json --timeout 2m
 ```
 
-OpenAI uses `OPENAI_API_KEY`; Anthropic uses `ANTHROPIC_API_KEY`. Provider keys remain in the worker and are not published to the broker. The broker stores task coordination, output, and usage. Workers that should share results and budgets need credentials in the same broker scope; see [deployment](deployment.md) for the shared service/storage boundary.
+OpenAI uses `OPENAI_API_KEY`; Anthropic uses `ANTHROPIC_API_KEY`; local Ollama requires no provider key. Provider keys remain in the worker and are not published to the broker. The CLI also accepts a protected `QUESTLOCK_TOKEN_FILE` when `QUESTLOCK_TOKEN` is absent. Keep all credentials outside specs. The broker stores task coordination, output, and usage. Workers that should share results and budgets need credentials in the same broker scope; see [deployment](deployment.md) for the shared service/storage boundary.
 
 `--timeout` must be positive and bounds the whole run. `--api-base-url` is an explicit endpoint override; it requires the selected adapter's generation and token-counting routes. An OpenRouter route is a future adapter candidate, not a supported substitution: this implementation depends on provider-specific count preflight and usage semantics. Do not treat a compatible completion endpoint as sufficient compatibility.
 
@@ -64,7 +67,23 @@ Results separate `generation_usage`, `this_run_usage`, and `avoided_usage`. A Qu
 
 There is no built-in price list. If you need dollar estimates or budget enforcement, supply `prices` with USD per million tokens for `input_per_million`, `cache_read_per_million`, `cache_write_per_million`, and `output_per_million`. Use current account/provider prices and the correct cache write policy. `max_cost_usd` optionally caps one request; `daily_budget_usd` optionally uses a shared UTC-day ledger in the broker scope. Both need explicit prices. Preflight reserves the configured `max_input_tokens` at the largest configured input/cache rate plus `max_output_tokens` at the output rate, rather than relying on a count estimate as a bill ceiling. Set realistic token caps: unused reservation is settled after known generation usage. Reported cap violations are stored as `limit_exceeded` and cannot be reused. Incorrect prices or provider usage above those configured maxima can still exceed the intended dollar cap.
 
-Once a scope has a daily ledger, all cooperating workers must use its same daily cap and supply accurate prices for their model. This coordinates trusted workers; arbitrary clients with write access can modify broker artifacts, so it is not an account-wide billing restriction. It covers this Questlock workflow, not unrelated API use or the entire provider account. Provider usage and invoices remain the final billing evidence.
+Once a scope has a daily ledger, cooperating hosted API workers must use its same daily cap and supply accurate prices for their model. Validated local Ollama jobs omit USD fields, skip that ledger, and neither consume nor clear it; they can continue when paid admission is frozen. Separate scopes can isolate permission/privacy, but are not required for local versus paid accounting. These controls coordinate trusted workers; arbitrary clients with write access can modify broker artifacts, so they are not an account-wide billing restriction. Provider usage and invoices remain the final billing evidence.
+
+## Measure and gate a bounded task
+
+`model run` returns current-run phase and usage measurements. Set `"stream": true` only in a local Ollama spec for client-observed first-content and output-content intervals. A reused answer has no fresh generation or TTFT. Optional `--langfuse --langfuse-timeout 2s` exports content-free metadata after stdout output, with receipts on stderr; supply Langfuse keys and endpoint in the environment. Export failure never retries generation. See [the timing and export contract](inference-observability.md).
+
+```sh
+questlock model evaluate --report "$HOME/questlock-workspace/NEW-fixture-report.json"
+questlock model evaluate --live --broker http://127.0.0.1:8080 \
+  --report "$HOME/questlock-workspace/NEW-live-report.json"
+questlock worker run --request "$HOME/questlock-workspace/approved-task.json" \
+  --broker http://127.0.0.1:8080
+```
+
+Evaluation defaults to six simulated public cases. Live mode needs an intentionally fresh broker scope and explicit installed/configured models. Report files are private and existing paths are refused. JSON/literal checks establish only the supplied expectations; no eligible selection is a nonzero result. The [recorded local run](measurements-v0.3.0.md) qualified neither configuration.
+
+The [delegation request](delegation.md) declares local and optional escalation tiers, budgets, context, TTL, and checks. Only an error-free complete, durable, valid-known-usage answer failing those checks can reach the one explicit next tier. Hosted escalation also requires process `--allow-paid` and explicit prices/caps. `worker serve --workspace ROOT` exposes only `questlock_delegate` with `request_path`; it does not discover or edit files, execute commands, or proxy an assistant session.
 
 ## Use from Codex or Claude Code
 
@@ -79,7 +98,7 @@ mkdir -p "$HOME/.local/share/questlock/agent-workflows"
 "$HOME/.local/bin/questlock" serve --db "$HOME/.local/share/questlock/agent-workflows/state.db" --listen 127.0.0.1:8080
 ```
 
-Stop if provisioning fails; the token-file command refuses overwrite. For an already provisioned workflow, use just the same `serve` command. The installed helper reads this token file only for `run`, or preserves an explicitly supplied `QUESTLOCK_TOKEN`. Set the provider key separately through your secret manager. The token and database are not installed by `model install`.
+Stop if provisioning fails; the token-file command refuses overwrite. For an already provisioned workflow, use just the same `serve` command. The installed helper reads this token file for `run`, `worker-run`, or `worker-serve`, or preserves an explicitly supplied `QUESTLOCK_TOKEN`. Set a hosted provider key separately through your secret manager. The token and database are not installed by `model install`.
 
 Ask the coding assistant to gather current facts into a spec, inspect `questlock model plan`, run the bounded job, and read `response.text` from its JSON result. Suitable jobs include summarizing a fixed diff, producing a short handoff, or drafting release text from verified facts. Keep complex diagnosis and final review with the assistant when the cheaper model does not meet the quality bar.
 
@@ -87,4 +106,4 @@ Example instruction to either assistant:
 
 > Prepare an engineering handoff spec with current changed files and confirmed checks. Keep my concise preferences required and old discussion optional. Run Questlock's offline plan, then use the configured provider to generate at most six bullets. Reuse only this exact revision's completed result and report usage from the JSON response.
 
-This integration is a CLI tool call within the assistant's workflow. It does not proxy Codex's entire agent protocol, switch the assistant's global model, or suppress the tokens needed by the assistant to prepare and review the task. CLI/fake-server checks demonstrate behavior; real provider savings and billing require a live run with configured credentials.
+This integration is an explicit CLI or bounded MCP tool call within the assistant's workflow. It does not proxy Codex's entire agent protocol, switch the assistant's global model, or suppress tokens needed to prepare and review the task. The surrounding hosted chat retains its own allowance and billing. CLI/fake-server checks demonstrate behavior; real provider savings and billing require a live run with configured credentials.

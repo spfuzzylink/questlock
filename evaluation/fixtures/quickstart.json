@@ -1,0 +1,442 @@
+{
+  "schema": 1,
+  "id": "questlock-inference-quickstart",
+  "revision": "public-fixtures-1",
+  "objective": "latency",
+  "configurations": [
+    {
+      "id": "compact-64",
+      "spec": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "max_context_bytes": 8192,
+        "max_input_tokens": 8192,
+        "max_output_tokens": 64,
+        "reuse_for_seconds": 3600,
+        "stream": true
+      },
+      "max_first_run_ms": 120000,
+      "max_reuse_ms": 1000
+    },
+    {
+      "id": "balanced-256",
+      "spec": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "max_context_bytes": 8192,
+        "max_input_tokens": 8192,
+        "max_output_tokens": 256,
+        "reuse_for_seconds": 3600,
+        "stream": true
+      },
+      "max_first_run_ms": 120000,
+      "max_reuse_ms": 1000
+    }
+  ],
+  "cases": [
+    {
+      "id": "deadline-extraction",
+      "complexity": "simple",
+      "instructions": "Return only a JSON object with issue and deadline strings. Use the supplied values exactly.",
+      "input": "Ticket OPS-17 must be completed on 2030-04-03. No other date is supplied.",
+      "checks": [
+        {
+          "id": "strict-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "expected-task-values",
+          "kind": "json_equals",
+          "expected": {
+            "issue": "OPS-17",
+            "deadline": "2030-04-03"
+          }
+        },
+        {
+          "id": "no-infinite-claim",
+          "kind": "not_contains",
+          "text": "infinite",
+          "ignore_case": true
+        }
+      ],
+      "fixture_by_configuration": {
+        "compact-64": {
+          "response": {
+            "id": "public-fixture-deadline-extraction-compact-64",
+            "model": "qwen3.5:4b",
+            "text": "{\"issue\":\"OPS-17\",\"deadline\":\"2030-04-03\"}",
+            "complete": true,
+            "stop_reason": "stop",
+            "usage": {
+              "input_tokens": 81,
+              "uncached_input_tokens": 81,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 26
+            }
+          },
+          "first_run_ms": 320,
+          "reuse_ms": 2
+        },
+        "balanced-256": {
+          "response": {
+            "id": "public-fixture-deadline-extraction-balanced-256",
+            "model": "qwen3.5:4b",
+            "text": "{\"issue\":\"OPS-17\",\"deadline\":\"2030-04-03\"}",
+            "complete": true,
+            "stop_reason": "stop",
+            "usage": {
+              "input_tokens": 81,
+              "uncached_input_tokens": 81,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 26
+            }
+          },
+          "first_run_ms": 440,
+          "reuse_ms": 2
+        }
+      }
+    },
+    {
+      "id": "reservation-check",
+      "complexity": "simple",
+      "instructions": "Return only JSON with admit (boolean), total (number), cap (number). Admit only when existing plus requested is at most cap.",
+      "input": "Existing reservations: 2 units. Requested reservation: 3 units. Cap: 4 units.",
+      "checks": [
+        {
+          "id": "strict-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "expected-task-values",
+          "kind": "json_equals",
+          "expected": {
+            "admit": false,
+            "total": 5,
+            "cap": 4
+          }
+        },
+        {
+          "id": "no-infinite-claim",
+          "kind": "not_contains",
+          "text": "infinite",
+          "ignore_case": true
+        }
+      ],
+      "fixture_by_configuration": {
+        "compact-64": {
+          "response": {
+            "id": "public-fixture-reservation-check-compact-64",
+            "model": "qwen3.5:4b",
+            "text": "{\"admit\":false,\"total\":5,\"cap\":4}",
+            "complete": true,
+            "stop_reason": "stop",
+            "usage": {
+              "input_tokens": 93,
+              "uncached_input_tokens": 93,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 22
+            }
+          },
+          "first_run_ms": 350,
+          "reuse_ms": 2
+        },
+        "balanced-256": {
+          "response": {
+            "id": "public-fixture-reservation-check-balanced-256",
+            "model": "qwen3.5:4b",
+            "text": "{\"admit\":false,\"total\":5,\"cap\":4}",
+            "complete": true,
+            "stop_reason": "stop",
+            "usage": {
+              "input_tokens": 93,
+              "uncached_input_tokens": 93,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 22
+            }
+          },
+          "first_run_ms": 470,
+          "reuse_ms": 2
+        }
+      }
+    },
+    {
+      "id": "snapshot-reuse",
+      "complexity": "simple",
+      "instructions": "Return only JSON with reuse (boolean) and reason. For a fresh, identical approved snapshot use reason same_snapshot; otherwise changed_or_expired.",
+      "input": "Saved revision: commit-A. Requested revision: commit-A. Saved effective request fingerprint equals requested fingerprint. Both supplied TTLs are valid. Saved response is complete and durable.",
+      "checks": [
+        {
+          "id": "strict-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "expected-task-values",
+          "kind": "json_equals",
+          "expected": {
+            "reuse": true,
+            "reason": "same_snapshot"
+          }
+        },
+        {
+          "id": "no-infinite-claim",
+          "kind": "not_contains",
+          "text": "infinite",
+          "ignore_case": true
+        }
+      ],
+      "fixture_by_configuration": {
+        "compact-64": {
+          "response": {
+            "id": "public-fixture-snapshot-reuse-compact-64",
+            "model": "qwen3.5:4b",
+            "text": "{\"reuse\":true,\"reason\":\"same_snapshot\"}",
+            "complete": true,
+            "stop_reason": "stop",
+            "usage": {
+              "input_tokens": 131,
+              "uncached_input_tokens": 131,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 18
+            }
+          },
+          "first_run_ms": 390,
+          "reuse_ms": 2
+        },
+        "balanced-256": {
+          "response": {
+            "id": "public-fixture-snapshot-reuse-balanced-256",
+            "model": "qwen3.5:4b",
+            "text": "{\"reuse\":true,\"reason\":\"same_snapshot\"}",
+            "complete": true,
+            "stop_reason": "stop",
+            "usage": {
+              "input_tokens": 131,
+              "uncached_input_tokens": 131,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 18
+            }
+          },
+          "first_run_ms": 510,
+          "reuse_ms": 2
+        }
+      }
+    },
+    {
+      "id": "incident-handoff",
+      "complexity": "complex",
+      "instructions": "Return only JSON with cause, evidence, next, unknown. Use the requested values and order exactly. Distinguish the observed regression from an unproved underlying root cause.",
+      "input": "The deploy changed timeout from 200 ms to 20 ms. Errors increased, then rollback recovered the error rate. Report cause deploy_changed_timeout; evidence [timeout_ms_20, rollback_recovered]; next [restore_200_ms, verify_error_rate]; unknown [root_cause]. These observations do not establish the underlying root cause.",
+      "checks": [
+        {
+          "id": "strict-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "expected-task-values",
+          "kind": "json_equals",
+          "expected": {
+            "cause": "deploy_changed_timeout",
+            "evidence": [
+              "timeout_ms_20",
+              "rollback_recovered"
+            ],
+            "next": [
+              "restore_200_ms",
+              "verify_error_rate"
+            ],
+            "unknown": [
+              "root_cause"
+            ]
+          }
+        },
+        {
+          "id": "no-infinite-claim",
+          "kind": "not_contains",
+          "text": "infinite",
+          "ignore_case": true
+        }
+      ],
+      "fixture_by_configuration": {
+        "compact-64": {
+          "response": {
+            "id": "public-fixture-incident-handoff-compact-64",
+            "model": "qwen3.5:4b",
+            "text": "{\"cause\":\"deploy_changed_timeout\",\"evidence\":[\"timeout_ms_20\",\"rollback_recovered\"],\"next\":[",
+            "complete": false,
+            "stop_reason": "length",
+            "usage": {
+              "input_tokens": 231,
+              "uncached_input_tokens": 231,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 64
+            }
+          },
+          "first_run_ms": 540,
+          "reuse_ms": 2
+        },
+        "balanced-256": {
+          "response": {
+            "id": "public-fixture-incident-handoff-balanced-256",
+            "model": "qwen3.5:4b",
+            "text": "{\"cause\":\"deploy_changed_timeout\",\"evidence\":[\"timeout_ms_20\",\"rollback_recovered\"],\"next\":[\"restore_200_ms\",\"verify_error_rate\"],\"unknown\":[\"root_cause\"]}",
+            "complete": true,
+            "stop_reason": "stop",
+            "usage": {
+              "input_tokens": 231,
+              "uncached_input_tokens": 231,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 88
+            }
+          },
+          "first_run_ms": 760,
+          "reuse_ms": 2
+        }
+      }
+    },
+    {
+      "id": "uncertain-call-recovery",
+      "complexity": "complex",
+      "instructions": "Return only JSON with generate_again (boolean), reservation, state, action. Apply the supplied recovery policy to the incident; do not promise an external API exactly-once guarantee.",
+      "input": "A worker published pending ownership and a budget reservation, then its provider request timed out after it may have reached generation. Policy: an unknown generation outcome stays uncertain, reservation stays retained, another generation is forbidden, and the operator must inspect_artifact. No automatic retry is authorized.",
+      "checks": [
+        {
+          "id": "strict-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "expected-task-values",
+          "kind": "json_equals",
+          "expected": {
+            "generate_again": false,
+            "reservation": "retained",
+            "state": "uncertain",
+            "action": "inspect_artifact"
+          }
+        },
+        {
+          "id": "no-infinite-claim",
+          "kind": "not_contains",
+          "text": "infinite",
+          "ignore_case": true
+        }
+      ],
+      "fixture_by_configuration": {
+        "compact-64": {
+          "response": {
+            "id": "public-fixture-uncertain-call-recovery-compact-64",
+            "model": "qwen3.5:4b",
+            "text": "{\"generate_again\":false,\"reservation\":\"retained\",\"state\":\"uncertain\",\"action\":\"inspect_artifact\"}",
+            "complete": true,
+            "stop_reason": "stop",
+            "usage": {
+              "input_tokens": 247,
+              "uncached_input_tokens": 247,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 36
+            }
+          },
+          "first_run_ms": 580,
+          "reuse_ms": 2
+        },
+        "balanced-256": {
+          "response": {
+            "id": "public-fixture-uncertain-call-recovery-balanced-256",
+            "model": "qwen3.5:4b",
+            "text": "{\"generate_again\":false,\"reservation\":\"retained\",\"state\":\"uncertain\",\"action\":\"inspect_artifact\"}",
+            "complete": true,
+            "stop_reason": "stop",
+            "usage": {
+              "input_tokens": 247,
+              "uncached_input_tokens": 247,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 36
+            }
+          },
+          "first_run_ms": 790,
+          "reuse_ms": 2
+        }
+      }
+    },
+    {
+      "id": "release-readiness",
+      "complexity": "complex",
+      "instructions": "Return only JSON with ship (boolean), passed, missing, claim. Passed/missing arrays must use the supplied order. Shipping requires every gate. The claim must say not_released until publication is confirmed.",
+      "input": "Required gates: unit, race, container. Unit and race passed. Container has not run. No tag or package publication has been confirmed. Do not infer a release from passing source tests.",
+      "checks": [
+        {
+          "id": "strict-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "expected-task-values",
+          "kind": "json_equals",
+          "expected": {
+            "ship": false,
+            "passed": [
+              "unit",
+              "race"
+            ],
+            "missing": [
+              "container"
+            ],
+            "claim": "not_released"
+          }
+        },
+        {
+          "id": "no-infinite-claim",
+          "kind": "not_contains",
+          "text": "infinite",
+          "ignore_case": true
+        }
+      ],
+      "fixture_by_configuration": {
+        "compact-64": {
+          "response": {
+            "id": "public-fixture-release-readiness-compact-64",
+            "model": "qwen3.5:4b",
+            "text": "{\"ship\":true,\"passed\":[\"unit\",\"race\"],\"missing\":[\"container\"],\"claim\":\"released\"}",
+            "complete": true,
+            "stop_reason": "stop",
+            "usage": {
+              "input_tokens": 177,
+              "uncached_input_tokens": 177,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 34
+            }
+          },
+          "first_run_ms": 470,
+          "reuse_ms": 2
+        },
+        "balanced-256": {
+          "response": {
+            "id": "public-fixture-release-readiness-balanced-256",
+            "model": "qwen3.5:4b",
+            "text": "{\"ship\":false,\"passed\":[\"unit\",\"race\"],\"missing\":[\"container\"],\"claim\":\"not_released\"}",
+            "complete": true,
+            "stop_reason": "stop",
+            "usage": {
+              "input_tokens": 177,
+              "uncached_input_tokens": 177,
+              "cache_read_tokens": 0,
+              "cache_write_tokens": 0,
+              "output_tokens": 34
+            }
+          },
+          "first_run_ms": 670,
+          "reuse_ms": 2
+        }
+      }
+    }
+  ]
+}

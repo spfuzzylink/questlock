@@ -1,5 +1,9 @@
 # Local models: routine work without provider credits
 
+This guide includes the **unpublished v0.3.0 candidate**. New worker, evaluation,
+and streaming-measurement commands require a source build until release assets
+are confirmed.
+
 Use Questlock's `ollama` provider to run a bounded handoff, repository summary,
 or extraction on installed local model weights. Accepted local requests need no
 OpenAI, Anthropic, or Ollama cloud API key and incur no provider token metering.
@@ -7,10 +11,11 @@ Hardware, electricity, memory, and elapsed time remain costs. Local model qualit
 must still meet the task's requirements.
 
 The examples use `qwen3.5:4b`, a model listed in
-[Ollama's library](https://ollama.com/library/qwen3.5:4b). It is a practical
-starting point for small approved snapshots, not a claim that it matches a
-frontier hosted model on complex engineering tasks. Choose and evaluate a local
-model that fits your hardware and workload.
+[Ollama's library](https://ollama.com/library/qwen3.5:4b). The
+[v0.3.0 live suite](measurements-v0.3.0.md) qualified neither tested output-cap
+configuration, even though generation, durability, and exact reuse worked.
+Treat this as an explicit example; evaluate a local model against your task's
+requirements before approving its answers.
 
 ## What changes
 
@@ -31,8 +36,9 @@ included example remembers relevant approved preferences: Go for core logic,
 concise writing. Replace example facts with current evidence before real use.
 
 `questlock model install` copies the binary and the same workflow skill into
-Codex and Claude Code skill directories. The installed skill can choose local
-inference for routine tasks when the user's goal is to avoid provider credits.
+Codex and Claude Code skill directories. The installed skill can prepare an
+explicit local spec for an approved routine task when the user's goal is to avoid
+provider credits.
 An explicit provider/model choice takes precedence. The installer changes no
 global assistant model setting and installs neither Ollama nor a coding client.
 
@@ -64,8 +70,8 @@ weights are installed.
 
 ## Run a bounded Questlock task
 
-Use a local-only broker scope. A fresh standalone setup can use port 8081 so it
-does not compete with an existing API-workflow broker on 8080:
+Use a scope appropriate to the task's permissions and privacy. A fresh standalone
+setup can use port 8081 so it does not compete with an existing broker on 8080:
 
 ```sh
 questlock model install --agents codex,claude
@@ -77,8 +83,11 @@ questlock serve --db "$HOME/.local/share/questlock/local-workflows/state.db" --l
 
 Provision the token once; the command refuses to overwrite its file. For later
 starts use only the same `serve` command. Keep it running in that terminal.
-Alternatively, create a dedicated local scope in an existing broker database;
-both local and API scopes can share one storage service without sharing ledgers.
+Alternatively, use an existing broker and an appropriate scope. Validated local
+Ollama jobs omit USD fields and skip the API dollar ledger entirely, neither
+consuming nor clearing it. They can continue in the same scope when paid
+admission is frozen. Separate scopes remain useful for permission/privacy
+isolation; local hardware and runtime cost are outside that ledger.
 
 From the source checkout, review the example first:
 
@@ -131,8 +140,10 @@ every template. The effective context window is the input cap plus output cap
 plus 512; it must fit both the model's reported capacity and Questlock's 65,536
 context-window ceiling. Avoid raising caps merely to fit irrelevant history.
 
-Native `/api/generate` receives `stream: false`, `think: false`, bounded
-`num_predict`, and the chosen `num_ctx`. The returned prompt/evaluation counters
+Native `/api/generate` receives `think: false`, bounded `num_predict`, and the
+chosen `num_ctx`. Streaming defaults off; an explicit local `"stream": true`
+collects client-observed content-arrival timing while retaining the same output
+and usage validation. The returned prompt/evaluation counters
 are actual runtime usage. Incomplete, unexpected-thinking, tool, or limit-violating
 output cannot become an approved reusable answer. Ollama documents these
 [generation fields and usage counters](https://docs.ollama.com/api/generate).
@@ -142,6 +153,29 @@ Inspect the job before deliberately changing revision; another attempt could
 repeat computation. Results and approved memory are retained scope data; reuse
 TTL controls validity, not deletion. Workers share broker HTTP access, while the
 database remains local to its broker host.
+
+## Measure and delegate local work
+
+`questlock model evaluate` runs simulated public fixtures by default; `--live`
+uses the installed explicit model settings in a fresh evaluation scope. The
+default suite has three simple and three complex cases at 64/256 output-token
+caps, with local content streaming enabled. Single samples and uncontrolled
+cache/warmth/load are observations, not a reliable latency ranking. JSON/literal
+checks establish only their declared expectations.
+
+`questlock worker run --request PATH` executes an approved local-first request
+with checks and at most one explicit escalation. The stdio MCP mode,
+`worker serve --workspace ROOT`, exposes only a named request file and returns
+only a passing selected answer. No shell or workspace edit tool is provided.
+Unknown, incomplete, or budget/error outcomes stop; they do not authorize a
+larger model. Hosted escalation additionally needs process permission, explicit
+prices, and per-call/daily caps. See [delegation](delegation.md).
+
+The [recorded worker extraction](measurements-v0.3.0.md#worker-extraction-observation)
+failed its public-field checks and withheld the answer, then reused that failed
+snapshot without generating again. Reuse is useful accounting behavior, not a
+quality guarantee. [Current-run measurements and optional Langfuse export](inference-observability.md)
+keep that distinction visible without exporting prompt or answer content.
 
 ## Use the coding clients themselves with local inference
 

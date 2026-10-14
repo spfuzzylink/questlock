@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1100" viewBox="0 0 1200 1100" role="img" aria-labelledby="title desc">
+<title id="title">Questlock inference runtime</title>
+<desc id="desc">Unreleased v0.3.0 candidate architecture. Explicit approved snapshots enter the Go inference runtime through CLI or MCP. The runtime calls local Ollama or direct hosted adapters and coordinates durable state with the broker. Optional local-first delegation permits one explicit escalation only after a complete durable known-usage answer fails checks. Current-run measurements, answer delivery, and content-free optional Langfuse export remain distinct.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#596a86"/></marker></defs>
+<rect width="1200" height="1100" fill="#f8fafc"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<polygon points="88,30 126,51 126,93 88,114 50,93 50,51" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<ellipse cx="88" cy="65" rx="14" ry="17" fill="none" stroke="#a8fbe7" stroke-width="4"/>
+<rect x="66" y="68" width="44" height="32" rx="6" fill="#1e2540" stroke="#93f9e5" stroke-width="2"/>
+<circle cx="88" cy="81" r="4" fill="#b5a5ff"/>
+<path d="M88 83V93" stroke="#b5a5ff" stroke-width="4"/>
+<path d="M550 227.5L650 227.5" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M300 285L300 320L425 320L425 355" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M900 285L900 320L775 320L775 355" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M425 510L425 552L215 552L215 595" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M600 510L600 595" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M775 510L775 552L985 552L985 595" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M250 432.5L25 432.5L25 910L50 910" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M950 432.5L1175 432.5L1175 910L1150 910" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" stroke-dasharray="7 5"/>
+<text x="145" y="68" font-size="30" fill="#18243b" font-weight="700">Questlock inference runtime</text>
+<text x="145" y="101" font-size="19" fill="#34445e">v0.3.0 candidate · unreleased · Faster, affordable, measurable repeat tasks</text>
+<text x="50" y="1030" font-size="18" fill="#34445e">Delegation escalation: complete + durable + known valid usage + failed checks only.</text>
+<text x="50" y="1061" font-size="18" fill="#34445e">Unknown, incomplete, error, and budget outcomes stop. OpenRouter adapter remains future work.</text>
+<rect x="50" y="170" width="500" height="115" rx="10" fill="#eff3f7" stroke="#7b8a9c" stroke-width="2"/>
+<text x="68" y="206" font-size="21" fill="#18243b" font-weight="700">Approved snapshot</text>
+<text x="68" y="237" font-size="17" fill="#34445e">Task + revision + supplied context</text>
+<text x="68" y="260" font-size="17" fill="#34445e">Explicit models, caps, reuse TTL, and checks</text>
+<rect x="650" y="170" width="500" height="115" rx="10" fill="#eff3f7" stroke="#7b8a9c" stroke-width="2"/>
+<text x="668" y="206" font-size="21" fill="#18243b" font-weight="700">CLI / MCP client</text>
+<text x="668" y="237" font-size="17" fill="#34445e">model run · model evaluate · worker run/serve</text>
+<text x="668" y="260" font-size="17" fill="#34445e">questlock_delegate takes only request_path</text>
+<rect x="250" y="355" width="700" height="155" rx="10" fill="#f1edff" stroke="#8063ba" stroke-width="2"/>
+<text x="268" y="391" font-size="21" fill="#18243b" font-weight="700">Go inference runtime</text>
+<text x="268" y="422" font-size="17" fill="#34445e">Plan, reuse/claim, preflight, reserve, generate, publish/settle</text>
+<text x="268" y="445" font-size="17" fill="#34445e">Current-run metrics; historical generation timing kept separate</text>
+<text x="268" y="468" font-size="17" fill="#34445e">Optional delegation: local tier, checks, one explicit escalation</text>
+<rect x="50" y="595" width="330" height="145" rx="10" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="68" y="631" font-size="21" fill="#18243b" font-weight="700">Local Ollama</text>
+<text x="68" y="662" font-size="17" fill="#34445e">Installed local weights</text>
+<text x="68" y="685" font-size="17" fill="#34445e">Literal loopback; optional stream</text>
+<text x="68" y="708" font-size="17" fill="#34445e">Client-observed content timing</text>
+<rect x="435" y="595" width="330" height="145" rx="10" fill="#eaf1ff" stroke="#5778b8" stroke-width="2"/>
+<text x="453" y="631" font-size="21" fill="#18243b" font-weight="700">Direct OpenAI / Anthropic</text>
+<text x="453" y="662" font-size="17" fill="#34445e">Explicit model and prices</text>
+<text x="453" y="685" font-size="17" fill="#34445e">Hosted delegation: process permission</text>
+<text x="453" y="708" font-size="17" fill="#34445e">Per-call + daily caps</text>
+<rect x="820" y="595" width="330" height="145" rx="10" fill="#e8f6f3" stroke="#277f75" stroke-width="2"/>
+<text x="838" y="631" font-size="21" fill="#18243b" font-weight="700">Broker + SQLite</text>
+<text x="838" y="662" font-size="17" fill="#34445e">Scoped HTTP + durable records</text>
+<text x="838" y="685" font-size="17" fill="#34445e">Claims, results, publication receipts</text>
+<text x="838" y="708" font-size="17" fill="#34445e">Optional shared API USD ledger</text>
+<rect x="50" y="845" width="500" height="130" rx="10" fill="#e8f6f3" stroke="#277f75" stroke-width="2"/>
+<text x="68" y="881" font-size="21" fill="#18243b" font-weight="700">Answer / evaluation report</text>
+<text x="68" y="912" font-size="17" fill="#34445e">Result emitted before CLI export</text>
+<text x="68" y="935" font-size="17" fill="#34445e">Only passing delegation answer exposed</text>
+<text x="68" y="958" font-size="17" fill="#34445e">Fresh usage or zero-new-usage reuse</text>
+<rect x="650" y="845" width="500" height="130" rx="10" fill="#f1edff" stroke="#8063ba" stroke-width="2"/>
+<text x="668" y="881" font-size="21" fill="#18243b" font-weight="700">Opt-in Langfuse</text>
+<text x="668" y="912" font-size="17" fill="#34445e">Content-free metadata; 2 spans fresh, 1 reuse</text>
+<text x="668" y="935" font-size="17" fill="#34445e">MCP queue: bounded, best effort, may drop</text>
+<text x="668" y="958" font-size="17" fill="#34445e">Export failures never retry generation</text>
+</g>
+</svg>

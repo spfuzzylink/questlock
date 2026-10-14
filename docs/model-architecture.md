@@ -1,5 +1,8 @@
 # Model cost-control architecture: what, why, how
 
+This guide describes the **unpublished v0.3.0 candidate**. Published releases and
+their historical validation remain available; new CI/publication proof is pending.
+
 Questlock coordinates an approved model task before anyone pays to generate it.
 The first customer use case is a developer or small team repeatedly asking for
 the same repository summary, change review, or explanation from several workers.
@@ -17,6 +20,12 @@ provider-credit path, [the model workflow guide](model-workflows.md) for API set
 spec examples, and [the broker architecture](architecture.md) for storage and
 publication semantics.
 
+The candidate adds [current-run measurements and optional Langfuse export](inference-observability.md),
+[explicit local-first Go/MCP delegation](delegation.md), and bounded evaluation.
+The [local measurement record](measurements-v0.3.0.md) shows working durable reuse
+but no configuration meeting every declared quality gate. Reuse preserves an
+answer; it does not improve its quality.
+
 This release controls requests that use the Runner. It does not remove a
 provider's credit requirement or alter a subscription's limits. A remembered
 task snapshot is application data, not additional training of the model. Local
@@ -33,7 +42,7 @@ path. A future OpenRouter adapter would connect that path to its model ecosystem
 | Architectural choice | Benefit | Tradeoff and decision |
 | --- | --- | --- |
 | Explicit Go Runner and CLI | Review the exact selected context; use the existing scoped broker; preserve native provider token-counting and usage distinctions | Chosen for this release. The caller constructs a spec for each bounded task. |
-| Transparent OpenAI-compatible HTTP proxy | Existing clients could change one base URL | Future option. Tool calls, streaming, multimodal input, stateful sessions, and provider-specific limits require a broader protocol contract than this implementation supports. |
+| Transparent OpenAI-compatible HTTP proxy | Existing clients could change one base URL | Future option. Native tool calls, hosted streaming, multimodal input, stateful sessions, and provider-specific limits require a broader protocol contract than this implementation supports. Local content streaming remains an explicit bounded measurement option. |
 | Similarity or semantic cache | Reuse answers for loosely related requests | Deferred. A similar repository review can be wrong after one important change. Exact effective-request reuse with an explicit task revision is easier to evaluate. |
 | Central model/provider router | Access many providers and implement availability fallbacks | Compose with a router instead of rebuilding its entire catalog, billing, and routing system. An adapter must advertise counting and usage capabilities. |
 | Direct shared filesystem between workers | Appears simple for a local experiment | Use authenticated HTTP access to one broker instead. Workers do not mount or edit the SQLite database. |
@@ -44,6 +53,13 @@ silently falling back to another model can change answer quality, tokenization,
 pricing, and the meaning of an existing result. Add such choices only with a
 task-specific evaluation and a fingerprinted policy.
 
+The delegation router runs only the declared local tier and, at most, its one
+declared escalation. It reaches that tier only after an error-free complete,
+durable answer with valid known usage fails explicit deterministic checks.
+Unknown, incomplete, budget, provider, publication, and settlement outcomes stop;
+no automatic model choice or retry occurs. Hosted escalation additionally needs
+process permission, explicit prices, and per-call/daily budgets.
+
 ## Editable architecture diagrams
 
 The [two-page draw.io source](diagrams/model-workflows.drawio) contains native,
@@ -51,6 +67,10 @@ editable shapes, labels, and connectors in uncompressed XML. The SVG views below
 show the same labels and relationships for reading on GitHub and in release
 archives. They use plain SVG text without scripts, external assets, or
 `foreignObject` labels.
+
+The [inference runtime SVG](diagrams/inference-runtime.svg) and its
+[native editable source](diagrams/inference-runtime.drawio) show the v0.3.0 CLI/MCP,
+measurement, delegation, and optional export boundaries together.
 
 ### System boundaries
 
@@ -123,8 +143,9 @@ flowchart LR
 5. If an API daily budget is configured, use a second broker artifact to reserve that
    maximum across participating workers in the scope and UTC day. Publish the
    reservation identity to the job record before calling `Generate`. Local
-   Ollama jobs omit USD fields and use a local-only scope to keep dollar ledgers
-   separate from unmetered inference.
+   Ollama jobs omit USD fields and skip the API ledger entirely. They neither
+   consume nor clear it and can continue when paid admission is frozen; their
+   hardware, power, memory, and runtime costs are not measured by that ledger.
 6. Save the provider response, usage, and completion status. A complete result
    is eligible for opted-in reuse; incomplete output is saved for inspection
    and cannot be reused as a completed answer. Settle a known daily reservation
@@ -208,6 +229,9 @@ ones, per scope and UTC day. Ledger updates make at most 32 CAS attempts before
 returning a contention error. Those bounds stop new generation rather than
 silently losing accounting. A scope's first daily budget initializes its cap;
 subsequent Runner requests must supply that same cap and explicit prices.
+This requirement applies to hosted API jobs. Validated local Ollama work leaves
+the paid ledger untouched. Separate scopes remain useful for permission/privacy
+boundaries, rather than being required to separate local and paid accounting.
 
 A distributed successor should keep linearizable claims, idempotent receipts,
 scope isolation, and conservative reservations together. Splitting metadata from
@@ -303,6 +327,13 @@ requirements constant, and record generation calls, reported token categories,
 latency, reused receipts, and actual charged dollars. Count reduced output only
 when the shorter answer still satisfies the task. Reusing changing facts without
 revision updates is not a valid saving.
+
+`questlock model evaluate` now provides an explicit suite format and a default
+six-case fixture/live workflow. It checks bounded JSON/literal expectations and
+reports a candidate only if every declared gate passes. The report changes no
+future model choice. The [v0.3.0 live observations](measurements-v0.3.0.md) passed
+completion, durability, accounting, and reuse checks but qualified neither
+output-cap configuration. That distinction is part of the intended guard.
 
 ## Distinctive design hypothesis
 

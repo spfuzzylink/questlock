@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/inference"
 )
 
@@ -259,6 +260,13 @@ func TestEmbeddedSpecsBuildOffline(t *testing.T) {
 			t.Fatalf("embedded task example %s is invalid: %v", name, err)
 		}
 	}
+	request, err := delegation.Load(bytes.NewReader(files["references/local-worker.json"]))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := delegation.Validate(request, false); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestInstalledShellHelperTokenHandlingWithoutPaidCalls(t *testing.T) {
@@ -311,7 +319,13 @@ func TestInstalledShellHelperTokenHandlingWithoutPaidCalls(t *testing.T) {
 	if _, err := invoke("unknown"); err == nil {
 		t.Fatal("helper accepted an unsupported command")
 	}
-	if strings.Count(string(readFile(t, filepath.Join(options.Home, "calls.log"))), "invoked") != 3 {
+	for _, command := range []string{"worker-run", "worker-serve"} {
+		output, err := invoke(command, "--broker", "http://127.0.0.1:8080")
+		if err != nil || !strings.HasPrefix(output, "worker\n"+strings.TrimPrefix(command, "worker-")+"\n") || !strings.Contains(output, "token-present") {
+			t.Fatalf("worker helper did not preserve args and private token: %q %v", output, err)
+		}
+	}
+	if strings.Count(string(readFile(t, filepath.Join(options.Home, "calls.log"))), "invoked") != 5 {
 		t.Fatal("helper retried or invoked a rejected command")
 	}
 }
