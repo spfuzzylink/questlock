@@ -1,29 +1,108 @@
 # Validation record
 
-## v0.3.0 candidate observations — 2026-10-14
+## v0.3.0 observations — 2026-10-14
 
-Version 0.3.0 is not yet published. The local live evaluation used installed
-`qwen3.5:4b` through Ollama on an Apple M5 host. All twelve fresh generations had
-complete, durable, known, bounded usage; twelve exact reuses skipped generation,
-reported zero new usage, and retained the same output hashes. Neither tested
-configuration met every quality gate: the 64-token cap passed 4/6 cases and the
-256-token cap passed 3/6. The CLI correctly returned no eligible selection and
-exited 1. A worker extraction also returned `quality_failed` and withheld its
-failed answer on both the fresh call and exact reuse.
+Release source: `3727709908d878becfa29281d3fe3fc0d67f556f` (the peeled `v0.3.0`
+tag), with Git tree `42f8169e1d08f65e7dec95e9fe4e3d54baaddbb3`. Release
+archives preserve that tagged source and its bundled documentation. These web
+docs record later verification and setup clarifications without replacing the
+immutable release artifacts.
+
+### Local inference and MCP
+
+The live evaluation used installed `qwen3.5:4b` through Ollama on an Apple M5 host.
+All twelve fresh generations had complete, durable, known, bounded usage; twelve
+exact reuses skipped generation, reported zero new usage, and retained the same
+output hashes. Neither tested configuration met every quality gate: the 64-token
+cap passed 4/6 cases and the 256-token cap passed 3/6. The CLI correctly returned
+no eligible selection and exited 1. A feature extraction also returned
+`quality_failed` and withheld its failed answer on both the fresh call and exact
+reuse.
+
+A separate actual MCP ticket extraction passed strict JSON and exact-value checks
+with 58 input / 21 output tokens. One exact reuse returned its passing saved
+answer with zero current tokens and `generation_called: false`. The official Go
+MCP SDK negotiated protocol `2026-07-28` and discovered only `questlock_delegate`.
+Complete Codex settings were read by `codex mcp get` and `codex mcp list` in an
+isolated configuration home; the existing `notify` array remained intact. Claude
+Code's native `mcp get` connected from an isolated complete user profile. Active
+client settings were not modified.
 
 The [measurement record](measurements-v0.3.0.md) contains content-free counters,
 timings, environment, and failed check IDs. Model warmth, cache state, and load
-were uncontrolled. The results establish these observed protocol and guard
-outcomes, not a reliable latency benchmark, a general model ranking, or invoices.
+were uncontrolled. Usage covers delegated provider/local generation and excludes
+the surrounding hosted assistant's prompt, tool, and context tokens. The results
+establish observed protocol and guard outcomes, not a reliable latency benchmark,
+a general model ranking, or invoices.
 
-The new source includes regressions for current-run versus historical timing,
+### Actual Langfuse metadata contract
+
+[CI run 38632010394](https://github.com/spfuzzylink/questlock/actions/runs/38632010394)
+passed all seven jobs at commit `510590ed31d3ca7c4890f91a8d71ebe58843e4f7`, whose
+Git tree matches the release source above. Its isolated self-hosted Langfuse
+v4.59.0 smoke check exported deterministic fixtures and read actual observations
+and scores back through the service API. It verified three roots, two generation
+children, exclusive normalized cache/reasoning buckets, content-free metadata,
+caller-estimated/local-zero costs, zero-new-usage reuse, streamed first-content
+and output-content timing, and root quality scores `1/1/0`. The fixtures call no
+model and establish no paid charges or model-quality result.
+
+The web process binds `0.0.0.0` inside its container; host publication stays on
+`127.0.0.1:3000`. CI cleans up the disposable services and volumes. Your own
+Langfuse project is separate and requires manual provisioning plus explicit
+export opt-in; the test does not populate a user dashboard.
+
+### Release archives and container
+
+The [v0.3.0 release run](https://github.com/spfuzzylink/questlock/actions/runs/38633672804)
+passed all seven validation gates and published the four native archives. Every
+published archive was downloaded and verified against `checksums.txt`; its
+`BUILDINFO.json` names clean source commit
+`3727709908d878becfa29281d3fe3fc0d67f556f`, Go 1.27.1, and its intended target.
+The license and notices agree byte-for-byte with that tagged source. Published
+archives preserve the source snapshot's candidate-era documentation; these web
+docs record the subsequent publication evidence.
+
+| Archive | SHA-256 |
+| --- | --- |
+| Darwin AMD64 | `7db6d5d45cc1bae24b6fb4d009bee685f0376d8fd2caaceade24040ec15e73c7` |
+| Darwin ARM64 | `c65943d89a31e7ab87413f84ef9635d5e20fa6314d670a54cdb209b7a69e0c49` |
+| Linux AMD64 | `6644a33dbac9721d114995ee67400e70c03839c65705953e746593824c513bd3` |
+| Linux ARM64 | `d744f2156792ae75d0af66c2f7625ca745f464cb5194a7426e44e1ec2949e6a3` |
+
+The [container pipeline](https://github.com/spfuzzylink/questlock/actions/runs/38634508620)
+passed both native architectures, version/user/source/license checks, both
+recovery quests, and the offline evaluator's negative quality controls. The
+published `v0.3.0` and moving `experimental` tags resolve to:
+
+- Index: `sha256:867d9c24f88c21cf6e80dc02b573cf1ea48f9c246bbeec2d4fac5a9bc6ebaae2`
+- Linux AMD64: `sha256:53c707aa280b77e156bdf0d49a9d130d4a1af48629dfebb4f860bba69b82aad3`
+- Linux ARM64: `sha256:604d22c16400519ed20c8c32bb2d0d0fd0e710b45f199413b9339388efbcb2f1`
+
+Anonymous registry requests verified both manifests, their configs, and all 16
+layer references by SHA-256, with exactly two Linux platforms. OCI labels name
+v0.3.0, the exact source revision, MIT, and `@spfuzzylink`; both images run as
+`65532:65532`. The v0.2.0 digest remains unchanged. No old tags or assets were
+replaced.
+
+The verified Darwin ARM64 release executable and embedded skills were installed
+on the test workstation. Global local Codex and Claude Code MCP registrations
+passed complete-candidate isolated validation, private known-good backups,
+independent automatic rollback protection, and native live config reads. Codex's
+existing command arrays were preserved; Claude Code reported a connected worker.
+This enables explicit bounded delegation in local chats; it does not reroute a
+hosted session or eliminate its normal usage.
+
+The release gates cover all four native Darwin/Linux AMD64/ARM64 archives,
+source-container execution, source/history publication checks, and the reusable
+self-hosted Langfuse contract. The container pipeline uses the confirmed release
+archives, runs both quests on native Linux AMD64 and ARM64, and verifies anonymous
+pulling after publication. Exact release evidence belongs in this record.
+
+The source also includes regressions for current-run versus historical timing,
 bounded local streaming, exclusive observability buckets, exporter failures,
 strict evaluation gates, cancellation, concurrent `worker_busy`, workspace
 paths, explicit escalation, and local work preserving a frozen API ledger.
-The disposable self-hosted Langfuse contract is a required reusable CI gate;
-actual-server/CI proof remains pending. Record final native, packaging, and CI
-results against the concrete release commit before publication. Passing a fake
-HTTP exporter test alone does not prove dashboard/API ingestion.
 
 ## Historical prototype record — 2026-09-28
 

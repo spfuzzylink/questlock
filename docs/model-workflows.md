@@ -1,13 +1,13 @@
 # Bounded model workflows
 
-This guide includes the **unpublished v0.3.0 candidate**. Build the checkout for
-new evaluation, observability, and worker commands until release assets are confirmed.
+This guide covers **v0.3.0**, including evaluation, observability, and the bounded
+worker. Use a [release binary or source build](installation.md).
 
 Repeated handoffs, change summaries, and draft release notes often resend yesterday's discussion and regenerate an answer someone already requested. Questlock now makes those small, explicit jobs reproducible: keep necessary context, bound the response, and reuse a completed answer for the same task snapshot.
 
 The adapters support direct OpenAI Responses, Anthropic Claude Messages, and installed local Ollama weights. Specs use `provider: "openai"`, `provider: "anthropic"` (`"claude"` is an alias), or `provider: "ollama"`. Each request is a single text-generation turn. Pick an explicit provider/model that meets the task's quality bar, and review its result before acting on it.
 
-Questlock uses the instructions and context you supply. It does not train a model on your work or automatically read past conversations. It cannot bypass provider credits, billing, rate limits, or a Codex/Claude subscription limit. Direct API requests use provider API billing; the surrounding coding assistant can still consume its own plan allowance.
+Questlock uses the instructions and context you supply. It does not train a model on your work or automatically read past conversations. It cannot bypass provider credits, billing, rate limits, or a Codex/Claude subscription limit. Direct API requests use provider API billing; the surrounding coding assistant can still consume its own plan allowance. Questlock usage counters measure only the delegated provider/local generation and exclude that assistant's prompt, tool, and context tokens.
 
 ## Start with an offline plan
 

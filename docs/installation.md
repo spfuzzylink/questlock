@@ -1,9 +1,8 @@
 # Install and try Questlock
 
-This guide is prepared for **v0.3.0, currently unpublished**. New features require
-the source build below until its archives are confirmed. The preserved published
-v0.2.0 remains installable with `./scripts/install.sh --version v0.2.0`; the default
-installer and v0.3.0 archive examples below require publication of those assets.
+This guide covers the experimental **v0.3.0** release. The installer selects
+the version in `VERSION`; older published versions remain available, including
+v0.2.0 with `./scripts/install.sh --version v0.2.0`.
 
 ## From a checkout, without Go
 
@@ -138,7 +137,7 @@ for `run`, `worker-run`, or `worker-serve`, loads `QUESTLOCK_TOKEN` from `QUESTL
 belong in the environment. See [bounded model workflows](model-workflows.md)
 for task selection, fresh broker setup, cost limits, and live-run requirements.
 
-The installed candidate includes an explicit local worker request template.
+The installed workflow includes an explicit local worker request template.
 See [bounded delegation](delegation.md) before registering `worker serve` as a
 stdio MCP server. `model evaluate` and optional `--langfuse` are documented in
 [runtime observability](inference-observability.md). Local generation needs

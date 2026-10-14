@@ -8,7 +8,7 @@ The workflows below are plausible integration patterns, not bundled agent
 framework integrations or claims of production adoption. The published foundation
 is the HTTP API, Go client, scoped credentials, version checks, successful-operation
 receipts, publication journal, and process-failure quest, plus bounded inference.
-The **unpublished v0.3.0 candidate** adds an actual Go/MCP delegation worker,
+Version **v0.3.0** adds an actual Go/MCP delegation worker,
 evaluation, current-run measurement, and optional content-free Langfuse export.
 
 ## Who this could help
@@ -175,7 +175,7 @@ current supplied facts, name its local model and resource limits, and declare
 deterministic task checks. `worker run` or the sole MCP `questlock_delegate` tool
 executes that request; identical valid snapshots retain normal durable reuse.
 
-**Implemented in the candidate:** bounded local-first generation, at most one
+**Implemented in v0.3.0:** bounded local-first generation, at most one
 explicit escalation after a confirmed complete durable quality failure, withheld
 failed answers, and current-run measurements. Unknown, incomplete, budget, or
 provider/accounting-error outcomes stop. Hosted escalation additionally requires
@@ -189,9 +189,11 @@ configuration, and the worker withheld a failed feature extraction. Durable
 reuse did not turn those outputs into approved answers. Read [delegation](delegation.md)
 and [measurement limits](inference-observability.md) before using the worker.
 
-The surrounding hosted chat keeps its existing model and billing. OpenRouter is
+The surrounding hosted chat keeps its existing model and billing. Questlock
+usage counters exclude its prompt, tool, and context tokens; they measure only
+the delegated provider/local generation. OpenRouter is
 a future companion adapter; automatic model choice and full-session interception
-are outside this candidate.
+remain future work.
 
 ## When another component is needed
 
@@ -213,6 +215,6 @@ are outside this candidate.
 
 The publishing boundary makes stale writes and uncertain results explicit.
 Bounded inference builds on it to avoid repeating an eligible task and to expose
-resource use; the candidate's worker returns only answers passing declared checks.
+resource use; the worker returns only answers passing declared checks.
 Those checks and measured reuse remain task-specific, rather than a guarantee of
 general model quality.

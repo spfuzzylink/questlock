@@ -53,7 +53,7 @@ Workers call the selected model provider; the broker owns the database and
 receives no provider API key. Job claims and the daily budget ledger use separate
 CAS publications, rather than one multi-key transaction.
 
-The **unpublished v0.3.0 candidate** adds current-run phase/usage measurements,
+Version **v0.3.0** adds current-run phase/usage measurements,
 optional local content-stream timing, explicit evaluation checks, and a bounded
 stdio MCP worker. The worker reads only an approved request inside its declared
 workspace and can run at most one explicit escalation after a confirmed complete,

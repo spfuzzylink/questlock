@@ -1,11 +1,10 @@
 # Run the Questlock container
 
-This guide is prepared for the **unpublished v0.3.0 candidate**. Its image commands
-become available after release/container CI and publication are confirmed.
-The preserved [v0.2.0 release](https://github.com/spfuzzylink/questlock/releases/tag/v0.2.0)
-and `ghcr.io/spfuzzylink/questlock:v0.2.0` remain the historical published path.
+This guide covers the experimental **v0.3.0** image. The preserved
+[v0.2.0 release](https://github.com/spfuzzylink/questlock/releases/tag/v0.2.0) and
+`ghcr.io/spfuzzylink/questlock:v0.2.0` remain available.
 
-The target experimental image in [GitHub Packages](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
+The current experimental image in [GitHub Packages](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
 is `ghcr.io/spfuzzylink/questlock:v0.3.0`, with native Linux ARM64 and x86-64 images.
 Podman and Docker select the matching CPU image. On macOS, the container engine
 runs Linux in its own VM; native macOS binaries use the separate release archives.
@@ -68,7 +67,7 @@ host port automatically. Keep any explicit host binding on `127.0.0.1`.
 
 ## Tags, updates, and provenance
 
-- `v0.3.0` is the candidate release tag; `experimental` is a moving tag
+- `v0.3.0` is the release tag; `experimental` is a moving tag
   for subsequent experimental publications. Neither implies a stable API.
 - Registry tags can change. For a repeatable deployment, record the image digest
   shown by `podman images --digests` and use the corresponding digest reference.
@@ -106,4 +105,4 @@ See [local models](local-models.md) and [delegation](delegation.md).
 The optional disposable Langfuse stack is separate from this small broker image.
 It has six content-pinned services, needs substantial local resources, and is
 validated through an isolated wrapper. It needs no hosted Langfuse account.
-Actual-server/CI proof remains pending; see [setup and limits](inference-observability.md#validate-a-self-hosted-endpoint).
+The actual-server CI readback contract passed; see [setup and limits](inference-observability.md#validate-a-self-hosted-endpoint).
