@@ -2,6 +2,8 @@
 """Ensure disposable checks cannot consume ambient credentials or targets."""
 
 import importlib.util
+import io
+import json
 import os
 from pathlib import Path
 import socket
@@ -126,6 +128,52 @@ class IsolationTest(unittest.TestCase):
         ordinary.touch()
         with self.assertRaises(RUN.IsolationError):
             RUN.local_socket("unix://" + str(ordinary))
+
+    def test_diagnostics_emit_only_allowlisted_state_and_fixed_causes(self):
+        state = {
+            "service": "langfuse-worker", "status": "running", "health": "unhealthy",
+            "restart_count": 0, "oom": False, "exit_code": 0,
+            "health_exit_codes": [1, 1],
+            "private_env_fixture": "diagnostic-secret-fixture",
+        }
+        logs = "ECONNREFUSED; DATABASE_URL=diagnostic-secret-fixture; arbitrary secret content"
+        summary = RUN.diagnostic_summary(state, logs)
+        self.assertEqual(summary["log_causes"], ["connection_refused"])
+        self.assertEqual(summary["last_health_exit_code"], 1)
+        self.assertNotIn("diagnostic-secret-fixture", json.dumps(summary))
+        self.assertNotIn("arbitrary secret content", json.dumps(summary))
+        self.assertNotIn("private_env_fixture", summary)
+
+    def test_diagnostic_subprocesses_are_isolated_and_raw_output_is_captured(self):
+        state = {
+            "service": "langfuse-web", "status": "running", "health": "unhealthy",
+            "restart_count": 0, "oom": False, "exit_code": 0, "health_exit_codes": [1],
+        }
+        replies = iter([
+            SimpleNamespace(returncode=0, stdout="a" * 64 + "\n", stderr=""),
+            SimpleNamespace(returncode=0, stdout=json.dumps(state), stderr=""),
+            SimpleNamespace(returncode=0, stdout="Ready in 100ms; diagnostic-secret-fixture", stderr="diagnostic-secret-fixture"),
+        ])
+
+        def inspect(argv, *, env, cwd, timeout, capture_output, text, check):
+            self.assertTrue(capture_output)
+            self.assertTrue(text)
+            self.assertFalse(check)
+            self.assertEqual(argv[:3], ["/fixture/docker", "--host", "unix:///fixture/local.sock"])
+            self.assertEqual(env["DOCKER_HOST"], "unix:///fixture/local.sock")
+            self.assertNotIn("DOCKER_CONTEXT", env)
+            self.assertNotIn("LANGFUSE_AI_API_KEY", env)
+            return next(replies)
+
+        output = io.StringIO()
+        with (patch.dict(os.environ, {"DOCKER_CONTEXT": "hostile-fixture", "LANGFUSE_AI_API_KEY": "diagnostic-secret-fixture"}, clear=True),
+              patch.object(RUN.shutil, "which", return_value="/fixture/docker"),
+              patch.object(RUN, "local_socket", return_value="unix:///fixture/local.sock"),
+              patch.object(RUN.subprocess, "run", side_effect=inspect),
+              patch("sys.stdout", output)):
+            self.assertEqual(RUN.execute(self.env_file, "diagnose"), 0)
+        self.assertNotIn("diagnostic-secret-fixture", output.getvalue())
+        self.assertEqual(json.loads(output.getvalue())["log_causes"], ["web_ready"])
 
 
 if __name__ == "__main__":

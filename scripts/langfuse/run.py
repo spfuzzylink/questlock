@@ -6,6 +6,7 @@ is forwarded. Every operation uses the same generated private environment.
 """
 
 import argparse
+import json
 import os
 from pathlib import Path
 import re
@@ -31,6 +32,88 @@ OPERATIONS = {
     "ps": ("ps", "--all"),
     "down": ("down", "--volumes", "--remove-orphans", "--timeout", "20"),
 }
+SERVICES = frozenset({"langfuse-web", "langfuse-worker", "postgres", "redis", "clickhouse", "minio"})
+STATE_FORMAT = (
+    '{"service":{{json (index .Config.Labels "com.docker.compose.service")}},'
+    '"status":{{json .State.Status}},'
+    '"health":{{if .State.Health}}{{json .State.Health.Status}}{{else}}"none"{{end}},'
+    '"restart_count":{{.RestartCount}},"oom":{{.State.OOMKilled}},"exit_code":{{.State.ExitCode}},'
+    '"health_exit_codes":[{{if .State.Health}}{{range $i,$e := .State.Health.Log}}'
+    '{{if $i}},{{end}}{{$e.ExitCode}}{{end}}{{end}}]}'
+)
+
+
+def classify_logs(text):
+    """Return only fixed labels; never return, interpolate, or print log text."""
+    patterns = {
+        "postgres_migration_failed": r"Applying database migrations failed",
+        "clickhouse_migration_failed": r"Applying clickhouse migrations failed",
+        "environment_schema_failed": r"ZodError|Invalid environment variables",
+        "connection_refused": r"ECONNREFUSED",
+        "dns_resolution_failed": r"ENOTFOUND|EAI_AGAIN",
+        "dependency_auth_failed": r"WRONGPASS|NOAUTH|Authentication failed",
+        "disk_space_exhausted": r"ENOSPC|NO_SPACE_LEFT_ON_DEVICE",
+        "missing_runtime_module": r"Cannot find module",
+        "worker_start_failed": r"Failed to start worker",
+        "worker_listener_started": r"Listening: http://",
+        "web_ready": r"Ready in|Ready on",
+        "prisma_migration_error": r"P1001|P1000|P3009|P3018",
+        "clickhouse_schema_error": r"UNKNOWN_TABLE|UNKNOWN_DATABASE|SYNTAX_ERROR",
+    }
+    return [label for label, pattern in patterns.items() if re.search(pattern, text)]
+
+
+def diagnostic_summary(state, logs):
+    if (state.get("service") not in SERVICES
+            or state.get("status") not in {"created", "running", "paused", "restarting", "removing", "exited", "dead"}
+            or state.get("health") not in {"none", "starting", "healthy", "unhealthy"}
+            or not isinstance(state.get("oom"), bool)
+            or any(type(state.get(key)) is not int for key in ("restart_count", "exit_code"))
+            or not isinstance(state.get("health_exit_codes"), list)
+            or len(state["health_exit_codes"]) > 5
+            or any(type(code) is not int for code in state["health_exit_codes"])):
+        raise IsolationError("diagnostic state schema was unexpected")
+    # Construct the output from scratch. Docker state or log strings cannot be
+    # copied through accidentally, even if they contain environment values.
+    return {
+        "service": state["service"], "status": state["status"],
+        "health": state["health"], "restart_count": state["restart_count"],
+        "oom": state["oom"], "exit_code": state["exit_code"],
+        "last_health_exit_code": state["health_exit_codes"][-1] if state["health_exit_codes"] else None,
+        "log_causes": classify_logs(logs[:65536]),
+    }
+
+
+def diagnose(executable, socket, compose_args, env):
+    """Read bounded state and classify logs privately; print no raw log text."""
+    base = [executable, "--host", socket]
+    try:
+        query = subprocess.run(
+            [*base, "compose", *compose_args, "ps", "--all", "--quiet"],
+            env=env, cwd=ROOT, timeout=10, capture_output=True, text=True, check=False,
+        )
+        containers = query.stdout.splitlines()
+        if query.returncode or len(containers) > 6 or any(not re.fullmatch(r"[a-f0-9]{12,64}", cid) for cid in containers):
+            raise IsolationError("diagnostic container query was unavailable")
+        for cid in containers:
+            state_reply = subprocess.run(
+                [*base, "inspect", "--format", STATE_FORMAT, cid],
+                env=env, cwd=ROOT, timeout=5, capture_output=True, text=True, check=False,
+            )
+            if state_reply.returncode or len(state_reply.stdout) > 4096:
+                raise IsolationError("diagnostic state query was unavailable")
+            state = json.loads(state_reply.stdout)
+            logs = subprocess.run(
+                [*base, "logs", "--tail", "50", cid], env=env, cwd=ROOT,
+                timeout=5, capture_output=True, text=True, check=False,
+            )
+            # Service logs have an image-side 2 x 5MiB rotation cap. The maximum
+            # query is 50 lines; only the first64KiB is inspected for fixed labels.
+            text = logs.stdout[:65536] + logs.stderr[:65536]
+            print(json.dumps(diagnostic_summary(state, text), sort_keys=True))
+        return 0
+    except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
+        raise IsolationError("bounded diagnostic query failed") from exc
 
 
 class IsolationError(Exception):
@@ -152,9 +235,10 @@ def execute(path, operation, socket="unix:///var/run/docker.sock"):
         else:
             # Fixed subcommands prevent accidental unredacted `compose config`
             # or forwarding --context/--host/--env-file flags from caller input.
-            argv = [executable, "--host", socket, "compose", "--env-file",
-                    os.path.abspath(path), "-f", str(ROOT / "scripts/langfuse/compose.yml"),
-                    *OPERATIONS[operation]]
+            compose_args = ["--env-file", os.path.abspath(path), "-f", str(ROOT / "scripts/langfuse/compose.yml")]
+            if operation == "diagnose":
+                return diagnose(executable, socket, compose_args, env)
+            argv = [executable, "--host", socket, "compose", *compose_args, *OPERATIONS[operation]]
             timeout = 720 if operation == "up" else 60
         try:
             result = subprocess.run(argv, env=env, cwd=ROOT, timeout=timeout, check=False)
@@ -167,7 +251,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--env-file", type=Path, required=True)
     parser.add_argument("--docker-socket", default="unix:///var/run/docker.sock")
-    parser.add_argument("operation", choices=(*OPERATIONS, "smoke"))
+    parser.add_argument("operation", choices=(*OPERATIONS, "smoke", "diagnose"))
     args = parser.parse_args()
     try:
         return execute(args.env_file, args.operation, args.docker_socket)

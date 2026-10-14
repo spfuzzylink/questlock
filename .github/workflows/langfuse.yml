@@ -36,7 +36,7 @@ jobs:
         run: python3 scripts/langfuse/run.py --env-file "$LANGFUSE_ENV_FILE" smoke
       - name: Report bounded service state on failure
         if: failure()
-        run: python3 scripts/langfuse/run.py --env-file "$LANGFUSE_ENV_FILE" ps
+        run: python3 scripts/langfuse/run.py --env-file "$LANGFUSE_ENV_FILE" diagnose
       - name: Remove services, volumes, and private credentials
         if: always()
         run: |

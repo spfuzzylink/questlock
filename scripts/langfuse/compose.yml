@@ -11,6 +11,11 @@ x-runtime: &runtime
       max-file: "2"
 
 x-langfuse-environment: &langfuse-environment
+  # Docker injects HOSTNAME=container ID. Both the worker and Next.js standalone
+  # server use it as their bind address, which otherwise excludes loopback.
+  # Only the web port is published, and that remains host-loopback-only.
+  # https://langfuse.com/faq/all/debug-docker-deployment
+  HOSTNAME: 0.0.0.0
   NEXTAUTH_URL: http://127.0.0.1:3000
   DATABASE_URL: ${DATABASE_URL:?private environment required}
   SALT: ${SALT:?private environment required}

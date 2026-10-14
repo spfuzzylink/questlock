@@ -14,6 +14,27 @@ The runtime completed and durably stored all twelve fresh evaluation results, th
 
 Runner elapsed time includes planning, coordination, and provider work, with provider setup reported separately. Generation time covers the whole provider `Generate` call. First-content time starts at that call's entry and includes metadata/network overhead. Output-content time spans the first to last nonempty content chunk. Neither streaming metric is pure server compute time. See the [measurement contract](inference-observability.md#read-the-measurements-correctly).
 
+## A passing bounded MCP task
+
+A separate single-tier ticket extraction copied the public values `OPS-17` and
+`2030-04-03`. The actual MCP tool call passed strict JSON and exact-value checks,
+with one complete, durable generation using **58 input / 21 output tokens**.
+The SDK call took **5,524.343 ms**, including transport and provider setup. Its
+client-observed first-content and output-content intervals were **4,772.504 ms**
+and **589.916 ms**.
+
+One exact repeat in the same private test scope took **27.584 ms** through MCP,
+returned the passing saved result, and reported **zero current input/output
+tokens** with `generation_called: false`. There was no paid tier, escalation,
+or generation retry. This is one accepted extraction and one reuse observation,
+not a general speedup, semantic reasoning test, or invoice saving.
+
+The official Go MCP SDK negotiated protocol `2026-07-28` and discovered the sole
+`questlock_delegate` tool. Complete candidate Codex settings were parsed by the
+native CLI in isolation; Claude Code connected to the candidate worker in an
+isolated profile. Those checks did not modify active client configuration or
+reroute an existing hosted chat.
+
 ## Default suite observations
 
 | Configuration | Cases passing checks | Fresh input/output tokens, summed | Mean Runner ms | Mean reuse ms |
