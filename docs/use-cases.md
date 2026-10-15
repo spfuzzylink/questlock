@@ -10,7 +10,7 @@ is the HTTP API, Go client, scoped credentials, version checks, successful-opera
 receipts, publication journal, and process-failure quest, plus bounded inference.
 Version **v0.3.0** adds an actual Go/MCP delegation worker,
 evaluation, current-run measurement, and optional content-free Langfuse export.
-The **v0.4.0 experimental source candidate** adds explicit human review events
+**v0.4.0 experimental** adds explicit human review events
 and recorded-cohort cost reporting. It does not automatically observe rewrites
 or infer human acceptance from declared checks.
 
@@ -42,7 +42,7 @@ better model output, or production readiness.
   without that retry creating a new version or restoring an older head.
 - **Conflict-resolution effort:** instrument the application to count reruns,
   reconciliation attempts, and manual reviews, along with time spent resolving
-  them. The v0.4.0 candidate can store explicitly reported incremental reviewer
+  them. Version 0.4.0 can store explicitly reported incremental reviewer
   minutes through outcome feedback; it does not observe or automate that work.
 - **Storage growth:** record database size and growth in artifact versions,
   successful-operation receipts, and journal events over the pilot. Include
@@ -205,7 +205,7 @@ A support-case extraction passes strict JSON and value checks, then a reviewer
 finds an omitted requirement and corrects the final artifact. Counting only the
 passing attempt would hide that correction and its effort.
 
-**Implemented in the v0.4.0 source candidate:** opt-in `track_outcome` worker
+**Implemented in v0.4.0:** opt-in `track_outcome` worker
 records, explicit accepted/rewritten/rejected/reopened events, final artifact
 digests, and a declared-cohort report. Every rewrite clears prior acceptance,
 including style changes. The reviewer must explicitly reaccept the final
@@ -219,6 +219,11 @@ effort and its reason, choose the cohort before comparing it, and reconcile
 version conflicts. A scope token authorizes artifact access but does not prove a
 human authored an event. The application must supply that identity and review
 boundary. There is no passive editor watcher or model training from these events.
+
+Define what one business deliverable means in the application. The report counts
+ID/revision pairs, so selecting two accepted revisions counts two outcomes.
+Missing effort in an immutable feedback event cannot be retroactively corrected
+in this release; appending an event does not erase the missing observation.
 
 Run `questlock outcome quest` for three simple and three complex synthetic
 scenarios without a model call. The [runnable examples](../examples/outcomes/README.md)

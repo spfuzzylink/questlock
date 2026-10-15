@@ -1,37 +1,107 @@
 # Validation record
 
-## v0.4.0 candidate observations — 2026-10-14
+## v0.4.0 observations — 2026-10-14
 
-The source candidate adds operator-reported outcome feedback after declared
-checks. Local `go vet ./...` and `go test -race ./...` passed, as did all 70 Python
-publication/packaging/security regressions and Actionlint. The six new outcome
-scenarios passed with real authenticated HTTP and temporary SQLite. They use
-synthetic cost and effort, make no model calls, and validate acceptance/rewrite
-transitions, receipt replay, inclusive cohort accounting, unknown values, stale
-feedback, and recovery after a broker restart.
+Release source: `cb42e9e251f258db3fff65df6e213f7874706922` (the peeled `v0.4.0`
+tag), with Git tree `95f3a7a05f2307c2f3129dfb1907cc1d2c33c00f`. The tested source
+and its candidate-era bundled documents remain in the immutable release archives.
+These web documents record subsequent publication, installation, and verification
+without replacing those artifacts or rewriting older tags.
 
-Root integration regressions verified that enabling tracking preserves exact
-inference reuse; a stopped token-cap violation can retain its observed passing
-checks and known usage without exposing its answer; and failed outcome
-registration returns its original recovery record without another generation.
-Library tests cover concurrent scoped records, competing feedback, exact retries
-after a lost publication acknowledgement, strict ledger validation, bounds, and
-accounting overflow.
+### Acceptance, accounting, and development use
 
-### Using Questlock during development
+Local `go vet ./...` and `go test -race ./...` passed, as did all 70 Python
+publication/packaging/security regressions and Actionlint. Six new outcome
+scenarios run against real authenticated HTTP and temporary SQLite with synthetic
+costs and effort. They validate acceptance/rewrite transitions, exact receipt
+replay, inclusive cohort accounting, unknown values, stale feedback, and restart
+recovery without a model call. Focused regressions cover concurrent scoped writes,
+lost publication acknowledgements, strict ledger validation, bounds, and overflow.
 
-One bounded extraction of public outcome-contract facts used installed local
-`qwen3.5:4b` through Ollama with explicit JSON/value checks and no paid tier.
-It passed with **81 input / 26 output tokens** and recorded its invocation in the
-existing broker scope. One exact repeat reused the passing result with **zero
-new generation tokens** and recorded a separate invocation. The report showed
-two recorded runs, zero operator-reported acceptances, one missing human-effort
-observation, and `cost_per_accepted_task_usd: null`. Assistant review was not
-recorded as human acceptance. This is a bounded development observation, not an
-invoice saving, a whole-chat token reduction, or a general model-quality result.
+Worker integration tests verified that enabling tracking preserves exact
+inference reuse. A stopped token-cap violation retains observed passing checks
+and known usage while withholding the answer. Failed outcome registration returns
+its original metadata recovery record without another generation.
 
-Native release archives, tagged CI, and container publication are not yet
-confirmed for this candidate. The published v0.3.0 record below remains intact.
+During development, one bounded extraction of public outcome-contract facts used
+installed local `qwen3.5:4b` through Ollama, with explicit JSON/value checks and no
+paid tier. It passed with **81 input / 26 output tokens**. One CLI repeat and one
+fresh native MCP process reused the checked result with **zero new generation
+tokens** and separate invocation receipts. The initial two-run report showed
+zero operator-reported acceptances, one missing human-effort observation, and
+`cost_per_accepted_task_usd: null`. Assistant review was not recorded as human
+acceptance.
+
+A later fresh MCP process using the actual installed published binary connected,
+discovered the outcome receipt schema, and recorded a passing result with **81
+input / 34 output tokens**. The original one-hour reuse TTL had expired. A private
+smoke assertion incorrectly expected reuse and failed after the successful result
+and receipt; its expectation was corrected from retained metadata without another
+model call. All four recorded invocations remain unreviewed: two generations,
+two reuses, zero reported human acceptances. These are bounded observations, not
+invoice savings, whole-chat token reductions, or general model-quality results.
+
+### Native and tagged CI
+
+[Source CI 38651943905](https://github.com/spfuzzylink/questlock/actions/runs/38651943905)
+and [PR CI 38651951417](https://github.com/spfuzzylink/questlock/actions/runs/38651951417)
+passed all seven source gates at independently reviewed commit
+`5bc944b056e38d7fc740b3c1263e1a5bba035375`; its tree matches the release above.
+The initial source-container build caught an omitted `outcomes` COPY, which was
+fixed and independently reviewed before these successful checks and publication.
+
+[Tagged CI 38652413378](https://github.com/spfuzzylink/questlock/actions/runs/38652413378)
+passed all eight jobs, including retained tested archives and publication. The
+four native Darwin/Linux AMD64/ARM64 jobs ran vet/race checks, packaged the clean
+source, and exercised all three quests plus fixture evaluation. The filtered
+source image passed its offline scenarios. The isolated disposable Langfuse
+v4.59.0 job passed actual metadata/score readback; its synthetic fixtures call no
+model and establish no human acceptance or paid charge.
+
+The experimental release contains four archives and one checksum manifest.
+All four actual downloads were hashed and verified for target architecture,
+clean `BUILDINFO.json`, version `0.4.0`, the exact source commit, Go `1.27.1`, and
+CGO disabled. Each archive's 51 public files, including legal notices, feedback
+docs, editable diagrams, examples, and matching banner, matched the tagged source
+byte-for-byte.
+
+| Archive | Verified SHA-256 |
+| --- | --- |
+| `questlock_0.4.0_darwin_amd64.tar.gz` | `32736c24ecaa349e3e7632994ec3b252f5f239b448c3e2b2a2b7f19f449bd290` |
+| `questlock_0.4.0_darwin_arm64.tar.gz` | `ee253ea4630c7c19d49e5f898368a3ae40097d793ebcfd211fedcdc82145ada4` |
+| `questlock_0.4.0_linux_amd64.tar.gz` | `27d8beadb8fe16b5693f9ff89d799153c1135fb155bcb0a62d0c68638fd47c58` |
+| `questlock_0.4.0_linux_arm64.tar.gz` | `47405d97ef35d85832c5ca9b7a56321cd01df245105d1764c99ef4a72ebabc37` |
+
+### Container and installation
+
+[Container CI 38652679029, attempt 2](https://github.com/spfuzzylink/questlock/actions/runs/38652679029/attempts/2)
+completed all four required jobs. The first ARM64 attempt stopped on a GitHub
+HTTP 500 during release retrieval before building an image; only the failed and
+downstream jobs were rerun, retaining the successful AMD64 image. Both native
+images passed all three quests, fixture evaluation, version/ownership checks,
+and immutable source labels before publication.
+
+Anonymous verification downloaded both image configs and all sixteen layers,
+checked compressed hashes and uncompressed rootfs digests, and compared binary,
+BUILDINFO, license, and dependency notices against the verified Linux archives.
+The index contains exactly Linux AMD64 and ARM64. Image user is `65532:65532`;
+`/data` is owned by that user with mode `0755`, without group/other write. Source,
+revision, version, creator, and MIT labels match the release.
+
+- `v0.4.0` and moving `experimental` index: `sha256:b45f67d60904a901ea103edbaeedbcbdbbf0118b5396c3dd660d90ad4d31d563`.
+- Linux AMD64 child: `sha256:249f59da38c8e10c17589f5c9e1c0d71dc6a04747467c8b067f85dc442ef002a`.
+- Linux ARM64 child: `sha256:b6c96f6d1a52490414b2692b59a39ae653701c30b28c7c4f502d780822f1aec4`.
+
+The v0.3.0 and v0.2.0 image indexes remain unchanged. Anonymous verification used
+no stored registry credential; temporary tokens stayed in memory and authorization
+was stripped before following storage redirects.
+
+The verified published Darwin ARM64 executable and both embedded agent skills
+were installed after an isolated-home preflight and complete private backup.
+The installed executable passed all six outcome scenarios and the fresh MCP check
+above. Codex and Claude client configuration hashes remained unchanged; no client
+settings swap or forced process restart was needed. Already running older MCP
+processes use their loaded version until their normal restart.
 
 ## v0.3.0 observations — 2026-10-14
 

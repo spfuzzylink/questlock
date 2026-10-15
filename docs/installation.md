@@ -1,6 +1,6 @@
 # Install and try Questlock
 
-This guide covers the experimental **v0.3.0** release. The installer selects
+This guide covers the experimental **v0.4.0** release. The installer selects
 the version in `VERSION`; older published versions remain available, including
 v0.2.0 with `./scripts/install.sh --version v0.2.0`.
 
@@ -48,16 +48,17 @@ separate runtime validation.
 For example, on Linux x86-64, from the download directory:
 
 ```sh
-sha256sum questlock_0.3.0_linux_amd64.tar.gz
+sha256sum questlock_0.4.0_linux_amd64.tar.gz
 ```
 
 On macOS use `shasum -a 256` instead. Compare the result with the **matching
 filename's entry** in `checksums.txt` before extracting. Then:
 
 ```sh
-tar -xzf questlock_0.3.0_linux_amd64.tar.gz
+tar -xzf questlock_0.4.0_linux_amd64.tar.gz
 ./questlock version
 ./questlock quest
+./questlock outcome quest
 ```
 
 Use your platform's filename in those commands. Each archive contains the binary,
@@ -144,6 +145,14 @@ stdio MCP server. `model evaluate` and optional `--langfuse` are documented in
 installed Ollama weights; Langfuse export needs opt-in keys/endpoint. Installing
 Questlock creates neither provider accounts nor a Langfuse service and leaves
 the surrounding hosted assistant's model and allowance unchanged.
+
+Version 0.4.0 also includes `outcome record`, `feedback`, `show`, and `report`.
+The installed worker request template opts in with `"track_outcome": true`;
+human acceptance still requires an explicit review event. Run
+`questlock outcome quest` for six synthetic scenarios without a model account.
+Read [human outcomes and accounting](outcomes.md) before interpreting cost per
+accepted task, and see the [release validation](validation.md#v040-observations--2026-10-14)
+for publication and runtime evidence.
 
 ## Updates and removal
 

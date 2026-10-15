@@ -22,7 +22,7 @@ and explicit local-first Go/MCP delegation; an OpenRouter plugin or adapter is
 not selectable yet. The integration needs a tested contract for
 counting, routing policy, output limits, and billed usage before it can ship.
 
-The **v0.4.0 experimental source candidate** adds explicit downstream human
+**v0.4.0 experimental** adds explicit downstream human
 feedback. It makes check success and human acceptance separate measurements,
 with versioned acceptance/rewriting/rejection/reopening events and a declared
 cohort report. Every rewrite removes an outcome from the accepted denominator

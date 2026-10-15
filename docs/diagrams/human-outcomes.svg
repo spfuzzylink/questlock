@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="title desc">
 <title id="title">Questlock human outcome feedback</title>
-<desc id="desc">Unreleased v0.4.0 candidate. Opted-in worker attempts record content-free metadata in existing scoped broker artifacts. Explicit human feedback can accept, rewrite, reject, or reopen work. Rewrites clear acceptance until explicit reacceptance. A cohort report includes all recorded attempts and explicit reviewer effort; unknown accounting remains unknown. Langfuse check scores remain separate from human acceptance.</desc>
+<desc id="desc">Published v0.4.0 experimental release. Opted-in worker attempts record content-free metadata in existing scoped broker artifacts. Explicit human feedback can accept, rewrite, reject, or reopen work. Rewrites clear acceptance until explicit reacceptance. A cohort report includes all recorded attempts and explicit reviewer effort; unknown accounting remains unknown. Langfuse check scores remain separate from human acceptance.</desc>
 <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#596a86"/></marker></defs>
 <rect width="1200" height="1000" fill="#f8fafc"/>
 <g font-family="Arial, Helvetica, sans-serif">
@@ -15,7 +15,7 @@
 <path d="M50 707.5H25V462.5H250" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <path d="M775 540V590H900V630" fill="none" stroke="#596a86" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <text x="145" y="68" font-size="30" fill="#18243b" font-weight="700">Questlock human outcome feedback</text>
-<text x="145" y="101" font-size="19" fill="#34445e">v0.4.0 candidate · explicit review after declared checks</text>
+<text x="145" y="101" font-size="19" fill="#34445e">v0.4.0 experimental · explicit review after declared checks</text>
 <rect x="50" y="170" width="500" height="145" rx="10" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
 <text x="68" y="206" font-size="21" fill="#18243b" font-weight="700">Worker invocation</text>
 <text x="68" y="237" font-size="17" fill="#34445e">Opt in: track_outcome = true</text>
