@@ -73,7 +73,7 @@ Mermaid request-flow view and explains reuse, uncertain outcomes, and settlement
 
 ## Explicit human outcome records
 
-The **v0.4.0 experimental source candidate** adds an `outcomes` Go package and
+**v0.4.0 experimental** adds an `outcomes` Go package and
 CLI on the same scoped artifact boundary. Opted-in worker requests publish
 content-free invocation and attempt metadata. Reviewers explicitly record
 acceptance, rewriting, rejection, or reopening; check success never implies
@@ -89,6 +89,11 @@ migration or second database. It is application data inside a cooperative scope;
 scope access does not authenticate the reviewer as a person. Apps must obtain
 intentional human decisions and maintain their own identity controls.
 
+Every new outcome-artifact version contains the full ledger. Per-ledger run,
+event, and byte limits bound its current content but do not cap cumulative
+artifact history. Retention, database-growth monitoring, and backups remain
+operator responsibilities.
+
 The cohort report includes all its recorded attempts and explicit incremental
 review effort, including failed and rejected work, divided by currently accepted
 outcomes when all inputs are known. Missing accounting stays unknown; zero
@@ -97,6 +102,9 @@ version rather than in one atomic cross-task snapshot. Outcome registration is
 separate from inference and never triggers generation retries; tracking failure
 must be recovered through the metadata receipt path. See
 [the feedback guide](outcomes.md) for schema limits, recovery, and cost coverage.
+The cohort counts task ID/revision pairs; it does not deduplicate revisions of
+one business deliverable. Immutable missing effort cannot be retrospectively
+corrected in this release and continues to make the combined metric unknown.
 
 ## What grows next
 

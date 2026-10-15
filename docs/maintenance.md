@@ -9,7 +9,10 @@ run and their source commit; a successful build is not evidence of publication.
   private outputs, and personal paths out of source and release archives.
 - For behavior changes, add focused regressions for admission, recovery, token
   bounds, billing categories, or quality requirements. Run `make check`,
-  `make quest`, and `./bin/questlock model quest`.
+  `make quest`, `./bin/questlock model quest`, and `./bin/questlock outcome quest`.
+  Feedback changes also need checks for explicit acceptance, every rewrite
+  clearing it, immutable missing effort, scoped retries/conflicts, failed work in
+  cohort costs, and unknown accounting staying unknown.
 - Review `go.mod`, `go.sum`, toolchain changes, and dependency security advisories.
   Regenerate notices with `python3 scripts/generate-notices.py`, then run its
   `--check` mode. Preserve [third-party attribution](../THIRD_PARTY_NOTICES.md).
@@ -22,11 +25,13 @@ run and their source commit; a successful build is not evidence of publication.
   Preserve old tags, release assets, and working published versions; never force
   rewrite a published tag or replace old binaries to conceal a correction.
 - Require all four native CI targets: Darwin and Linux, each on AMD64 and ARM64.
-  Verify each archive's checksum, version, help, recovery quest, and model quest;
-  retain the tested archives rather than rebuilding them in the publication job.
+  Verify each archive's checksum, version, help, recovery/model/outcome quests,
+  and embedded fixture evaluation; retain the tested archives rather than
+  rebuilding them in the publication job.
 - Require the source-container CI job too. It builds through `.dockerignore` and
-  runs both quests without a network and with a read-only root filesystem. Keep
-  Go source and embedded skill assets in the build context as the project evolves.
+  runs all three quests and fixture evaluation without a network and with a
+  read-only root filesystem. Keep Go source and embedded skill assets in the
+  build context as the project evolves.
 - Require the reusable self-hosted Langfuse CI job for the release source. Its
   disposable v4.59.0 stack needs Docker/Compose and enough memory/CPU for six
   services. Use `scripts/langfuse/run.py` for config, startup, smoke reads, service
@@ -39,8 +44,9 @@ run and their source commit; a successful build is not evidence of publication.
 - Resolve container inputs to that published tag and exact source commit through
   `scripts/container_release.py`; reject checksum or provenance mismatches.
   Require native Linux AMD64 and ARM64 image checks: version, UID/GID 65532,
-  writable data ownership, both quests, OCI source/revision/license labels,
-  and a manifest containing exactly those two tested architectures.
+  writable data ownership, all three quests, fixture evaluation, and OCI
+  source/revision/license labels. Require a manifest containing exactly those
+  two tested architectures.
 - Record immutable image digests. Verify anonymous pulling after publication
   before advertising access; an upload or authenticated pull is insufficient:
 
@@ -73,6 +79,17 @@ run and their source commit; a successful build is not evidence of publication.
   current metrics are not durable identity, MCP telemetry is silent best effort,
   and only a known complete durable quality failure permits the explicit next tier.
   Validated local jobs skip API USD accounting without consuming or clearing it.
+- Keep [human outcome feedback](outcomes.md) distinct from declared-check scores.
+  A reviewer must explicitly accept or reaccept the final artifact after a rewrite;
+  a scope token does not establish that person's identity. Keep the explicit
+  cohort, its ID/revision counting boundary, missing-accounting coverage, and
+  exclusions visible in public cost claims. Immutable unknown effort cannot be
+  retrospectively filled in through this release's API. Full ledger snapshots
+  accumulate in history despite per-ledger size/event limits.
+- Update current download/container references, matching project/profile banners,
+  and editable diagrams only after actual publication and anonymous registry
+  verification. Preserve historical release evidence and distinguish immutable
+  archive documentation from later web-documentation corrections.
 
 ## Client configuration rollout
 

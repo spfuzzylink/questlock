@@ -1,11 +1,15 @@
-# Questlock 0.4.0 candidate — explicit human outcomes after checks
+# Questlock 0.4.0 — explicit human outcomes after checks
 
-**Experimental source candidate; not yet published.** A worker can pass its
-declared checks while a person still has to rewrite the work. This candidate
-separates check success from explicit human acceptance, so cost per accepted
+**Experimental release.** A worker can pass its declared checks while a person
+still has to rewrite the work. Version **0.4.0** separates check success from
+explicit human acceptance, so cost per accepted
 task can be reported for a declared cohort when its accounting inputs are known.
 
-## New in the candidate
+[Release and downloads](https://github.com/spfuzzylink/questlock/releases/tag/v0.4.0) ·
+[Installation](installation.md) ·
+[Validation record](validation.md#v040-observations--2026-10-14)
+
+## New in 0.4.0
 
 - A Go `outcomes` package using the existing scoped versioned artifact API. No
   SQLite schema migration or additional storage service is required.
@@ -24,12 +28,13 @@ task can be reported for a declared cohort when its accounting inputs are known.
   public examples and an editable feedback diagram. They require no model call.
 
 Read the [human outcome guide](outcomes.md), [synthetic examples](../examples/outcomes/README.md),
-and [feedback architecture](diagrams/human-outcomes.drawio). This candidate
+and [feedback architecture](diagrams/human-outcomes.drawio). This release
 does not monitor edits automatically, authenticate a reviewer's human identity,
 retrain or select models, export human feedback to Langfuse, reconcile invoices,
 or include surrounding hosted-assistant/hardware/unrecorded-work costs.
 
-Publication and validation evidence will be recorded after release review.
+The [validation record](validation.md#v040-observations--2026-10-14) records
+the tagged publication gates, archive provenance, and release limitations.
 Published v0.3.0 and older archives, tags, and historical observations remain
 available unchanged.
 

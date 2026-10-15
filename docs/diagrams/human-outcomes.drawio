@@ -8,7 +8,7 @@
         <mxCell id="title" value="Questlock human outcome feedback" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=30;fontColor=#18243b;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="145" y="38" width="1010" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="subtitle" value="v0.4.0 candidate · explicit review after declared checks" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#34445e;" vertex="1" parent="1">
+        <mxCell id="subtitle" value="v0.4.0 experimental · explicit review after declared checks" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#34445e;" vertex="1" parent="1">
           <mxGeometry x="145" y="82" width="1010" height="30" as="geometry" />
         </mxCell>
         <mxCell id="sigil" value="" style="shape=hexagon;direction=north;fillColor=#15152e;strokeColor=#9d7dff;strokeWidth=2;" vertex="1" parent="1">

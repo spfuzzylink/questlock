@@ -99,8 +99,8 @@ self-hosted Langfuse CI contract also passed actual metadata readback. See the
 
 ### Count the work a person actually accepts
 
-A check-passing answer can still need a rewrite. The **v0.4.0 experimental source
-candidate** adds explicit human outcome feedback, separate from worker checks.
+A check-passing answer can still need a rewrite. **v0.4.0 experimental** adds
+explicit human outcome feedback, separate from worker checks.
 Opted-in invocations record content-free attempt metadata in the existing scoped
 broker. A reviewer can accept, rewrite, reject, or reopen the work; every rewrite
 clears acceptance until the reviewer explicitly accepts the final artifact again.
@@ -118,6 +118,7 @@ model training, or human-feedback export is implied.
 
 [What, why, and how human feedback works](docs/outcomes.md) ·
 [Synthetic examples](examples/outcomes/README.md) ·
+[Release validation](docs/validation.md#v040-observations--2026-10-14) ·
 [Editable feedback diagram](docs/diagrams/human-outcomes.drawio)
 
 ### A companion layer for the OpenRouter ecosystem
@@ -154,17 +155,17 @@ sudo and changes no shell settings. The demo cleans up its temporary state.
 
 ### Download a binary
 
-The current experimental release is **v0.3.0**. Choose your operating system and
+The current experimental release is **v0.4.0**. Choose your operating system and
 CPU; x86-64 covers 64-bit Intel and AMD processors. No Go installation is needed.
 
 | System | ARM64 | x86-64 (Intel / AMD) |
 | --- | --- | --- |
-| macOS 13+ | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.3.0/questlock_0.3.0_darwin_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.3.0/questlock_0.3.0_darwin_amd64.tar.gz) |
-| Linux | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.3.0/questlock_0.3.0_linux_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.3.0/questlock_0.3.0_linux_amd64.tar.gz) |
+| macOS 13+ | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.4.0/questlock_0.4.0_darwin_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.4.0/questlock_0.4.0_darwin_amd64.tar.gz) |
+| Linux | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.4.0/questlock_0.4.0_linux_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.4.0/questlock_0.4.0_linux_amd64.tar.gz) |
 
-Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.3.0/checksums.txt)
+Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.4.0/checksums.txt)
 before extracting, then run `./questlock quest`. The installer above performs the
-checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.3.0).
+checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.4.0).
 [Older releases](https://github.com/spfuzzylink/questlock/releases), including
 v0.2.0, remain available.
 
@@ -178,7 +179,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.3.0 quest
+  ghcr.io/spfuzzylink/questlock:v0.4.0 quest
 ```
 
 Use `docker` in place of `podman` if preferred. The image pulls without a registry

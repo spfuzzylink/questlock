@@ -1,7 +1,7 @@
 # Synthetic human feedback examples
 
 These files contain invented task IDs, digests, usage, cost estimates, and human
-effort. They test the **v0.4.0 experimental source candidate** without calling a
+effort. They test the **v0.4.0 experimental release** without calling a
 model. Manual `outcome record` input is explicitly caller-reported accounting;
 these fixtures are not provider receipts, invoices, or measured customer savings.
 

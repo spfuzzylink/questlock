@@ -1,7 +1,7 @@
 # Bounded local-first delegation
 
-The published **v0.3.0** runtime and the **v0.4.0 experimental source candidate**
-share this execution contract. The `delegation` Go package and `questlock worker` execute one approved request through local Ollama, with at most one explicitly configured escalation tier. They let a coding assistant delegate a fixed extraction, handoff, or summary while keeping context, models, reuse, budgets, and declared checks reviewable.
+The published **v0.4.0 experimental** runtime retains v0.3.0's execution contract
+and adds opt-in outcome tracking. The `delegation` Go package and `questlock worker` execute one approved request through local Ollama, with at most one explicitly configured escalation tier. They let a coding assistant delegate a fixed extraction, handoff, or summary while keeping context, models, reuse, budgets, and declared checks reviewable.
 
 The surrounding assistant prepares the request and reviews the passing answer. The worker provides no shell execution, workspace editing, file discovery, model training, whole-session proxy, or automatic model selection. A supported OpenRouter adapter remains future work. Questlock measures the
 delegated generation; it excludes the surrounding hosted assistant's prompt,
@@ -179,7 +179,7 @@ Quality checks support JSON validity/equality and literal contains/not-contains 
 
 ## Opt in to downstream outcome tracking
 
-The v0.4.0 candidate accepts `"track_outcome": true` at the top level of the
+Version 0.4.0 accepts `"track_outcome": true` at the top level of the
 approved request. It records content-free invocation and attempt metadata in
 the worker's existing broker scope and adds `outcome_tracking` to the result.
 Each invocation receives a run ID, including an exact reuse; reuse records zero
@@ -197,7 +197,7 @@ of the generated answer. No generation is retried to repair outcome metadata.
 The [outcome guide](outcomes.md) covers receipt recovery, scoped access, cohort
 cost coverage, and the distinction between caller-reported records and automatic
 worker linkage. Langfuse's existing quality score still describes declared
-checks; human feedback is not exported to Langfuse in this candidate.
+checks; human feedback is not exported to Langfuse in this release.
 
 The request digest and tier ID derive stable job identity. Repeating the same approved request preserves normal snapshot reuse and uncertainty rules; the router never changes a revision to force generation. Update the approved revision when facts change. Review retained broker records before deliberately creating a new attempt after an uncertain outcome.
 

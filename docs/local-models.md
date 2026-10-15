@@ -1,7 +1,7 @@
 # Local models: routine work without provider credits
 
-This guide covers **v0.3.0**, including the bounded worker, evaluation, and
-streaming-measurement commands. Install a [release binary](installation.md) or
+This guide covers **v0.4.0 experimental**, including the bounded worker, evaluation,
+streaming measurements, and [explicit human outcome feedback](outcomes.md). Install a [release binary](installation.md) or
 build the source.
 
 Use Questlock's `ollama` provider to run a bounded handoff, repository summary,

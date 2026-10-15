@@ -1,8 +1,8 @@
 # Model cost-control architecture: what, why, how
 
-This guide describes the published **v0.3.0** runtime and the **v0.4.0 experimental
-source candidate** for explicit human feedback. Published releases and their historical
-validation remain available; see the [current evidence](validation.md#v030-observations--2026-10-14).
+This guide describes **v0.4.0 experimental**, including the bounded runtime and
+explicit human feedback. Published releases and their historical validation remain
+available; see the [current evidence](validation.md#v040-observations--2026-10-14).
 
 Questlock coordinates an approved model task before anyone pays to generate it.
 The first customer use case is a developer or small team repeatedly asking for
@@ -28,7 +28,7 @@ extraction and working durable reuse, while neither broader suite configuration
 met every declared quality gate. Reuse preserves an
 answer; it does not improve its quality.
 
-The v0.4.0 candidate adds [human outcome feedback](outcomes.md). A passing check
+Version 0.4.0 adds [human outcome feedback](outcomes.md). A passing check
 and human acceptance have separate records. The existing broker stores opted-in
 invocations, attempt metadata, and explicit review events; every rewrite clears
 acceptance until explicit reacceptance. A declared cohort report includes failed
@@ -87,6 +87,13 @@ The [human feedback SVG](diagrams/human-outcomes.svg) and its
 [editable source](diagrams/human-outcomes.drawio) show the separate review loop,
 versioned outcome records, and cohort accounting boundary. Langfuse's declared
 check scores remain distinct from explicit human acceptance.
+
+Outcome cohorts count task ID/revision pairs. An application mapping several
+revisions to one business deliverable must choose its cohort explicitly;
+Questlock does not deduplicate those accepted revisions automatically. Full
+ledger snapshots accumulate in immutable artifact history, so the per-ledger
+limits do not cap historical database growth. Missing effort recorded in an
+immutable event cannot be retroactively filled in through this release's API.
 
 ### System boundaries
 

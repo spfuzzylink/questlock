@@ -1,7 +1,7 @@
 # Bounded model workflows
 
-This guide covers **v0.3.0**, including evaluation, observability, and the bounded
-worker. Use a [release binary or source build](installation.md).
+This guide covers **v0.4.0 experimental**, including evaluation, observability,
+the bounded worker, and [explicit human outcome feedback](outcomes.md). Use a [release binary or source build](installation.md).
 
 Repeated handoffs, change summaries, and draft release notes often resend yesterday's discussion and regenerate an answer someone already requested. Questlock now makes those small, explicit jobs reproducible: keep necessary context, bound the response, and reuse a completed answer for the same task snapshot.
 

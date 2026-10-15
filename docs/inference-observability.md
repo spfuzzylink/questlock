@@ -105,7 +105,7 @@ Questlock's developer-facing direction is faster, affordable, measurable repeat 
 
 ## Checks and human acceptance are separate measurements
 
-The **v0.4.0 experimental source candidate** adds a separate
+**v0.4.0 experimental** adds a separate
 [human outcome feedback loop](outcomes.md). An opted-in worker records its
 content-free attempts; a reviewer explicitly supplies acceptance, rewrite,
 rejection, or reopening events. Passing `questlock.quality` checks does not

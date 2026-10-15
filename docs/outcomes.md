@@ -1,7 +1,7 @@
 # From passed checks to human-accepted work
 
-This describes the **v0.4.0 experimental candidate**, which is not yet a published
-release. A worker passing its declared checks is useful evidence, but a person
+This describes the published **v0.4.0 experimental release**. A worker passing
+its declared checks is useful evidence, but a person
 can still have to correct the answer. The `outcomes` package adds explicit human
 feedback and a scoped cost report to make that difference visible.
 
@@ -60,7 +60,8 @@ that exact event after an ambiguous publication result.
 
 ## How to record a review
 
-Build the candidate binary and start with its self-contained demonstration:
+Install a [release binary](installation.md), or build the checked-out source and
+start with the self-contained demonstration:
 
 ```sh
 go build -trimpath -o bin/questlock ./cmd/questlock
@@ -135,6 +136,12 @@ cohort can represent a sprint, experiment, or approved task set. It includes
 recorded work that is pending, failed, rewritten, reopened, and rejected as well
 as work that is currently accepted.
 
+The counted identity is **task ID plus revision**. Two accepted revisions of the
+same business task count as two outcomes if both are selected. Questlock does not
+automatically deduplicate revisions into one business deliverable. Your
+application must define that mapping and choose its explicit cohort accordingly;
+keep the same mapping when comparing workflows.
+
 The numerator includes **all recorded attempts in that cohort**, not only the
 successful attempt. An exact saved-answer reuse adds zero new generation usage;
 it does not create another charge for the original generation. Multiple
@@ -158,6 +165,12 @@ minutes when that is the intended known value. An omitted value is not zero.
 `human_minutes` is incremental effort for that feedback event, not a running
 total. The report sums the events. A task with no feedback contributes missing
 human effort, even though it has zero recorded minutes; no review is inferred.
+
+Feedback events are immutable in this release. If an event records unknown
+`human_minutes`, a later event cannot fill in or replace that earlier effort
+value. The missing observation remains, so combined cost metrics for a cohort
+containing that ledger remain unknown. There is no retroactive effort-correction
+API; preserve that limitation instead of rewriting history to obtain a number.
 
 If any recorded attempt cost, effort value, or required hourly rate is unknown,
 the combined cost metric stays unknown and the report exposes that missing
@@ -195,6 +208,11 @@ task identity. Its artifact allows at most 256 runs and 256 review events within
 the broker's 1MiB artifact cap. A cohort report accepts at most 256 task revisions.
 Changing the revision creates a separate outcome; it does not carry acceptance
 forward. Existing records and artifacts are retained without automatic deletion.
+
+Every accepted artifact version stores the full outcome ledger at that point.
+The limits above bound the current ledger, not cumulative historical storage;
+append-only version history can consume considerably more space. Back up and
+monitor the broker's database growth. There is no automatic retention service.
 
 The records contain run and event identifiers, checked-attempt metadata, usage
 and cost estimates, artifact digests, feedback categories, and effort. They do
@@ -238,3 +256,6 @@ capability contract is implemented.
 See [bounded delegation](delegation.md) for attempt execution,
 [inference observability](inference-observability.md) for generation measurements,
 and [model architecture](model-architecture.md) for budget and storage boundaries.
+The [v0.4.0 validation record](validation.md#v040-observations--2026-10-14)
+distinguishes synthetic scenarios, bounded development observations, and release
+publication evidence.
