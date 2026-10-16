@@ -7,6 +7,16 @@ import (
 	"testing"
 )
 
+func TestSourceBuildVersionMatchesReleaseManifest(t *testing.T) {
+	manifest, err := os.ReadFile(filepath.Join("..", "..", "VERSION"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if version != strings.TrimSpace(string(manifest)) {
+		t.Fatal("source build version differs from VERSION; container and go run must identify the current source")
+	}
+}
+
 func TestListenAddressRequiresExplicitRemoteOptIn(t *testing.T) {
 	for _, address := range []string{"127.0.0.1:8080", "127.0.0.2:0", "[::1]:8080", "[::ffff:127.0.0.1]:8080"} {
 		if err := validateListenAddress(address, false); err != nil {
