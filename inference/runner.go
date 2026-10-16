@@ -95,6 +95,17 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 	if r.Broker == nil || r.Provider == nil || r.Provider.Identity() == "" {
 		return Result{}, errors.New("broker and identified provider are required")
 	}
+	// Mutable serving runtimes must validate their captured identity even on
+	// a completed-result hit. The check cannot make administrator mutations
+	// atomic; deployments still require immutable weights/configuration.
+	if guarded, ok := r.Provider.(interface{ RefreshIdentity(context.Context) error }); ok {
+		phase = time.Now()
+		err = guarded.RefreshIdentity(ctx)
+		measurement.PhaseMS["runtime_identity"] = milliseconds(time.Since(phase))
+		if err != nil {
+			return Result{}, err
+		}
+	}
 	digest := sha256.Sum256([]byte(plan.Fingerprint + "\x00" + r.Provider.Identity()))
 	fingerprint := hex.EncodeToString(digest[:])
 	measurement.Fingerprint = fingerprint
@@ -291,9 +302,11 @@ func savedResult(rec jobRecord, s Spec, reused bool) Result {
 	}
 	result.Response = *rec.Response
 	result.GenerationTiming = rec.Response.Timing
+	result.GenerationRuntimeCache = rec.Response.RuntimeCache
 	result.GenerationUsage = rec.Response.Usage
 	if reused {
-		result.Response.Timing = nil // Historical timing is not current inference.
+		result.Response.Timing = nil       // Historical timing is not current inference.
+		result.Response.RuntimeCache = nil // Historical KV hits are not a new runtime observation.
 		result.Response.Usage = Usage{}
 		result.AvoidedUsage = rec.Response.Usage
 	} else {

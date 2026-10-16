@@ -1,6 +1,6 @@
 <div align="center">
 
-![Questlock — measure acceptance and rework](assets/questlock-v0.4.0.svg)
+![Questlock — coordinate work, inspect runtime reuse, measure acceptance](assets/questlock-v0.5.0.svg)
 
 **Coordinate shared agent work before paying for it again.**
 
@@ -27,7 +27,8 @@ One host. No Kubernetes. Offline demos need no model account.
 
 Two workers ask for the same approved handoff. One model call should be enough.
 Questlock now offers a Go `inference` library and a bounded model-task CLI for
-**OpenAI Responses, Anthropic Claude Messages, and local Ollama models**. The worker plans whole context
+**OpenAI Responses, Anthropic Claude Messages, OpenRouter, local Ollama, and
+self-hosted SGLang**. The worker plans whole context
 chunks, checks token and configured cost allowances, claims the task in shared
 storage, and saves the completed answer for explicitly opted-in reuse.
 
@@ -45,7 +46,8 @@ retaining its budget reservation. No API key or paid call is needed for this dem
 
 [Local models without provider token bills](docs/local-models.md) ·
 [What, why, and how](docs/model-architecture.md) ·
-[Setup, Codex/Claude skills, and model specs](docs/model-workflows.md)
+[Setup, Codex/Claude skills, and model specs](docs/model-workflows.md) ·
+[Runtime caches and provider contracts](docs/runtime-cache.md)
 
 Local Ollama generation needs installed local weights and no provider API key.
 Cloud generation needs the selected provider's API key. Reuse can avoid a complete
@@ -128,12 +130,45 @@ Its response cache already makes identical completed requests reusable.
 **OpenRouter routes the model. Questlock coordinates the work.**
 **OpenRouter is the switchboard. Questlock helps keep a swarm from running up duplicate tabs.**
 
-Questlock's intended add-on role is bounded context, shared task admission,
-durable results, and budget coordination around the provider-routing layer.
-A supported OpenRouter adapter remains future work; this release runs the direct
-OpenAI, Claude, and local Ollama adapters described above.
+The **v0.5.0 source release candidate** adds a dedicated OpenRouter text adapter:
+one explicit model/provider route, requested fallbacks disabled, an operator
+input reservation bound, and strict known-usage accounting. It complements
+OpenRouter with bounded context, shared task admission, durable results,
+review feedback, and budget coordination. It is a standalone companion adapter,
+not an OpenRouter-hosted plugin. Live paid routing and invoices remain unvalidated.
 [Add-on architecture and sources](docs/model-architecture.md#openrouter-inspiration-and-possible-add-on) ·
 [Positioning and reproducible evidence](docs/positioning.md)
+
+### Reuse answers and inspect runtime caches separately
+
+Version **v0.5.0 experimental candidate** also adds a pinned SGLang v0.5.20
+adapter. Standalone dense and HiCache engines can run bounded native tasks;
+read-only inspection reports runtime identity and the declared profile.
+HiSparse and other prefill/decode instances are inspection-only while a
+validated PD ingress remains future work.
+
+```sh
+# Build the v0.5.0 source candidate before using these new commands.
+make build
+./bin/questlock model runtime-quest           # six offline HTTP-fixture scenarios
+./bin/questlock model runtime-inspect --spec deploy/sglang/task.json \
+  --api-base-url http://127.0.0.1:30000         # needs your configured runtime
+```
+
+Questlock stores whole results; SGLang manages device/host/storage KV. A KV hit
+still belongs to a new generation and is not zero-token answer reuse or a billed
+API cache discount. Self-hosted inference leaves the provider USD ledger alone;
+hardware and operating costs remain. Runtime inspection reports configuration,
+with `gpu_validated: false`; fixtures establish protocol behavior, not GPU speedup.
+
+We also used the local worker during this release's development: one recorded
+attempt used 75 input / 17 output tokens. Its outcome remains unreviewed; this
+is not a human-acceptance or surrounding hosted-chat savings claim. Publication
+and live GPU qualification remain pending for this candidate.
+
+[Runtime guide and evidence levels](docs/runtime-cache.md) ·
+[GPU profiles and reproducible qualification](deploy/sglang/README.md) ·
+[Editable layered architecture](docs/diagrams/runtime-layers.drawio)
 
 ## Start the quest
 
@@ -155,7 +190,9 @@ sudo and changes no shell settings. The demo cleans up its temporary state.
 
 ### Download a binary
 
-The current experimental release is **v0.4.0**. Choose your operating system and
+The last published experimental binary is **v0.4.0**; the **v0.5.0 source
+candidate** above awaits tagged publication and does not ship in these archives.
+Choose your operating system and
 CPU; x86-64 covers 64-bit Intel and AMD processors. No Go installation is needed.
 
 | System | ARM64 | x86-64 (Intel / AMD) |
@@ -332,6 +369,7 @@ questlock/
   internal/store/     SQLite transactions, scopes, versions, receipts
   examples/publish/   Minimal compilable integration
   deploy/quadlet/     Rootless Linux service definition
+  deploy/sglang/      Pinned runtime argv profiles and qualification instructions
   docs/               Architecture, API, deployment, validation
   scripts/            Installer, release packaging, public-source guard
   assets/             Repository artwork

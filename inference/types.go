@@ -12,23 +12,25 @@ import (
 // Spec is an explicit snapshot of a task. Reuse is opt-in and should only be
 // enabled for tasks whose answer remains valid for the supplied revision.
 type Spec struct {
-	Stream          bool          `json:"stream,omitempty"` // Optional local Ollama content streaming.
-	Task            string        `json:"task"`
-	Revision        string        `json:"revision"`
-	Provider        string        `json:"provider"`
-	Model           string        `json:"model"`
-	ReasoningEffort string        `json:"reasoning_effort,omitempty"`
-	Instructions    string        `json:"instructions"`
-	Input           string        `json:"input"`
-	Context         []ContextItem `json:"context,omitempty"`
-	MaxContextBytes int           `json:"max_context_bytes"`
-	MaxInputTokens  int64         `json:"max_input_tokens"`
-	MaxOutputTokens int64         `json:"max_output_tokens"`
-	CacheMode       string        `json:"cache_mode,omitempty"` // default or prefix
-	ReuseForSeconds int64         `json:"reuse_for_seconds,omitempty"`
-	Prices          *Prices       `json:"prices,omitempty"`
-	MaxCostUSD      float64       `json:"max_cost_usd,omitempty"`
-	DailyBudgetUSD  float64       `json:"daily_budget_usd,omitempty"`
+	OpenRouter      *OpenRouterConfig `json:"openrouter,omitempty"`
+	SGLang          *SGLangConfig     `json:"sglang,omitempty"`
+	Stream          bool              `json:"stream,omitempty"` // Optional local Ollama content streaming.
+	Task            string            `json:"task"`
+	Revision        string            `json:"revision"`
+	Provider        string            `json:"provider"`
+	Model           string            `json:"model"`
+	ReasoningEffort string            `json:"reasoning_effort,omitempty"`
+	Instructions    string            `json:"instructions"`
+	Input           string            `json:"input"`
+	Context         []ContextItem     `json:"context,omitempty"`
+	MaxContextBytes int               `json:"max_context_bytes"`
+	MaxInputTokens  int64             `json:"max_input_tokens"`
+	MaxOutputTokens int64             `json:"max_output_tokens"`
+	CacheMode       string            `json:"cache_mode,omitempty"` // default or prefix
+	ReuseForSeconds int64             `json:"reuse_for_seconds,omitempty"`
+	Prices          *Prices           `json:"prices,omitempty"`
+	MaxCostUSD      float64           `json:"max_cost_usd,omitempty"`
+	DailyBudgetUSD  float64           `json:"daily_budget_usd,omitempty"`
 }
 
 type ContextItem struct {
@@ -43,15 +45,17 @@ type ContextItem struct {
 // Prefix contains approved instructions and stable reference material; Input
 // contains changing reference material and the user's task.
 type Request struct {
-	Stream          bool   `json:"stream,omitempty"`
-	Provider        string `json:"provider"`
-	Model           string `json:"model"`
-	ReasoningEffort string `json:"reasoning_effort,omitempty"`
-	ContextWindow   int64  `json:"context_window,omitempty"` // local runtime only
-	Prefix          string `json:"prefix"`
-	Input           string `json:"input"`
-	MaxOutputTokens int64  `json:"max_output_tokens"`
-	CacheMode       string `json:"cache_mode"`
+	OpenRouter      *OpenRouterConfig `json:"openrouter,omitempty"`
+	SGLang          *SGLangConfig     `json:"sglang,omitempty"`
+	Stream          bool              `json:"stream,omitempty"`
+	Provider        string            `json:"provider"`
+	Model           string            `json:"model"`
+	ReasoningEffort string            `json:"reasoning_effort,omitempty"`
+	ContextWindow   int64             `json:"context_window,omitempty"` // local runtime only
+	Prefix          string            `json:"prefix"`
+	Input           string            `json:"input"`
+	MaxOutputTokens int64             `json:"max_output_tokens"`
+	CacheMode       string            `json:"cache_mode"`
 }
 
 type Plan struct {
@@ -76,13 +80,35 @@ type Usage struct {
 }
 
 type Response struct {
-	Timing     *GenerationTiming `json:"timing,omitempty"`
-	ID         string            `json:"id"`
-	Model      string            `json:"model"`
-	Text       string            `json:"text"`
-	Complete   bool              `json:"complete"`
-	StopReason string            `json:"stop_reason"`
-	Usage      Usage             `json:"usage"`
+	RuntimeCache *RuntimeCacheObservation `json:"runtime_cache,omitempty"`
+	Timing       *GenerationTiming        `json:"timing,omitempty"`
+	ID           string                   `json:"id"`
+	Model        string                   `json:"model"`
+	Text         string                   `json:"text"`
+	Complete     bool                     `json:"complete"`
+	StopReason   string                   `json:"stop_reason"`
+	Usage        Usage                    `json:"usage"`
+}
+
+// RuntimeCacheObservation describes compute reuse reported by a serving runtime.
+// These counters are not billing cache buckets or proof of an invoice discount.
+// A nil counter means unreported, rather than zero. Historical observations on
+// a reused result describe its original generation, not a new runtime request.
+type RuntimeCacheObservation struct {
+	CachedTokens   *int64 `json:"cached_tokens,omitempty"`
+	DeviceTokens   *int64 `json:"device_tokens,omitempty"`
+	HostTokens     *int64 `json:"host_tokens,omitempty"`
+	StorageTokens  *int64 `json:"storage_tokens,omitempty"`
+	StorageBackend string `json:"storage_backend,omitempty"`
+	Profile        string `json:"profile"`
+	RuntimeVersion string `json:"runtime_version"`
+	Evidence       string `json:"evidence"`
+}
+
+// SelfHosted reports the explicit no-provider-token-metering contract. It does
+// not assert that hardware, electricity, infrastructure or operator time is free.
+func SelfHosted(s Spec) bool {
+	return s.Provider == "ollama" || (s.Provider == "sglang" && s.SGLang != nil && s.SGLang.SelfHosted)
 }
 
 // Prices are explicit USD per million tokens, not a built-in or live price list.
@@ -95,19 +121,20 @@ type Prices struct {
 }
 
 type Result struct {
-	GenerationTiming *GenerationTiming `json:"generation_timing,omitempty"`
-	Measurement      *Measurement      `json:"measurement,omitempty"`
-	Fingerprint      string            `json:"fingerprint"`
-	Response         Response          `json:"response"`
-	Reused           bool              `json:"reused"`
-	Durable          bool              `json:"durable"`
-	GenerationUsage  Usage             `json:"generation_usage"`
-	ThisRunUsage     Usage             `json:"this_run_usage"`
-	AvoidedUsage     Usage             `json:"avoided_usage"`
-	CostUSD          *float64          `json:"cost_usd,omitempty"`
-	AvoidedCostUSD   *float64          `json:"avoided_cost_usd,omitempty"`
-	CreatedAt        time.Time         `json:"created_at"`
-	ExpiresAt        time.Time         `json:"expires_at"`
+	GenerationRuntimeCache *RuntimeCacheObservation `json:"generation_runtime_cache,omitempty"`
+	GenerationTiming       *GenerationTiming        `json:"generation_timing,omitempty"`
+	Measurement            *Measurement             `json:"measurement,omitempty"`
+	Fingerprint            string                   `json:"fingerprint"`
+	Response               Response                 `json:"response"`
+	Reused                 bool                     `json:"reused"`
+	Durable                bool                     `json:"durable"`
+	GenerationUsage        Usage                    `json:"generation_usage"`
+	ThisRunUsage           Usage                    `json:"this_run_usage"`
+	AvoidedUsage           Usage                    `json:"avoided_usage"`
+	CostUSD                *float64                 `json:"cost_usd,omitempty"`
+	AvoidedCostUSD         *float64                 `json:"avoided_cost_usd,omitempty"`
+	CreatedAt              time.Time                `json:"created_at"`
+	ExpiresAt              time.Time                `json:"expires_at"`
 }
 
 type Broker interface {

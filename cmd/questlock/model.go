@@ -28,7 +28,7 @@ func modelCommand(args []string) error {
 
 func modelCommandIO(args []string, output, helpOutput io.Writer) error {
 	if len(args) == 1 && (args[0] == "help" || args[0] == "-h" || args[0] == "--help") {
-		_, err := fmt.Fprintln(helpOutput, "Usage: questlock model plan --spec PATH\n       questlock model run --spec PATH [--broker http://127.0.0.1:8080] [--api-base-url URL] [--timeout 2m]\n       questlock model evaluate [--suite PATH] [--live --broker URL] [--report PATH] [--langfuse]\n       questlock model quest\n       questlock model install [--agents codex,claude] [--replace]")
+		_, err := fmt.Fprintln(helpOutput, "Usage: questlock model plan --spec PATH\n       questlock model run --spec PATH [--broker http://127.0.0.1:8080] [--api-base-url URL] [--timeout 2m]\n       questlock model evaluate [--suite PATH] [--live --broker URL] [--report PATH] [--langfuse]\n       questlock model quest\n       questlock model runtime-quest\n       questlock model runtime-inspect --spec PATH [--api-base-url URL]\n       questlock model install [--agents codex,claude] [--replace]")
 		return err
 	}
 	if len(args) != 0 && args[0] == "evaluate" {
@@ -36,6 +36,15 @@ func modelCommandIO(args []string, output, helpOutput io.Writer) error {
 	}
 	if len(args) != 0 && args[0] == "install" {
 		return modelInstallCommand(args[1:], output, helpOutput)
+	}
+	if len(args) != 0 && args[0] == "runtime-inspect" {
+		return modelRuntimeInspect(args[1:], output, helpOutput)
+	}
+	if len(args) != 0 && args[0] == "runtime-quest" {
+		if len(args) != 1 {
+			return errors.New("model runtime-quest takes no arguments")
+		}
+		return modelRuntimeQuest(output)
 	}
 	if len(args) != 0 && args[0] == "quest" {
 		if len(args) == 2 && (args[1] == "--help" || args[1] == "-h") {
@@ -48,7 +57,7 @@ func modelCommandIO(args []string, output, helpOutput io.Writer) error {
 		return modelQuestIO(output)
 	}
 	if len(args) == 0 || (args[0] != "plan" && args[0] != "run") {
-		return errors.New("use model plan, model run, model evaluate, model quest, or model install; use model --help")
+		return errors.New("use model plan, run, evaluate, quest, runtime-quest, runtime-inspect, or install; use model --help")
 	}
 	command := args[0]
 	f := flag.NewFlagSet("model "+command, flag.ContinueOnError)
@@ -62,7 +71,7 @@ func modelCommandIO(args []string, output, helpOutput io.Writer) error {
 	var langfuseTimeout *time.Duration
 	if command == "run" {
 		brokerURL = f.String("broker", "http://127.0.0.1:8080", "Questlock broker URL")
-		apiBaseURL = f.String("api-base-url", "", "provider API base URL; empty uses its official API or local Ollama on 127.0.0.1:11434")
+		apiBaseURL = f.String("api-base-url", "", "provider API base URL; empty uses the official API, Ollama on 127.0.0.1:11434, or SGLang on 127.0.0.1:30000")
 		timeout = f.Duration("timeout", 2*time.Minute, "positive time limit for the entire run")
 		langfuse = f.Bool("langfuse", false, "export metadata to explicitly configured Langfuse after inference")
 		langfuseTimeout = f.Duration("langfuse-timeout", 2*time.Second, "bounded timeout per Langfuse request (1ms..5s)")
@@ -131,7 +140,7 @@ func modelCommandIO(args []string, output, helpOutput io.Writer) error {
 	}
 	exportTelemetry(exporter, []telemetryRecord{{execution: observation(spec, result)}}, helpOutput)
 	if err != nil {
-		return redactModelError(err, token, os.Getenv("OPENAI_API_KEY"), os.Getenv("ANTHROPIC_API_KEY"))
+		return redactModelError(err, token, os.Getenv("OPENAI_API_KEY"), os.Getenv("ANTHROPIC_API_KEY"), os.Getenv("OPENROUTER_API_KEY"), os.Getenv("SGLANG_API_KEY"))
 	}
 	return nil
 }

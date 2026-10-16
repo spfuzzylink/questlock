@@ -1,0 +1,18 @@
+{
+  "task": "openrouter-summary-example",
+  "revision": "approved-snapshot-001",
+  "provider": "openrouter",
+  "model": "openai/gpt-4.1-mini",
+  "openrouter": {
+    "upstream_provider": "openai",
+    "input_token_upper_bound": 2048,
+    "cache_write_usage": "not_applicable"
+  },
+  "instructions": "Summarize only the supplied facts in two sentences. State when evidence is missing.",
+  "input": "The example adds a dedicated OpenRouter text adapter with a pinned provider and explicit reservation policy. Live account billing has not been validated.",
+  "max_context_bytes": 0,
+  "max_input_tokens": 2048,
+  "max_output_tokens": 128,
+  "cache_mode": "default",
+  "reuse_for_seconds": 3600
+}

@@ -35,5 +35,11 @@ layer positioning. See the [architecture and source references](docs/model-archi
 This acknowledgment does not imply a partnership, sponsorship, or endorsement
 by OpenRouter or any model provider.
 
+SGLang provides the native inference runtime, HiCache, HiSparse, and the upstream
+scheduler/cache simulator described in the runtime guide. Questlock implements
+a separate protocol adapter; it does not implement those GPU kernels or claim
+the upstream benchmarks as its own. See [SGLang](https://github.com/sgl-project/sglang)
+and [the integration boundary](docs/runtime-cache.md).
+
 See [BRANDING.md](BRANDING.md) for guidance on identifying upstream Questlock,
 modified forks, and independently operated services.

@@ -236,7 +236,7 @@ func validateExecution(e Execution) error {
 		}
 	}
 	switch e.Provider {
-	case "", "openai", "anthropic", "claude", "ollama", "openrouter":
+	case "", "openai", "anthropic", "claude", "ollama", "openrouter", "sglang":
 	default:
 		return ErrInvalidExecution
 	}
@@ -248,7 +248,7 @@ func validateExecution(e Execution) error {
 	}
 	for name, ms := range e.PhaseMS {
 		switch name {
-		case "provider_setup", "plan", "lookup", "admission", "preflight", "reservation", "generation", "publication", "settlement", "recovery":
+		case "provider_setup", "runtime_identity", "plan", "lookup", "admission", "preflight", "reservation", "generation", "publication", "settlement", "recovery":
 		default:
 			return ErrInvalidExecution
 		}
@@ -263,6 +263,25 @@ func validateExecution(e Execution) error {
 		return ErrInvalidExecution
 	}
 	if g := e.Generation; g != nil {
+		if cache := g.RuntimeCache; cache != nil {
+			if e.Provider != "sglang" || !g.KnownUsage || (cache.Profile != "dense" && cache.Profile != "hicache" && cache.Profile != "hisparse") {
+				return ErrInvalidExecution
+			}
+			var sum int64
+			for _, count := range []*int64{cache.CachedTokens, cache.DeviceTokens, cache.HostTokens, cache.StorageTokens} {
+				if count != nil && (*count < 0 || *count > g.Usage.InputTokens) {
+					return ErrInvalidExecution
+				}
+			}
+			for _, count := range []*int64{cache.DeviceTokens, cache.HostTokens, cache.StorageTokens} {
+				if count != nil {
+					sum += *count
+				}
+			}
+			if sum > g.Usage.InputTokens || (cache.CachedTokens != nil && (sum > *cache.CachedTokens || (cache.DeviceTokens != nil && cache.HostTokens != nil && cache.StorageTokens != nil && sum != *cache.CachedTokens))) {
+				return ErrInvalidExecution
+			}
+		}
 		if !validInterval(g.StartedAt, g.EndedAt) || g.StartedAt.Before(e.StartedAt) || g.EndedAt.After(e.EndedAt) || !validOutcome(g.Outcome) || g.Outcome == Reused || g.Outcome == Pending || g.Outcome == BudgetBlocked || (g.Model != "" && !validLabel(g.Model)) || !validUsage(g.Usage) || !validCost(g.CostUSD) {
 			return ErrInvalidExecution
 		}

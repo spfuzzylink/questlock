@@ -1,3 +1,65 @@
+# Questlock 0.5.0 — explicit provider routes and runtime cache evidence
+
+**Experimental source release candidate; tagged publication is pending.**
+Repeated tasks and repeated prefix computation are different costs. Version
+**0.5.0** adds explicit OpenRouter and SGLang contracts while keeping runtime KV
+evidence, API token accounting, whole-result reuse and human acceptance separate.
+Published v0.4.0 and older tags/assets remain unchanged.
+
+## New in the 0.5.0 candidate
+
+- A dedicated nonstreaming OpenRouter Chat Completions adapter: one explicit
+  model/provider, requested upstream fallbacks disabled, operator input
+  reservation bound, and strict native token/cache usage validation. It makes
+  no generation retries and does not substitute a direct OpenAI counting route.
+  Worker paid escalation still requires process permission, prices and caps.
+- An explicitly self-hosted SGLang v0.5.20 native adapter pinned to the reviewed
+  upstream protocol. Standalone dense/HiCache engines support bounded
+  tokenization/generation. Observed runtime identity is rechecked before result
+  lookup and around generation; an existing provider stops on changes.
+- `model runtime-inspect --spec PATH --api-base-url URL` for read-only
+  configuration evidence, with `capabilities`,
+  `evidence: "runtime_reported_configuration"`, and `gpu_validated: false`.
+  HiSparse and PD prefill/decode engines are inspection-only: direct decode
+  generation lacks the validated ingress/bootstrap orchestration this release
+  deliberately does not implement.
+- Runtime-reported KV hit/tier counters stay separate from billable cache token
+  buckets. Missing optional runtime counters stay unknown. Exact result reuse
+  retains historical cache evidence without presenting it as a new generation.
+  Allowlisted optional Langfuse metadata includes no prompts, answers, runtime
+  URLs, model paths or credentials.
+- `model runtime-quest`: three simple and three complex deterministic native
+  HTTP scenarios with the real broker. They exercise dense generation, exact
+  reuse, namespace separation, HiCache tier accounting, runtime mutation, and
+  unknown metrics/HiSparse boundaries. They are neither GPU execution nor a
+  latency predictor.
+- Pinned dense/HiCache/HiSparse argv profiles, example specs, matched cold/warm
+  qualification instructions, and an editable layered architecture diagram.
+
+Read [the runtime contract](runtime-cache.md), [setup and qualification](../deploy/sglang/README.md),
+[workflow schemas](model-workflows.md), and the
+[editable architecture](diagrams/runtime-layers.drawio).
+
+## Evidence and limits
+
+Local source checks pass, including focused OpenRouter adapter/Runner race
+tests, inference vet, and actual offline CLI plans for both new specs. Tagged
+publication gates, archive/container provenance, and any new real-server
+telemetry readback must be
+recorded in [validation](validation.md) before publication is claimed.
+Live OpenRouter paid-account and SGLang GPU/PD performance have not been
+validated. The upstream CPU simulator instructions are exploratory and were
+not executed as evidence for this candidate.
+
+One local development attempt recorded known usage of 75 input / 17 output
+tokens; its registered outcome remains unreviewed. It does not establish human acceptance, whole-chat
+savings, model quality, or a GPU optimization win. Surrounding hosted assistant
+allowances remain separate. Self-hosted inference has no provider token charge
+in Questlock's ledger, but hardware, power, storage and operation still cost
+resources. Caller-supplied prices remain estimates, not reconciled invoices.
+
+---
+
 # Questlock 0.4.0 — explicit human outcomes after checks
 
 **Experimental release.** A worker can pass its declared checks while a person

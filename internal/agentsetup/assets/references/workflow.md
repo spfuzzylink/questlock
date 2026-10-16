@@ -1,6 +1,6 @@
 # Task snapshot and local setup
 
-The skill runs independently of the source checkout. Its helper uses `QUESTLOCK_BIN`, defaulting to `$HOME/.local/bin/questlock`. Call it with `sh scripts/run.sh plan|run|quest|worker-run|worker-serve` from the skill directory. Set `QUESTLOCK_TOKEN` or `QUESTLOCK_TOKEN_FILE`; live commands read the default token file `$HOME/.local/share/questlock/agent-workflows/worker.token`. Ollama uses no provider key. Use `OPENAI_API_KEY` for OpenAI and `ANTHROPIC_API_KEY` for Claude. Load keys using the user's existing secret mechanism; never print them.
+The skill runs independently of the source checkout. Its helper uses `QUESTLOCK_BIN`, defaulting to `$HOME/.local/bin/questlock`. Call it with `sh scripts/run.sh plan|run|quest|worker-run|worker-serve` from the skill directory. Set `QUESTLOCK_TOKEN` or `QUESTLOCK_TOKEN_FILE`; live commands read the default token file `$HOME/.local/share/questlock/agent-workflows/worker.token`. Ollama uses no provider key. Use `OPENAI_API_KEY` for OpenAI, `ANTHROPIC_API_KEY` for Claude, `OPENROUTER_API_KEY` for OpenRouter and `SGLANG_API_KEY` for authenticated SGLang. Load keys using the user's existing secret mechanism; never print them.
 
 For a fresh local broker, provision once in a foreground shell:
 
@@ -20,7 +20,7 @@ Specs are UTF-8 JSON objects, maximum 1MiB, with no unknown fields or trailing c
 | Field | Meaning |
 | --- | --- |
 | `task`, `revision`, `model` | Nonempty identifiers, maximum 128 bytes. Update revision for changed facts. |
-| `provider` | `ollama`, `openai`, `claude`, or `anthropic` (Claude alias). |
+| `provider` | `ollama`, `sglang`, `openrouter`, `openai`, `claude`, or `anthropic` (Claude alias). |
 | `instructions`, `input` | Nonempty text; instructions express the task's behavior and input is the changing request. |
 | `context` | Up to 1,000 chunks: unique `id`, nonempty `text`, optional `required`, `priority`, `stable`. |
 | `max_context_bytes` | 0–524,288 bytes for rendered context. Required chunks must fit; optional chunks use descending priority, then ID, and stay whole. |
@@ -33,7 +33,7 @@ Specs are UTF-8 JSON objects, maximum 1MiB, with no unknown fields or trailing c
 | `prices` | API-only optional explicit USD per million tokens: `input_per_million`, `cache_read_per_million`, `cache_write_per_million`, `output_per_million`. Never assume fixture/current prices. Omit for Ollama. |
 | `max_cost_usd`, `daily_budget_usd` | API-only optional positive caps, require accurate explicit prices. Daily ledger covers cooperating workers in one broker scope per UTC day. Omit for Ollama. |
 
-The full prepared prompt cannot exceed 512KiB. Stable chunks form the prefix; changing chunks and task input follow it. Installed local Ollama, direct OpenAI, and direct Anthropic APIs are supported. OpenRouter needs a future capability-aware adapter and is not a drop-in `--api-base-url` override.
+The full prepared prompt cannot exceed 512KiB. Stable chunks form the prefix; changing chunks and task input follow it. Installed local Ollama, direct OpenAI, and direct Anthropic APIs are supported. v0.5.0 adds a dedicated `openrouter` adapter with a pinned upstream, declared input upper bound, and explicit cache-write accounting policy; it is not a direct OpenAI base-URL override. SGLang requires a `sglang` object declaring self-hosted ownership, deployment ID, cache namespace, profile and the same input cap. Standalone dense/HiCache native generation is supported for pinned SGLang 0.5.20; all PD instances, including HiSparse decode, are inspection only. Runtime KV hits remain separate from API billing usage. Read the packaged `docs/runtime-cache.md` and `deploy/sglang/README.md` before selecting these providers.
 
 ## Local inference and approved memory
 

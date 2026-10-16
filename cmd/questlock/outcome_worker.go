@@ -66,7 +66,7 @@ func workerOutcomeRecord(request delegation.Request, result delegation.Result, r
 		case !item.GenerationCalled:
 			item.UsageKnown, item.Usage = true, inference.Usage{}
 			item.EstimatedCostUSD, item.CostBasis = &zero, "no_generation"
-		case spec.Provider == "ollama":
+		case inference.SelfHosted(spec):
 			item.EstimatedCostUSD, item.CostBasis = &zero, "local_token_charge"
 		case item.UsageKnown && spec.Prices != nil:
 			// Match Runner's conservative micro-dollar rounding and exclusive

@@ -67,6 +67,7 @@ func BuildPlan(s Spec) (Plan, error) {
 		provider = "claude"
 	}
 	p.Request = Request{Stream: s.Stream, Provider: provider, Model: s.Model, ReasoningEffort: s.ReasoningEffort, Prefix: prefix, Input: input, MaxOutputTokens: s.MaxOutputTokens, CacheMode: mode}
+	p.Request.OpenRouter, p.Request.SGLang = s.OpenRouter, s.SGLang
 	if provider == "ollama" {
 		p.Request.ContextWindow = s.MaxInputTokens + s.MaxOutputTokens + 512
 	}
@@ -95,8 +96,34 @@ func validateSpec(s Spec) error {
 			return errors.New("task, revision, and model must be nonempty identifiers of at most 128 bytes")
 		}
 	}
-	if s.Provider != "openai" && s.Provider != "claude" && s.Provider != "anthropic" && s.Provider != "ollama" {
-		return errors.New("provider must be openai, claude (anthropic is an alias), or ollama")
+	if s.Provider != "openai" && s.Provider != "claude" && s.Provider != "anthropic" && s.Provider != "ollama" && s.Provider != "openrouter" && s.Provider != "sglang" {
+		return errors.New("provider must be openai, claude (anthropic is an alias), ollama, openrouter, or sglang")
+	}
+	if s.Provider == "openrouter" {
+		if s.OpenRouter == nil {
+			return errors.New("openrouter requires an explicit pinned route and input upper bound")
+		}
+		if err := validateOpenRouterConfig(*s.OpenRouter); err != nil {
+			return err
+		}
+		if s.OpenRouter.InputTokenUpperBound > s.MaxInputTokens {
+			return errors.New("OpenRouter operator input upper bound exceeds max_input_tokens")
+		}
+	} else if s.OpenRouter != nil {
+		return errors.New("openrouter settings require the openrouter provider")
+	}
+	if s.Provider == "sglang" {
+		if s.SGLang == nil {
+			return errors.New("sglang requires an explicit self-hosted deployment contract")
+		}
+		if err := ValidateSGLangConfig(*s.SGLang); err != nil {
+			return err
+		}
+		if s.SGLang.MaxInputTokens != s.MaxInputTokens {
+			return errors.New("sglang max_input_tokens must equal the task input cap")
+		}
+	} else if s.SGLang != nil {
+		return errors.New("sglang settings require the sglang provider")
 	}
 	if s.ReasoningEffort != "" {
 		if s.Provider != "openai" {
@@ -146,8 +173,8 @@ func validateSpec(s Spec) error {
 	if (s.MaxCostUSD > 0 || s.DailyBudgetUSD > 0) && s.Prices == nil {
 		return errors.New("USD caps require explicit prices")
 	}
-	if s.Provider == "ollama" && (s.Prices != nil || s.MaxCostUSD != 0 || s.DailyBudgetUSD != 0) {
-		return errors.New("local Ollama has no provider token price; omit USD prices and caps and use a separate local-only broker scope")
+	if SelfHosted(s) && (s.Prices != nil || s.MaxCostUSD != 0 || s.DailyBudgetUSD != 0) {
+		return errors.New("self-hosted inference has no provider token price; omit USD prices and caps and use a separate self-hosted broker scope")
 	}
 	if s.Prices != nil {
 		for _, price := range []float64{s.Prices.Input, s.Prices.CacheRead, s.Prices.CacheWrite, s.Prices.Output} {

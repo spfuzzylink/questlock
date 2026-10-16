@@ -1,12 +1,12 @@
 # Run the Questlock container
 
-This guide covers the experimental **v0.4.0** image. The preserved
+This guide covers the experimental **v0.5.0** image candidate. The preserved
 [v0.3.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.3.0) and
 [v0.2.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.2.0) releases and
 their corresponding container tags remain available.
 
-The current experimental image in [GitHub Packages](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
-is `ghcr.io/spfuzzylink/questlock:v0.4.0`, with native Linux ARM64 and x86-64 images.
+The target experimental image in [GitHub Packages](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
+is `ghcr.io/spfuzzylink/questlock:v0.5.0`, with native Linux ARM64 and x86-64 images.
 Podman and Docker select the matching CPU image. On macOS, the container engine
 runs Linux in its own VM; native macOS binaries use the separate release archives.
 
@@ -19,7 +19,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.4.0 quest
+  ghcr.io/spfuzzylink/questlock:v0.5.0 quest
 ```
 
 The same command works with `docker` in place of `podman`. Pulling the public
@@ -37,7 +37,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.4.0 model quest
+  ghcr.io/spfuzzylink/questlock:v0.5.0 model quest
 ```
 
 Look for six `PASS` lines and `QUEST CLEARED`. This quest starts a real local HTTP
@@ -58,7 +58,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.4.0 outcome quest
+  ghcr.io/spfuzzylink/questlock:v0.5.0 outcome quest
 ```
 
 Look for six `PASS` lines and `QUEST CLEARED`. Three simple and three complex
@@ -68,6 +68,15 @@ cost/effort/rate, stale feedback, and broker restart. No model runs or real huma
 review decisions are involved; costs and reviewer minutes are synthetic. Read
 [human feedback and accounting](outcomes.md) before interpreting the metric.
 
+## Run the offline runtime quest
+
+Use the same isolated container settings with `model runtime-quest`. Six native
+HTTP-fixture scenarios test token-ID handoff, result reuse, namespaces, cache tier
+evidence, runtime mutation, and unsupported sparse decode. They run on Linux
+ARM64 or AMD64 without a GPU. These are protocol checks, not CUDA emulation or
+GPU benchmarks. The Questlock image contains the broker/worker binary; SGLang
+and its GPU runtime run separately. See [the runtime guide](runtime-cache.md).
+
 ## Run a persistent broker
 
 The command above is a disposable demo. A persistent broker needs its own named
@@ -76,8 +85,8 @@ Follow the [rootless Podman deployment guide](deployment.md). Replace its initia
 image-build command with:
 
 ```sh
-podman pull ghcr.io/spfuzzylink/questlock:v0.4.0
-podman tag ghcr.io/spfuzzylink/questlock:v0.4.0 localhost/questlock:dev
+podman pull ghcr.io/spfuzzylink/questlock:v0.5.0
+podman tag ghcr.io/spfuzzylink/questlock:v0.5.0 localhost/questlock:dev
 ```
 
 Then continue with the volume, credential provisioning, and Quadlet steps in that
@@ -87,7 +96,7 @@ host port automatically. Keep any explicit host binding on `127.0.0.1`.
 
 ## Tags, updates, and provenance
 
-- `v0.4.0` is the release tag; `experimental` is a moving tag
+- `v0.5.0` is the target release tag; `experimental` is a moving tag
   for subsequent experimental publications. Neither implies a stable API.
 - Registry tags can change. For a repeatable deployment, record the image digest
   shown by `podman images --digests` and use the corresponding digest reference.

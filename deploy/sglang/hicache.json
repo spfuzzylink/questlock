@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "profile": "hicache",
+  "source_revision": "94602c9c2b7cbdb8efd5c52802dac6a1c180089e",
+  "questlock_generation": true,
+  "argv": [
+    "python3", "-m", "sglang.launch_server",
+    "--model-path", "MODEL_DIRECTORY",
+    "--served-model-name", "questlock-example",
+    "--host", "127.0.0.1", "--port", "30000",
+    "--enable-cache-report", "--page-size", "64",
+    "--enable-hierarchical-cache", "--hicache-ratio", "2",
+    "--hicache-io-backend", "kernel", "--hicache-mem-layout", "page_first",
+    "--hicache-write-policy", "write_through"
+  ]
+}

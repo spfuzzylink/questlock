@@ -1,0 +1,20 @@
+{
+  "task": "sglang-checked-summary",
+  "revision": "approved-snapshot-001",
+  "provider": "sglang",
+  "model": "questlock-example",
+  "sglang": {
+    "deployment_id": "replace-with-pinned-runtime-and-model-digest",
+    "cache_namespace": "engineering-demo",
+    "profile": "dense",
+    "self_hosted": true,
+    "max_input_tokens": 2048
+  },
+  "instructions": "Summarize only the supplied facts in two sentences. State when evidence is missing.",
+  "input": "The example change adds an explicit runtime identity and preserves shared result coordination. Real GPU performance has not been measured.",
+  "max_context_bytes": 0,
+  "max_input_tokens": 2048,
+  "max_output_tokens": 128,
+  "cache_mode": "default",
+  "reuse_for_seconds": 0
+}

@@ -109,7 +109,7 @@ func (l *Langfuse) envelope(e Execution, r Receipt) otlpEnvelope {
 		attrs = append(attrs, floatAttribute(metadataPrefix+"avoided_cost_usd", *e.AvoidedCostUSD))
 		attrs = append(attrs, stringAttribute(metadataPrefix+"avoided_cost_source", costSource(e.Provider, *e.AvoidedCostUSD)))
 	}
-	for _, name := range []string{"provider_setup", "plan", "lookup", "admission", "preflight", "reservation", "generation", "publication", "settlement", "recovery"} {
+	for _, name := range []string{"provider_setup", "runtime_identity", "plan", "lookup", "admission", "preflight", "reservation", "generation", "publication", "settlement", "recovery"} {
 		if ms, ok := e.PhaseMS[name]; ok {
 			attrs = append(attrs, floatAttribute(metadataPrefix+"phase_"+name+"_ms", ms))
 		}
@@ -129,6 +129,18 @@ func (l *Langfuse) envelope(e Execution, r Receipt) otlpEnvelope {
 		}
 		if g.Model != "" {
 			generationAttrs = append(generationAttrs, stringAttribute("langfuse.observation.model.name", g.Model))
+		}
+		if cache := g.RuntimeCache; cache != nil {
+			generationAttrs = append(generationAttrs, stringAttribute(metadataPrefix+"runtime_cache_profile", cache.Profile), stringAttribute(metadataPrefix+"runtime_cache_basis", "runtime_reported_compute_reuse"))
+			for _, item := range []struct {
+				name  string
+				value *int64
+			}{{"cached", cache.CachedTokens}, {"device", cache.DeviceTokens}, {"host", cache.HostTokens}, {"storage", cache.StorageTokens}} {
+				generationAttrs = append(generationAttrs, boolAttribute(metadataPrefix+"runtime_cache_"+item.name+"_known", item.value != nil))
+				if item.value != nil {
+					generationAttrs = append(generationAttrs, intAttribute(metadataPrefix+"runtime_cache_"+item.name+"_tokens", *item.value))
+				}
+			}
 		}
 		if g.TimingBasis != "" {
 			generationAttrs = append(generationAttrs, stringAttribute(metadataPrefix+"timing_basis", g.TimingBasis))
@@ -173,7 +185,7 @@ func (l *Langfuse) envelope(e Execution, r Receipt) otlpEnvelope {
 }
 
 func costSource(provider string, value float64) string {
-	if provider == "ollama" && value == 0 {
+	if (provider == "ollama" || provider == "sglang") && value == 0 {
 		return "local_zero"
 	}
 	return "caller_estimate"

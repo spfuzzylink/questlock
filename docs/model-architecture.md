@@ -1,8 +1,10 @@
 # Model cost-control architecture: what, why, how
 
-This guide describes **v0.4.0 experimental**, including the bounded runtime and
-explicit human feedback. Published releases and their historical validation remain
-available; see the [current evidence](validation.md#v040-observations--2026-10-14).
+This guide describes the **v0.5.0 experimental source candidate**, adding
+OpenRouter and explicit SGLang runtime/cache contracts to bounded tasks and human
+feedback. Tagged publication and live GPU qualification remain pending.
+Published releases and historical validation remain available in the
+[verification record](validation.md).
 
 Questlock coordinates an approved model task before anyone pays to generate it.
 The first customer use case is a developer or small team repeatedly asking for
@@ -35,6 +37,13 @@ acceptance until explicit reacceptance. A declared cohort report includes failed
 and rejected work in its recorded cost numerator and exposes missing accounting.
 This adds no SQLite schema, passive editor monitoring, or model training.
 
+Version 0.5.0 adds a dedicated OpenRouter text adapter and pinned SGLang v0.5.20
+readback/native generation. Standalone dense/HiCache engines can generate;
+HiSparse and other PD engines are inspection-only until a validated PD ingress
+exists. Runtime KV hits, billable provider caching, and whole-result reuse are
+different observations. The [runtime guide](runtime-cache.md) defines those
+boundaries, the explicit schema, and the evidence needed for a real GPU claim.
+
 This release controls requests that use the Runner. Its usage counters cover
 delegated provider/local generation and exclude the surrounding hosted assistant's
 prompt, tool, and context tokens. It does not remove a
@@ -48,11 +57,12 @@ electricity, and hardware remain costs.
 The useful question is: **does this exact approved task need another paid call?**
 Task admission and provider routing compose naturally: Questlock keeps approved
 context, freshness, coordination, and budget state around the selected provider
-path. A future OpenRouter adapter would connect that path to its model ecosystem.
+path. The OpenRouter adapter connects that path to one explicitly selected
+model/provider without requesting availability fallbacks or automatic selection.
 
 | Architectural choice | Benefit | Tradeoff and decision |
 | --- | --- | --- |
-| Explicit Go Runner and CLI | Review the exact selected context; use the existing scoped broker; preserve native provider token-counting and usage distinctions | Chosen for this release. The caller constructs a spec for each bounded task. |
+| Explicit Go Runner and CLI | Review selected context; use the scoped broker; preserve direct-provider counts, native SGLang tokenization, OpenRouter operator bounds, and distinct usage categories | Chosen. The caller constructs an explicit bounded task and adapter contract. |
 | Transparent OpenAI-compatible HTTP proxy | Existing clients could change one base URL | Future option. Native tool calls, hosted streaming, multimodal input, stateful sessions, and provider-specific limits require a broader protocol contract than this implementation supports. Local content streaming remains an explicit bounded measurement option. |
 | Similarity or semantic cache | Reuse answers for loosely related requests | Deferred. A similar repository review can be wrong after one important change. Exact effective-request reuse with an explicit task revision is easier to evaluate. |
 | Central model/provider router | Access many providers and implement availability fallbacks | Compose with a router instead of rebuilding its entire catalog, billing, and routing system. An adapter must advertise counting and usage capabilities. |
@@ -72,6 +82,14 @@ no automatic model choice or retry occurs. Hosted escalation additionally needs
 process permission, explicit prices, and per-call/daily budgets.
 
 ## Editable architecture diagrams
+
+The current [layered runtime SVG](diagrams/runtime-layers.svg) and
+[editable draw.io source](diagrams/runtime-layers.drawio) show whole-result
+coordination, OpenRouter routing, SGLang KV tiers, and human outcome reporting.
+The older diagrams below retain the v0.3/v0.4 subsystem views; their narrower
+provider labels are historical, not the full v0.5 adapter list.
+
+![Questlock v0.5 task, provider, runtime KV, and review boundaries](diagrams/runtime-layers.svg)
 
 The [two-page draw.io source](diagrams/model-workflows.drawio) contains native,
 editable shapes, labels, and connectors in uncompressed XML. The SVG views below
@@ -134,9 +152,9 @@ flowchart LR
   P --> R[Runner: exact request + upstream identity]
   R --> B[Scoped broker HTTP API]
   B --> D[Local SQLite: immutable versions + CAS receipts]
-  R --> C[API token-count preflight or local estimate]
+  R --> C[Native count or tokenization, local estimate, or explicit router bound]
   C --> Q[Token cap + optional API dollar reservation]
-  Q --> G[OpenAI, Claude, or installed local Ollama]
+  Q --> G[OpenAI, Claude, OpenRouter, Ollama, or standalone SGLang]
   G --> U[Usage + completion status]
   U --> B
   B --> H[Later worker reuses complete fresh result]
@@ -147,16 +165,21 @@ flowchart LR
    reference framing, and stable selected items go into a consistent prefix.
    Nothing is silently rewritten by another model. `model plan` exposes the
    resulting prompt without reading API credentials or generating an answer.
-2. Fingerprint the task, revision, effective request, and adapter endpoint
-   identity. Broker scope provides the sharing boundary. Reuse requires an
+2. Fingerprint the task, revision, effective request, adapter endpoint, and
+   explicit route/deployment policy. SGLang readback is rechecked before lookup;
+   an existing provider stops on observed runtime identity change. Broker scope
+   provides the sharing boundary. Reuse requires an
    explicitly positive TTL and a complete result that is still fresh under both
    the stored TTL and the current caller's TTL. Different task revisions,
    selected text, models, output limits, or upstream identities separate results.
 3. Publish a pending claim with compare-and-swap. One worker wins; other workers
    receive `ErrInFlight`. They may retry reading later. The Runner does not
    automatically generate again while a claim is pending or uncertain.
-4. The owner uses the API provider's input count, or the local adapter's
-   byte/template estimate, to check the input cap. For API jobs, an explicit
+4. The owner uses the selected adapter's preflight: direct-provider input
+   counting, Ollama's byte/template estimate, native SGLang token IDs, or the
+   explicitly approved OpenRouter reservation bound. The latter is not a
+   tokenizer measurement; an arbitrary operator bound cannot prove a prompt
+   fits before generation. For API jobs, an explicit
    conservative maximum cost uses
    the configured input-token allowance, the largest configured input/cache rate,
    and maximum output. Reserving the allowance protects against count estimates
@@ -166,7 +189,8 @@ flowchart LR
 5. If an API daily budget is configured, use a second broker artifact to reserve that
    maximum across participating workers in the scope and UTC day. Publish the
    reservation identity to the job record before calling `Generate`. Local
-   Ollama jobs omit USD fields and skip the API ledger entirely. They neither
+   Ollama and explicitly self-hosted SGLang jobs omit USD fields and skip the API
+   ledger entirely. They neither
    consume nor clear it and can continue when paid admission is frozen; their
    hardware, power, memory, and runtime costs are not measured by that ledger.
 6. Save the provider response, usage, and completion status. A complete result
@@ -210,12 +234,13 @@ limits modest. If a known answer cannot be published, the CLI returns its text
 and usage with `durable: false` and an error; the pending claim still prevents
 automatic regeneration. Stored results report `durable: true`.
 
-There are four different wins to measure:
+There are five different mechanisms to measure:
 
 | Mechanism | What is reduced | Evidence to collect |
 | --- | --- | --- |
 | Whole-item context selection | Unnecessary input included in the effective request | Review selected and omitted IDs; compare provider-counted input for equivalent-quality tasks. Bytes are not token counts. |
 | Provider prompt caching | Cost of eligible repeated input prefixes | Inspect actual cache-read and cache-write usage. The provider still generates output. |
+| Runtime KV caching/offload | Repeated prefill work or device memory pressure, depending on the supported runtime mechanism | Record runtime cache tiers and matched hardware timing/memory; a KV hit is not a billable cache discount or an avoided generation. |
 | Questlock completed-result reuse | An entire repeated generation, including output | Confirm `reused`, zero this-run generation usage, unchanged exact fingerprint, and original receipt. |
 | Installed local inference | Provider token charges for a supported task | Verify local weights/digest, loopback runtime with cloud disabled, actual runtime usage, and acceptable answer quality. Hardware costs remain. |
 
@@ -259,7 +284,8 @@ ones, per scope and UTC day. Ledger updates make at most 32 CAS attempts before
 returning a contention error. Those bounds stop new generation rather than
 silently losing accounting. A scope's first daily budget initializes its cap;
 subsequent Runner requests must supply that same cap and explicit prices.
-This requirement applies to hosted API jobs. Validated local Ollama work leaves
+This requirement applies to hosted API jobs. Validated Ollama and explicitly
+self-hosted SGLang work leave
 the paid ledger untouched. Separate scopes remain useful for permission/privacy
 boundaries, rather than being required to separate local and paid accounting.
 
@@ -286,26 +312,30 @@ Routing and prompt caching affect the cost of a new generation; Questlock's
 durable task claim decides whether participating workers should start one at all.
 [OpenRouter prompt caching](https://openrouter.ai/docs/guides/best-practices/prompt-caching).
 
-The promising add-on shape is:
+The implemented v0.5.0 companion shape is:
 
 ```text
 your task runner → Questlock planning / claim / budget / receipts
                 → capability-aware OpenRouter adapter → selected upstream
 ```
 
-An OpenRouter adapter is a future integration, not a currently selectable
-provider. An OpenAI-compatible generation endpoint alone is insufficient: this
-Runner also requires trustworthy input-count preflight, compatible maximum-output
-semantics, and usage that distinguishes input/cache/output charges. The adapter
-must explicitly define unsupported capabilities rather than assuming direct
-OpenAI counting routes exist behind another API's base URL.
+Select `provider: "openrouter"` and supply an explicit model, upstream provider,
+input reservation bound and cache-write usage policy. The adapter requests one
+route with `only`/`order`, `allow_fallbacks: false`, and
+`require_parameters: true`; per-request fees are excluded by `max_price`.
+Questlock makes one nonstreaming text request and no automatic generation retry.
+These are requested routing controls, not a claim about OpenRouter's internal
+execution. A compatible completion endpoint alone does not supply this contract.
 
-For that adapter, fingerprint the router endpoint, full routing policy, and
-effective request. Persist the resolved model/provider when available and observe
-actual cached usage. Reuse should remain within the broker's intended trust and
-freshness scope. Provider price/routing changes require policy review; an
-OpenRouter API response's normalized schema should not silently remove billing
-detail needed by the shared ledger.
+The endpoint, route policy and effective request enter result identity. A
+reported model/provider mismatch is incomplete and cannot be reused. Missing or
+contradictory native token/cache usage remains unknown and stops execution;
+reasoning is already part of completion tokens. OpenRouter has no documented
+general token-count endpoint used here, so the operator's explicit input bound
+is not presented as measured input. The configured token prices remain estimates
+rather than verified OpenRouter charges. Prefix-breakpoint controls, reasoning
+overrides, streaming and endpoint/region suffix pins are unsupported. Read the
+[full contract and example](runtime-cache.md#openrouter-boundary) before paid use.
 
 Native caching complements this design. OpenAI caches eligible exact prefixes;
 placing stable content before changing task data improves eligibility.
@@ -317,9 +347,11 @@ Claude's token-counting documentation also cautions that counts can differ from
 the eventual generation, which is why preflight and actual usage are distinct
 records. [Claude token counting](https://platform.claude.com/docs/en/build-with-claude/token-counting).
 
-These primary documentation pages were checked on 2026-10-12. Integration
-choices above are design conclusions drawn from their documented capabilities,
-not claims that the vendors endorse or integrate Questlock.
+The direct-provider primary documentation above was checked on 2026-10-12;
+OpenRouter's [routing](https://openrouter.ai/docs/guides/routing/provider-selection)
+and [native usage](https://openrouter.ai/docs/cookbook/administration/usage-accounting)
+contracts were checked for the v0.5 candidate on 2026-10-16. The integration is
+our design, not a vendor endorsement or hosted OpenRouter plugin.
 
 ## Six easy scenarios to verify the win
 
@@ -382,6 +414,7 @@ not a statement of legal novelty or patentability.
 
 Useful next experiments are read-only reconciliation of unknown upstream
 receipts, evaluated cost/quality model selection, task freshness policies tied to
-repository snapshots, and a capability-aware OpenRouter adapter. Each should
+repository snapshots, a validated SGLang PD ingress, and matched real GPU
+qualification for supported cache profiles. Each should
 preserve the rule that an ambiguous paid outcome never silently becomes another
 paid call.
