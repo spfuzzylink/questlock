@@ -4,9 +4,11 @@ Version **v0.3.0** adds current-run measurements, optional Langfuse export, and 
 
 Repeated handoffs and fixed-snapshot summaries should be faster and more affordable when their completed answer can be reused. Measurements make that behavior inspectable: distinguish a fresh generation from a broker lookup, record the context admitted, and compare explicit output caps against declared task checks. [Bounded delegation](delegation.md) uses the same runtime.
 
-![Questlock inference runtime](diagrams/inference-runtime.svg)
+![Questlock layered inference runtime](diagrams/runtime-layers.svg)
 
-The diagram is [editable in diagrams.net](diagrams/inference-runtime.drawio). The Go Runner owns model calls; the authenticated broker owns durable coordination and results. Langfuse receives an optional metadata copy after execution. The [existing model architecture](model-architecture.md) explains claims, budget reservation, and uncertain outcomes.
+The current diagram is [editable in diagrams.net](diagrams/runtime-layers.drawio).
+The [historical v0.3 runtime view](diagrams/inference-runtime.svg) and its
+[editable source](diagrams/inference-runtime.drawio) remain available. The Go Runner owns model calls; the authenticated broker owns durable coordination and results. Langfuse receives an optional metadata copy after execution. The [existing model architecture](model-architecture.md) explains claims, budget reservation, and uncertain outcomes.
 
 ## Read the measurements correctly
 
@@ -26,6 +28,28 @@ hosted assistant's prompt, tool, and context tokens.
 Runtime measurements are neither persisted in the job record nor included in its fingerprint. Original streaming timing is stored with `Response.Timing`; a reused result retains it in `generation_timing`, clears `response.timing`, and has no fresh generation timing in `measurement`.
 
 For local Ollama only, set `"stream": true` in the approved spec to collect content-arrival observations. `first_content_ms` (TTFT) starts at entry to `Generate` and ends at the first nonempty content chunk observed by the client, including metadata and network overhead. `output_content_ms` is the interval from the first to the last nonempty content chunk; one content chunk can yield zero. Empty frames do not extend it. These are not pure compute TTFT, per-token throughput, or reasoning-token timing. Streaming consumes and validates the bounded response before exposing approved output.
+
+## Runtime KV evidence in v0.5.0
+
+The SGLang adapter reports optional `response.runtime_cache` counters for a new
+generation. `generation_runtime_cache` retains original observations on an exact
+result hit; current `response.runtime_cache` is cleared on reuse. Missing
+aggregate/tier counters stay unknown. KV hits describe compute reuse and never
+become the API `cache_read_tokens` billing bucket or a dollar discount.
+
+Optional generation metadata exports controlled `questlock_runtime_cache_*`
+counts, known flags, profile and `runtime_reported_compute_reuse` basis. No
+runtime URL, path, cache namespace, storage credential, prompt or answer is
+exported. `phase_ms.runtime_identity` records the pre-lookup identity check.
+Self-hosted SGLang uses explicit zero provider token charge; hardware and rental
+costs remain outside this token-price ledger.
+
+The disposable real Langfuse v4.59.0 test now reads back four roots and three
+generation children. Its additional synthetic cache observation reports 80
+cached, 50 device and 30 host tokens with unknown storage, while billing cache
+usage stays zero. This verifies telemetry mapping, not GPU performance.
+See [current evidence](validation.md#v050-observations--2026-10-16) and
+[the runtime contract](runtime-cache.md).
 
 ## Opt in to Langfuse
 

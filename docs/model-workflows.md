@@ -1,10 +1,9 @@
 # Bounded model workflows
 
-This guide covers the **v0.5.0 experimental source candidate**, including runtime
+This guide covers the **v0.5.0 experimental release**, including runtime
 cache inspection, the OpenRouter adapter, evaluation, observability, the bounded
-worker, and [explicit human outcome feedback](outcomes.md). New candidate
-commands need a [source build](installation.md); v0.4.0 remains the last
-published binary until tagged publication is verified.
+worker, and [explicit human outcome feedback](outcomes.md). These commands are
+available in the verified [v0.5.0 binary or a source build](installation.md).
 
 Repeated handoffs, change summaries, and draft release notes often resend yesterday's discussion and regenerate an answer someone already requested. Questlock now makes those small, explicit jobs reproducible: keep necessary context, bound the response, and reuse a completed answer for the same task snapshot.
 

@@ -1,31 +1,98 @@
 # Validation record
 
-## v0.5.0 candidate observations — 2026-10-16
+## v0.5.0 observations — 2026-10-16
 
-The runtime integration candidate adds a dedicated OpenRouter adapter and a
-pinned SGLang v0.5.20 native contract. Local Go vet/race checks and all 70 Python
-packaging/publication regressions passed. Six `model runtime-quest` scenarios
-exercise real HTTP adapters and temporary SQLite with deterministic fixtures:
-dense generation, exact result reuse, separate namespaces, HiCache tier evidence,
-runtime identity mutation, unknown counters and unsupported sparse decode.
+Release source: `85a5779b6ed61b0eed7e87b56cf2e07aa2c6c47b`, the peeled
+`v0.5.0` tag, with reviewed tree `667fe60ab56e40911f99ace490f35cfe1926eeb6`.
+The immutable archives retain their source-era candidate wording. These web
+documents record subsequent publication and verification without replacing
+those assets or rewriting older releases.
 
-These are **protocol_fixture** checks. No GPU kernel, accelerator throughput,
-GPU memory offload, model quality, or OpenRouter invoice was measured. Native
-Apple inference, predicted CPU simulation, Linux CPU/ABI validation, and actual
-CUDA/ROCm qualification have separate evidence boundaries in the
-[runtime guide](runtime-cache.md). Reproducible GPU prerequisites and matched
-cold/warm instructions are [packaged with the profiles](../deploy/sglang/README.md).
-HiSparse and other direct PD targets support inspection only in this release.
+### Protocol, native platforms, and real telemetry
 
-A bounded public-fact extraction used the installed local Questlock worker with
-`track_outcome: true`, strict JSON and exact-value checks. It completed with
-**75 input / 17 output tokens**, and outcome registration was confirmed. No paid
-tier was configured; assistant review was not recorded as human acceptance.
-This observation excludes surrounding hosted chat usage and establishes no
-invoice savings or general model-quality result.
+Go vet/race, all 70 Python publication/packaging regressions, Actionlint and the
+public-source guard passed. Six `model runtime-quest` scenarios exercise actual
+HTTP adapters and temporary SQLite with deterministic fixtures: dense generation,
+exact result reuse, cache namespaces, HiCache tier evidence, identity mutation,
+unknown counters and the unsupported sparse-decode boundary. A golden request
+fingerprint captured from the published v0.4.0 CLI remains unchanged.
 
-Publication, native platform CI, released archive checks and GHCR verification
-remain pending for this candidate. Existing v0.4.0 evidence below remains intact.
+[Source CI](https://github.com/spfuzzylink/questlock/actions/runs/38958538608) and
+[PR CI](https://github.com/spfuzzylink/questlock/actions/runs/38958546182) passed all
+seven gates at independently reviewed head `28e1f2b0515c4e680649ec8ede52ca19306a779b`.
+Its tree equals the release tree above. Earlier candidate CI caught the stale
+source-build version default; it was fixed and a manifest/source-version
+regression added before publication. The original failure remains in the
+[earlier run](https://github.com/spfuzzylink/questlock/actions/runs/38958150022).
+
+[Tagged CI](https://github.com/spfuzzylink/questlock/actions/runs/38959115848)
+passed all eight jobs. Four native Darwin/Linux AMD64/ARM64 jobs exercised their
+archives, all four offline quests, race checks and fixture evaluation. The source
+container passed the same offline scenarios. Disposable real Langfuse v4.59.0
+returned four root spans, three generation children, explicit costs, exclusive
+billing buckets and scores 1/1/0/1. The additional synthetic SGLang fixture
+returned runtime KV counts separately: cached 80, device 50, host 30, storage
+unreported. Those values did not become billable cache tokens.
+
+These are protocol and telemetry checks. No paid OpenRouter invoice, GPU kernel,
+accelerator throughput, KV-offload latency or SGLang model-quality win was
+measured. Native Apple inference, predicted CPU simulation, Linux CPU/ABI
+validation and real CUDA/ROCm qualification remain distinct. HiSparse and all
+direct PD instances support inspection only. See [evidence levels](runtime-cache.md)
+and [reproducible GPU prerequisites](../deploy/sglang/README.md).
+
+### Published artifacts
+
+All five actual release assets were downloaded over anonymous HTTPS. Checksums,
+GitHub asset digests, target executable headers, clean Go 1.27.1/CGO-disabled
+BUILDINFO, normalized archive ownership, and all **62 public files** match the
+tagged source byte for byte. Archive SHA-256 values:
+
+| Archive | SHA-256 |
+| --- | --- |
+| `questlock_0.5.0_darwin_amd64.tar.gz` | `ca0f36c284bc01ac2de57b181f4e5e833a13349e824f2cd57b3458f7f387a494` |
+| `questlock_0.5.0_darwin_arm64.tar.gz` | `387ce3caa9b66ba9f5eeca3de7eec424fe445f3c85636b738f6e9abcd4e2c00f` |
+| `questlock_0.5.0_linux_amd64.tar.gz` | `3c514e86de188632c0df7f2711f0a3c46da67f2c26161882fc7d914c8e24bdbe` |
+| `questlock_0.5.0_linux_arm64.tar.gz` | `df963307c58463a26c6d35abf108168008f4940346c57f37637364ab66702a9d` |
+
+[Container CI](https://github.com/spfuzzylink/questlock/actions/runs/38959504126)
+passed both native architectures and publication. Anonymous GHCR verification
+checked the index, both configs and every one of the 16 layers, including
+uncompressed layer digests, exact archive binaries/legal files, nonroot user and
+non-world-writable data directory.
+
+`v0.5.0` and `experimental` resolve to:
+
+`sha256:b6483ee45f2a551ab7302631180384d3e1025c3bae17afcb790cd338520b2d8c`
+
+The v0.4.0, v0.3.0 and v0.2.0 indexes retain their previously verified digests.
+The project/profile v0.5 banner matches byte for byte; its SHA-256 is
+`38a055a73c8932dce036903190271fdbd25bce829084b4cf74c808cc5082a6e8`.
+
+### Installed development use
+
+The actual published macOS ARM64 binary passed installation and all four quests
+in an isolated home before activation. A private complete backup of the existing
+binary and both skills was saved. The verified binary and Codex/Claude skills
+are installed; the three active client-setting files remain byte-for-byte
+unchanged. This does not switch the surrounding chat's model or restart an
+already-running MCP process.
+
+A bounded public-fact extraction used local `qwen3.5:4b` with strict JSON and
+exact-value checks: **75 input / 17 output tokens**, with confirmed outcome
+registration. A fresh native MCP process using the installed v0.5.0 binary
+connected, discovered the tool/schema, returned the checked answer, and recorded
+receipt version 2. The private checker then incorrectly expected unredacted
+per-attempt response fields; the MCP privacy contract intentionally clears them.
+That failed assertion is retained. Read-only broker reconciliation confirmed the
+second invocation was complete, durable, check-passed **reuse with zero new
+generation tokens**. The original SDK payload was not retained, so this is
+broker-backed reconciliation rather than a rerun of the corrected checker.
+No additional model call was made to repair the proof.
+
+The two recorded invocations have no operator feedback in this ledger. These
+observations exclude surrounding hosted assistant usage and establish no human
+acceptance, invoice savings, or general model-quality claim.
 
 ## v0.4.0 observations — 2026-10-14
 

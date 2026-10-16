@@ -1,12 +1,13 @@
 # Questlock 0.5.0 — explicit provider routes and runtime cache evidence
 
-**Experimental source release candidate; tagged publication is pending.**
+**Published experimental release.**
+[Release and downloads](https://github.com/spfuzzylink/questlock/releases/tag/v0.5.0) · [Verified artifacts](validation.md#v050-observations--2026-10-16)
 Repeated tasks and repeated prefix computation are different costs. Version
 **0.5.0** adds explicit OpenRouter and SGLang contracts while keeping runtime KV
 evidence, API token accounting, whole-result reuse and human acceptance separate.
 Published v0.4.0 and older tags/assets remain unchanged.
 
-## New in the 0.5.0 candidate
+## New in 0.5.0
 
 - A dedicated nonstreaming OpenRouter Chat Completions adapter: one explicit
   model/provider, requested upstream fallbacks disabled, operator input
@@ -42,14 +43,14 @@ Read [the runtime contract](runtime-cache.md), [setup and qualification](../depl
 
 ## Evidence and limits
 
-Local source checks pass, including focused OpenRouter adapter/Runner race
-tests, inference vet, and actual offline CLI plans for both new specs. Tagged
-publication gates, archive/container provenance, and any new real-server
-telemetry readback must be
-recorded in [validation](validation.md) before publication is claimed.
+Go vet/race, 70 Python regressions, all four native platforms, source-container
+execution, and disposable real Langfuse readback passed. Published archives
+match the tagged source and checksums; both native GHCR images and all layers
+were verified anonymously. Older tags remain unchanged. See the
+[verification record](validation.md#v050-observations--2026-10-16).
 Live OpenRouter paid-account and SGLang GPU/PD performance have not been
 validated. The upstream CPU simulator instructions are exploratory and were
-not executed as evidence for this candidate.
+not executed as evidence for this release.
 
 One local development attempt recorded known usage of 75 input / 17 output
 tokens; its registered outcome remains unreviewed. It does not establish human acceptance, whole-chat
