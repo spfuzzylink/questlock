@@ -34,6 +34,8 @@ func workerCommandIO(args []string, input io.ReadCloser, output, diagnostics io.
 	workspace := f.String("workspace", ".", "MCP request file boundary; server reads only explicitly named files")
 	brokerURL := f.String("broker", "http://127.0.0.1:8080", "broker endpoint for this worker's trusted scope")
 	ollamaURL := f.String("ollama-url", "", "local literal-loopback Ollama endpoint; default 127.0.0.1:11434")
+	sglangURL := f.String("sglang-url", "", "process-authorized self-hosted SGLang endpoint; default 127.0.0.1:30000")
+	openrouterURL := f.String("openrouter-url", "", "process-authorized OpenRouter API endpoint; empty uses the official API")
 	allowPaid := f.Bool("allow-paid", false, "permit one explicitly budgeted hosted escalation after known quality failure")
 	timeout := f.Duration("timeout", 2*time.Minute, "per-task bound, maximum 10 minutes")
 	lfEnabled := f.Bool("langfuse", false, "opt-in content-free metadata; MCP uses a bounded best-effort queue")
@@ -88,6 +90,12 @@ func workerCommandIO(args []string, input io.ReadCloser, output, diagnostics io.
 			base := ""
 			if tier.Spec.Provider == "ollama" {
 				base = *ollamaURL
+			}
+			if tier.Spec.Provider == "sglang" {
+				base = *sglangURL
+			}
+			if tier.Spec.Provider == "openrouter" {
+				base = *openrouterURL
 			}
 			started := time.Now()
 			provider, err := configuredProvider(ctx, tier.Spec, base)

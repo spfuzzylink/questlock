@@ -1,11 +1,19 @@
 # Bounded model workflows
 
-This guide covers **v0.4.0 experimental**, including evaluation, observability,
-the bounded worker, and [explicit human outcome feedback](outcomes.md). Use a [release binary or source build](installation.md).
+This guide covers the **v0.5.0 experimental source candidate**, including runtime
+cache inspection, the OpenRouter adapter, evaluation, observability, the bounded
+worker, and [explicit human outcome feedback](outcomes.md). New candidate
+commands need a [source build](installation.md); v0.4.0 remains the last
+published binary until tagged publication is verified.
 
 Repeated handoffs, change summaries, and draft release notes often resend yesterday's discussion and regenerate an answer someone already requested. Questlock now makes those small, explicit jobs reproducible: keep necessary context, bound the response, and reuse a completed answer for the same task snapshot.
 
-The adapters support direct OpenAI Responses, Anthropic Claude Messages, and installed local Ollama weights. Specs use `provider: "openai"`, `provider: "anthropic"` (`"claude"` is an alias), or `provider: "ollama"`. Each request is a single text-generation turn. Pick an explicit provider/model that meets the task's quality bar, and review its result before acting on it.
+The adapters support direct OpenAI Responses, Anthropic Claude Messages,
+OpenRouter text completions, installed local Ollama weights, and standalone
+self-hosted SGLang dense/HiCache engines. Specs use `provider: "openai"`,
+`"anthropic"` (`"claude"` is an alias), `"openrouter"`, `"ollama"`, or `"sglang"`.
+Each generation is one text-only turn. HiSparse/PD profiles are inspection-only.
+Choose an explicit model qualified for the task and review its result.
 
 Questlock uses the instructions and context you supply. It does not train a model on your work or automatically read past conversations. It cannot bypass provider credits, billing, rate limits, or a Codex/Claude subscription limit. Direct API requests use provider API billing; the surrounding coding assistant can still consume its own plan allowance. Questlock usage counters measure only the delegated provider/local generation and exclude that assistant's prompt, tool, and context tokens.
 
@@ -41,9 +49,51 @@ questlock model run --spec handoff.json --broker http://127.0.0.1:8080 --timeout
 questlock model run --spec examples/model-workflows/claude-handoff.json --timeout 2m
 ```
 
-OpenAI uses `OPENAI_API_KEY`; Anthropic uses `ANTHROPIC_API_KEY`; local Ollama requires no provider key. Provider keys remain in the worker and are not published to the broker. The CLI also accepts a protected `QUESTLOCK_TOKEN_FILE` when `QUESTLOCK_TOKEN` is absent. Keep all credentials outside specs. The broker stores task coordination, output, and usage. Workers that should share results and budgets need credentials in the same broker scope; see [deployment](deployment.md) for the shared service/storage boundary.
+OpenAI uses `OPENAI_API_KEY`; Anthropic uses `ANTHROPIC_API_KEY`; OpenRouter uses
+`OPENROUTER_API_KEY`. SGLang optionally reads `SGLANG_API_KEY` (required for a
+remote HTTPS endpoint); literal-loopback local SGLang and Ollama need no provider
+key. Provider keys remain in the worker and are not published to the broker.
+The CLI also accepts a protected `QUESTLOCK_TOKEN_FILE` when `QUESTLOCK_TOKEN`
+is absent. Keep all credentials outside specs. Workers sharing results/budgets
+need credentials in the same broker scope; see [deployment](deployment.md).
 
-`--timeout` must be positive and bounds the whole run. `--api-base-url` is an explicit endpoint override; it requires the selected adapter's generation and token-counting routes. An OpenRouter route is a future adapter candidate, not a supported substitution: this implementation depends on provider-specific count preflight and usage semantics. Do not treat a compatible completion endpoint as sufficient compatibility.
+`--timeout` must be positive and bounds the whole run. `--api-base-url` selects
+an endpoint for the chosen adapter's own protocol. Select
+`provider: "openrouter"` for its dedicated Chat Completions contract, not
+`"openai"` with a
+gateway URL. SGLang uses native runtime readback, tokenization and generation;
+it is not an interchangeable OpenAI-compatible completion endpoint.
+
+## Inspect an explicit runtime contract
+
+The [OpenRouter spec](../examples/inference/openrouter-summary.json) includes
+`openrouter.upstream_provider`, `input_token_upper_bound`, and the explicit
+`cache_write_usage` policy. The bound reserves approved input capacity; it is
+not a measured tokenizer count. One model/provider is requested with upstream
+fallbacks disabled. Unknown or contradictory usage stops the job. Add current
+prices and per-call/day caps before a paid run; worker escalation also needs
+process `--allow-paid`.
+
+The [SGLang spec](../deploy/sglang/task.json) includes `sglang.deployment_id`,
+`cache_namespace`, `profile`, `self_hosted: true`, and `max_input_tokens`, which
+must equal the task's top-level input cap. Replace the deployment ID with your
+pinned runtime/model identity, use the server's served model alias, and match
+the profile to its configuration.
+
+```sh
+questlock model runtime-quest
+questlock model plan --spec deploy/sglang/task.json
+questlock model runtime-inspect --spec deploy/sglang/task.json \
+  --api-base-url http://127.0.0.1:30000
+```
+
+The quest is six offline protocol-fixture scenarios. Inspection requires an
+already running configured SGLang v0.5.20 server but no broker or model call.
+Its JSON contains `capabilities`, `evidence: "runtime_reported_configuration"`,
+and `gpu_validated: false`. Only standalone dense/HiCache engines can generate;
+HiSparse and PD prefill/decode instances remain inspection-only. Follow
+[the runtime guide](runtime-cache.md) and [pinned profiles](../deploy/sglang/README.md)
+for exact capabilities, setup, shared-cache boundaries, and GPU qualification.
 
 ## Make context selection explicit
 
@@ -53,7 +103,14 @@ Mark lasting preferences and stable reference text `stable: true`; they form the
 
 For OpenAI models that support it, optional `reasoning_effort: "low"` requests lower reasoning effort for a suitable small task. The adapter forwards the chosen effort to both count and generation; supported efforts vary by model, so verify the selected model's documentation. Omit the field to use the provider default. Claude specs must omit `reasoning_effort`; this adapter rejects the OpenAI setting rather than translating it into Claude thinking configuration.
 
-The runner submits the exact prepared request to the provider's count endpoint before generation: [OpenAI input-token counting](https://developers.openai.com/api/docs/guides/token-counting) and [Claude token counting](https://platform.claude.com/docs/en/build-with-claude/token-counting). Anthropic documents its count as an estimate that can differ slightly from actual usage, so a Claude preflight is not an absolute billing or token guarantee. An unavailable count endpoint fails the run; there is no character-count fallback or silent truncation.
+For direct OpenAI/Claude, the runner submits the exact prepared request to the
+provider's count endpoint: [OpenAI input-token counting](https://developers.openai.com/api/docs/guides/token-counting)
+and [Claude token counting](https://platform.claude.com/docs/en/build-with-claude/token-counting).
+Claude documents an estimate that can differ from actual usage. An unavailable
+direct-provider count endpoint stops the run. Ollama uses its documented local
+estimate; SGLang reuses native token IDs from the exact prepared prompt;
+OpenRouter requires the declared operator bound. None silently truncates input
+or assumes another provider's tokenizer is equivalent.
 
 ## Reuse results and account for costs
 
@@ -67,7 +124,14 @@ Results separate `generation_usage`, `this_run_usage`, and `avoided_usage`. A Qu
 
 There is no built-in price list. If you need dollar estimates or budget enforcement, supply `prices` with USD per million tokens for `input_per_million`, `cache_read_per_million`, `cache_write_per_million`, and `output_per_million`. Use current account/provider prices and the correct cache write policy. `max_cost_usd` optionally caps one request; `daily_budget_usd` optionally uses a shared UTC-day ledger in the broker scope. Both need explicit prices. Preflight reserves the configured `max_input_tokens` at the largest configured input/cache rate plus `max_output_tokens` at the output rate, rather than relying on a count estimate as a bill ceiling. Set realistic token caps: unused reservation is settled after known generation usage. Reported cap violations are stored as `limit_exceeded` and cannot be reused. Incorrect prices or provider usage above those configured maxima can still exceed the intended dollar cap.
 
-Once a scope has a daily ledger, cooperating hosted API workers must use its same daily cap and supply accurate prices for their model. Validated local Ollama jobs omit USD fields, skip that ledger, and neither consume nor clear it; they can continue when paid admission is frozen. Separate scopes can isolate permission/privacy, but are not required for local versus paid accounting. These controls coordinate trusted workers; arbitrary clients with write access can modify broker artifacts, so they are not an account-wide billing restriction. Provider usage and invoices remain the final billing evidence.
+Once a scope has a daily ledger, cooperating hosted API workers must use its
+same daily cap and supply accurate prices. Validated Ollama and explicitly
+self-hosted SGLang jobs omit USD fields and leave that ledger untouched, even
+when paid admission is frozen. Self-hosting still costs hardware and operations.
+SGLang KV hit counters are runtime metrics, not billable input-cache discounts.
+Separate scopes can isolate permission/privacy; they are not required to
+separate local/paid accounting. These controls coordinate trusted workers, not
+the whole provider account. Provider invoices remain final billing evidence.
 
 ## Measure and gate a bounded task
 

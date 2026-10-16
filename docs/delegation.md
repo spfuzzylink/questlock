@@ -1,9 +1,16 @@
 # Bounded local-first delegation
 
-The published **v0.4.0 experimental** runtime retains v0.3.0's execution contract
-and adds opt-in outcome tracking. The `delegation` Go package and `questlock worker` execute one approved request through local Ollama, with at most one explicitly configured escalation tier. They let a coding assistant delegate a fixed extraction, handoff, or summary while keeping context, models, reuse, budgets, and declared checks reviewable.
+The **v0.5.0 experimental source candidate** retains bounded delegation and
+opt-in outcome tracking, while adding standalone self-hosted SGLang dense/HiCache
+tiers and a dedicated OpenRouter paid tier. The `delegation` Go package and
+`questlock worker` execute one approved task with at most one explicitly
+configured escalation. Context, models, reuse, budgets and checks stay reviewable.
 
-The surrounding assistant prepares the request and reviews the passing answer. The worker provides no shell execution, workspace editing, file discovery, model training, whole-session proxy, or automatic model selection. A supported OpenRouter adapter remains future work. Questlock measures the
+The surrounding assistant prepares the request and reviews the passing answer.
+The worker provides no shell execution, workspace editing, file discovery,
+model training, whole-session proxy, or automatic model selection. The
+[runtime guide](runtime-cache.md) defines each adapter's distinct contract;
+HiSparse/PD engines are inspection-only, not generation tiers. Questlock measures the
 delegated generation; it excludes the surrounding hosted assistant's prompt,
 tool, and context tokens. Preparing the request and reviewing its result can
 still consume that assistant's normal allowance.
@@ -59,13 +66,33 @@ For example, save this as `$HOME/questlock-workspace/approved-task.json`. The mo
 
 Omit `escalation` for a single local tier. Optional `"stream": true` belongs in a local tier spec and enables the [client-observed timing](inference-observability.md). The policy permits at most 32,768 input tokens, 4,096 output tokens, and 131,072 context bytes per tier; the inference planner also validates minimums, TTL, and effective request bounds.
 
-The first tier must use Ollama. A hosted escalation must name a supported direct OpenAI or Anthropic model, include explicit input/cache/output prices, and supply positive `max_cost_usd` and `daily_budget_usd`. The process must also start with `--allow-paid`; this authority cannot come from request JSON, an MCP tool argument, or an environment variable. A configured hosted tier without that permission is rejected before either tier runs. Prices are caller estimates and the scope ledger covers cooperating Questlock workers, not the whole provider account.
+The first tier must use Ollama or an explicitly self-hosted SGLang deployment.
+A SGLang tier needs the complete nested `sglang` contract and a standalone
+dense/HiCache engine; its observed runtime identity is rechecked before reuse.
+A hosted escalation may name direct OpenAI, Anthropic or OpenRouter, with
+explicit input/cache/output prices and positive `max_cost_usd` and
+`daily_budget_usd`. OpenRouter also needs the explicit route/input-bound/cache
+policy in its nested `openrouter` object. See [both schema examples](runtime-cache.md).
 
-Both tiers use the worker's one broker scope. Validated local Ollama jobs omit USD fields and neither consume nor clear the API dollar ledger, so local work can continue when paid admission is blocked. Hosted escalation still obeys that ledger. Local hardware, power, memory, and time are bounded by task/resource settings, not measured by the USD ledger.
+The process must start with `--allow-paid`; this authority cannot come from
+request JSON, an MCP tool argument, or an environment variable. A configured
+hosted tier without permission is rejected before either tier runs. Prices are
+caller estimates and the ledger covers cooperating workers, not the provider
+account. OpenRouter's operator input bound is not a measured token count.
+
+Both tiers use the worker's one broker scope. Validated Ollama and explicitly
+self-hosted SGLang jobs omit USD fields and neither consume nor clear the API
+dollar ledger. They can continue when paid admission is blocked. Hardware,
+power, memory and time remain costs outside that ledger. SGLang KV hit metrics
+do not become billable API cache discounts or zero-token generation.
 
 ## Run or expose the worker
 
-Provision the broker and its private scope credential using [the setup guide](model-workflows.md). Keep secrets outside the request file: use `QUESTLOCK_TOKEN`, or `QUESTLOCK_TOKEN_FILE` as shown below. Hosted provider credentials remain in the worker process as `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`.
+Provision the broker and its private scope credential using [the setup guide](model-workflows.md).
+Keep secrets outside the request file: use `QUESTLOCK_TOKEN`, or
+`QUESTLOCK_TOKEN_FILE` below. Provider credentials stay in the process as
+`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, or optional
+`SGLANG_API_KEY` (required for remote HTTPS SGLang).
 
 ```sh
 export QUESTLOCK_TOKEN_FILE="$HOME/.local/share/questlock/agent-workflows/worker.token"
@@ -88,7 +115,15 @@ The only tool is `questlock_delegate`, and its only argument is:
 
 Paths may be relative to the declared workspace or absolute within it. Traversal, symlink path components, nonregular files, and oversized files are rejected. The worker reads only the named request file. MCP admits one active task per process; concurrent calls fail immediately with `worker_busy`, without executing or retrying. Calls honor cancellation and return controlled error categories. A normal CLI `run` reads the exact path explicitly supplied by the operator; the workspace boundary applies to `serve`.
 
-Both commands default to a two-minute per-task bound, with `--timeout` limited to ten minutes. `--ollama-url` can select another literal loopback HTTP origin. Add `--langfuse --langfuse-timeout 2s` for [optional content-free telemetry](inference-observability.md). CLI result JSON reaches stdout before export receipts on stderr. MCP exports silently through a background queue of 16 record batches, with a five-second shutdown grace; saturated queues drop telemetry. It is best effort, with no durable export guarantee or generation retry.
+Both commands default to a two-minute per-task bound, with `--timeout` limited
+to ten minutes. Process flags `--ollama-url`, `--sglang-url`, and
+`--openrouter-url` select the respective adapters' endpoints; request JSON and
+MCP arguments cannot replace them. SGLang plaintext HTTP requires literal
+loopback; remote HTTPS needs an explicit key. Add
+`--langfuse --langfuse-timeout 2s` for [content-free telemetry](inference-observability.md).
+CLI JSON reaches stdout before export receipts on stderr. MCP exports silently
+through a background queue of 16 batches with a five-second shutdown grace;
+full queues drop telemetry. Export is best effort and never retries generation.
 
 ## Register with native Codex or Claude Code
 

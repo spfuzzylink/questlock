@@ -38,11 +38,11 @@ func Load(reader io.Reader) (Request, error) {
 // even when the local tier could produce a passing answer.
 func Validate(request Request, allowPaid bool) error {
 	base := request.Spec
-	if base.Provider != "" || base.Model != "" || base.Stream || base.ReasoningEffort != "" || base.MaxContextBytes != 0 || base.MaxInputTokens != 0 || base.MaxOutputTokens != 0 || base.CacheMode != "" || base.ReuseForSeconds != 0 || base.Prices != nil || base.MaxCostUSD != 0 || base.DailyBudgetUSD != 0 {
+	if base.Provider != "" || base.Model != "" || base.Stream || base.ReasoningEffort != "" || base.MaxContextBytes != 0 || base.MaxInputTokens != 0 || base.MaxOutputTokens != 0 || base.CacheMode != "" || base.ReuseForSeconds != 0 || base.Prices != nil || base.MaxCostUSD != 0 || base.DailyBudgetUSD != 0 || base.SGLang != nil || base.OpenRouter != nil {
 		return errors.New("request spec supplies task, revision, instructions, input and context only; model/resource settings belong to each tier spec")
 	}
-	if request.Policy.Local.Spec.Provider != "ollama" {
-		return errors.New("local-first policy requires an explicit Ollama local tier")
+	if !inference.SelfHosted(request.Policy.Local.Spec) {
+		return errors.New("local-first policy requires an explicit Ollama or self-hosted SGLang tier")
 	}
 	if request.Policy.Escalation != nil && request.Policy.Escalation.ID == request.Policy.Local.ID {
 		return errors.New("delegation tiers require distinct IDs")
@@ -63,7 +63,7 @@ func Validate(request Request, allowPaid bool) error {
 		if tier.Spec.MaxInputTokens > 32768 || tier.Spec.MaxOutputTokens > 4096 || tier.Spec.MaxContextBytes > 131072 {
 			return errors.New("delegation limits are at most 32768 input tokens, 4096 output tokens, and 131072 context bytes")
 		}
-		if tier.Spec.Provider != "ollama" {
+		if !inference.SelfHosted(tier.Spec) {
 			if !allowPaid {
 				return errors.New("hosted delegation requires caller AllowPaid permission; no tier has run")
 			}

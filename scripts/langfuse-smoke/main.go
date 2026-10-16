@@ -153,7 +153,7 @@ func run() error {
 			f.completed = true
 		}
 		if complete {
-			fmt.Println("PASS: self-hosted Langfuse accepted and returned 3 roots, 2 generation children, exclusive token buckets, metadata-only privacy, explicit estimate/local-zero costs, zero-new-usage reuse, streamed first-content/output timing, and root quality scores 1/1/0.")
+			fmt.Println("PASS: self-hosted Langfuse accepted and returned 4 roots, 3 generation children, exclusive token buckets, metadata-only privacy, explicit estimate/local-zero costs, zero-new-usage reuse, streamed first-content/output timing, runtime KV evidence separate from billing, and root quality scores 1/1/0/1.")
 			fmt.Println("Fixtures are deterministic API-contract checks; no model inference or paid API call was made.")
 			return nil
 		}
@@ -193,10 +193,19 @@ func fixtures(start time.Time) []fixture {
 		ThisRunUsage: observability.Usage{InputTokens: 7, UncachedInputTokens: 7, OutputTokens: 3}, CostUSD: &zero,
 		Generation: &observability.Generation{StartedAt: start.Add(325 * time.Millisecond), EndedAt: start.Add(375 * time.Millisecond), Model: "questlock-smoke-local-model", Outcome: observability.Complete, KnownUsage: true, Usage: observability.Usage{InputTokens: 7, UncachedInputTokens: 7, OutputTokens: 3}, CostUSD: &zero, FirstTokenMS: &first, OutputMS: &output, TimingBasis: "client_observed_content_chunks"},
 	}
+	cached, device, host := int64(80), int64(50), int64(30)
+	kvUsage := observability.Usage{InputTokens: 100, UncachedInputTokens: 100, OutputTokens: 40}
+	kv := observability.Execution{
+		StartedAt: start.Add(500 * time.Millisecond), EndedAt: start.Add(600 * time.Millisecond),
+		Fingerprint: strings.Repeat("c", 64), Provider: "sglang", Model: "questlock-smoke-sglang-model", Outcome: observability.Complete, Durable: true,
+		ThisRunUsage: kvUsage, CostUSD: &zero,
+		Generation: &observability.Generation{StartedAt: start.Add(525 * time.Millisecond), EndedAt: start.Add(575 * time.Millisecond), Model: "questlock-smoke-sglang-model", Outcome: observability.Complete, KnownUsage: true, Usage: kvUsage, CostUSD: &zero, RuntimeCache: &observability.RuntimeCache{Profile: "hicache", CachedTokens: &cached, DeviceTokens: &device, HostTokens: &host}},
+	}
 	return []fixture{
 		{name: "estimated-generation", event: e, score: 1, cost: estimate, costKind: "caller_estimate", usage: map[string]int64{"input": 60, "input_cached_tokens": 30, "input_cache_creation": 10, "output": 32, "output_reasoning_tokens": 8, "total": 140}},
 		{name: "snapshot-reuse", event: r, score: 1, cost: 0, costKind: "caller_estimate"},
 		{name: "local-generation-quality-fail", event: l, score: 0, cost: 0, costKind: "local_zero", usage: map[string]int64{"input": 7, "input_cached_tokens": 0, "input_cache_creation": 0, "output": 3, "output_reasoning_tokens": 0, "total": 10}},
+		{name: "runtime-cache-evidence", event: kv, score: 1, cost: 0, costKind: "local_zero", usage: map[string]int64{"input": 100, "input_cached_tokens": 0, "input_cache_creation": 0, "output": 40, "output_reasoning_tokens": 0, "total": 140}},
 	}
 }
 
@@ -339,6 +348,19 @@ func validateObservations(f fixture, observations []observation) error {
 	}
 	if len(child.UsageDetails) != len(f.usage) {
 		return errors.New("unexpected generation usage bucket")
+	}
+	if cache := f.event.Generation.RuntimeCache; cache != nil {
+		if child.Metadata["questlock_runtime_cache_profile"] != "hicache" || child.Metadata["questlock_runtime_cache_basis"] != "runtime_reported_compute_reuse" || child.Metadata["questlock_runtime_cache_storage_known"] != false {
+			return errors.New("runtime cache evidence or unknown tier classification mismatch")
+		}
+		for key, expected := range map[string]int64{"cached": 80, "device": 50, "host": 30} {
+			if child.Metadata["questlock_runtime_cache_"+key+"_known"] != true || !equalNumber(child.Metadata["questlock_runtime_cache_"+key+"_tokens"], float64(expected)) {
+				return errors.New("runtime cache tier count missing or changed")
+			}
+		}
+		if _, present := child.Metadata["questlock_runtime_cache_storage_tokens"]; present {
+			return errors.New("unreported runtime storage became zero")
+		}
 	}
 	actualCost, hasCost := child.CostDetails["total"]
 	if !hasCost || !equalNumber(actualCost, f.cost) || child.TotalCost == nil || !equalNumber(*child.TotalCost, f.cost) || child.Metadata["questlock_cost_source"] != f.costKind {

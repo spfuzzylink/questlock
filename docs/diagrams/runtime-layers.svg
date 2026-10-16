@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+<title id="title">Questlock runtime layers, v0.5.0 experimental</title>
+<desc id="desc">Questlock coordinates bounded tasks and shared results. OpenRouter routes hosted generation. SGLang owns KV tensors. HiSparse direct decode is inspection only. All cache counters remain separate from billing.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#939bb8"/></marker></defs>
+<rect width="1200" height="900" fill="#0c1120"/>
+<g font-family="Arial, sans-serif" fill="#f1f4fc"><text x="40" y="42" font-size="28" font-weight="700">Questlock: reuse across task and runtime layers</text><text x="40" y="70" font-size="17" fill="#aeb9d0">v0.5.0 experimental · compute reuse and billing stay separate</text></g>
+<path d="M330 142.5 L420 142.5" fill="none" stroke="#939bb8" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="375.0" y="130.5" font-family="Arial, sans-serif" font-size="14" fill="#b8c3db" text-anchor="middle">Task</text>
+<path d="M760 142.5 L850 142.5" fill="none" stroke="#939bb8" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="805.0" y="130.5" font-family="Arial, sans-serif" font-size="14" fill="#b8c3db" text-anchor="middle">Scoped CAS</text>
+<path d="M590.0 190 L310.0 315" fill="none" stroke="#939bb8" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="460.0" y="252.5" font-family="Arial, sans-serif" font-size="14" fill="#b8c3db" text-anchor="middle">Hosted route</text>
+<path d="M590.0 190 L895.0 315" fill="none" stroke="#939bb8" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="752.5" y="252.5" font-family="Arial, sans-serif" font-size="14" fill="#b8c3db" text-anchor="middle">Self-hosted route</text>
+<path d="M310.0 420 L310.0 525" fill="none" stroke="#939bb8" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="320.0" y="472.5" font-family="Arial, sans-serif" font-size="14" fill="#b8c3db" text-anchor="middle">One completion</text>
+<path d="M895.0 420 L895.0 525" fill="none" stroke="#939bb8" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="905.0" y="472.5" font-family="Arial, sans-serif" font-size="14" fill="#b8c3db" text-anchor="middle">Compute reuse</text>
+<path d="M1000 190 L1175 220 L1175 675 L760 725" fill="none" stroke="#939bb8" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1040" y="690" font-family="Arial, sans-serif" font-size="14" fill="#b8c3db" text-anchor="middle">Recorded attempts</text>
+<path d="M310.0 615 L590.0 725" fill="none" stroke="#939bb8" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="460.0" y="670.0" font-family="Arial, sans-serif" font-size="14" fill="#b8c3db" text-anchor="middle">Known usage</text>
+<path d="M895.0 630 L590.0 725" fill="none" stroke="#939bb8" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="752.5" y="677.5" font-family="Arial, sans-serif" font-size="14" fill="#b8c3db" text-anchor="middle">Reported evidence</text>
+<rect x="40" y="95" width="290" height="95" rx="12" fill="#17243b" stroke="#74d8c5"/>
+<text x="185.0" y="125" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#f1f4fc" text-anchor="middle">Approved task snapshot</text>
+<text x="185.0" y="149" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#f1f4fc" text-anchor="middle">Context / model / checks / caps</text>
+<rect x="420" y="95" width="340" height="95" rx="12" fill="#17243b" stroke="#74d8c5"/>
+<text x="590.0" y="125" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#f1f4fc" text-anchor="middle">Questlock Go Runner</text>
+<text x="590.0" y="149" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#f1f4fc" text-anchor="middle">Claim / reuse / budget / outcome</text>
+<rect x="850" y="95" width="300" height="95" rx="12" fill="#17243b" stroke="#74d8c5"/>
+<text x="1000.0" y="125" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#f1f4fc" text-anchor="middle">Scoped HTTP broker</text>
+<text x="1000.0" y="149" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#f1f4fc" text-anchor="middle">SQLite artifacts; no KV tensors</text>
+<rect x="130" y="315" width="360" height="105" rx="12" fill="#17243b" stroke="#74d8c5"/>
+<text x="310.0" y="345" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#f1f4fc" text-anchor="middle">OpenRouter adapter</text>
+<text x="310.0" y="369" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#f1f4fc" text-anchor="middle">One pinned provider; no fallback</text>
+<text x="310.0" y="393" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#f1f4fc" text-anchor="middle">Operator input reservation bound</text>
+<rect x="700" y="315" width="390" height="105" rx="12" fill="#17243b" stroke="#74d8c5"/>
+<text x="895.0" y="345" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#f1f4fc" text-anchor="middle">SGLang native adapter</text>
+<text x="895.0" y="369" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#f1f4fc" text-anchor="middle">Inspect → tokenize → exact input IDs</text>
+<text x="895.0" y="393" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#f1f4fc" text-anchor="middle">Standalone dense / HiCache generation</text>
+<rect x="130" y="525" width="360" height="90" rx="12" fill="#17243b" stroke="#74d8c5"/>
+<text x="310.0" y="555" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#f1f4fc" text-anchor="middle">Hosted model provider</text>
+<text x="310.0" y="579" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#f1f4fc" text-anchor="middle">Native usage / caller cost estimates</text>
+<rect x="700" y="525" width="390" height="105" rx="12" fill="#17243b" stroke="#74d8c5"/>
+<text x="895.0" y="555" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#f1f4fc" text-anchor="middle">SGLang owns runtime KV</text>
+<text x="895.0" y="579" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#f1f4fc" text-anchor="middle">L1 device / L2 host / optional L3</text>
+<text x="895.0" y="603" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#f1f4fc" text-anchor="middle">Only configured L3 can be shared</text>
+<rect x="420" y="725" width="340" height="80" rx="12" fill="#17243b" stroke="#74d8c5"/>
+<text x="590.0" y="755" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#f1f4fc" text-anchor="middle">Checks + explicit human outcomes</text>
+<text x="590.0" y="779" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#f1f4fc" text-anchor="middle">Acceptance / rewrites / effort</text>
+<text x="40" y="855" font-family="Arial, sans-serif" font-size="17" fill="#d4c2f3">HiSparse PD decode: read-only inspection here; generation requires a separately validated PD ingress.</text>
+<text x="40" y="882" font-family="Arial, sans-serif" font-size="16" fill="#aeb9d0">Protocol fixtures ≠ predicted simulation ≠ Apple inference ≠ measured GPU acceleration.</text>
+</svg>

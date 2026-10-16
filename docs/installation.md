@@ -1,6 +1,6 @@
 # Install and try Questlock
 
-This guide covers the experimental **v0.4.0** release. The installer selects
+This guide covers the experimental **v0.5.0** release candidate. The installer selects
 the version in `VERSION`; older published versions remain available, including
 v0.2.0 with `./scripts/install.sh --version v0.2.0`.
 
@@ -48,14 +48,14 @@ separate runtime validation.
 For example, on Linux x86-64, from the download directory:
 
 ```sh
-sha256sum questlock_0.4.0_linux_amd64.tar.gz
+sha256sum questlock_0.5.0_linux_amd64.tar.gz
 ```
 
 On macOS use `shasum -a 256` instead. Compare the result with the **matching
 filename's entry** in `checksums.txt` before extracting. Then:
 
 ```sh
-tar -xzf questlock_0.4.0_linux_amd64.tar.gz
+tar -xzf questlock_0.5.0_linux_amd64.tar.gz
 ./questlock version
 ./questlock quest
 ./questlock outcome quest
@@ -83,6 +83,9 @@ Or use `make quest`. Dependencies download through the Go module proxy on the
 first build. The installed binary needs no Go runtime, system SQLite library, or
 external service. To run all development checks, install Python 3 and run
 `make check`; the Go race detector also needs a working C toolchain.
+
+For runtime adapter checks without model weights, run `./bin/questlock model runtime-quest`.
+See [runtime profiles, emulation, and GPU qualification](runtime-cache.md).
 
 ## Start a persistent local broker
 

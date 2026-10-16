@@ -68,6 +68,9 @@ func observation(spec inference.Spec, result inference.Result) observability.Exe
 			}
 		}
 		g := &observability.Generation{StartedAt: m.GenerationStartedAt, EndedAt: m.GenerationEndedAt, Model: spec.Model, Outcome: outcome, KnownUsage: m.KnownGenerationUsage, CostUSD: result.CostUSD}
+		if cache := result.Response.RuntimeCache; cache != nil {
+			g.RuntimeCache = &observability.RuntimeCache{Profile: cache.Profile, CachedTokens: cache.CachedTokens, DeviceTokens: cache.DeviceTokens, HostTokens: cache.HostTokens, StorageTokens: cache.StorageTokens}
+		}
 		if m.GenerationUsage != nil {
 			g.Usage = observedUsage(*m.GenerationUsage)
 			execution.ThisRunUsage = g.Usage
@@ -75,7 +78,7 @@ func observation(spec inference.Spec, result inference.Result) observability.Exe
 		if result.Response.Model != "" {
 			g.Model = result.Response.Model
 		}
-		if spec.Provider == "ollama" && m.KnownGenerationUsage {
+		if inference.SelfHosted(spec) && m.KnownGenerationUsage {
 			g.CostUSD = &zero
 			execution.CostUSD = &zero
 		}

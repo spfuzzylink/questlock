@@ -71,6 +71,40 @@ See the [system-boundary and task-lifecycle diagrams](model-architecture.md#edit
 for SVG views and a two-page editable draw.io source. The same guide retains a
 Mermaid request-flow view and explains reuse, uncertain outcomes, and settlement.
 
+## Provider routing and runtime caches
+
+The **v0.5.0 experimental source candidate** adds two explicit integration
+contracts. OpenRouter uses one declared model/provider route, an operator input
+reservation bound, and strict native usage partitions. Its requested upstream
+fallbacks are disabled; Questlock does not retry uncertain generation. Direct
+OpenAI Responses and Anthropic Messages retain their own counting protocols.
+
+Self-hosted SGLang v0.5.20 supports bounded native generation on standalone dense
+and HiCache engines. Before looking up a stored answer, the Runner rechecks the
+observed runtime identity; a restart or configuration change stops that provider
+instance rather than silently adopting a different deployment. HiSparse and PD
+prefill/decode engines support configuration inspection only in this release;
+the adapter does not supply a PD ingress or bootstrap/transfer orchestration.
+
+![Questlock task, provider routing, runtime KV tiers, and human outcome boundaries](diagrams/runtime-layers.svg)
+
+The diagram has [editable draw.io source](diagrams/runtime-layers.drawio).
+It supplements the historical v0.3/v0.4 runtime and outcome views above.
+
+Questlock's SQLite artifacts contain coordination/results, never runtime KV
+tensors. SGLang owns its L1/device, L2/host and optional shared L3 storage.
+The configured namespace separates cache keys and is not an ACL. Runtime KV hit
+counters stay separate from billable API cache-read/write tokens. Explicitly
+self-hosted work skips the paid ledger while retaining hardware and operating
+costs outside it. Optional Langfuse runtime metadata has no task text, endpoints,
+model paths or credentials. See [contracts and evidence levels](runtime-cache.md).
+
+`model runtime-quest` checks six deterministic HTTP-fixture scenarios without a
+GPU. `model runtime-inspect` returns `capabilities`,
+`evidence: "runtime_reported_configuration"`, and `gpu_validated: false`.
+Neither establishes kernel execution, a HiSparse deployment, or speedup.
+Tagged publication and live GPU qualification remain pending for the candidate.
+
 ## Explicit human outcome records
 
 **v0.4.0 experimental** adds an `outcomes` Go package and

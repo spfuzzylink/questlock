@@ -1,5 +1,32 @@
 # Validation record
 
+## v0.5.0 candidate observations — 2026-10-16
+
+The runtime integration candidate adds a dedicated OpenRouter adapter and a
+pinned SGLang v0.5.20 native contract. Local Go vet/race checks and all 70 Python
+packaging/publication regressions passed. Six `model runtime-quest` scenarios
+exercise real HTTP adapters and temporary SQLite with deterministic fixtures:
+dense generation, exact result reuse, separate namespaces, HiCache tier evidence,
+runtime identity mutation, unknown counters and unsupported sparse decode.
+
+These are **protocol_fixture** checks. No GPU kernel, accelerator throughput,
+GPU memory offload, model quality, or OpenRouter invoice was measured. Native
+Apple inference, predicted CPU simulation, Linux CPU/ABI validation, and actual
+CUDA/ROCm qualification have separate evidence boundaries in the
+[runtime guide](runtime-cache.md). Reproducible GPU prerequisites and matched
+cold/warm instructions are [packaged with the profiles](../deploy/sglang/README.md).
+HiSparse and other direct PD targets support inspection only in this release.
+
+A bounded public-fact extraction used the installed local Questlock worker with
+`track_outcome: true`, strict JSON and exact-value checks. It completed with
+**75 input / 17 output tokens**, and outcome registration was confirmed. No paid
+tier was configured; assistant review was not recorded as human acceptance.
+This observation excludes surrounding hosted chat usage and establishes no
+invoice savings or general model-quality result.
+
+Publication, native platform CI, released archive checks and GHCR verification
+remain pending for this candidate. Existing v0.4.0 evidence below remains intact.
+
 ## v0.4.0 observations — 2026-10-14
 
 Release source: `cb42e9e251f258db3fff65df6e213f7874706922` (the peeled `v0.4.0`

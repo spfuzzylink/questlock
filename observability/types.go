@@ -41,6 +41,7 @@ type Usage struct {
 // available only through explicit streaming measurements below. Model must be
 // a model identifier, never a provider URL or user input.
 type Generation struct {
+	RuntimeCache       *RuntimeCache
 	StartedAt, EndedAt time.Time
 	Model              string
 	Outcome            Outcome
@@ -52,6 +53,13 @@ type Generation struct {
 	// These never stand for server compute time or per-token throughput.
 	FirstTokenMS, OutputMS *float64
 	TimingBasis            string
+}
+
+// RuntimeCache is compute reuse only, separate from billable usage buckets.
+// Nil counters are unreported. The exporter accepts only controlled profiles.
+type RuntimeCache struct {
+	Profile                                               string
+	CachedTokens, DeviceTokens, HostTokens, StorageTokens *int64
 }
 
 // Execution describes one Runner invocation. Reuse exports a root span with

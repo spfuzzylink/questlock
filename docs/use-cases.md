@@ -13,6 +13,10 @@ evaluation, current-run measurement, and optional content-free Langfuse export.
 **v0.4.0 experimental** adds explicit human review events
 and recorded-cohort cost reporting. It does not automatically observe rewrites
 or infer human acceptance from declared checks.
+The **v0.5.0 experimental source candidate** adds a dedicated OpenRouter text
+adapter and explicit SGLang runtime/cache contracts. Standalone dense/HiCache
+engines can generate; HiSparse/PD deployments support read-only inspection.
+Tagged publication and real GPU qualification remain pending.
 
 ## Who this could help
 
@@ -195,9 +199,9 @@ and [measurement limits](inference-observability.md) before using the worker.
 
 The surrounding hosted chat keeps its existing model and billing. Questlock
 usage counters exclude its prompt, tool, and context tokens; they measure only
-the delegated provider/local generation. OpenRouter is
-a future companion adapter; automatic model choice and full-session interception
-remain future work.
+the delegated provider/local generation. The v0.5 candidate adds an explicit
+OpenRouter companion adapter and self-hosted SGLang dense/HiCache tiers;
+automatic model choice and full-session interception remain future work.
 
 ## 7. A passing answer is rewritten by a person
 
@@ -237,6 +241,53 @@ Avoid selecting only successful tasks after seeing the results. Report known
 partial subtotals and missing coverage alongside the current acceptance count.
 Configured model prices are estimates rather than invoice data; surrounding
 hosted-assistant tokens, hardware, and unrecorded work remain outside this report.
+
+## 8. Repeated prefixes on an explicitly operated runtime
+
+A team repeatedly summarizes approved repository snapshots with the same stable
+instructions. Whole answers may be reused only when the task revision is
+unchanged. For a new revision, the runtime may still reuse eligible prefix KV.
+
+**Implemented in the v0.5 candidate:** SGLang v0.5.20 runtime readback, native
+tokenization and bounded standalone dense/HiCache generation. Deployment and
+cache namespace enter identity; a changed observed runtime stops an existing
+provider before stale answer reuse. Runtime-reported device/host/storage cache
+counters remain separate from API cache billing. Missing optional KV counters
+stay unknown; they do not become zero. HiSparse and PD engines are inspection-only.
+
+**Your qualification:** pin actual model/tokenizer/runtime versions, supply a
+supported GPU environment, and compare matched cold/warm runs with Questlock
+result reuse disabled. Record output checks, human outcomes, latency, memory,
+failures and hardware costs. An emulator or predictor is not GPU evidence.
+
+Run `questlock model runtime-quest` without installing SGLang or weights:
+
+| Complexity | Offline HTTP-fixture scenario | Observable boundary |
+| --- | --- | --- |
+| Simple | Dense native generation | One bounded generation with known usage |
+| Simple | Exact result reuse | One original generation, zero new usage on repeat |
+| Simple | Separate cache namespaces | Different request identities and runtime salts |
+| Complex | HiCache tier reporting | Runtime KV evidence does not discount billable input |
+| Complex | Runtime configuration changes | Existing provider stops before stale reuse |
+| Complex | Unknown KV metrics and HiSparse | Missing counters stay unknown; direct sparse decode sends no generation |
+
+These scenarios test protocol behavior, not GPU execution or a latency predictor.
+See [the runtime guide](runtime-cache.md) and [deployment profiles](../deploy/sglang/README.md).
+
+## 9. A bounded task through OpenRouter
+
+A developer wants OpenRouter model access while coordinating an approved task
+across several workers. The v0.5 companion adapter requests one explicit model
+and upstream provider with fallbacks disabled, keeps the route policy in
+identity, and applies the same durable claims, review checks and result reuse.
+
+**Your integration:** choose a route with the required token/cache usage fields,
+supply an explicit input reservation bound and current prices, and configure
+per-call/day caps. The bound is operator-declared, not a tokenizer measurement.
+Unknown usage halts instead of becoming a free or automatically retried call.
+Paid worker escalation needs process `--allow-paid` too. Direct provider
+protocols remain available. The [example spec](../examples/inference/openrouter-summary.json)
+is for offline planning; live paid routing and invoice savings remain unvalidated.
 
 ## When another component is needed
 

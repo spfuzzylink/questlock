@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "profile": "hisparse-prefill-prerequisite",
+  "source_revision": "94602c9c2b7cbdb8efd5c52802dac6a1c180089e",
+  "questlock_generation": false,
+  "purpose": "External PD ingress must coordinate this prefill instance with the HiSparse decode instance.",
+  "argv": [
+    "python3", "-m", "sglang.launch_server",
+    "--model-path", "MODEL_DIRECTORY",
+    "--served-model-name", "questlock-example",
+    "--host", "127.0.0.1", "--port", "30000",
+    "--disaggregation-mode", "prefill"
+  ]
+}

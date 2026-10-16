@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device">
+  <diagram id="runtime-layers-v05" name="Runtime layers">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" page="1" pageWidth="1200" pageHeight="900">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="e0" value="Task" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#939bb8;fontColor=#aeb9d0;" parent="1" source="task" target="runner" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="Scoped CAS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#939bb8;fontColor=#aeb9d0;" parent="1" source="runner" target="broker" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="Hosted route" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#939bb8;fontColor=#aeb9d0;" parent="1" source="runner" target="router" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="Self-hosted route" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#939bb8;fontColor=#aeb9d0;" parent="1" source="runner" target="sglang" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="One completion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#939bb8;fontColor=#aeb9d0;" parent="1" source="router" target="providers" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="Compute reuse" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#939bb8;fontColor=#aeb9d0;" parent="1" source="sglang" target="kv" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="Recorded attempts" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#939bb8;fontColor=#aeb9d0;" parent="1" source="broker" target="outcomes" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1175" y="220" />
+              <mxPoint x="1175" y="675" />
+              <mxPoint x="760" y="700" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" value="Known usage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#939bb8;fontColor=#aeb9d0;" parent="1" source="providers" target="outcomes" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="Reported evidence" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#939bb8;fontColor=#aeb9d0;" parent="1" source="kv" target="outcomes" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="task" value="Approved task snapshot&#10;Context / model / checks / caps" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#17243b;strokeColor=#74d8c5;fontColor=#f1f4fc;fontSize=17;" parent="1" vertex="1">
+          <mxGeometry x="40" y="95" width="290" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="runner" value="Questlock Go Runner&#10;Claim / reuse / budget / outcome" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#17243b;strokeColor=#74d8c5;fontColor=#f1f4fc;fontSize=17;" parent="1" vertex="1">
+          <mxGeometry x="420" y="95" width="340" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="broker" value="Scoped HTTP broker&#10;SQLite artifacts; no KV tensors" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#17243b;strokeColor=#74d8c5;fontColor=#f1f4fc;fontSize=17;" parent="1" vertex="1">
+          <mxGeometry x="850" y="95" width="300" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="router" value="OpenRouter adapter&#10;One pinned provider; no fallback&#10;Operator input reservation bound" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#17243b;strokeColor=#74d8c5;fontColor=#f1f4fc;fontSize=17;" parent="1" vertex="1">
+          <mxGeometry x="130" y="315" width="360" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="sglang" value="SGLang native adapter&#10;Inspect → tokenize → exact input IDs&#10;Standalone dense / HiCache generation" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#17243b;strokeColor=#74d8c5;fontColor=#f1f4fc;fontSize=17;" parent="1" vertex="1">
+          <mxGeometry x="700" y="315" width="390" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="providers" value="Hosted model provider&#10;Native usage / caller cost estimates" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#17243b;strokeColor=#74d8c5;fontColor=#f1f4fc;fontSize=17;" parent="1" vertex="1">
+          <mxGeometry x="130" y="525" width="360" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="kv" value="SGLang owns runtime KV&#10;L1 device / L2 host / optional L3&#10;Only configured L3 can be shared" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#17243b;strokeColor=#74d8c5;fontColor=#f1f4fc;fontSize=17;" parent="1" vertex="1">
+          <mxGeometry x="700" y="525" width="390" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="outcomes" value="Checks + explicit human outcomes&#10;Acceptance / rewrites / effort" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#17243b;strokeColor=#74d8c5;fontColor=#f1f4fc;fontSize=17;" parent="1" vertex="1">
+          <mxGeometry x="420" y="725" width="340" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
