@@ -35,6 +35,7 @@ internal/agentsetup/assets/references/**
 !internal/agentsetup/assets/references/workflow.md
 !internal/agentsetup/assets/references/local-summary.json
 !internal/agentsetup/assets/references/local-worker.json
+!internal/agentsetup/assets/references/checked-revision.json
 !internal/agentsetup/assets/references/openai-summary.json
 !internal/agentsetup/assets/references/claude-summary.json
 !inference/
@@ -55,6 +56,9 @@ delegation/**
 !worker/
 worker/**
 !worker/*.go
+!revision/
+revision/**
+!revision/*.go
 !outcomes/
 outcomes/**
 !outcomes/*.go

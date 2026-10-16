@@ -1,5 +1,25 @@
 # From passed checks to human-accepted work
 
+## v0.6.0 candidate: account for deterministic revisions
+
+Checked literal revisions may opt in with `track_outcome: true` in their own
+request. A fresh checked edit uses cost basis `deterministic_edit`; an exact
+repeated plan uses `reuse_zero`. Both record no model call, known zero new
+provider token usage and zero provider charge. Historical source-model costs
+are not charged again, and hypothetical rewrite tokens are not estimated.
+
+Use a separate task/revision cohort for edited work. Every reader/writer of a
+revision outcome cohort must be v0.6.0 or newer: older clients do not recognize
+the additive `deterministic_edit` basis. Do not mix new revision records into a
+cohort that older generation workers still read. Existing generation/outcome
+records stay compatible and retain their historical costs and feedback.
+
+Checks and reuse do not carry the parent's acceptance to the edited result.
+Explicit human feedback is still required; missing effort, cost coverage, or an
+accepted denominator retains the existing null behavior. A registration failure
+is recovered from its exact metadata record, without a model retry. See
+[checked revisions](checked-revisions.md). This candidate is not yet published.
+
 This describes the published **v0.4.0 experimental release**. A worker passing
 its declared checks is useful evidence, but a person
 can still have to correct the answer. The `outcomes` package adds explicit human
@@ -249,9 +269,9 @@ automatically export feedback to Langfuse or watch edits in Codex or Claude Code
 The feedback loop records evidence for later model and workflow evaluation. It
 does not retrain a model, choose a cheaper model automatically, change the
 delegation escalation gate, or guarantee correctness. Direct OpenAI, Anthropic,
-and local Ollama remain available. An OpenRouter companion adapter is still
-planned; outcome accounting can compose with that provider layer once its
-capability contract is implemented.
+and local Ollama remain available. The published v0.5.0
+OpenRouter companion adapter can also use this outcome accounting; its bounded
+provider contract is described in [runtime caches](runtime-cache.md).
 
 See [bounded delegation](delegation.md) for attempt execution,
 [inference observability](inference-observability.md) for generation measurements,

@@ -1,5 +1,20 @@
 # Run the Questlock container
 
+## v0.6.0 source candidate
+
+The new `revise quest` runs three simple and three complex offline deterministic
+edit scenarios with temporary broker state. It needs no model account. A source
+container can exercise it under the same network-disabled/read-only settings
+as the existing quests. No v0.6.0 registry publication is claimed here; the
+v0.5.0 image and digests below remain the verified public version until release
+checks and anonymous publication proof are recorded.
+
+A persistent revision worker talks to the broker through scoped HTTP. Give only
+the broker its SQLite volume. No GPU, model, provider secret or KV storage is
+needed for literal revisions. Upgrade all readers/writers before sharing new
+revision outcome cohorts; older versions do not understand `deterministic_edit`.
+See [checked revisions](checked-revisions.md).
+
 This guide covers the experimental **v0.5.0** image. The preserved
 [v0.3.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.3.0) and
 [v0.2.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.2.0) releases and

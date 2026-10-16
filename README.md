@@ -23,6 +23,32 @@ The quest theme is a little weekend motivation. Underneath it: a compiled Go
 broker, a Go client library, SQLite transactions, and concrete failure tests.
 One host. No Kubernetes. Offline demos need no model account.
 
+## Make exact edits without another generation
+
+**v0.6.0 source candidate — publication pending.** An answer is already checked;
+the next request only changes its presentation. `questlock revise` pins those
+source bytes, applies counted literal edits, checks the output, and publishes an
+immutable result through the shared broker. It calls no model. Exact source
+hashes, declared checks, and parent provenance keep the change reviewable.
+
+```sh
+# Build this checkout; the published v0.5.0 binary does not include revise.
+make build
+./bin/questlock revise quest                  # three simple + three complex cases
+./bin/questlock revise plan --request examples/revisions/bold-mission.json
+```
+
+Use this path for known formatting or literal changes; new reasoning still needs
+review and an approved model task. A failed hash, count, check, or uncertain
+publish withholds text without a generation fallback. Measured zero new model
+usage applies to the revision, excluding this hosted chat, hardware and human
+work. Checks do not create human acceptance.
+
+[What, why, and how checked revisions work](docs/checked-revisions.md) ·
+[Runnable examples](examples/revisions/README.md) ·
+[Editable architecture](docs/diagrams/checked-revisions.drawio) ·
+[Candidate validation](docs/validation.md#v060-candidate--2026-10-16)
+
 ## Reduce repeated model work
 
 Two workers ask for the same approved handoff. One model call should be enough.
@@ -361,6 +387,7 @@ questlock/
   client/             Public Go client library
   inference/          Context planning, provider adapters, shared claims/budgets
   delegation/         Explicit local-first policy and deterministic quality gates
+  revision/           Checked literal edits, immutable provenance, no model calls
   evaluation/         Six-case comparisons with fresh/reuse measurements
   observability/      Optional content-free Langfuse OTLP metadata and scores
   worker/             Bounded MCP stdio tool for approved request files

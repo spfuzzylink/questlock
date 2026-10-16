@@ -18,6 +18,7 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/inference"
+	"github.com/spfuzzylink/questlock/revision"
 )
 
 const (
@@ -39,6 +40,8 @@ type Options struct {
 	Workspace string
 	Version   string
 	Execute   func(context.Context, delegation.Request) (delegation.Result, error)
+	// Revise optionally enables checked literal edits, without model inference.
+	Revise    func(context.Context, revision.Request) (revision.Result, error)
 	AllowPaid bool
 }
 
@@ -107,6 +110,9 @@ func (w *worker) server() *mcp.Server {
 		OutputSchema: json.RawMessage(`{"type":"object","required":["status","request_sha256","attempts"],"properties":{"status":{"type":"string","enum":["completed","quality_failed","stopped"]},"request_sha256":{"type":"string"},"attempts":{"type":"array"},"selected_tier":{"type":"string"},"response":{"type":"object"},"error_category":{"type":"string"},"outcome_tracking":{"type":"object","required":["status","run_id","task"],"properties":{"status":{"type":"string","enum":["recorded","failed"]},"run_id":{"type":"string"},"task":{"type":"object"},"receipt":{"type":"object"},"record":{"type":"object"}}}}}`),
 		Annotations:  &mcp.ToolAnnotations{ReadOnlyHint: false, DestructiveHint: &additive, IdempotentHint: false, OpenWorldHint: &openWorld},
 	}, w.call)
+	if w.options.Revise != nil {
+		w.addRevisionTool(server)
+	}
 	return server
 }
 
@@ -202,7 +208,16 @@ func requestPath(data json.RawMessage) (string, error) {
 }
 
 func (w *worker) load(path string) (delegation.Request, error) {
-	var empty delegation.Request
+	data, err := w.loadBytes(path)
+	if err != nil {
+		return delegation.Request{}, err
+	}
+	return delegation.Load(bytes.NewReader(data))
+}
+
+// loadBytes shares the pinned file boundary between approved request types.
+func (w *worker) loadBytes(path string) ([]byte, error) {
+	var empty []byte
 	// Reject traversal before cleaning, even if the final path would be inside.
 	for _, component := range strings.Split(filepath.ToSlash(path), "/") {
 		if component == ".." {
@@ -242,7 +257,7 @@ func (w *worker) load(path string) (delegation.Request, error) {
 	if err != nil || len(data) > MaxRequestBytes {
 		return empty, ErrConfiguration
 	}
-	return delegation.Load(bytes.NewReader(data))
+	return data, nil
 }
 
 func safeOutput(result delegation.Result, err error) toolOutput {

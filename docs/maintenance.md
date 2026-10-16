@@ -1,5 +1,22 @@
 # Owner maintenance checklist
 
+## Revision release gates (v0.6.0 candidate)
+
+Keep exact source/hash drift, counted sequential edits, source/output check
+failure withholding, publication uncertainty, restart, scope isolation,
+concurrent exact reuse, immutable parent provenance and MCP path/busy/cancel
+behavior under regression coverage. Require no model calls in every revision
+scenario and retain failed-run accounting; no retry may silently generate text.
+
+Check the installed shell helper's offline token boundary and live argument
+routing. Validate complete embedded revision examples. Native archives and both
+source/published containers must run `revise quest` as the fifth offline quest.
+Use fresh `deterministic_edit` and exact-repeat `reuse_zero` records, with no
+inherited human acceptance or guessed avoided tokens. All readers/writers of
+revision outcome cohorts must be v0.6.0+; keep older generation cohorts separate
+while rolling out. Preserve old binaries/tags. Skill installation does not
+restart MCP or authorize an unguarded client configuration change.
+
 Use the existing Go, Python, and GitHub Actions workflows. Record checks actually
 run and their source commit; a successful build is not evidence of publication.
 
@@ -10,7 +27,7 @@ run and their source commit; a successful build is not evidence of publication.
 - For behavior changes, add focused regressions for admission, recovery, token
   bounds, billing categories, or quality requirements. Run `make check`,
   `make quest`, `./bin/questlock model quest`, `./bin/questlock outcome quest`,
-  and `./bin/questlock model runtime-quest`.
+  `./bin/questlock model runtime-quest`, and `./bin/questlock revise quest`.
   Feedback changes also need checks for explicit acceptance, every rewrite
   clearing it, immutable missing effort, scoped retries/conflicts, failed work in
   cohort costs, and unknown accounting staying unknown.
@@ -26,11 +43,11 @@ run and their source commit; a successful build is not evidence of publication.
   Preserve old tags, release assets, and working published versions; never force
   rewrite a published tag or replace old binaries to conceal a correction.
 - Require all four native CI targets: Darwin and Linux, each on AMD64 and ARM64.
-  Verify each archive's checksum, version, help, recovery/model/outcome/runtime quests,
+  Verify each archive's checksum, version, help, recovery/model/outcome/runtime/revision quests,
   and embedded fixture evaluation; retain the tested archives rather than
   rebuilding them in the publication job.
 - Require the source-container CI job too. It builds through `.dockerignore` and
-  runs all four quests and fixture evaluation without a network and with a
+  runs all five quests and fixture evaluation without a network and with a
   read-only root filesystem. Keep Go source and embedded skill assets in the
   build context as the project evolves.
 - Require the reusable self-hosted Langfuse CI job for the release source. Its
@@ -45,7 +62,7 @@ run and their source commit; a successful build is not evidence of publication.
 - Resolve container inputs to that published tag and exact source commit through
   `scripts/container_release.py`; reject checksum or provenance mismatches.
   Require native Linux AMD64 and ARM64 image checks: version, UID/GID 65532,
-  writable data ownership, all four quests, fixture evaluation, and OCI
+  writable data ownership, all five quests, fixture evaluation, and OCI
   source/revision/license labels. Require a manifest containing exactly those
   two tested architectures.
 - Record immutable image digests. Verify anonymous pulling after publication
@@ -71,8 +88,9 @@ run and their source commit; a successful build is not evidence of publication.
   qualified neither configuration. Reuse is evidence of avoided generation,
   not evidence that the reused answer passed its task checks. Keep candidate
   wording until tags, archives, CI, and publication are confirmed.
-- Follow [positioning](positioning.md): OpenRouter needs a future capability-aware
-  adapter; compatible generation alone does not supply counting or usage semantics.
+- Follow [positioning](positioning.md): the OpenRouter adapter pins an explicit
+  model/provider route and enforces declared reservation/native billing semantics;
+  it does not proxy all generation or intercept hosted client sessions.
   Questlock cannot bypass credits, rate limits, or hosted assistant allowances.
   Local inference has hardware costs. Promise neither infinite usage nor novelty.
 - Keep [runtime observability](inference-observability.md) and [delegation](delegation.md)

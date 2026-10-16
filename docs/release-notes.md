@@ -1,3 +1,35 @@
+# Questlock 0.6.0 candidate — checked edits without another generation
+
+**Source candidate; publication and activation pending.** Published v0.5.0 and
+older releases/assets remain available unchanged. Do not use the candidate's
+presence in source as evidence of an available release binary or container.
+
+## New in the candidate
+
+- A Go `revision` library and `revise plan`, `run`, and `quest` commands apply
+  exact counted literal replacements to a SHA-256-pinned source. Required
+  source/output checks bound what can be returned; no model is called.
+- Immutable content-addressed results compose with the existing scoped broker
+  and exact parent key/version/digest provenance. Failed source/count/checks and
+  uncertain publication withhold text without a paid or local model fallback.
+- `questlock_revise` shares the bounded MCP workspace, admission and cancellation
+  boundary with `questlock_delegate`; neither gains a filesystem-edit tool.
+- Opt-in revision accounting records known zero new usage/provider charge with
+  `deterministic_edit` or exact-repeat `reuse_zero`. Human acceptance remains
+  explicit. Revision outcome cohorts require v0.6.0+ readers/writers; keep them
+  separate from older generation cohorts during upgrades.
+- Three simple and three complex offline scenarios, complete JSON examples,
+  editable architecture, and Codex/Claude skill guidance for preferring exact
+  edits before new generation.
+
+Read [what, why and how](checked-revisions.md), [runnable examples](../examples/revisions/README.md),
+and [candidate evidence](validation.md#v060-candidate--2026-10-16).
+A formatting development run and exact repeat made zero new model calls; their
+single observed latencies establish no benchmark or whole-session savings.
+New facts, open-ended rewrites and reasoning changes still need reviewed tasks.
+
+---
+
 # Questlock 0.5.0 — explicit provider routes and runtime cache evidence
 
 **Published experimental release.**

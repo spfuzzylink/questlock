@@ -14,6 +14,7 @@ import (
 	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/inference"
 	"github.com/spfuzzylink/questlock/observability"
+	"github.com/spfuzzylink/questlock/revision"
 	"github.com/spfuzzylink/questlock/worker"
 )
 
@@ -148,7 +149,12 @@ func workerCommandIO(args []string, input io.ReadCloser, output, diagnostics io.
 		queue.submit(records)
 		return result, err
 	}
-	return worker.Serve(process, input, output, worker.Options{Workspace: *workspace, Version: version, AllowPaid: *allowPaid, Execute: execute})
+	revise := func(ctx context.Context, request revision.Request) (revision.Result, error) {
+		ctx, cancel := context.WithTimeout(ctx, *timeout)
+		defer cancel()
+		return (revision.Runner{Broker: broker}).Run(ctx, request)
+	}
+	return worker.Serve(process, input, output, worker.Options{Workspace: *workspace, Version: version, AllowPaid: *allowPaid, Execute: execute, Revise: revise})
 }
 
 // One background exporter handles only bounded content-free records. Saturated

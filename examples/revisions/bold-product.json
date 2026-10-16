@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "task": "launch-emphasis",
+  "revision": "approved-1",
+  "source": {
+    "text": "OpenRouter routes the model. Questlock coordinates the work.\nQuestlock reuses checked work. #Questlock",
+    "sha256": "baa389e51bb7080a407d59b91c3718518144eb6a61a8ebf7a34d321dc94b77cc"
+  },
+  "edits": [
+    {
+      "old": "Questlock coordinates",
+      "new": "𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 coordinates",
+      "expected_matches": 1
+    },
+    {
+      "old": "Questlock reuses",
+      "new": "𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 reuses",
+      "expected_matches": 1
+    }
+  ],
+  "source_checks": [
+    {
+      "id": "source-companion",
+      "kind": "contains",
+      "text": "OpenRouter routes the model."
+    }
+  ],
+  "checks": [
+    {
+      "id": "bold-name",
+      "kind": "contains",
+      "text": "𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤"
+    },
+    {
+      "id": "searchable-tag",
+      "kind": "contains",
+      "text": "#Questlock"
+    },
+    {
+      "id": "plain-prose-absent",
+      "kind": "not_contains",
+      "text": " Questlock coordinates"
+    }
+  ],
+  "track_outcome": true
+}

@@ -112,6 +112,15 @@ func validateAttempt(a Attempt) error {
 	if a.EstimatedCostUSD != nil && !finiteNonnegative(*a.EstimatedCostUSD) {
 		return invalid("cost must be finite and nonnegative")
 	}
+	// Deterministic transformations complete without model generation. Keep
+	// this additive basis distinct from legacy no_generation (incomplete)
+	// records, and never permit a failed transformation to claim durability.
+	if a.CostBasis == "deterministic_edit" {
+		if a.TierID != "checked_revision" || a.Reused || a.GenerationCalled || !a.Complete || !a.UsageKnown || a.Usage != (inference.Usage{}) || a.EstimatedCostUSD == nil || *a.EstimatedCostUSD != 0 || (a.Durable && !a.CheckPassed) {
+			return invalid("deterministic edits require completed checked revision work with zero generation usage and charge")
+		}
+		return nil
+	}
 	if a.Reused {
 		if a.GenerationCalled || !a.Complete || !a.Durable || !a.UsageKnown || a.Usage != (inference.Usage{}) || a.CostBasis != "reuse_zero" || a.EstimatedCostUSD == nil || *a.EstimatedCostUSD != 0 {
 			return invalid("reuse must be complete durable with zero new generation usage and charge")
@@ -175,7 +184,7 @@ func validateRun(r Run) error {
 			return invalid("quality failure requires an attempt")
 		}
 		for _, a := range r.Attempts {
-			if a.CheckPassed || !a.Complete || !a.Durable || !a.UsageKnown {
+			if a.CheckPassed || !a.Complete || (!a.Durable && a.CostBasis != "deterministic_edit") || !a.UsageKnown {
 				return invalid("quality failure requires known complete durable failed checks")
 			}
 		}

@@ -1,5 +1,35 @@
 # Validation record
 
+## v0.6.0 candidate — 2026-10-16
+
+This section records a source candidate, not a published release. The v0.5.0
+publication evidence below and its immutable assets remain unchanged. Native
+archive/container CI, publication, installed-client validation and independent
+release approval for v0.6.0 are pending until their concrete results are added.
+
+### Deterministic text-edit development observation
+
+A real scoped local broker accepted one approved three-edit formatting request
+against exact source bytes. The checked result matched the independently
+approved final-text hash. One fresh invocation took **30.999 ms**; one exact
+repeat took **4.119 ms**, as observed by the calling client. Both made no model
+call and reported known zero new generation tokens and provider token charge.
+Both outcome registrations were recorded; neither has a human acceptance event.
+
+These are two development observations, not a latency benchmark, avoided-token
+estimate, invoice saving, or whole-chat cost reduction. The surrounding hosted
+assistant, hardware, storage and human work remain outside those measurements.
+The [revision quest](checked-revisions.md#try-three-simple-and-three-complex-cases)
+provides six reproducible offline protocol scenarios; its actual release gate
+results must be recorded separately.
+
+A local source build ran all three packaged `revise plan` examples and all six
+`revise quest` scenarios successfully. The embedded-skill tests passed, including
+the revision example's offline source/output checks and shell helper argument/
+credential boundaries. The native SVG was rendered and visually inspected;
+its text labels exactly match the editable draw.io source. These local checks
+do not replace the pending native release/CI and publication gates above.
+
 ## v0.5.0 observations — 2026-10-16
 
 Release source: `85a5779b6ed61b0eed7e87b56cf2e07aa2c6c47b`, the peeled

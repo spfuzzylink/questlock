@@ -1,5 +1,23 @@
 # Install and try Questlock
 
+## Trying the v0.6.0 source candidate
+
+Published v0.5.0 remains the verified release described below. To try checked
+revisions before v0.6.0 publication, build this checkout explicitly:
+
+```sh
+go build -trimpath -o bin/questlock ./cmd/questlock
+./bin/questlock revise quest
+./bin/questlock revise plan --request examples/revisions/bold-mission.json
+```
+
+Both commands need no model account. Inline planning is offline; durable runs
+need the existing authenticated broker. `model install` from a built candidate
+updates the binary/skills only, not native client settings or a running MCP
+process. Review/restart worker deployment deliberately. Every client reading a
+new revision outcome cohort must be v0.6.0+; keep it separate from older
+generation cohorts. [Contract and setup](checked-revisions.md).
+
 This guide covers the experimental **v0.5.0** release. The installer selects
 the version in `VERSION`; older published versions remain available, including
 v0.2.0 with `./scripts/install.sh --version v0.2.0`.
