@@ -1,8 +1,8 @@
 # Model cost-control architecture: what, why, how
 
-This guide describes the **v0.5.0 experimental source candidate**, adding
+This guide describes the **v0.5.0 experimental release**, adding
 OpenRouter and explicit SGLang runtime/cache contracts to bounded tasks and human
-feedback. Tagged publication and live GPU qualification remain pending.
+feedback. Tagged publication is verified; live GPU qualification remains pending.
 Published releases and historical validation remain available in the
 [verification record](validation.md).
 
@@ -350,7 +350,7 @@ records. [Claude token counting](https://platform.claude.com/docs/en/build-with-
 The direct-provider primary documentation above was checked on 2026-10-12;
 OpenRouter's [routing](https://openrouter.ai/docs/guides/routing/provider-selection)
 and [native usage](https://openrouter.ai/docs/cookbook/administration/usage-accounting)
-contracts were checked for the v0.5 candidate on 2026-10-16. The integration is
+contracts were checked for the v0.5 release on 2026-10-16. The integration is
 our design, not a vendor endorsement or hosted OpenRouter plugin.
 
 ## Six easy scenarios to verify the win

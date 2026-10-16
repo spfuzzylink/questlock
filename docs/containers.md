@@ -1,11 +1,11 @@
 # Run the Questlock container
 
-This guide covers the experimental **v0.5.0** image candidate. The preserved
+This guide covers the experimental **v0.5.0** image. The preserved
 [v0.3.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.3.0) and
 [v0.2.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.2.0) releases and
 their corresponding container tags remain available.
 
-The target experimental image in [GitHub Packages](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
+The current experimental image in [GitHub Packages](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
 is `ghcr.io/spfuzzylink/questlock:v0.5.0`, with native Linux ARM64 and x86-64 images.
 Podman and Docker select the matching CPU image. On macOS, the container engine
 runs Linux in its own VM; native macOS binaries use the separate release archives.
@@ -96,7 +96,7 @@ host port automatically. Keep any explicit host binding on `127.0.0.1`.
 
 ## Tags, updates, and provenance
 
-- `v0.5.0` is the target release tag; `experimental` is a moving tag
+- `v0.5.0` is the release tag; `experimental` is a moving tag
   for subsequent experimental publications. Neither implies a stable API.
 - Registry tags can change. For a repeatable deployment, record the image digest
   shown by `podman images --digests` and use the corresponding digest reference.
@@ -105,11 +105,11 @@ host port automatically. Keep any explicit host binding on `127.0.0.1`.
   and `/THIRD_PARTY_NOTICES.md` accompany the binary.
 - Native Linux ARM64 and x86-64 runners check the binary version, non-root user,
   writable data directory, seven recovery checks, six offline model checks, six
-  offline outcome checks, and the embedded fixture evaluation before publication.
-  All three quests run from the image's packaged executable. See the
+  offline outcome checks, six runtime protocol checks, and the embedded fixture evaluation before publication.
+  All four quests run from the image's packaged executable. See the
   [container workflow](https://github.com/spfuzzylink/questlock/actions/workflows/container.yml).
 
-See the [v0.4.0 validation record](validation.md#v040-observations--2026-10-14)
+See the [v0.5.0 validation record](validation.md#v050-observations--2026-10-16)
 for the tagged source, native publication checks, and immutable registry digests.
 
 The broker runs as UID/GID 65532. Containers are an operating environment, not a

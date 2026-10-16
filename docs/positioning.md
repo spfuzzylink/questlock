@@ -16,12 +16,12 @@ before generation, while related workers can recover the same valid result.
 
 **OpenRouter is the switchboard. Questlock helps keep a swarm from running up duplicate tabs.**
 
-Use “OpenRouter companion adapter” in v0.5 launch copy. This experimental source
-candidate selects OpenRouter through its own strict text protocol, one explicit
+Use “OpenRouter companion adapter” in v0.5 launch copy. This experimental release
+selects OpenRouter through its own strict text protocol, one explicit
 model/provider route, an operator-declared input reservation bound, and known
 token/cache accounting. It is a standalone adapter, not an OpenRouter-hosted
-plugin or endorsed partnership. Tagged publication and live paid routing/billing
-validation remain pending. Earlier v0.2–v0.4 releases retain their direct
+plugin or endorsed partnership. Tagged publication is verified; live paid routing/billing
+validation remains pending. Earlier v0.2–v0.4 releases retain their direct
 OpenAI, Anthropic and Ollama integration history.
 
 **v0.4.0 experimental** adds explicit downstream human
@@ -32,7 +32,7 @@ until explicit reacceptance. The numerator retains all recorded attempts and
 reported human effort, including failed and rejected work. Missing accounting
 stays unknown. See [what this measures and excludes](outcomes.md).
 
-The v0.5 candidate also separates **task reuse from runtime KV reuse**.
+The v0.5 release also separates **task reuse from runtime KV reuse**.
 Standalone SGLang dense/HiCache engines can generate bounded tasks; HiSparse and
 PD profiles can be inspected but need a future validated ingress for generation.
 SGLang's KV tiers are its implementation, credited to its upstream team.

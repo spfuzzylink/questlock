@@ -1,6 +1,6 @@
 # Install and try Questlock
 
-This guide covers the experimental **v0.5.0** release candidate. The installer selects
+This guide covers the experimental **v0.5.0** release. The installer selects
 the version in `VERSION`; older published versions remain available, including
 v0.2.0 with `./scripts/install.sh --version v0.2.0`.
 

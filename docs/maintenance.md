@@ -9,7 +9,8 @@ run and their source commit; a successful build is not evidence of publication.
   private outputs, and personal paths out of source and release archives.
 - For behavior changes, add focused regressions for admission, recovery, token
   bounds, billing categories, or quality requirements. Run `make check`,
-  `make quest`, `./bin/questlock model quest`, and `./bin/questlock outcome quest`.
+  `make quest`, `./bin/questlock model quest`, `./bin/questlock outcome quest`,
+  and `./bin/questlock model runtime-quest`.
   Feedback changes also need checks for explicit acceptance, every rewrite
   clearing it, immutable missing effort, scoped retries/conflicts, failed work in
   cohort costs, and unknown accounting staying unknown.
@@ -25,11 +26,11 @@ run and their source commit; a successful build is not evidence of publication.
   Preserve old tags, release assets, and working published versions; never force
   rewrite a published tag or replace old binaries to conceal a correction.
 - Require all four native CI targets: Darwin and Linux, each on AMD64 and ARM64.
-  Verify each archive's checksum, version, help, recovery/model/outcome quests,
+  Verify each archive's checksum, version, help, recovery/model/outcome/runtime quests,
   and embedded fixture evaluation; retain the tested archives rather than
   rebuilding them in the publication job.
 - Require the source-container CI job too. It builds through `.dockerignore` and
-  runs all three quests and fixture evaluation without a network and with a
+  runs all four quests and fixture evaluation without a network and with a
   read-only root filesystem. Keep Go source and embedded skill assets in the
   build context as the project evolves.
 - Require the reusable self-hosted Langfuse CI job for the release source. Its
@@ -44,7 +45,7 @@ run and their source commit; a successful build is not evidence of publication.
 - Resolve container inputs to that published tag and exact source commit through
   `scripts/container_release.py`; reject checksum or provenance mismatches.
   Require native Linux AMD64 and ARM64 image checks: version, UID/GID 65532,
-  writable data ownership, all three quests, fixture evaluation, and OCI
+  writable data ownership, all four quests, fixture evaluation, and OCI
   source/revision/license labels. Require a manifest containing exactly those
   two tested architectures.
 - Record immutable image digests. Verify anonymous pulling after publication
@@ -102,3 +103,21 @@ run and their source commit; a successful build is not evidence of publication.
   matches it, preserving concurrent human repairs. Test each changed setting and
   native local connection/status before committing the rollout; on failure or
   timeout restore the matching known-good backup through that watchdog.
+
+## Runtime integration evidence
+
+For SGLang changes, check the pinned native protocol, exact token-ID handoff,
+immutable deployment identity, cache namespaces, context bounds and unknown
+metadata. Keep runtime KV hits separate from provider billing. HiSparse and
+other PD endpoints remain inspection only until an ingress is implemented and
+qualified. Protocol fixtures, a CPU predictor, native Apple inference and real
+GPU measurements must retain distinct labels. Require matching quality, model,
+configuration and cold/warm workload evidence before publishing an acceleration
+claim. Keep GPU instructions reproducible even when local hardware cannot run
+them; do not substitute simulated timing for measured latency.
+
+For OpenRouter changes, preserve explicit route pins, capability policy, realistic
+operator reservation bounds, unknown-usage stops and caller price provenance.
+A paid live qualification is separate from fixture compatibility. Update the
+[runtime guide](runtime-cache.md), paired diagram, source examples, public archive
+allowlist and real Langfuse metadata readback whenever their contract changes.

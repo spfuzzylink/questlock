@@ -130,7 +130,7 @@ Its response cache already makes identical completed requests reusable.
 **OpenRouter routes the model. Questlock coordinates the work.**
 **OpenRouter is the switchboard. Questlock helps keep a swarm from running up duplicate tabs.**
 
-The **v0.5.0 source release candidate** adds a dedicated OpenRouter text adapter:
+The **v0.5.0 experimental release** adds a dedicated OpenRouter text adapter:
 one explicit model/provider route, requested fallbacks disabled, an operator
 input reservation bound, and strict known-usage accounting. It complements
 OpenRouter with bounded context, shared task admission, durable results,
@@ -141,14 +141,14 @@ not an OpenRouter-hosted plugin. Live paid routing and invoices remain unvalidat
 
 ### Reuse answers and inspect runtime caches separately
 
-Version **v0.5.0 experimental candidate** also adds a pinned SGLang v0.5.20
+Version **v0.5.0 experimental** also adds a pinned SGLang v0.5.20
 adapter. Standalone dense and HiCache engines can run bounded native tasks;
 read-only inspection reports runtime identity and the declared profile.
 HiSparse and other prefill/decode instances are inspection-only while a
 validated PD ingress remains future work.
 
 ```sh
-# Build the v0.5.0 source candidate before using these new commands.
+# Install v0.5.0 with the steps below, or build this checkout.
 make build
 ./bin/questlock model runtime-quest           # six offline HTTP-fixture scenarios
 ./bin/questlock model runtime-inspect --spec deploy/sglang/task.json \
@@ -163,8 +163,9 @@ with `gpu_validated: false`; fixtures establish protocol behavior, not GPU speed
 
 We also used the local worker during this release's development: one recorded
 attempt used 75 input / 17 output tokens. Its outcome remains unreviewed; this
-is not a human-acceptance or surrounding hosted-chat savings claim. Publication
-and live GPU qualification remain pending for this candidate.
+is not a human-acceptance or surrounding hosted-chat savings claim. Published
+archives and both native container images are verified; live GPU qualification
+remains pending. See [the release evidence](docs/validation.md#v050-observations--2026-10-16).
 
 [Runtime guide and evidence levels](docs/runtime-cache.md) ·
 [GPU profiles and reproducible qualification](deploy/sglang/README.md) ·
@@ -190,19 +191,18 @@ sudo and changes no shell settings. The demo cleans up its temporary state.
 
 ### Download a binary
 
-The last published experimental binary is **v0.4.0**; the **v0.5.0 source
-candidate** above awaits tagged publication and does not ship in these archives.
+The current published experimental binary is **v0.5.0**.
 Choose your operating system and
 CPU; x86-64 covers 64-bit Intel and AMD processors. No Go installation is needed.
 
 | System | ARM64 | x86-64 (Intel / AMD) |
 | --- | --- | --- |
-| macOS 13+ | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.4.0/questlock_0.4.0_darwin_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.4.0/questlock_0.4.0_darwin_amd64.tar.gz) |
-| Linux | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.4.0/questlock_0.4.0_linux_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.4.0/questlock_0.4.0_linux_amd64.tar.gz) |
+| macOS 13+ | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.5.0/questlock_0.5.0_darwin_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.5.0/questlock_0.5.0_darwin_amd64.tar.gz) |
+| Linux | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.5.0/questlock_0.5.0_linux_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.5.0/questlock_0.5.0_linux_amd64.tar.gz) |
 
-Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.4.0/checksums.txt)
+Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.5.0/checksums.txt)
 before extracting, then run `./questlock quest`. The installer above performs the
-checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.4.0).
+checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.5.0).
 [Older releases](https://github.com/spfuzzylink/questlock/releases), including
 v0.2.0, remain available.
 
@@ -216,7 +216,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.4.0 quest
+  ghcr.io/spfuzzylink/questlock:v0.5.0 quest
 ```
 
 Use `docker` in place of `podman` if preferred. The image pulls without a registry
