@@ -25,7 +25,7 @@ hosted assistant's prompt, tool, and context tokens.
 | `generation_timing` | Historical original streaming timing, if available; it is separate from current-run `measurement`. |
 | `pending`, `uncertain`, `incomplete`, `limit_exceeded` | Inspect the retained broker record before deliberately starting another attempt. |
 
-Runtime measurements are neither persisted in the job record nor included in its fingerprint. Original streaming timing is stored with `Response.Timing`; a reused result retains it in `generation_timing`, clears `response.timing`, and has no fresh generation timing in `measurement`.
+`measurement` describes only this invocation and is neither persisted in the job record nor included in its fingerprint. Original streaming timing and runtime KV observations are persisted separately. A reused result retains original timing in `generation_timing`, clears `response.timing`, and has no fresh generation timing in `measurement`; its original KV observations remain in `generation_runtime_cache` rather than current `response.runtime_cache`.
 
 For local Ollama only, set `"stream": true` in the approved spec to collect content-arrival observations. `first_content_ms` (TTFT) starts at entry to `Generate` and ends at the first nonempty content chunk observed by the client, including metadata and network overhead. `output_content_ms` is the interval from the first to the last nonempty content chunk; one content chunk can yield zero. Empty frames do not extend it. These are not pure compute TTFT, per-token throughput, or reasoning-token timing. Streaming consumes and validates the bounded response before exposing approved output.
 
