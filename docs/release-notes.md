@@ -1,10 +1,15 @@
-# Questlock 0.6.0 candidate — checked edits without another generation
+# Questlock 0.6.0 — checked edits without another generation
 
-**Source candidate; publication and activation pending.** Published v0.5.0 and
-older releases/assets remain available unchanged. Do not use the candidate's
-presence in source as evidence of an available release binary or container.
+**Published experimental release.**
+[Release and downloads](https://github.com/spfuzzylink/questlock/releases/tag/v0.6.0) ·
+[Verified artifacts and installed-worker evidence](validation.md#v060-observations--2026-10-16)
 
-## New in the candidate
+Published v0.5.0 and older releases/assets remain available unchanged. Four native
+archives, both container architectures and the installed v0.6.0 worker are verified.
+The immutable archives retain their source-era candidate wording; these web docs
+record subsequent publication without replacing those assets.
+
+## New in 0.6.0
 
 - A Go `revision` library and `revise plan`, `run`, and `quest` commands apply
   exact counted literal replacements to a SHA-256-pinned source. Required
@@ -23,10 +28,26 @@ presence in source as evidence of an available release binary or container.
   edits before new generation.
 
 Read [what, why and how](checked-revisions.md), [runnable examples](../examples/revisions/README.md),
-and [candidate evidence](validation.md#v060-candidate--2026-10-16).
+and [release evidence](validation.md#v060-observations--2026-10-16).
 A formatting development run and exact repeat made zero new model calls; their
 single observed latencies establish no benchmark or whole-session savings.
 New facts, open-ended rewrites and reasoning changes still need reviewed tasks.
+
+
+Go vet/race, packaging/public-source checks, all five offline quests, native
+Darwin/Linux ARM64/AMD64 archive CI, source-container execution and disposable
+Langfuse readback passed before publication. Anonymous registry verification
+checked both image configs and all layers. Published binary/skills activation
+used an independent rollback watchdog and a private complete known-good backup;
+a fresh native MCP process discovered both tools and returned a checked exact
+revision reuse with zero new generation. Installation changed no client settings.
+The development workstation separately completed its guarded global local-Codex
+instruction rollout; [supported opt-in setup](installation.md#optional-default-for-local-codex-chats)
+is documented. This preference is not enabled by the library installer. Broader
+local comparison evidence now records all six deterministic edits and repeats
+passing with zero generation, alongside one passing local-model baseline and
+five withheld failures. See the validation record for all measured usage, the
+single passing timing pair and the comparison's limits.
 
 ---
 

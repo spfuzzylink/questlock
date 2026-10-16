@@ -1,6 +1,6 @@
 # Where Questlock fits
 
-## Exact edits of reviewed work (v0.6.0 candidate)
+## Exact edits of reviewed work (v0.6.0)
 
 A launch post needs its product name and one mission sentence emphasized. A
 reviewed JSON document needs one approved field changed. The source is already
@@ -29,10 +29,10 @@ evaluation, current-run measurement, and optional content-free Langfuse export.
 **v0.4.0 experimental** adds explicit human review events
 and recorded-cohort cost reporting. It does not automatically observe rewrites
 or infer human acceptance from declared checks.
-The **v0.5.0 experimental source candidate** adds a dedicated OpenRouter text
+The **v0.5.0 experimental release** added a dedicated OpenRouter text
 adapter and explicit SGLang runtime/cache contracts. Standalone dense/HiCache
 engines can generate; HiSparse/PD deployments support read-only inspection.
-Tagged publication and real GPU qualification remain pending.
+Tagged publication is verified; real GPU qualification remains pending.
 
 ## Who this could help
 
@@ -215,7 +215,7 @@ and [measurement limits](inference-observability.md) before using the worker.
 
 The surrounding hosted chat keeps its existing model and billing. Questlock
 usage counters exclude its prompt, tool, and context tokens; they measure only
-the delegated provider/local generation. The v0.5 candidate adds an explicit
+the delegated provider/local generation. Version v0.5.0 added an explicit
 OpenRouter companion adapter and self-hosted SGLang dense/HiCache tiers;
 automatic model choice and full-session interception remain future work.
 
@@ -264,7 +264,7 @@ A team repeatedly summarizes approved repository snapshots with the same stable
 instructions. Whole answers may be reused only when the task revision is
 unchanged. For a new revision, the runtime may still reuse eligible prefix KV.
 
-**Implemented in the v0.5 candidate:** SGLang v0.5.20 runtime readback, native
+**Implemented since v0.5.0:** SGLang v0.5.20 runtime readback, native
 tokenization and bounded standalone dense/HiCache generation. Deployment and
 cache namespace enter identity; a changed observed runtime stops an existing
 provider before stale answer reuse. Runtime-reported device/host/storage cache

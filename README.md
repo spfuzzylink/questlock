@@ -1,6 +1,6 @@
 <div align="center">
 
-![Questlock — coordinate work, inspect runtime reuse, measure acceptance](assets/questlock-v0.5.0.svg)
+![Questlock — coordinate work, inspect runtime reuse, measure acceptance](assets/questlock-v0.6.0.svg)
 
 **Coordinate shared agent work before paying for it again.**
 
@@ -25,14 +25,14 @@ One host. No Kubernetes. Offline demos need no model account.
 
 ## Make exact edits without another generation
 
-**v0.6.0 source candidate — publication pending.** An answer is already checked;
+**v0.6.0 experimental release.** An answer is already checked;
 the next request only changes its presentation. `questlock revise` pins those
 source bytes, applies counted literal edits, checks the output, and publishes an
 immutable result through the shared broker. It calls no model. Exact source
 hashes, declared checks, and parent provenance keep the change reviewable.
 
 ```sh
-# Build this checkout; the published v0.5.0 binary does not include revise.
+# Install v0.6.0 below, or build this checkout.
 make build
 ./bin/questlock revise quest                  # three simple + three complex cases
 ./bin/questlock revise plan --request examples/revisions/bold-mission.json
@@ -47,7 +47,7 @@ work. Checks do not create human acceptance.
 [What, why, and how checked revisions work](docs/checked-revisions.md) ·
 [Runnable examples](examples/revisions/README.md) ·
 [Editable architecture](docs/diagrams/checked-revisions.drawio) ·
-[Candidate validation](docs/validation.md#v060-candidate--2026-10-16)
+[Release validation](docs/validation.md#v060-observations--2026-10-16)
 
 ## Reduce repeated model work
 
@@ -174,7 +174,7 @@ HiSparse and other prefill/decode instances are inspection-only while a
 validated PD ingress remains future work.
 
 ```sh
-# Install v0.5.0 with the steps below, or build this checkout.
+# Install v0.6.0 with the steps below, or build this checkout.
 make build
 ./bin/questlock model runtime-quest           # six offline HTTP-fixture scenarios
 ./bin/questlock model runtime-inspect --spec deploy/sglang/task.json \
@@ -217,18 +217,18 @@ sudo and changes no shell settings. The demo cleans up its temporary state.
 
 ### Download a binary
 
-The current published experimental binary is **v0.5.0**.
+The current published experimental binary is **v0.6.0**.
 Choose your operating system and
 CPU; x86-64 covers 64-bit Intel and AMD processors. No Go installation is needed.
 
 | System | ARM64 | x86-64 (Intel / AMD) |
 | --- | --- | --- |
-| macOS 13+ | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.5.0/questlock_0.5.0_darwin_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.5.0/questlock_0.5.0_darwin_amd64.tar.gz) |
-| Linux | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.5.0/questlock_0.5.0_linux_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.5.0/questlock_0.5.0_linux_amd64.tar.gz) |
+| macOS 13+ | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.6.0/questlock_0.6.0_darwin_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.6.0/questlock_0.6.0_darwin_amd64.tar.gz) |
+| Linux | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.6.0/questlock_0.6.0_linux_arm64.tar.gz) | [Download](https://github.com/spfuzzylink/questlock/releases/download/v0.6.0/questlock_0.6.0_linux_amd64.tar.gz) |
 
-Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.5.0/checksums.txt)
+Compare the archive's SHA-256 with [checksums.txt](https://github.com/spfuzzylink/questlock/releases/download/v0.6.0/checksums.txt)
 before extracting, then run `./questlock quest`. The installer above performs the
-checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.5.0).
+checksum check for you. [Release notes](https://github.com/spfuzzylink/questlock/releases/tag/v0.6.0).
 [Older releases](https://github.com/spfuzzylink/questlock/releases), including
 v0.2.0, remain available.
 
@@ -242,7 +242,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.5.0 quest
+  ghcr.io/spfuzzylink/questlock:v0.6.0 quest
 ```
 
 Use `docker` in place of `podman` if preferred. The image pulls without a registry

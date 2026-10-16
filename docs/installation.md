@@ -1,26 +1,25 @@
 # Install and try Questlock
 
-## Trying the v0.6.0 source candidate
+This guide covers the experimental **v0.6.0** release. The installer selects
+the version in `VERSION`; older published versions remain available, including
+v0.5.0 with `./scripts/install.sh --version v0.5.0`.
 
-Published v0.5.0 remains the verified release described below. To try checked
-revisions before v0.6.0 publication, build this checkout explicitly:
+## Try checked revisions without a model
+
+After extracting an archive, run:
 
 ```sh
-go build -trimpath -o bin/questlock ./cmd/questlock
-./bin/questlock revise quest
-./bin/questlock revise plan --request examples/revisions/bold-mission.json
+./questlock revise quest
+./questlock revise plan --request examples/revisions/bold-mission.json
 ```
 
-Both commands need no model account. Inline planning is offline; durable runs
-need the existing authenticated broker. `model install` from a built candidate
-updates the binary/skills only, not native client settings or a running MCP
-process. Review/restart worker deployment deliberately. Every client reading a
-new revision outcome cohort must be v0.6.0+; keep it separate from older
-generation cohorts. [Contract and setup](checked-revisions.md).
-
-This guide covers the experimental **v0.5.0** release. The installer selects
-the version in `VERSION`; older published versions remain available, including
-v0.2.0 with `./scripts/install.sh --version v0.2.0`.
+From a checkout installation, use `./bin/questlock` instead. Both commands need
+no model account. Inline planning is offline; durable runs need the existing
+authenticated broker. `model install` updates the binary/skills, not native
+client settings or an already-running MCP process. Review and restart the
+worker deliberately to expose `questlock_revise`. Every client reading a new
+revision outcome cohort must be v0.6.0+; keep it separate from older generation
+cohorts. [Contract and setup](checked-revisions.md).
 
 ## From a checkout, without Go
 
@@ -66,17 +65,20 @@ separate runtime validation.
 For example, on Linux x86-64, from the download directory:
 
 ```sh
-sha256sum questlock_0.5.0_linux_amd64.tar.gz
+sha256sum questlock_0.6.0_linux_amd64.tar.gz
 ```
 
 On macOS use `shasum -a 256` instead. Compare the result with the **matching
 filename's entry** in `checksums.txt` before extracting. Then:
 
 ```sh
-tar -xzf questlock_0.5.0_linux_amd64.tar.gz
+tar -xzf questlock_0.6.0_linux_amd64.tar.gz
 ./questlock version
 ./questlock quest
+./questlock model quest
 ./questlock outcome quest
+./questlock model runtime-quest
+./questlock revise quest
 ```
 
 Use your platform's filename in those commands. Each archive contains the binary,
@@ -152,14 +154,16 @@ files or directories at its destinations. It does not start a broker, install
 Claude Code, add to `PATH`, or change either assistant's model defaults. Client
 discovery can require opening a new chat/session.
 
-The installed skill uses `sh scripts/run.sh plan|run|quest|worker-run|worker-serve` from its own
+The installed skill uses `sh scripts/run.sh plan|run|quest|revise-plan|revise-run|revise-quest|worker-run|worker-serve` from its own
 directory. The helper resolves `QUESTLOCK_BIN` or `~/.local/bin/questlock` and,
-for `run`, `worker-run`, or `worker-serve`, loads `QUESTLOCK_TOKEN` from `QUESTLOCK_TOKEN_FILE` or
+for `run`, `revise-run`, `worker-run`, or `worker-serve`, loads `QUESTLOCK_TOKEN` from `QUESTLOCK_TOKEN_FILE` or
 `~/.local/share/questlock/agent-workflows/worker.token`. Provider keys still
 belong in the environment. See [bounded model workflows](model-workflows.md)
 for task selection, fresh broker setup, cost limits, and live-run requirements.
 
-The installed workflow includes an explicit local worker request template.
+Inline `revise-plan` reads no credential; a shared-parent plan reads the token
+only when the CLI needs authenticated broker access. `revise-quest` is offline.
+The installed workflow includes explicit local worker and checked-revision templates.
 See [bounded delegation](delegation.md) before registering `worker serve` as a
 stdio MCP server. `model evaluate` and optional `--langfuse` are documented in
 [runtime observability](inference-observability.md). Local generation needs
@@ -174,6 +178,40 @@ human acceptance still requires an explicit review event. Run
 Read [human outcomes and accounting](outcomes.md) before interpreting cost per
 accepted task, and see the [release validation](validation.md#v040-observations--2026-10-14)
 for publication and runtime evidence.
+
+## Optional default for local Codex chats
+
+Installing the skill makes its workflow available; choosing it as a default is
+a separate opt-in. Codex supports global instructions in `~/.codex/AGENTS.md`
+(or the corresponding `CODEX_HOME`) and the `developer_instructions` string in
+its user configuration. Global AGENTS instructions apply across local projects;
+more specific project instructions can refine them. See the official
+[AGENTS.md guide](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
+and [configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference).
+
+Append a short policy to your existing global instructions, or incorporate it
+into an existing developer instruction string rather than replacing prior
+preferences:
+
+> For substantive local work, follow the installed Questlock skill. Prefer
+> checked literal edits or exact valid snapshot reuse, then suitable bounded
+> checked local inference. Use compact approved inputs, stable project/use-case
+> task IDs independent of chat, and updated revisions when facts change. Track
+> outcomes and retain failures; human acceptance stays explicit. Keep final
+> judgment with the caller. Skip trivial conversation and silent paid fallback.
+> Link reviewed artifacts unless copy-ready text is requested.
+
+Open a fresh local session and verify skill/tool discovery in both a project
+and standalone workspace. Restart an older MCP worker deliberately to expose
+`questlock_revise`; existing chats are not proven hot-reloaded. This preference
+applies to the configured local Codex home, not remote/cloud hosts. It does not
+proxy the assistant protocol or change its model or hosted allowance.
+
+For configuration edits, preserve a complete known-good backup and validate the
+complete candidate in an isolated home with the native client before a guarded
+swap. Keep an independent rollback mechanism and preserve concurrent repairs;
+see [configuration rollout requirements](maintenance.md#client-configuration-rollout).
+No private workstation recovery helper is distributed by the Questlock installer.
 
 ## Updates and removal
 

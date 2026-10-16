@@ -30,6 +30,7 @@ PUBLIC_FILES = (
     "docs/diagrams/checked-revisions.drawio", "docs/diagrams/checked-revisions.svg",
     "examples/revisions/README.md", "examples/revisions/bold-product.json",
     "examples/revisions/bold-mission.json", "examples/revisions/json-status.json",
+    "examples/revisions/comparison.json",
     "assets/questlock-v0.5.0.svg", "docs/runtime-cache.md",
     "docs/diagrams/runtime-layers.drawio", "docs/diagrams/runtime-layers.svg",
     "deploy/sglang/README.md", "deploy/sglang/dense.json", "deploy/sglang/hicache.json",

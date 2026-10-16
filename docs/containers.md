@@ -1,13 +1,12 @@
 # Run the Questlock container
 
-## v0.6.0 source candidate
+## Checked revisions without a model
 
-The new `revise quest` runs three simple and three complex offline deterministic
-edit scenarios with temporary broker state. It needs no model account. A source
-container can exercise it under the same network-disabled/read-only settings
-as the existing quests. No v0.6.0 registry publication is claimed here; the
-v0.5.0 image and digests below remain the verified public version until release
-checks and anonymous publication proof are recorded.
+The published v0.6.0 image includes `revise quest`: three simple and three complex
+offline deterministic edit scenarios with temporary broker state. It needs no
+model account. Use the network-disabled/read-only command below, replacing its
+final `quest` arguments with `revise quest`. The [published artifact evidence](validation.md#v060-observations--2026-10-16)
+includes both native architectures and anonymous registry verification.
 
 A persistent revision worker talks to the broker through scoped HTTP. Give only
 the broker its SQLite volume. No GPU, model, provider secret or KV storage is
@@ -15,13 +14,15 @@ needed for literal revisions. Upgrade all readers/writers before sharing new
 revision outcome cohorts; older versions do not understand `deterministic_edit`.
 See [checked revisions](checked-revisions.md).
 
-This guide covers the experimental **v0.5.0** image. The preserved
+This guide covers the experimental **v0.6.0** image. The preserved
+[v0.5.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.5.0),
+[v0.4.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.4.0),
 [v0.3.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.3.0) and
 [v0.2.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.2.0) releases and
 their corresponding container tags remain available.
 
 The current experimental image in [GitHub Packages](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
-is `ghcr.io/spfuzzylink/questlock:v0.5.0`, with native Linux ARM64 and x86-64 images.
+is `ghcr.io/spfuzzylink/questlock:v0.6.0`, with native Linux ARM64 and x86-64 images.
 Podman and Docker select the matching CPU image. On macOS, the container engine
 runs Linux in its own VM; native macOS binaries use the separate release archives.
 
@@ -34,7 +35,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.5.0 quest
+  ghcr.io/spfuzzylink/questlock:v0.6.0 quest
 ```
 
 The same command works with `docker` in place of `podman`. Pulling the public
@@ -52,7 +53,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.5.0 model quest
+  ghcr.io/spfuzzylink/questlock:v0.6.0 model quest
 ```
 
 Look for six `PASS` lines and `QUEST CLEARED`. This quest starts a real local HTTP
@@ -73,7 +74,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.5.0 outcome quest
+  ghcr.io/spfuzzylink/questlock:v0.6.0 outcome quest
 ```
 
 Look for six `PASS` lines and `QUEST CLEARED`. Three simple and three complex
@@ -92,6 +93,22 @@ ARM64 or AMD64 without a GPU. These are protocol checks, not CUDA emulation or
 GPU benchmarks. The Questlock image contains the broker/worker binary; SGLang
 and its GPU runtime run separately. See [the runtime guide](runtime-cache.md).
 
+## Run the offline revision quest
+
+```sh
+podman run --rm --network none --read-only \
+  --cap-drop all --security-opt no-new-privileges \
+  --memory 256m --cpus 1 --pids-limit 128 \
+  --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
+  ghcr.io/spfuzzylink/questlock:v0.6.0 revise quest
+```
+
+Three simple cases cover exact product/sentence emphasis and a checked JSON
+literal change. Three complex cases cover parent provenance and restart,
+source/count/check failure withholding, and concurrent exact reuse with scope
+isolation. No model runs; the application receives checked text and decides
+where to apply it. The container grants no host-file editing capability.
+
 ## Run a persistent broker
 
 The command above is a disposable demo. A persistent broker needs its own named
@@ -100,8 +117,8 @@ Follow the [rootless Podman deployment guide](deployment.md). Replace its initia
 image-build command with:
 
 ```sh
-podman pull ghcr.io/spfuzzylink/questlock:v0.5.0
-podman tag ghcr.io/spfuzzylink/questlock:v0.5.0 localhost/questlock:dev
+podman pull ghcr.io/spfuzzylink/questlock:v0.6.0
+podman tag ghcr.io/spfuzzylink/questlock:v0.6.0 localhost/questlock:dev
 ```
 
 Then continue with the volume, credential provisioning, and Quadlet steps in that
@@ -111,7 +128,7 @@ host port automatically. Keep any explicit host binding on `127.0.0.1`.
 
 ## Tags, updates, and provenance
 
-- `v0.5.0` is the release tag; `experimental` is a moving tag
+- `v0.6.0` is the release tag; `experimental` is a moving tag
   for subsequent experimental publications. Neither implies a stable API.
 - Registry tags can change. For a repeatable deployment, record the image digest
   shown by `podman images --digests` and use the corresponding digest reference.
@@ -120,11 +137,12 @@ host port automatically. Keep any explicit host binding on `127.0.0.1`.
   and `/THIRD_PARTY_NOTICES.md` accompany the binary.
 - Native Linux ARM64 and x86-64 runners check the binary version, non-root user,
   writable data directory, seven recovery checks, six offline model checks, six
-  offline outcome checks, six runtime protocol checks, and the embedded fixture evaluation before publication.
-  All four quests run from the image's packaged executable. See the
+  offline outcome checks, six runtime protocol checks, six revision checks, and
+  the embedded fixture evaluation before publication.
+  All five quests run from the image's packaged executable. See the
   [container workflow](https://github.com/spfuzzylink/questlock/actions/workflows/container.yml).
 
-See the [v0.5.0 validation record](validation.md#v050-observations--2026-10-16)
+See the [v0.6.0 validation record](validation.md#v060-observations--2026-10-16)
 for the tagged source, native publication checks, and immutable registry digests.
 
 The broker runs as UID/GID 65532. Containers are an operating environment, not a

@@ -1,34 +1,189 @@
 # Validation record
 
-## v0.6.0 candidate — 2026-10-16
+## v0.6.0 observations — 2026-10-16
 
-This section records a source candidate, not a published release. The v0.5.0
-publication evidence below and its immutable assets remain unchanged. Native
-archive/container CI, publication, installed-client validation and independent
-release approval for v0.6.0 are pending until their concrete results are added.
+Release source: `ac70ba19f9e82a671bc21f0f5dcc897c2e551551`, the peeled
+`v0.6.0` tag. The independently reviewed PR head was
+`f8c07c31628b2fd34b9c0891554f724b98c684c7`, with tree
+`24ce22a473d826fb04ffd616b34e8796ff9b30e7`; the squash release commit has that
+same tree. The immutable archives retain their source-era candidate wording.
+These web documents record subsequent publication without replacing old assets.
 
-### Deterministic text-edit development observation
+### Protocol, native platforms, and telemetry
 
-A real scoped local broker accepted one approved three-edit formatting request
-against exact source bytes. The checked result matched the independently
-approved final-text hash. One fresh invocation took **30.999 ms**; one exact
-repeat took **4.119 ms**, as observed by the calling client. Both made no model
-call and reported known zero new generation tokens and provider token charge.
-Both outcome registrations were recorded; neither has a human acceptance event.
+[Source CI](https://github.com/spfuzzylink/questlock/actions/runs/38973633393) and
+[PR CI](https://github.com/spfuzzylink/questlock/actions/runs/38973638579) each
+passed all seven gates at the reviewed source. Go vet/race, packaging and public
+source checks, all five offline quests, source-container execution and disposable
+Langfuse readback passed. The revision quest runs three simple and three complex
+cases through real authenticated HTTP and temporary SQLite: exact text/JSON
+edits, pinned parent provenance across restart, source/count/check failures,
+concurrent exact reuse and scope isolation. It performs no model call.
 
-These are two development observations, not a latency benchmark, avoided-token
-estimate, invoice saving, or whole-chat cost reduction. The surrounding hosted
-assistant, hardware, storage and human work remain outside those measurements.
-The [revision quest](checked-revisions.md#try-three-simple-and-three-complex-cases)
-provides six reproducible offline protocol scenarios; its actual release gate
-results must be recorded separately.
+[Tagged CI](https://github.com/spfuzzylink/questlock/actions/runs/38974298900)
+passed all eight jobs, including four native Darwin/Linux ARM64/AMD64 archive
+targets. [Container CI](https://github.com/spfuzzylink/questlock/actions/runs/38974585889)
+passed all four jobs, including both native Linux architectures and publication.
+No paid provider generation or real SGLang GPU execution was used to qualify
+deterministic revisions. The v0.5 runtime/HiSparse evidence limits remain in force.
 
-A local source build ran all three packaged `revise plan` examples and all six
-`revise quest` scenarios successfully. The embedded-skill tests passed, including
-the revision example's offline source/output checks and shell helper argument/
-credential boundaries. The native SVG was rendered and visually inspected;
-its text labels exactly match the editable draw.io source. These local checks
-do not replace the pending native release/CI and publication gates above.
+### Published archives and registry
+
+All five actual release assets were downloaded over anonymous HTTPS. All four
+archives match the published checksums, exact target executable headers, clean
+Go 1.27.1/CGO-disabled BUILDINFO, normalized archive ownership, and all **70 public
+files** from the tagged source byte for byte.
+
+| Archive | SHA-256 |
+| --- | --- |
+| `questlock_0.6.0_darwin_amd64.tar.gz` | `7b6b9cb9538c0dd164ec06bbbf3bd5e71c5cb33b29af812775451340edc044a6` |
+| `questlock_0.6.0_darwin_arm64.tar.gz` | `a61b3621356bfa557db60b84bbf910d291ab181542e88a3b7b9b9457d960af49` |
+| `questlock_0.6.0_linux_amd64.tar.gz` | `eb12fa5d4e8083c1b2cd2cf7d4ea40715971f5a7074a20e96e5d4247b89e27b9` |
+| `questlock_0.6.0_linux_arm64.tar.gz` | `7008f9c76887a38910082d023879956643affefd4fd2fe9c025fbf00d1f5e4e9` |
+
+Anonymous GHCR verification checked both configs and all 16 layers, including
+compressed/uncompressed hashes and extracted root filesystems. Both native
+images contain the exact archive binaries, BUILDINFO and legal files; the data
+directory and nonroot user were checked. `v0.6.0` and `experimental` resolve to:
+
+`sha256:2fcc0eef07e685bdcbcea2efc0a8593865098d287d6cfc23d9c6296772123c43`
+
+| Native image | Manifest digest |
+| --- | --- |
+| Linux AMD64 | `sha256:a8e7fdf555a017fe6e90d189c85c5e1ca4fba2edec7c81061c59bd40cc922907` |
+| Linux ARM64 | `sha256:984e452307ed218ce7f668f59ceb6342c608c82b7cf773a96b4602be452cd8f4` |
+
+Previously verified v0.2.0/v0.3.0/v0.4.0/v0.5.0 indexes remain unchanged.
+[Release downloads](https://github.com/spfuzzylink/questlock/releases/tag/v0.6.0)
+and the [public container](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
+refer to actual verified publications.
+
+### Published binary and installed-worker validation
+
+The actual macOS ARM64 published binary has SHA-256
+`ab159d74b01a3ccbd3380c4cf1bddd3be4662a138f9e21a5d40a39b4726cac95`.
+An isolated install passed all five quests before activation. The binary and
+both Codex/Claude skills were installed as 19 files, preserving 17 complete
+known-good files under an independent detached rollback watchdog. Installed
+bytes matched the isolated candidate before the transaction committed.
+
+A fresh native MCP SDK process reported version 0.6.0 and discovered both
+`questlock_delegate` and `questlock_revise`. Its approved revision call returned
+a durable checked exact reuse with `generation_called: false`, known zero new
+usage, provider charge zero, and recorded outcome receipt at version 3. The
+process inherited no provider keys and had no paid permission. Passing declared
+checks did not establish human acceptance.
+
+This activation made zero client-setting writes. All three observed Codex/Claude
+setting files matched their before/after hashes at activation. Updating the
+binary/skills does not hot-reload an older MCP process, reroute a hosted chat,
+or establish that every future agent invocation will select the tool.
+
+### Deterministic text-edit development observations
+
+Before publication, a real scoped local broker accepted an approved three-edit
+formatting request against exact source bytes. The result matched an independently
+reviewed final-text hash. One fresh invocation took **30.999 ms** and one exact
+repeat **4.119 ms**, as observed by the calling client. Both made no model call
+and recorded zero new generation tokens/provider charge. Both outcome
+registrations were recorded; neither has a human acceptance event.
+
+The actual installed published binary was also used for this documentation
+iteration. A SHA-256-pinned README with ten counted literal edits produced a
+checked durable result in **9.608 ms**; one exact repeat took **3.925 ms**. Both
+reported `generation_called: false`, all this-run token categories zero and
+provider cost zero, with recorded outcomes and no invented human acceptance.
+The application compared the complete returned text against its independently
+expected output before writing the file. A separate source build had passed all
+three public inline example plans, the embedded helper credential/argument tests,
+and matching rendered SVG/draw.io label checks.
+
+These are individual development observations, not latency benchmarks, avoided
+token estimates, invoice savings, or whole-chat cost reductions. Source-generation
+cost is not charged again; CPU, storage, the surrounding hosted assistant and
+human effort remain outside the reported provider-token charges.
+
+### Global local-Codex routing on the development workstation
+
+At the user's request, a separate global configuration rollout now makes the
+installed Questlock skill the default workflow preference for substantive local
+Codex work in project and standalone chats. It prefers checked literal edits or
+exact valid snapshot reuse, then suitable bounded checked local inference, with
+final judgment retained by the caller. Stable task IDs are qualified by project
+and use case, independent of the chat. Trivial conversation is excluded, there
+is no silent paid fallback, and reviewed artifacts are linked instead of fully
+reprinted unless copy-ready text is requested.
+
+The complete reviewed candidate added only the documented
+`developer_instructions` field: **89 words / 687 UTF-8 bytes**, reduced from an
+earlier 181-word / 1,286-byte draft. Those are byte/word counts, not a token
+measurement. The `notify` command array, global model and reasoning selection,
+and every other parsed setting were preserved. Existing global instruction
+preferences were unchanged.
+
+Native strict `config/read` and `skills/list` in an isolated home confirmed the
+exact instruction and enabled v0.6 skill for a canonical project and a standalone
+workspace, without starting any model turn. A separately reviewed private
+recovery helper then applied the complete candidate with an independent
+watchdog, a complete private known-good backup, and exact live instruction and
+notify checks before committing. Its 18 race tests and vet checks covered
+paused/dead parent processes, early watchdog exit, rollback, and preservation of
+concurrent human repairs. The guarded transaction committed; live native reads
+again confirmed the intended instruction, enabled v0.6 skill and global MCP
+configuration in both workspaces, with zero model turns.
+
+This is a workstation integration observation. The private recovery helper is
+not bundled in the public installer or a new Questlock library feature.
+The [optional global setup](installation.md#optional-default-for-local-codex-chats)
+uses supported Codex instruction mechanisms. New local sessions can consume
+the default; existing chats and older MCP processes need their normal fresh
+session or worker restart. This does not prove hot reload, automatic invocation
+on every answer, whole-session interception, or reduced hosted-chat allowances.
+
+### Six-case local comparison
+
+The [complete approved inputs and checks](../examples/revisions/comparison.json)
+and [preparation steps](../examples/revisions/README.md#reproduce-the-measured-edit-inputs)
+are public; no private credentials or observed generated text are included.
+ after integration
+
+One declared comparison ran once after the global integration. Three simple
+cases covered product emphasis, an exact mission sentence and a JSON edit;
+three complex cases covered configuration, prose and code literals. Every
+deterministic fresh revision and exact repeat passed its checks and full-text
+hash comparison, returned a durable result and recorded its outcome: **6/6 fresh
+and 6/6 repeated**, with zero model calls, generation tokens or provider charge.
+
+The baseline made exactly one local Ollama `qwen3.5:4b` call per case. Only **1/6**
+passed the declared strict JSON and exact-result checks; the other five answers
+were withheld. All six generations, including failures, remain in accounting:
+**1,241 input / 486 output tokens**. Usage was known for every attempt; no retries
+or fallbacks ran.
+
+| Case | Fresh deterministic ms | Exact repeat ms | Local model ms | Local model checks |
+| --- | ---: | ---: | ---: | --- |
+| Simple: product emphasis | 9.157 | 8.714 | 10,395.193 | Failed; withheld |
+| Simple: mission sentence | 11.243 | 9.827 | 1,174.903 | Failed; withheld |
+| Simple: JSON field | 10.441 | 10.035 | 1,019.392 | Passed |
+| Complex: configuration | 8.693 | 10.689 | 3,755.708 | Failed; withheld |
+| Complex: prose literals | 9.983 | 9.511 | 2,497.362 | Failed; withheld |
+| Complex: code literals | 9.972 | 9.521 | 2,111.621 | Failed; withheld |
+
+These are individual client-observed wall times. There is only **one pair with
+passing checks on both paths**: the JSON case, 10.441 ms versus 1,019.392 ms.
+It establishes no general speedup or model ranking. Local warm states differ,
+no model TTFT was measured, and the baseline's declared JSON output wrapper
+adds a formatting requirement beyond the deterministic path's raw text. That
+limitation was declared before generation and remains part of the comparison.
+
+The explicit comparison cohort contains 12 task revisions, 18 recorded runs and
+18 attempts. It includes all failures and exact repeats, with zero missing usage
+and zero known provider charge. No human feedback was recorded:
+`accepted_tasks: 0` and `cost_per_accepted_task_usd: null`. Both paths are local
+and have zero provider token charge; hardware, power, storage, human work and
+the surrounding hosted chat remain excluded. These observations support the
+exact-edit path for suitable mechanical work, not an invoice-savings estimate
+or unrestricted free inference.
 
 ## v0.5.0 observations — 2026-10-16
 

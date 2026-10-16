@@ -1,6 +1,6 @@
 # Model cost-control architecture: what, why, how
 
-## v0.6.0 candidate: avoid generation for exact edits
+## v0.6.0: avoid generation for exact edits
 
 The next layer is a checked `revision` operation beside the model Runner. The
 caller already has reviewed text and supplies exact literal changes. Source
@@ -14,11 +14,12 @@ model is needed, and use Questlock's deterministic path when an exact edit is
 sufficient. It does not select models automatically or intercept surrounding
 chats. See [checked revisions](checked-revisions.md), the [SVG flow](diagrams/checked-revisions.svg),
 and its [editable draw.io source](diagrams/checked-revisions.drawio).
-Published v0.5.0 remains available while v0.6.0 verification/publication is pending.
+The [published v0.6.0 artifacts](validation.md#v060-observations--2026-10-16)
+are verified; v0.5.0 and older releases remain available unchanged.
 
-This guide describes the **v0.5.0 experimental release**, adding
-OpenRouter and explicit SGLang runtime/cache contracts to bounded tasks and human
-feedback. Tagged publication is verified; live GPU qualification remains pending.
+The provider layers introduced in **v0.5.0** add OpenRouter and explicit SGLang
+runtime/cache contracts to bounded tasks and human feedback. They remain available
+in v0.6.0. Tagged publication is verified; live GPU qualification remains pending.
 Published releases and historical validation remain available in the
 [verification record](validation.md).
 

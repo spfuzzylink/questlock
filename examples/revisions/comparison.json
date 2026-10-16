@@ -1,0 +1,554 @@
+{
+  "schema": 1,
+  "description": "Exact public and synthetic inputs and declared checks for the single-workstation v0.6.0 comparison; contains no credentials or observed private outputs. Run intentionally in a fresh broker scope and retain all failures.",
+  "cases": [
+    {
+      "id": "simple-product",
+      "complexity": "simple",
+      "revision_request": {
+        "schema": 1,
+        "task": "v060-measure-revise-simple-product",
+        "revision": "measurement-1",
+        "source": {
+          "text": "OpenRouter routes the model. Questlock coordinates the work.\nQuestlock reuses checked work. #Questlock",
+          "sha256": "baa389e51bb7080a407d59b91c3718518144eb6a61a8ebf7a34d321dc94b77cc"
+        },
+        "edits": [
+          {
+            "old": "Questlock coordinates",
+            "new": "𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 coordinates",
+            "expected_matches": 1
+          },
+          {
+            "old": "Questlock reuses",
+            "new": "𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 reuses",
+            "expected_matches": 1
+          }
+        ],
+        "source_checks": [
+          {
+            "id": "source-companion",
+            "kind": "contains",
+            "text": "OpenRouter routes the model."
+          }
+        ],
+        "checks": [
+          {
+            "id": "bold-name",
+            "kind": "contains",
+            "text": "𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤"
+          },
+          {
+            "id": "searchable-tag",
+            "kind": "contains",
+            "text": "#Questlock"
+          },
+          {
+            "id": "plain-prose-absent",
+            "kind": "not_contains",
+            "text": " Questlock coordinates"
+          }
+        ],
+        "track_outcome": true
+      },
+      "baseline_request": {
+        "track_outcome": true,
+        "spec": {
+          "task": "v060-measure-baseline-simple-product",
+          "revision": "measurement-1",
+          "instructions": "Apply these literal replacements sequentially. Replace all nonoverlapping occurrences; expected_matches must be met. Preserve every other byte, including whitespace, punctuation, Unicode and newlines. Return only strict JSON {\"text\":\"<final text>\"}. No Markdown or explanation.",
+          "input": "{\"source\":\"OpenRouter routes the model. Questlock coordinates the work.\\nQuestlock reuses checked work. #Questlock\",\"edits\":[{\"old\":\"Questlock coordinates\",\"new\":\"𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 coordinates\",\"expected_matches\":1},{\"old\":\"Questlock reuses\",\"new\":\"𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 reuses\",\"expected_matches\":1}]}"
+        },
+        "policy": {
+          "local": {
+            "id": "local-bounded",
+            "spec": {
+              "provider": "ollama",
+              "model": "qwen3.5:4b",
+              "max_context_bytes": 4096,
+              "max_input_tokens": 4096,
+              "max_output_tokens": 384,
+              "reuse_for_seconds": 86400,
+              "stream": false
+            }
+          }
+        },
+        "checks": [
+          {
+            "id": "strict-json",
+            "kind": "json_valid"
+          },
+          {
+            "id": "exact-final-text",
+            "kind": "json_equals",
+            "expected": {
+              "text": "OpenRouter routes the model. 𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 coordinates the work.\n𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 reuses checked work. #Questlock"
+            }
+          }
+        ]
+      },
+      "expected_text": "OpenRouter routes the model. 𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 coordinates the work.\n𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 reuses checked work. #Questlock",
+      "expected_output_sha256": "fa70a69a07a8c1b972db05db4e5e0292789c50acf248943bceb6bdb9efaa1a74"
+    },
+    {
+      "id": "simple-mission",
+      "complexity": "simple",
+      "revision_request": {
+        "schema": 1,
+        "task": "v060-measure-revise-simple-mission",
+        "revision": "measurement-1",
+        "source": {
+          "text": "The mission: lower cost per accepted task, including the work a person has to redo.",
+          "sha256": "022affc3d9291a0d35c7489227c2138902bbc471b858168b5d35c67fdc27aa23"
+        },
+        "edits": [
+          {
+            "old": "The mission: lower cost per accepted task, including the work a person has to redo.",
+            "new": "𝐓𝐡𝐞 𝐦𝐢𝐬𝐬𝐢𝐨𝐧: 𝐥𝐨𝐰𝐞𝐫 𝐜𝐨𝐬𝐭 𝐩𝐞𝐫 𝐚𝐜𝐜𝐞𝐩𝐭𝐞𝐝 𝐭𝐚𝐬𝐤, 𝐢𝐧𝐜𝐥𝐮𝐝𝐢𝐧𝐠 𝐭𝐡𝐞 𝐰𝐨𝐫𝐤 𝐚 𝐩𝐞𝐫𝐬𝐨𝐧 𝐡𝐚𝐬 𝐭𝐨 𝐫𝐞𝐝𝐨.",
+            "expected_matches": 1
+          }
+        ],
+        "source_checks": [
+          {
+            "id": "source-mission",
+            "kind": "contains",
+            "text": "The mission: lower cost per accepted task, including the work a person has to redo."
+          }
+        ],
+        "checks": [
+          {
+            "id": "bold-mission",
+            "kind": "contains",
+            "text": "𝐓𝐡𝐞 𝐦𝐢𝐬𝐬𝐢𝐨𝐧: 𝐥𝐨𝐰𝐞𝐫 𝐜𝐨𝐬𝐭 𝐩𝐞𝐫 𝐚𝐜𝐜𝐞𝐩𝐭𝐞𝐝 𝐭𝐚𝐬𝐤, 𝐢𝐧𝐜𝐥𝐮𝐝𝐢𝐧𝐠 𝐭𝐡𝐞 𝐰𝐨𝐫𝐤 𝐚 𝐩𝐞𝐫𝐬𝐨𝐧 𝐡𝐚𝐬 𝐭𝐨 𝐫𝐞𝐝𝐨."
+          }
+        ],
+        "track_outcome": true
+      },
+      "baseline_request": {
+        "track_outcome": true,
+        "spec": {
+          "task": "v060-measure-baseline-simple-mission",
+          "revision": "measurement-1",
+          "instructions": "Apply these literal replacements sequentially. Replace all nonoverlapping occurrences; expected_matches must be met. Preserve every other byte, including whitespace, punctuation, Unicode and newlines. Return only strict JSON {\"text\":\"<final text>\"}. No Markdown or explanation.",
+          "input": "{\"source\":\"The mission: lower cost per accepted task, including the work a person has to redo.\",\"edits\":[{\"old\":\"The mission: lower cost per accepted task, including the work a person has to redo.\",\"new\":\"𝐓𝐡𝐞 𝐦𝐢𝐬𝐬𝐢𝐨𝐧: 𝐥𝐨𝐰𝐞𝐫 𝐜𝐨𝐬𝐭 𝐩𝐞𝐫 𝐚𝐜𝐜𝐞𝐩𝐭𝐞𝐝 𝐭𝐚𝐬𝐤, 𝐢𝐧𝐜𝐥𝐮𝐝𝐢𝐧𝐠 𝐭𝐡𝐞 𝐰𝐨𝐫𝐤 𝐚 𝐩𝐞𝐫𝐬𝐨𝐧 𝐡𝐚𝐬 𝐭𝐨 𝐫𝐞𝐝𝐨.\",\"expected_matches\":1}]}"
+        },
+        "policy": {
+          "local": {
+            "id": "local-bounded",
+            "spec": {
+              "provider": "ollama",
+              "model": "qwen3.5:4b",
+              "max_context_bytes": 4096,
+              "max_input_tokens": 4096,
+              "max_output_tokens": 384,
+              "reuse_for_seconds": 86400,
+              "stream": false
+            }
+          }
+        },
+        "checks": [
+          {
+            "id": "strict-json",
+            "kind": "json_valid"
+          },
+          {
+            "id": "exact-final-text",
+            "kind": "json_equals",
+            "expected": {
+              "text": "𝐓𝐡𝐞 𝐦𝐢𝐬𝐬𝐢𝐨𝐧: 𝐥𝐨𝐰𝐞𝐫 𝐜𝐨𝐬𝐭 𝐩𝐞𝐫 𝐚𝐜𝐜𝐞𝐩𝐭𝐞𝐝 𝐭𝐚𝐬𝐤, 𝐢𝐧𝐜𝐥𝐮𝐝𝐢𝐧𝐠 𝐭𝐡𝐞 𝐰𝐨𝐫𝐤 𝐚 𝐩𝐞𝐫𝐬𝐨𝐧 𝐡𝐚𝐬 𝐭𝐨 𝐫𝐞𝐝𝐨."
+            }
+          }
+        ]
+      },
+      "expected_text": "𝐓𝐡𝐞 𝐦𝐢𝐬𝐬𝐢𝐨𝐧: 𝐥𝐨𝐰𝐞𝐫 𝐜𝐨𝐬𝐭 𝐩𝐞𝐫 𝐚𝐜𝐜𝐞𝐩𝐭𝐞𝐝 𝐭𝐚𝐬𝐤, 𝐢𝐧𝐜𝐥𝐮𝐝𝐢𝐧𝐠 𝐭𝐡𝐞 𝐰𝐨𝐫𝐤 𝐚 𝐩𝐞𝐫𝐬𝐨𝐧 𝐡𝐚𝐬 𝐭𝐨 𝐫𝐞𝐝𝐨.",
+      "expected_output_sha256": "29f2593a9977e5c3134ee6fad9e004c6a9b6b76dd0be08ade03e8976ed3baa2f"
+    },
+    {
+      "id": "simple-json",
+      "complexity": "simple",
+      "revision_request": {
+        "schema": 1,
+        "task": "v060-measure-revise-simple-json",
+        "revision": "measurement-1",
+        "source": {
+          "text": "{\"version\":\"0.6.0\",\"stage\":\"draft\",\"gpu_benchmarked\":false}",
+          "sha256": "a0d2691872e76bc6192882d50b9cb9d7321dd7eddfbf5ef17726bf40ae6ff77b"
+        },
+        "edits": [
+          {
+            "old": "\"stage\":\"draft\"",
+            "new": "\"stage\":\"review\"",
+            "expected_matches": 1
+          }
+        ],
+        "source_checks": [
+          {
+            "id": "source-json",
+            "kind": "json_valid"
+          },
+          {
+            "id": "source-stage",
+            "kind": "json_equals",
+            "pointer": "/stage",
+            "expected": "draft"
+          }
+        ],
+        "checks": [
+          {
+            "id": "output-json",
+            "kind": "json_valid"
+          },
+          {
+            "id": "new-stage",
+            "kind": "json_equals",
+            "pointer": "/stage",
+            "expected": "review"
+          },
+          {
+            "id": "no-benchmark-claim",
+            "kind": "json_equals",
+            "pointer": "/gpu_benchmarked",
+            "expected": false
+          }
+        ],
+        "track_outcome": true
+      },
+      "baseline_request": {
+        "track_outcome": true,
+        "spec": {
+          "task": "v060-measure-baseline-simple-json",
+          "revision": "measurement-1",
+          "instructions": "Apply these literal replacements sequentially. Replace all nonoverlapping occurrences; expected_matches must be met. Preserve every other byte, including whitespace, punctuation, Unicode and newlines. Return only strict JSON {\"text\":\"<final text>\"}. No Markdown or explanation.",
+          "input": "{\"source\":\"{\\\"version\\\":\\\"0.6.0\\\",\\\"stage\\\":\\\"draft\\\",\\\"gpu_benchmarked\\\":false}\",\"edits\":[{\"old\":\"\\\"stage\\\":\\\"draft\\\"\",\"new\":\"\\\"stage\\\":\\\"review\\\"\",\"expected_matches\":1}]}"
+        },
+        "policy": {
+          "local": {
+            "id": "local-bounded",
+            "spec": {
+              "provider": "ollama",
+              "model": "qwen3.5:4b",
+              "max_context_bytes": 4096,
+              "max_input_tokens": 4096,
+              "max_output_tokens": 256,
+              "reuse_for_seconds": 86400,
+              "stream": false
+            }
+          }
+        },
+        "checks": [
+          {
+            "id": "strict-json",
+            "kind": "json_valid"
+          },
+          {
+            "id": "exact-final-text",
+            "kind": "json_equals",
+            "expected": {
+              "text": "{\"version\":\"0.6.0\",\"stage\":\"review\",\"gpu_benchmarked\":false}"
+            }
+          }
+        ]
+      },
+      "expected_text": "{\"version\":\"0.6.0\",\"stage\":\"review\",\"gpu_benchmarked\":false}",
+      "expected_output_sha256": "d84a889d98ccda8b56f72ab73af178a7bb9c68f00496ffed7da79151d8e380d6"
+    },
+    {
+      "id": "complex-config",
+      "complexity": "complex",
+      "revision_request": {
+        "schema": 1,
+        "task": "v060-measure-revise-complex-config",
+        "revision": "measurement-1",
+        "source": {
+          "text": "{\"service\":\"demo-api\",\"timeout_ms\":1500,\"retries\":3,\"region\":\"us-west-2\",\"features\":{\"audit\":true,\"beta\":false},\"comment\":\"preserve: synthetic\"}",
+          "sha256": "5db8d0031c6e1a8bb512b7e948f5099c0567917a5ca3f899cb247b5c105684a9"
+        },
+        "edits": [
+          {
+            "old": "\"timeout_ms\":1500",
+            "new": "\"timeout_ms\":2500",
+            "expected_matches": 1
+          },
+          {
+            "old": "\"retries\":3",
+            "new": "\"retries\":1",
+            "expected_matches": 1
+          },
+          {
+            "old": "\"beta\":false",
+            "new": "\"beta\":true",
+            "expected_matches": 1
+          }
+        ],
+        "source_checks": [
+          {
+            "id": "source-json",
+            "kind": "json_valid"
+          },
+          {
+            "id": "source-config",
+            "kind": "json_equals",
+            "expected": {
+              "service": "demo-api",
+              "timeout_ms": 1500,
+              "retries": 3,
+              "region": "us-west-2",
+              "features": {
+                "audit": true,
+                "beta": false
+              },
+              "comment": "preserve: synthetic"
+            }
+          }
+        ],
+        "checks": [
+          {
+            "id": "result-json",
+            "kind": "json_valid"
+          },
+          {
+            "id": "result-config",
+            "kind": "json_equals",
+            "expected": {
+              "service": "demo-api",
+              "timeout_ms": 2500,
+              "retries": 1,
+              "region": "us-west-2",
+              "features": {
+                "audit": true,
+                "beta": true
+              },
+              "comment": "preserve: synthetic"
+            }
+          },
+          {
+            "id": "unchanged-region",
+            "kind": "json_equals",
+            "pointer": "/region",
+            "expected": "us-west-2"
+          }
+        ],
+        "track_outcome": true
+      },
+      "baseline_request": {
+        "track_outcome": true,
+        "spec": {
+          "task": "v060-measure-baseline-complex-config",
+          "revision": "measurement-1",
+          "instructions": "Apply these literal replacements sequentially. Replace all nonoverlapping occurrences; expected_matches must be met. Preserve every other byte, including whitespace, punctuation, Unicode and newlines. Return only strict JSON {\"text\":\"<final text>\"}. No Markdown or explanation.",
+          "input": "{\"source\":\"{\\\"service\\\":\\\"demo-api\\\",\\\"timeout_ms\\\":1500,\\\"retries\\\":3,\\\"region\\\":\\\"us-west-2\\\",\\\"features\\\":{\\\"audit\\\":true,\\\"beta\\\":false},\\\"comment\\\":\\\"preserve: synthetic\\\"}\",\"edits\":[{\"old\":\"\\\"timeout_ms\\\":1500\",\"new\":\"\\\"timeout_ms\\\":2500\",\"expected_matches\":1},{\"old\":\"\\\"retries\\\":3\",\"new\":\"\\\"retries\\\":1\",\"expected_matches\":1},{\"old\":\"\\\"beta\\\":false\",\"new\":\"\\\"beta\\\":true\",\"expected_matches\":1}]}"
+        },
+        "policy": {
+          "local": {
+            "id": "local-bounded",
+            "spec": {
+              "provider": "ollama",
+              "model": "qwen3.5:4b",
+              "max_context_bytes": 4096,
+              "max_input_tokens": 4096,
+              "max_output_tokens": 256,
+              "reuse_for_seconds": 86400,
+              "stream": false
+            }
+          }
+        },
+        "checks": [
+          {
+            "id": "strict-json",
+            "kind": "json_valid"
+          },
+          {
+            "id": "exact-final-text",
+            "kind": "json_equals",
+            "expected": {
+              "text": "{\"service\":\"demo-api\",\"timeout_ms\":2500,\"retries\":1,\"region\":\"us-west-2\",\"features\":{\"audit\":true,\"beta\":true},\"comment\":\"preserve: synthetic\"}"
+            }
+          }
+        ]
+      },
+      "expected_text": "{\"service\":\"demo-api\",\"timeout_ms\":2500,\"retries\":1,\"region\":\"us-west-2\",\"features\":{\"audit\":true,\"beta\":true},\"comment\":\"preserve: synthetic\"}",
+      "expected_output_sha256": "1ca28aa631059f4658fe6ce02f217d0e110777b30f17852b1ff36678a960c3b7"
+    },
+    {
+      "id": "complex-prose",
+      "complexity": "complex",
+      "revision_request": {
+        "schema": 1,
+        "task": "v060-measure-revise-complex-prose",
+        "revision": "measurement-1",
+        "source": {
+          "text": "Release note (synthetic)\nStatus: draft\nQuestlock coordinates work alongside OpenRouter.\nRuntime: local only; no GPU benchmark claimed.\nOwner: Example Developer\nNext: review the docs.\n",
+          "sha256": "8e2029ee5bfab7df42c4788ffa19f93e2bb2c23942e00986f39065846511fcbb"
+        },
+        "edits": [
+          {
+            "old": "Status: draft",
+            "new": "Status: review",
+            "expected_matches": 1
+          },
+          {
+            "old": "Questlock",
+            "new": "𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤",
+            "expected_matches": 1
+          },
+          {
+            "old": "Next: review the docs.",
+            "new": "Next: run the offline checks.",
+            "expected_matches": 1
+          }
+        ],
+        "source_checks": [
+          {
+            "id": "exact-source",
+            "kind": "contains",
+            "text": "Release note (synthetic)\nStatus: draft\nQuestlock coordinates work alongside OpenRouter.\nRuntime: local only; no GPU benchmark claimed.\nOwner: Example Developer\nNext: review the docs.\n"
+          }
+        ],
+        "checks": [
+          {
+            "id": "exact-result",
+            "kind": "contains",
+            "text": "Release note (synthetic)\nStatus: review\n𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 coordinates work alongside OpenRouter.\nRuntime: local only; no GPU benchmark claimed.\nOwner: Example Developer\nNext: run the offline checks.\n"
+          },
+          {
+            "id": "unchanged-runtime-limit",
+            "kind": "contains",
+            "text": "Runtime: local only; no GPU benchmark claimed."
+          }
+        ],
+        "track_outcome": true
+      },
+      "baseline_request": {
+        "track_outcome": true,
+        "spec": {
+          "task": "v060-measure-baseline-complex-prose",
+          "revision": "measurement-1",
+          "instructions": "Apply these literal replacements sequentially. Replace all nonoverlapping occurrences; expected_matches must be met. Preserve every other byte, including whitespace, punctuation, Unicode and newlines. Return only strict JSON {\"text\":\"<final text>\"}. No Markdown or explanation.",
+          "input": "{\"source\":\"Release note (synthetic)\\nStatus: draft\\nQuestlock coordinates work alongside OpenRouter.\\nRuntime: local only; no GPU benchmark claimed.\\nOwner: Example Developer\\nNext: review the docs.\\n\",\"edits\":[{\"old\":\"Status: draft\",\"new\":\"Status: review\",\"expected_matches\":1},{\"old\":\"Questlock\",\"new\":\"𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤\",\"expected_matches\":1},{\"old\":\"Next: review the docs.\",\"new\":\"Next: run the offline checks.\",\"expected_matches\":1}]}"
+        },
+        "policy": {
+          "local": {
+            "id": "local-bounded",
+            "spec": {
+              "provider": "ollama",
+              "model": "qwen3.5:4b",
+              "max_context_bytes": 4096,
+              "max_input_tokens": 4096,
+              "max_output_tokens": 384,
+              "reuse_for_seconds": 86400,
+              "stream": false
+            }
+          }
+        },
+        "checks": [
+          {
+            "id": "strict-json",
+            "kind": "json_valid"
+          },
+          {
+            "id": "exact-final-text",
+            "kind": "json_equals",
+            "expected": {
+              "text": "Release note (synthetic)\nStatus: review\n𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 coordinates work alongside OpenRouter.\nRuntime: local only; no GPU benchmark claimed.\nOwner: Example Developer\nNext: run the offline checks.\n"
+            }
+          }
+        ]
+      },
+      "expected_text": "Release note (synthetic)\nStatus: review\n𝐐𝐮𝐞𝐬𝐭𝐥𝐨𝐜𝐤 coordinates work alongside OpenRouter.\nRuntime: local only; no GPU benchmark claimed.\nOwner: Example Developer\nNext: run the offline checks.\n",
+      "expected_output_sha256": "d724cf8f3de20f7bdab5c99830015f7245c4c18e4f6e60b133f24ec1811c0834"
+    },
+    {
+      "id": "complex-code",
+      "complexity": "complex",
+      "revision_request": {
+        "schema": 1,
+        "task": "v060-measure-revise-complex-code",
+        "revision": "measurement-1",
+        "source": {
+          "text": "package demo\n\nconst retryLimit = 3\nconst requestTimeoutMS = 1500\n\nfunc Enabled(mode string) bool {\n    return mode == \"draft\"\n}\n\n// Keep: no network calls, no credentials.\n",
+          "sha256": "aac2a4a880f7d30700b6fe0d862b8299bac78777f01ca5513be2b38226f0c0a0"
+        },
+        "edits": [
+          {
+            "old": "retryLimit = 3",
+            "new": "retryLimit = 1",
+            "expected_matches": 1
+          },
+          {
+            "old": "requestTimeoutMS = 1500",
+            "new": "requestTimeoutMS = 2500",
+            "expected_matches": 1
+          },
+          {
+            "old": "func Enabled(",
+            "new": "func Ready(",
+            "expected_matches": 1
+          },
+          {
+            "old": "mode == \"draft\"",
+            "new": "mode == \"review\"",
+            "expected_matches": 1
+          }
+        ],
+        "source_checks": [
+          {
+            "id": "exact-source",
+            "kind": "contains",
+            "text": "package demo\n\nconst retryLimit = 3\nconst requestTimeoutMS = 1500\n\nfunc Enabled(mode string) bool {\n    return mode == \"draft\"\n}\n\n// Keep: no network calls, no credentials.\n"
+          }
+        ],
+        "checks": [
+          {
+            "id": "exact-result",
+            "kind": "contains",
+            "text": "package demo\n\nconst retryLimit = 1\nconst requestTimeoutMS = 2500\n\nfunc Ready(mode string) bool {\n    return mode == \"review\"\n}\n\n// Keep: no network calls, no credentials.\n"
+          },
+          {
+            "id": "unchanged-comment",
+            "kind": "contains",
+            "text": "// Keep: no network calls, no credentials."
+          }
+        ],
+        "track_outcome": true
+      },
+      "baseline_request": {
+        "track_outcome": true,
+        "spec": {
+          "task": "v060-measure-baseline-complex-code",
+          "revision": "measurement-1",
+          "instructions": "Apply these literal replacements sequentially. Replace all nonoverlapping occurrences; expected_matches must be met. Preserve every other byte, including whitespace, punctuation, Unicode and newlines. Return only strict JSON {\"text\":\"<final text>\"}. No Markdown or explanation.",
+          "input": "{\"source\":\"package demo\\n\\nconst retryLimit = 3\\nconst requestTimeoutMS = 1500\\n\\nfunc Enabled(mode string) bool {\\n    return mode == \\\"draft\\\"\\n}\\n\\n// Keep: no network calls, no credentials.\\n\",\"edits\":[{\"old\":\"retryLimit = 3\",\"new\":\"retryLimit = 1\",\"expected_matches\":1},{\"old\":\"requestTimeoutMS = 1500\",\"new\":\"requestTimeoutMS = 2500\",\"expected_matches\":1},{\"old\":\"func Enabled(\",\"new\":\"func Ready(\",\"expected_matches\":1},{\"old\":\"mode == \\\"draft\\\"\",\"new\":\"mode == \\\"review\\\"\",\"expected_matches\":1}]}"
+        },
+        "policy": {
+          "local": {
+            "id": "local-bounded",
+            "spec": {
+              "provider": "ollama",
+              "model": "qwen3.5:4b",
+              "max_context_bytes": 4096,
+              "max_input_tokens": 4096,
+              "max_output_tokens": 256,
+              "reuse_for_seconds": 86400,
+              "stream": false
+            }
+          }
+        },
+        "checks": [
+          {
+            "id": "strict-json",
+            "kind": "json_valid"
+          },
+          {
+            "id": "exact-final-text",
+            "kind": "json_equals",
+            "expected": {
+              "text": "package demo\n\nconst retryLimit = 1\nconst requestTimeoutMS = 2500\n\nfunc Ready(mode string) bool {\n    return mode == \"review\"\n}\n\n// Keep: no network calls, no credentials.\n"
+            }
+          }
+        ]
+      },
+      "expected_text": "package demo\n\nconst retryLimit = 1\nconst requestTimeoutMS = 2500\n\nfunc Ready(mode string) bool {\n    return mode == \"review\"\n}\n\n// Keep: no network calls, no credentials.\n",
+      "expected_output_sha256": "03cab47cc369ff2c88b06a222b7039e1dc026476d455d3ec40e1ca0d888014d2"
+    }
+  ]
+}

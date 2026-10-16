@@ -1,6 +1,6 @@
 # Owner maintenance checklist
 
-## Revision release gates (v0.6.0 candidate)
+## Revision release gates (v0.6.0)
 
 Keep exact source/hash drift, counted sequential edits, source/output check
 failure withholding, publication uncertainty, restart, scope isolation,

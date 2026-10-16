@@ -23,6 +23,7 @@ class PackageTests(unittest.TestCase):
             "docs/diagrams/checked-revisions.drawio", "docs/diagrams/checked-revisions.svg",
             "examples/revisions/README.md", "examples/revisions/bold-product.json",
             "examples/revisions/bold-mission.json", "examples/revisions/json-status.json",
+            "examples/revisions/comparison.json",
             "docs/diagrams/runtime-layers.drawio", "docs/diagrams/runtime-layers.svg",
             "deploy/sglang/README.md", "deploy/sglang/dense.json", "deploy/sglang/hicache.json",
             "deploy/sglang/hisparse.json", "deploy/sglang/hisparse-prefill.json", "deploy/sglang/task.json",

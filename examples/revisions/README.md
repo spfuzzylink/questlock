@@ -1,14 +1,15 @@
 # Exact edits with no model call
 
-These v0.6.0 source-candidate requests are public fixtures, not real customer
+These v0.6.0 experimental-release requests are public fixtures, not real customer
 data. Each includes the exact source SHA-256, literal replacements with counted
 matches, source/output checks, and opt-in outcome accounting. No provider key or
-model is needed. Published v0.5.0 does not implement `revise`.
+model is needed. The published v0.6.0 binary includes `revise`; older releases
+remain available unchanged.
 
-Build this checkout and preview each request offline:
+From a checkout, install the published binary and preview each request offline:
 
 ```sh
-go build -trimpath -o bin/questlock ./cmd/questlock
+./scripts/install.sh
 ./bin/questlock revise plan --request examples/revisions/bold-product.json
 ./bin/questlock revise plan --request examples/revisions/bold-mission.json
 ./bin/questlock revise plan --request examples/revisions/json-status.json
@@ -77,3 +78,33 @@ All callers sharing these revision outcome cohorts need v0.6.0; older clients
 cannot read the additive `deterministic_edit` cost basis. A recorded run is
 unreviewed until a person explicitly accepts it. Checks, Unicode formatting, and
 zero model calls establish no general quality or invoice-savings result.
+
+## Reproduce the measured edit inputs
+
+[comparison.json](comparison.json) contains all six complete revision requests,
+all six bounded local-model baseline requests, and exact expected texts used in
+the [recorded v0.6 comparison](../../docs/validation.md#six-case-local-comparison).
+The complex cases are synthetic config, prose, and Go snippets. The JSON file
+is a dataset, not a request accepted directly by the CLI.
+
+To inspect one case without any generation, split its two requests locally:
+
+```sh
+python3 - <<'PYTHON'
+import json
+from pathlib import Path
+suite = json.loads(Path("examples/revisions/comparison.json").read_text())
+case = next(item for item in suite["cases"] if item["id"] == "simple-json")
+for name, field in [("revise", "revision_request"), ("baseline", "baseline_request")]:
+    Path(name + "-request.json").write_text(json.dumps(case[field], ensure_ascii=False, indent=2) + "\n")
+PYTHON
+./bin/questlock revise plan --request revise-request.json
+```
+
+A deliberate live comparison uses a **fresh authenticated broker scope** and an
+installed local `qwen3.5:4b` model. Review the complete baseline prompt, caps and
+checks before `worker run`; keep both success and failure results. Each baseline
+has one local tier and no paid fallback. An exact repeat can reuse an existing
+result and is not a fresh model sample. Do not change revisions or retry failures
+to force a favorable result. Both paths have local hardware costs; these fixtures
+are not an invoice-savings or general model-quality benchmark.
