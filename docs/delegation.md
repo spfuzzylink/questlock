@@ -1,6 +1,6 @@
 # Bounded local-first delegation
 
-## Prefer exact revisions before generating (v0.6.0 candidate)
+## Prefer exact revisions before generating (v0.6.0)
 
 For a precisely specified presentation or literal edit of reviewed text, use
 `questlock revise plan|run --request PATH` or MCP `questlock_revise`. The request
@@ -17,9 +17,9 @@ v0.5.0 clients remain usable; upgrade/restart a worker deliberately to discover
 the new tool. Installing a skill does not restart the process or rewrite client
 configuration. [Full contract, examples and accounting](checked-revisions.md).
 
-The **v0.5.0 experimental source candidate** retains bounded delegation and
-opt-in outcome tracking, while adding standalone self-hosted SGLang dense/HiCache
-tiers and a dedicated OpenRouter paid tier. The `delegation` Go package and
+Version **v0.5.0** retained bounded delegation and opt-in outcome tracking,
+and added standalone self-hosted SGLang dense/HiCache tiers plus a dedicated
+OpenRouter paid tier. The `delegation` Go package and
 `questlock worker` execute one approved task with at most one explicitly
 configured escalation. Context, models, reuse, budgets and checks stay reviewable.
 

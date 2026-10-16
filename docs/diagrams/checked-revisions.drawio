@@ -119,7 +119,7 @@
         <mxCell id="text-title" value="Questlock checked revisions" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=30;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
           <mxGeometry x="50" y="52" width="1300" height="42" as="geometry" />
         </mxCell>
-        <mxCell id="text-subtitle" value="v0.6.0 source candidate · exact mechanical edits of checked text" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#34445e;" vertex="1" parent="1">
+        <mxCell id="text-subtitle" value="v0.6.0 experimental · exact mechanical edits of checked text" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#34445e;" vertex="1" parent="1">
           <mxGeometry x="50" y="105" width="1300" height="28" as="geometry" />
         </mxCell>
         <mxCell id="text-footer" value="Caller approves the source, edits, and destination. No full-session interception; no file-edit tool; hardware and hosted-chat costs remain." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=17;fontStyle=0;fontColor=#34445e;" vertex="1" parent="1">

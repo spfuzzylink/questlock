@@ -1,6 +1,6 @@
 # Architecture
 
-## Checked deterministic revisions (v0.6.0 candidate)
+## Checked deterministic revisions (v0.6.0)
 
 The new Go `revision` path composes with the same scoped publication boundary.
 It verifies exact source bytes/digest and declared source checks, applies an
@@ -15,7 +15,8 @@ plans converge on the same immutable result. Digest/count/check failure or
 uncertain publication withholds text and stops without fallback. Optional outcome
 accounting stays separate from human acceptance. See the [request and failure
 contract](checked-revisions.md) and [editable flow](diagrams/checked-revisions.drawio).
-Publication evidence for this candidate remains pending.
+[Tagged publication and installed-worker evidence](validation.md#v060-observations--2026-10-16)
+are verified for v0.6.0.
 
 Questlock has one trusted broker and multiple independently authenticated workers.
 It protects publication of shared UTF-8 artifacts on one host.
@@ -90,7 +91,7 @@ Mermaid request-flow view and explains reuse, uncertain outcomes, and settlement
 
 ## Provider routing and runtime caches
 
-The **v0.5.0 experimental source candidate** adds two explicit integration
+The **v0.5.0 experimental release** added two explicit integration
 contracts. OpenRouter uses one declared model/provider route, an operator input
 reservation bound, and strict native usage partitions. Its requested upstream
 fallbacks are disabled; Questlock does not retry uncertain generation. Direct
@@ -120,7 +121,7 @@ model paths or credentials. See [contracts and evidence levels](runtime-cache.md
 GPU. `model runtime-inspect` returns `capabilities`,
 `evidence: "runtime_reported_configuration"`, and `gpu_validated: false`.
 Neither establishes kernel execution, a HiSparse deployment, or speedup.
-Tagged publication and live GPU qualification remain pending for the candidate.
+Tagged publication is verified; live GPU qualification remains pending.
 
 ## Explicit human outcome records
 

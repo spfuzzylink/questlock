@@ -3,9 +3,9 @@
 A developer has already reviewed a launch post. The next instruction is “bold
 the product name and this mission sentence.” That calls for an exact text edit;
 asking another model to rewrite the post adds computation and a chance of changing
-its claims. The **v0.6.0 source candidate** adds checked deterministic revisions
-alongside the existing model workflow. Publication and live-client activation
-remain pending until recorded in [validation](validation.md).
+its claims. The **v0.6.0 experimental release** adds checked deterministic revisions
+alongside the existing model workflow. Tagged artifacts, containers and installed
+worker checks are recorded in [validation](validation.md#v060-observations--2026-10-16).
 
 The caller names the exact source bytes, a SHA-256 digest, literal replacements
 with expected occurrence counts, and source/output checks. Questlock verifies the
@@ -17,12 +17,15 @@ meaning the caller has already reviewed.
 
 ## Try three simple and three complex cases
 
-Build the source candidate, then run the self-contained quest:
+Install the [published release](installation.md), then run the self-contained
+quest. From an extracted archive:
 
 ```sh
-go build -trimpath -o bin/questlock ./cmd/questlock
-./bin/questlock revise quest
+./questlock revise quest
 ```
+
+From a checkout installation, use `./bin/questlock` instead. To build source,
+run `go build -trimpath -o bin/questlock ./cmd/questlock`.
 
 The quest uses real authenticated HTTP and temporary SQLite, without a model,
 provider account, API key, GPU, or separately running broker. It cleans up after
@@ -94,7 +97,9 @@ Unicode styling is appropriate for your audience; the caller retains that review
 
 Successful results use a content-addressed key
 `revision/v1/results/<request_digest>` in the authenticated scope. Repeating the
-same approved edit plan can reuse that exact result. A different source, digest,
+same approved edit plan can reuse that exact result. Every invocation still
+rechecks the source, applies the bounded edits, and validates the result before
+confirming the immutable publication. A different source, digest,
 ordered edit list, task revision, or declared checks gives a different identity;
 similar wording does not qualify. Accounting opt-in is outside that identity.
 No model-result TTL or semantic equivalence is
@@ -159,6 +164,14 @@ cancellation, file-size, and path-confinement boundary with `questlock_delegate`
 It has no file-edit, shell, or discovery tools. An older running MCP process
 needs its normal controlled restart to expose the new tool; skill installation
 alone does not change that running process or client model configuration.
+
+For a default across local Codex project and standalone chats, opt in through
+Codex's supported global instruction mechanisms after installing the skill.
+Prefer exact edits/reuse before suitable checked local inference, preserve
+caller judgment and explicit human acceptance, and use stable project/use-case
+task IDs across chats. [Setup and fresh-session validation](installation.md#optional-default-for-local-codex-chats)
+are separate from binary installation. This is a routing preference for eligible
+work, not interception of every conversation or a change to hosted allowances.
 
 OpenRouter continues to provide model access, routing, and provider caching.
 Questlock's companion path handles an exact downstream edit before asking for

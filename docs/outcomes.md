@@ -1,6 +1,6 @@
 # From passed checks to human-accepted work
 
-## v0.6.0 candidate: account for deterministic revisions
+## v0.6.0: account for deterministic revisions
 
 Checked literal revisions may opt in with `track_outcome: true` in their own
 request. A fresh checked edit uses cost basis `deterministic_edit`; an exact
@@ -18,7 +18,8 @@ Checks and reuse do not carry the parent's acceptance to the edited result.
 Explicit human feedback is still required; missing effort, cost coverage, or an
 accepted denominator retains the existing null behavior. A registration failure
 is recovered from its exact metadata record, without a model retry. See
-[checked revisions](checked-revisions.md). This candidate is not yet published.
+[checked revisions](checked-revisions.md) and the
+[published release evidence](validation.md#v060-observations--2026-10-16).
 
 This describes the published **v0.4.0 experimental release**. A worker passing
 its declared checks is useful evidence, but a person

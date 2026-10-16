@@ -48,6 +48,6 @@
 <text x="770" y="796" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Only explicit review accepts or records rework</text>
 <text x="770" y="825" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">All revision-cohort readers/writers require v0.6+</text>
 <text x="50" y="82" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#18243b">Questlock checked revisions</text>
-<text x="50" y="124" font-family="Arial, sans-serif" font-size="19" font-weight="400" fill="#34445e">v0.6.0 source candidate · exact mechanical edits of checked text</text>
+<text x="50" y="124" font-family="Arial, sans-serif" font-size="19" font-weight="400" fill="#34445e">v0.6.0 experimental · exact mechanical edits of checked text</text>
 <text x="50" y="916" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#34445e">Caller approves the source, edits, and destination. No full-session interception; no file-edit tool; hardware and hosted-chat costs remain.</text>
 </svg>
