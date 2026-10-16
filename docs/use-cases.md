@@ -1,5 +1,21 @@
 # Where Questlock fits
 
+## Exact edits of reviewed work (v0.6.0 candidate)
+
+A launch post needs its product name and one mission sentence emphasized. A
+reviewed JSON document needs one approved field changed. The source is already
+available and the intended replacement is exact. Use `revise plan` to preview
+pinned source bytes and counted edits, then `revise run` to publish checked text
+and provenance. The [examples](../examples/revisions/README.md) include both
+formatting and strict JSON cases; `revise quest` covers three simple and three
+complex scenarios without any model account.
+
+The concrete win is a deterministic operation with no new model call, rather
+than an assumed cheaper rewrite. Source drift, wrong counts and failed checks
+withhold output. Human review, the source-generation cost, hardware and hosted
+chat allowance remain separate. Meaning changes and open-ended rewrites still
+need a new approved task. [Contract and limits](checked-revisions.md).
+
 Questlock is useful when cooperating workers publish small pieces of shared text
 and need to detect stale updates or recover the result of an uncertain publish.
 It runs on one trusted host and stores UTF-8 artifacts of up to 1 MiB each.

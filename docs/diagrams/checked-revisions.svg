@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="960" viewBox="0 0 1400 960" role="img" aria-labelledby="title desc">
+<title id="title">Questlock checked revisions</title>
+<desc id="desc">Exact source and literal edits pass checks, publish a scoped immutable result and record zero-new-generation accounting with separate human review.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#506381"/></marker></defs>
+<rect width="1400" height="960" fill="#f8fafc"/>
+<path d="M420 230 L510 285" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M420 430 L510 365" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M880 290 L970 255" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M1160 345 L1160 405" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M695 420 L695 495" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M580 420 L355 705" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M1160 535 L1050 705" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="50" y="165" width="370" height="130" rx="12" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="70" y="198" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#18243b">1  Exact approved source</text>
+<text x="70" y="227" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Inline UTF-8 + SHA-256</text>
+<text x="70" y="256" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">or scoped parent key + version 1</text>
+<rect x="50" y="355" width="370" height="145" rx="12" fill="#eef0ff" stroke="#7970c2" stroke-width="2"/>
+<text x="70" y="388" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#18243b">2  Literal edit plan</text>
+<text x="70" y="417" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Counted replacements, in order</text>
+<text x="70" y="446" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Required source and output checks</text>
+<text x="70" y="475" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">No model, prompt, or paid fallback</text>
+<rect x="510" y="240" width="370" height="180" rx="12" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="530" y="273" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#18243b">3  Verify and transform</text>
+<text x="530" y="302" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Check source digest and criteria</text>
+<text x="530" y="331" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Require exact occurrence counts</text>
+<text x="530" y="360" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Apply edits; check output</text>
+<rect x="970" y="165" width="380" height="180" rx="12" fill="#eef0ff" stroke="#7970c2" stroke-width="2"/>
+<text x="990" y="198" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#18243b">4  Publish immutable result</text>
+<text x="990" y="227" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Scoped HTTP / CAS / SQLite</text>
+<text x="990" y="256" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">revision/v1/results/&lt;request_digest&gt;</text>
+<text x="990" y="285" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Output digest + parent provenance</text>
+<rect x="970" y="405" width="380" height="130" rx="12" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="990" y="438" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#18243b">5  Exact plan reuse or child edit</text>
+<text x="990" y="467" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Same request: recover checked result</text>
+<text x="990" y="496" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Child: pin parent key, version, digest</text>
+<rect x="510" y="495" width="370" height="130" rx="12" fill="#fff0ee" stroke="#b14b3b" stroke-width="2"/>
+<text x="530" y="528" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#18243b">Stop and withhold text</text>
+<text x="530" y="557" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Digest, count, or check failure</text>
+<text x="530" y="586" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Uncertain publication or cancellation</text>
+<rect x="50" y="705" width="610" height="145" rx="12" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="70" y="738" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#18243b">No new generation accounting</text>
+<text x="70" y="767" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">generation_called: false; known zero this-run usage</text>
+<text x="70" y="796" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Fresh edit: deterministic_edit; exact repeat: reuse_zero</text>
+<text x="70" y="825" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">No guessed token savings or model TTFT</text>
+<rect x="750" y="705" width="600" height="145" rx="12" fill="#eef0ff" stroke="#7970c2" stroke-width="2"/>
+<text x="770" y="738" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#18243b">Optional content-free outcome cohort</text>
+<text x="770" y="767" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Separate task/revision; human acceptance stays unset</text>
+<text x="770" y="796" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">Only explicit review accepts or records rework</text>
+<text x="770" y="825" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#18243b">All revision-cohort readers/writers require v0.6+</text>
+<text x="50" y="82" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#18243b">Questlock checked revisions</text>
+<text x="50" y="124" font-family="Arial, sans-serif" font-size="19" font-weight="400" fill="#34445e">v0.6.0 source candidate · exact mechanical edits of checked text</text>
+<text x="50" y="916" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#34445e">Caller approves the source, edits, and destination. No full-session interception; no file-edit tool; hardware and hosted-chat costs remain.</text>
+</svg>

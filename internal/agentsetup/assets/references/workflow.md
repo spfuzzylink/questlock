@@ -1,6 +1,6 @@
 # Task snapshot and local setup
 
-The skill runs independently of the source checkout. Its helper uses `QUESTLOCK_BIN`, defaulting to `$HOME/.local/bin/questlock`. Call it with `sh scripts/run.sh plan|run|quest|worker-run|worker-serve` from the skill directory. Set `QUESTLOCK_TOKEN` or `QUESTLOCK_TOKEN_FILE`; live commands read the default token file `$HOME/.local/share/questlock/agent-workflows/worker.token`. Ollama uses no provider key. Use `OPENAI_API_KEY` for OpenAI, `ANTHROPIC_API_KEY` for Claude, `OPENROUTER_API_KEY` for OpenRouter and `SGLANG_API_KEY` for authenticated SGLang. Load keys using the user's existing secret mechanism; never print them.
+The skill runs independently of the source checkout. Its helper uses `QUESTLOCK_BIN`, defaulting to `$HOME/.local/bin/questlock`. Call it with `sh scripts/run.sh plan|run|quest|revise-plan|revise-run|revise-quest|worker-run|worker-serve` from the skill directory. Set `QUESTLOCK_TOKEN` or `QUESTLOCK_TOKEN_FILE`; live commands read the default token file `$HOME/.local/share/questlock/agent-workflows/worker.token`. Ollama uses no provider key. Use `OPENAI_API_KEY` for OpenAI, `ANTHROPIC_API_KEY` for Claude, `OPENROUTER_API_KEY` for OpenRouter and `SGLANG_API_KEY` for authenticated SGLang. Load keys using the user's existing secret mechanism; never print them.
 
 For a fresh local broker, provision once in a foreground shell:
 
@@ -13,7 +13,49 @@ mkdir -p "$HOME/.local/share/questlock/agent-workflows"
 
 The token command refuses an existing output file. Stop if provisioning fails; investigate existing state instead of overwriting a credential. Once provisioned, restart using just the same `serve` command. Keep that process running while workers use it. This is not a boot service. For a shared remote broker, use its HTTPS URL via `--broker` and credentials in the intended scope; workers never share the SQLite file over a network.
 
-## Spec fields
+## Exact presentation edits with no model
+
+On v0.6.0+, adapt [checked-revision.json](checked-revision.json) when exact
+literal changes satisfy the request. Do not ask another model to regenerate
+already-reviewed text just to apply known formatting. An inline source plus its
+SHA-256 supports offline preview; a shared source uses the immutable
+`revision/v1/results/<request_digest>` key, exact version `1`, and output digest
+from a prior successful revision in the same scope. These are alternatives.
+
+```sh
+sh scripts/run.sh revise-plan --request references/checked-revision.json
+sh scripts/run.sh revise-run --request references/checked-revision.json --broker http://127.0.0.1:8080
+sh scripts/run.sh revise-quest
+```
+
+The strict request has `schema: 1`, `task`, `revision`, `source`, 1–32 ordered
+`edits`, and required `source_checks`/`checks` (1–64 each). Each edit specifies
+nonempty `old`, `new` (empty is allowed), and positive `expected_matches`.
+`source.sha256` always pins the unmodified UTF-8 bytes. Source/output are capped
+at 256 KiB and each literal at 16 KiB. Check kinds are `json_valid`,
+`json_equals`, `contains`, and `not_contains`. There is no fuzzy or semantic
+matching. Source/check/count failure or uncertain publication withholds text
+and stops; no model fallback runs.
+
+`plan` returns `status: planned` without durability. Only a successful `run`
+with `status: completed`, `durable: true`, passing checks, and `artifact`
+confirms publication. The application reviews the result and applies `text`
+to its destination; Questlock exposes no filesystem edit tool. A fresh edit
+reports cost basis `deterministic_edit`, an exact repeat `reuse_zero`; both
+report `generation_called: false`, known zero `this_run_usage` and provider
+cost. Source-generation cost is not recharged, and avoided tokens are not
+estimated. These are local text operations, not faster model TTFT.
+
+The optional `track_outcome: true` creates content-free accounting in a separate
+task/revision cohort. Require a recorded receipt and v0.6.0+ readers/writers for
+that cohort; older outcome clients reject its additive `deterministic_edit`
+basis. Human acceptance remains unset until explicit operator feedback. The
+same policy applies through `questlock_revise` using the approved request path
+inside the worker workspace, sharing admission and cancellation with
+`questlock_delegate`. This helper does not change native client settings or
+restart a running MCP process.
+
+## Model spec fields
 
 Specs are UTF-8 JSON objects, maximum 1MiB, with no unknown fields or trailing content. The included examples are fixtures. Replace their facts with the caller's approved current snapshot. For API jobs choose a currently supported, account-accessible model; for local jobs choose an installed local model.
 

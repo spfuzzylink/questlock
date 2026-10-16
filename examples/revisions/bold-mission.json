@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "task": "launch-mission",
+  "revision": "approved-1",
+  "source": {
+    "text": "The mission: lower cost per accepted task, including the work a person has to redo.",
+    "sha256": "022affc3d9291a0d35c7489227c2138902bbc471b858168b5d35c67fdc27aa23"
+  },
+  "edits": [
+    {
+      "old": "The mission: lower cost per accepted task, including the work a person has to redo.",
+      "new": "𝐓𝐡𝐞 𝐦𝐢𝐬𝐬𝐢𝐨𝐧: 𝐥𝐨𝐰𝐞𝐫 𝐜𝐨𝐬𝐭 𝐩𝐞𝐫 𝐚𝐜𝐜𝐞𝐩𝐭𝐞𝐝 𝐭𝐚𝐬𝐤, 𝐢𝐧𝐜𝐥𝐮𝐝𝐢𝐧𝐠 𝐭𝐡𝐞 𝐰𝐨𝐫𝐤 𝐚 𝐩𝐞𝐫𝐬𝐨𝐧 𝐡𝐚𝐬 𝐭𝐨 𝐫𝐞𝐝𝐨.",
+      "expected_matches": 1
+    }
+  ],
+  "source_checks": [
+    {
+      "id": "source-mission",
+      "kind": "contains",
+      "text": "The mission: lower cost per accepted task, including the work a person has to redo."
+    }
+  ],
+  "checks": [
+    {
+      "id": "bold-mission",
+      "kind": "contains",
+      "text": "𝐓𝐡𝐞 𝐦𝐢𝐬𝐬𝐢𝐨𝐧: 𝐥𝐨𝐰𝐞𝐫 𝐜𝐨𝐬𝐭 𝐩𝐞𝐫 𝐚𝐜𝐜𝐞𝐩𝐭𝐞𝐝 𝐭𝐚𝐬𝐤, 𝐢𝐧𝐜𝐥𝐮𝐝𝐢𝐧𝐠 𝐭𝐡𝐞 𝐰𝐨𝐫𝐤 𝐚 𝐩𝐞𝐫𝐬𝐨𝐧 𝐡𝐚𝐬 𝐭𝐨 𝐫𝐞𝐝𝐨."
+    }
+  ],
+  "track_outcome": true
+}

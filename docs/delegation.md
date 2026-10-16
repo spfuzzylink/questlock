@@ -1,5 +1,22 @@
 # Bounded local-first delegation
 
+## Prefer exact revisions before generating (v0.6.0 candidate)
+
+For a precisely specified presentation or literal edit of reviewed text, use
+`questlock revise plan|run --request PATH` or MCP `questlock_revise`. The request
+pins the source hash or exact shared parent and declares counted replacements
+and source/output checks. This deterministic path calls no model. The CLI/MCP
+withholds failed or uncertain results; a failure does not authorize generation
+fallback. For further reasoning, the caller constructs and reviews a separate
+bounded request under the user's existing authorization.
+
+The two MCP tools share path confinement, one-active-task admission and
+cancellation. `questlock_revise` reads only the explicit request inside the
+worker workspace, returns checked text/provenance, and edits no files. Existing
+v0.5.0 clients remain usable; upgrade/restart a worker deliberately to discover
+the new tool. Installing a skill does not restart the process or rewrite client
+configuration. [Full contract, examples and accounting](checked-revisions.md).
+
 The **v0.5.0 experimental source candidate** retains bounded delegation and
 opt-in outcome tracking, while adding standalone self-hosted SGLang dense/HiCache
 tiers and a dedicated OpenRouter paid tier. The `delegation` Go package and

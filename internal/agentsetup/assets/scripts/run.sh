@@ -7,14 +7,20 @@ if [ ! -x "$questlock_bin" ]; then
   exit 1
 fi
 if [ "$#" -eq 0 ]; then
-  echo 'Usage: sh scripts/run.sh plan|run|quest|worker-run|worker-serve [flags]' >&2
+  echo 'Usage: sh scripts/run.sh plan|run|quest|revise-plan|revise-run|revise-quest|worker-run|worker-serve [flags]' >&2
   exit 2
 fi
 questlock_command=$1
 shift
 case "$questlock_command" in
-  plan|quest) ;;
-  run|worker-run|worker-serve)
+  plan|quest|revise-quest) ;;
+  revise-plan)
+    # Inline planning is offline. Only the CLI reads this file if a parent
+    # reference actually requires authenticated broker access.
+    QUESTLOCK_TOKEN_FILE=${QUESTLOCK_TOKEN_FILE:-"$HOME/.local/share/questlock/agent-workflows/worker.token"}
+    export QUESTLOCK_TOKEN_FILE
+    ;;
+  run|revise-run|worker-run|worker-serve)
     if [ -z "${QUESTLOCK_TOKEN:-}" ]; then
       questlock_token_file=${QUESTLOCK_TOKEN_FILE:-"$HOME/.local/share/questlock/agent-workflows/worker.token"}
       if [ ! -r "$questlock_token_file" ]; then
@@ -31,11 +37,14 @@ case "$questlock_command" in
     fi
     ;;
   *)
-    echo 'Usage: sh scripts/run.sh plan|run|quest|worker-run|worker-serve [flags]' >&2
+    echo 'Usage: sh scripts/run.sh plan|run|quest|revise-plan|revise-run|revise-quest|worker-run|worker-serve [flags]' >&2
     exit 2
     ;;
 esac
 case "$questlock_command" in
+  revise-plan) exec "$questlock_bin" revise plan "$@" ;;
+  revise-run) exec "$questlock_bin" revise run "$@" ;;
+  revise-quest) exec "$questlock_bin" revise quest "$@" ;;
   worker-run) exec "$questlock_bin" worker run "$@" ;;
   worker-serve) exec "$questlock_bin" worker serve "$@" ;;
 esac

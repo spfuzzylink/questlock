@@ -1,5 +1,21 @@
 # Model cost-control architecture: what, why, how
 
+## v0.6.0 candidate: avoid generation for exact edits
+
+The next layer is a checked `revision` operation beside the model Runner. The
+caller already has reviewed text and supplies exact literal changes. Source
+hashes, counted replacements, source/output checks and immutable scoped parent
+references bound that mechanical operation. No model adapter or provider budget
+reservation is involved. A fresh edit reports `deterministic_edit`, an exact
+repeat `reuse_zero`; neither invents avoided token counts or a model TTFT.
+
+This extends the OpenRouter companion workflow: route through OpenRouter when a
+model is needed, and use Questlock's deterministic path when an exact edit is
+sufficient. It does not select models automatically or intercept surrounding
+chats. See [checked revisions](checked-revisions.md), the [SVG flow](diagrams/checked-revisions.svg),
+and its [editable draw.io source](diagrams/checked-revisions.drawio).
+Published v0.5.0 remains available while v0.6.0 verification/publication is pending.
+
 This guide describes the **v0.5.0 experimental release**, adding
 OpenRouter and explicit SGLang runtime/cache contracts to bounded tasks and human
 feedback. Tagged publication is verified; live GPU qualification remains pending.

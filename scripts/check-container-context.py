@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TOP_LEVEL = {"go.mod", "go.sum", "LICENSE", "ATTRIBUTION.md", "THIRD_PARTY_NOTICES.md"}
 GO_DIRECTORIES = {
     "cmd/questlock", "internal/store", "internal/httpapi", "internal/agentsetup",
-    "client", "protocol", "inference", "observability", "evaluation", "delegation", "worker", "outcomes",
+    "client", "protocol", "inference", "observability", "evaluation", "delegation", "worker", "outcomes", "revision",
 }
 EMBEDDED_FILES = {
     "internal/agentsetup/assets/SKILL.md",
@@ -23,6 +23,7 @@ EMBEDDED_FILES = {
     "internal/agentsetup/assets/references/workflow.md",
     "internal/agentsetup/assets/references/local-summary.json",
     "internal/agentsetup/assets/references/local-worker.json",
+    "internal/agentsetup/assets/references/checked-revision.json",
     "internal/agentsetup/assets/references/openai-summary.json",
     "internal/agentsetup/assets/references/claude-summary.json",
     "evaluation/fixtures/quickstart.json",
@@ -30,7 +31,7 @@ EMBEDDED_FILES = {
 REQUIRED_FILES = TOP_LEVEL | EMBEDDED_FILES | {
     "cmd/questlock/main.go", "internal/store/store.go", "internal/httpapi/httpapi.go",
     "internal/agentsetup/install.go", "client/client.go", "protocol/protocol.go", "inference/runner.go",
-    "observability/langfuse.go", "evaluation/fixtures.go", "delegation/router.go", "worker/worker.go", "outcomes/store.go",
+    "observability/langfuse.go", "evaluation/fixtures.go", "delegation/router.go", "worker/worker.go", "outcomes/store.go", "revision/types.go",
 }
 PRIVATE_SENTINELS = (
     ".local/context-private.txt", "cmd/.DS_Store", "cmd/questlock/.context-private.go",
@@ -40,6 +41,7 @@ PRIVATE_SENTINELS = (
     "evaluation/fixtures/nested/quickstart.json", "evaluation/nested/context-private.go",
     "delegation/context-private.env", "worker/context-private-request.json",
     "worker/nested/context-private.go", "scripts/langfuse/context-private.env",
+    "revision/context-private-request.json", "revision/nested/context-private.go",
     "outcomes/context-private-feedback.json", "outcomes/nested/context-private.go",
     "scripts/langfuse/context-private-request.json",
 )

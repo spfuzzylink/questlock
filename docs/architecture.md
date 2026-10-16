@@ -1,5 +1,22 @@
 # Architecture
 
+## Checked deterministic revisions (v0.6.0 candidate)
+
+The new Go `revision` path composes with the same scoped publication boundary.
+It verifies exact source bytes/digest and declared source checks, applies an
+ordered counted literal edit plan, and checks the output before publishing to
+`revision/v1/results/<request_digest>`. Each immutable result links source and
+output digests plus an optional exact parent key/version. Workers exchange text
+through HTTP; they receive neither the SQLite file nor an execution tool.
+
+A revision has no provider or model call. An inline preview is fully offline;
+a shared parent read and durable run use broker authentication. Concurrent exact
+plans converge on the same immutable result. Digest/count/check failure or
+uncertain publication withholds text and stops without fallback. Optional outcome
+accounting stays separate from human acceptance. See the [request and failure
+contract](checked-revisions.md) and [editable flow](diagrams/checked-revisions.drawio).
+Publication evidence for this candidate remains pending.
+
 Questlock has one trusted broker and multiple independently authenticated workers.
 It protects publication of shared UTF-8 artifacts on one host.
 

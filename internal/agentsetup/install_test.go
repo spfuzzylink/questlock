@@ -2,6 +2,7 @@ package agentsetup
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"os"
 	"os/exec"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/inference"
+	"github.com/spfuzzylink/questlock/revision"
 )
 
 func setupOptions(t *testing.T) Options {
@@ -267,6 +269,14 @@ func TestEmbeddedSpecsBuildOffline(t *testing.T) {
 	if err := delegation.Validate(request, false); err != nil {
 		t.Fatal(err)
 	}
+	revisionRequest, err := revision.Load(bytes.NewReader(files["references/checked-revision.json"]))
+	if err != nil {
+		t.Fatal(err)
+	}
+	preview, err := (revision.Runner{}).Plan(context.Background(), revisionRequest)
+	if err != nil || preview.Status != "planned" || preview.Durable || preview.GenerationCalled || preview.Artifact != nil {
+		t.Fatalf("embedded revision example is not a checked offline plan: %#v %v", preview, err)
+	}
 }
 
 func TestInstalledShellHelperTokenHandlingWithoutPaidCalls(t *testing.T) {
@@ -297,8 +307,24 @@ func TestInstalledShellHelperTokenHandlingWithoutPaidCalls(t *testing.T) {
 	if err != nil || output != "model\nplan\n--spec\nexample.json\ntoken-absent\n" {
 		t.Fatalf("offline helper unexpectedly needed/read a token: %q %v", output, err)
 	}
+	for _, command := range []string{"revise-plan", "revise-quest"} {
+		args := []string{command}
+		want := "revise\n" + strings.TrimPrefix(command, "revise-") + "\n"
+		if command == "revise-plan" {
+			args = append(args, "--request", "approved-edit.json")
+			want += "--request\napproved-edit.json\n"
+		}
+		output, err := invoke(args...)
+		want += "token-absent\n"
+		if err != nil || output != want {
+			t.Fatalf("offline revision helper read a token or changed arguments: %q %v", output, err)
+		}
+	}
 	if _, err := invoke("run", "--spec", "example.json"); err == nil {
 		t.Fatal("missing token did not stop run")
+	}
+	if _, err := invoke("revise-run", "--request", "approved-edit.json"); err == nil {
+		t.Fatal("missing token did not stop revision publication")
 	}
 	tokenFile := filepath.Join(options.Home, ".local", "share", "questlock", "agent-workflows", "worker.token")
 	if err := os.MkdirAll(filepath.Dir(tokenFile), 0700); err != nil {
@@ -319,13 +345,17 @@ func TestInstalledShellHelperTokenHandlingWithoutPaidCalls(t *testing.T) {
 	if _, err := invoke("unknown"); err == nil {
 		t.Fatal("helper accepted an unsupported command")
 	}
-	for _, command := range []string{"worker-run", "worker-serve"} {
+	for _, command := range []string{"worker-run", "worker-serve", "revise-run"} {
 		output, err := invoke(command, "--broker", "http://127.0.0.1:8080")
-		if err != nil || !strings.HasPrefix(output, "worker\n"+strings.TrimPrefix(command, "worker-")+"\n") || !strings.Contains(output, "token-present") {
+		want := "worker\n" + strings.TrimPrefix(command, "worker-") + "\n"
+		if command == "revise-run" {
+			want = "revise\nrun\n"
+		}
+		if err != nil || !strings.HasPrefix(output, want) || !strings.Contains(output, "token-present") {
 			t.Fatalf("worker helper did not preserve args and private token: %q %v", output, err)
 		}
 	}
-	if strings.Count(string(readFile(t, filepath.Join(options.Home, "calls.log"))), "invoked") != 5 {
+	if strings.Count(string(readFile(t, filepath.Join(options.Home, "calls.log"))), "invoked") != 8 {
 		t.Fatal("helper retried or invoked a rejected command")
 	}
 }

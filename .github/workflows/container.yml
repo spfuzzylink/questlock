@@ -6,7 +6,7 @@ on:
       version:
         description: Published experimental release tag (vX.Y.Z)
         required: true
-        default: v0.5.0
+        default: v0.6.0
         type: string
   # release:published is suppressed when the CI release uses GITHUB_TOKEN.
   workflow_run:
@@ -152,6 +152,11 @@ jobs:
             docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
               --memory=256m --cpus=1 --pids-limit=128 \
               --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" model runtime-quest
+          fi
+          if python3 -c 'import sys; sys.exit(tuple(map(int, sys.argv[1].split("."))) < (0, 6, 0))' "$RELEASE_VERSION"; then
+            docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+              --memory=256m --cpus=1 --pids-limit=128 \
+              --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" revise quest
           fi
       - name: Export only the image that passed its native smoke test
         run: |
