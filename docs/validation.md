@@ -145,7 +145,6 @@ on every answer, whole-session interception, or reduced hosted-chat allowances.
 The [complete approved inputs and checks](../examples/revisions/comparison.json)
 and [preparation steps](../examples/revisions/README.md#reproduce-the-measured-edit-inputs)
 are public; no private credentials or observed generated text are included.
- after integration
 
 One declared comparison ran once after the global integration. Three simple
 cases covered product emphasis, an exact mission sentence and a JSON edit;
