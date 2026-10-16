@@ -95,3 +95,31 @@ func TestStreamedTimingReadMapping(t *testing.T) {
 		t.Fatal("streamed generation without first-token mapping was accepted")
 	}
 }
+
+func TestRuntimeCacheReadbackDoesNotBecomeBilling(t *testing.T) {
+	f := fixtures(time.Now())[3]
+	f.receipt = observability.Receipt{TraceID: "trace-fixture", RootSpanID: "root", GenerationSpanID: "child"}
+	const reply = `[
+	{"id":"root","traceId":"trace-fixture","type":"SPAN","name":"questlock.run","metadata":{"questlock_outcome":"complete","questlock_provider":"sglang","questlock_reused":false,"questlock_cost_source":"local_zero","questlock_this_run_input_tokens":100,"questlock_this_run_output_tokens":40,"questlock_this_run_cost_usd":0}},
+	{"id":"child","traceId":"trace-fixture","parentObservationId":"root","type":"GENERATION","name":"questlock.generate","model":"questlock-smoke-sglang-model","metadata":{"questlock_cost_source":"local_zero","questlock_runtime_cache_profile":"hicache","questlock_runtime_cache_basis":"runtime_reported_compute_reuse","questlock_runtime_cache_cached_known":true,"questlock_runtime_cache_cached_tokens":80,"questlock_runtime_cache_device_known":true,"questlock_runtime_cache_device_tokens":50,"questlock_runtime_cache_host_known":true,"questlock_runtime_cache_host_tokens":30,"questlock_runtime_cache_storage_known":false},"usageDetails":{"input":100,"input_cached_tokens":0,"input_cache_creation":0,"output":40,"output_reasoning_tokens":0,"total":140},"costDetails":{"total":0},"totalCost":0,"latency":0.05}
+	]`
+	for _, kind := range []string{"valid", "billing", "missing-host", "invented-storage"} {
+		t.Run(kind, func(t *testing.T) {
+			var observations []observation
+			if err := json.Unmarshal([]byte(reply), &observations); err != nil {
+				t.Fatal(err)
+			}
+			switch kind {
+			case "billing":
+				observations[1].UsageDetails["input_cached_tokens"] = 80
+			case "missing-host":
+				delete(observations[1].Metadata, "questlock_runtime_cache_host_tokens")
+			case "invented-storage":
+				observations[1].Metadata["questlock_runtime_cache_storage_tokens"] = float64(0)
+			}
+			if err := validateObservations(f, observations); (err == nil) != (kind == "valid") {
+				t.Fatal("runtime evidence contract mismatch", err)
+			}
+		})
+	}
+}
