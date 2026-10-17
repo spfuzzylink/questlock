@@ -94,6 +94,13 @@ CREATE TABLE IF NOT EXISTS audit (
     created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS audit_scope_id ON audit(scope, id DESC);
+CREATE INDEX IF NOT EXISTS audit_scope_accepted_id ON audit(scope, id) WHERE outcome = 'accepted';
+CREATE INDEX IF NOT EXISTS audit_scope_accepted_key ON audit(scope, key, id) WHERE outcome = 'accepted';
+CREATE TABLE IF NOT EXISTS sync_authority (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    source_id TEXT NOT NULL,
+    cursor_key BLOB NOT NULL
+);
 `
 
 // Open creates or opens a local SQLite database. New directories are private;
@@ -155,6 +162,10 @@ func Open(path string) (*Store, error) {
 	if _, err = tx.Exec(schema); err != nil {
 		_ = tx.Rollback()
 		return fail(fmt.Errorf("initialize schema: %w", err))
+	}
+	if err = initializeSync(context.Background(), tx); err != nil {
+		_ = tx.Rollback()
+		return fail(fmt.Errorf("initialize sync authority: %w", err))
 	}
 	if err = tx.Commit(); err != nil {
 		return fail(fmt.Errorf("commit schema: %w", err))
@@ -233,6 +244,19 @@ func (s *Store) Authenticate(ctx context.Context, token string) (Principal, erro
 // operation ID is permanently bound to the complete original request. Retries
 // return that original version even after newer versions have been published.
 func (s *Store) Publish(ctx context.Context, p Principal, r protocol.PublishRequest) (protocol.PublishResult, error) {
+	return s.publish(ctx, p, r, nil)
+}
+
+// PublishPinned adds a rejection-only identity precondition inside the existing
+// CAS transaction. It never grants the supplied scope or agent any authority.
+func (s *Store) PublishPinned(ctx context.Context, p Principal, r protocol.PublishRequest, expected protocol.Identity) (protocol.PublishResult, error) {
+	if err := expected.Validate(); err != nil {
+		return protocol.PublishResult{}, invalid("invalid expected identity")
+	}
+	return s.publish(ctx, p, r, &expected)
+}
+
+func (s *Store) publish(ctx context.Context, p Principal, r protocol.PublishRequest, expected *protocol.Identity) (protocol.PublishResult, error) {
 	var result protocol.PublishResult
 	if err := validateRequest(r); err != nil {
 		return result, err
@@ -244,6 +268,15 @@ func (s *Store) Publish(ctx context.Context, p Principal, r protocol.PublishRequ
 	defer tx.Rollback()
 	if err = checkActive(ctx, tx, p); err != nil {
 		return result, err
+	}
+	if expected != nil {
+		actual, err := identityIn(ctx, tx, p)
+		if err != nil {
+			return result, err
+		}
+		if actual != *expected {
+			return result, &Error{Code: "identity_conflict", Message: "authenticated authority, scope or agent differs from the pinned identity"}
+		}
 	}
 	var original protocol.Artifact
 	var originalExpected int64

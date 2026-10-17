@@ -173,3 +173,14 @@ The optional disposable Langfuse stack is separate from this small broker image.
 It has six content-pinned services, needs substantial local resources, and is
 validated through an isolated wrapper. It needs no hosted Langfuse account.
 The actual-server CI readback contract passed; see [setup and limits](inference-observability.md#validate-a-self-hosted-endpoint).
+
+## Version 0.8 source candidate
+
+The source candidate adds `edge quest` and `resources quest`, both offline with
+temporary state and no model. Native publication checks run them with the same
+network-disabled, read-only settings above. The optional TypeSafe decision bridge
+requires a separately prepared Python environment and installed Ollama weights;
+the small broker image contains neither Python nor model weights. Follow the
+[local decision guide](system-one.md) on the host. Resource fixtures are not
+GPU emulation or a multi-host performance benchmark. Current verified published
+image commands above retain v0.7.0 until v0.8 publication is verified.

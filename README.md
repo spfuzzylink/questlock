@@ -90,6 +90,14 @@ These demos use temporary state and no model account. Local inference needs
 installed Ollama weights. Paid generation requires explicit credentials and
 policy; guided setup enables no paid escalation.
 
+## New in the 0.8 source candidate
+
+Queue edge writes safely, share accepted results, and admit local work according
+to CPU and memory headroom. Optional typed decisions use the official TypeSafe
+adapter with local Ollama. [Your policy is explicit configuration](examples/preferences/README.md),
+including a local-only preset; forks choose their own preferences.
+[Design and limits](docs/local-coordination.md).
+
 ## Go deeper
 
 - [What changed in 0.7.0](docs/release-notes.md) · [Measured build report](docs/success-report-v0.7.0.md)
@@ -97,6 +105,7 @@ policy; guided setup enables no paid escalation.
 - [Model workflows](docs/model-workflows.md) · [Acceptance and human rework](docs/outcomes.md)
 - [Langfuse and timings](docs/inference-observability.md) · [SGLang/KV cache integration](docs/runtime-cache.md)
 - [Containers](docs/containers.md) · [API](docs/api.md) · [Validation](docs/validation.md)
+- [SecondGate: durable edge push and pull](docs/second-gate.md)
 - [Contribute](CONTRIBUTING.md) · [Security](SECURITY.md) · [MIT license](LICENSE) · [Credits](ATTRIBUTION.md)
 
 Experimental. One authoritative broker on one host; no automatic multi-writer

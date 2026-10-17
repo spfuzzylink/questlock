@@ -1,0 +1,13 @@
+{
+  "schema": "questlock.system-one.choice.v1",
+  "model": "qwen3.5:4b",
+  "state": "A caller reports an exact request digest with a previously validated Questlock result. No source data or requested operation changed. This is advisory routing only; the caller must independently verify that digest and the cached result before reuse.",
+  "question": "Recommend the smallest permitted next step. Choose abstain if the information is insufficient. Never authorize a write.",
+  "choices": [
+    {"id": "reuse", "description": "Ask the caller to verify the exact Questlock result and reuse it if it still matches."},
+    {"id": "checked_edit", "description": "Ask the caller to prepare an already authorized literal revision with exact old-text checks."},
+    {"id": "local_reasoning", "description": "Ask the caller to submit a separately approved bounded request to the local reasoning worker."},
+    {"id": "abstain", "description": "Stop and return to the caller for missing information or judgment."}
+  ],
+  "policy": {"min_score": 0.75, "min_margin": 0.2}
+}

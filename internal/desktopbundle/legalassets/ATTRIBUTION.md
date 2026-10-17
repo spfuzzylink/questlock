@@ -43,3 +43,12 @@ and [the integration boundary](docs/runtime-cache.md).
 
 See [BRANDING.md](BRANDING.md) for guidance on identifying upstream Questlock,
 modified forks, and independently operated services.
+
+The optional [System One decision integration](docs/system-one.md) uses TypeSafe
+AI's original [system-one-adapter-python](https://github.com/typesafe-ai/system-one-adapter-python)
+v0.2.1 and `typesafe-sdk` v0.7.0 under MIT. Their original notices are preserved in
+[the adapter license](optional/system-one/TypeSafe-LICENSE) and
+[the SDK license](optional/system-one/TypeSafe-SDK-LICENSE).
+These separately installed Python dependencies are not required for the normal
+Go CLI. This integration uses caller-selected local Ollama weights; it does not
+include Jev weights or imply TypeSafe endorsement.

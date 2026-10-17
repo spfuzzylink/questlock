@@ -1,0 +1,20 @@
+{
+  "schema": "questlock.system-one.choice.v1",
+  "model": "qwen3.5:4b",
+  "state": "A byte-for-byte exact previously validated result is already available for this same task fingerprint. No new reasoning or edit is needed.",
+  "question": "Recommend the least expensive appropriate processing lane.",
+  "choices": [
+    {
+      "id": "reuse",
+      "description": "Read an exact previously validated result without generating new text."
+    },
+    {
+      "id": "local_reasoning",
+      "description": "Perform new deliberate local model reasoning when no validated exact result exists."
+    }
+  ],
+  "policy": {
+    "min_score": 0.75,
+    "min_margin": 0.2
+  }
+}

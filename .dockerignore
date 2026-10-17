@@ -58,6 +58,9 @@ internal/agentsetup/assets/references/**
 !inference/
 inference/**
 !inference/*.go
+!admission/
+admission/**
+!admission/*.go
 !observability/
 observability/**
 !observability/*.go
@@ -85,6 +88,16 @@ client/**
 !protocol/
 protocol/**
 !protocol/*.go
+!edge/
+edge/**
+!edge/*.go
+!systemone/
+systemone/**
+!systemone/*.go
+!internal/edgequest/
+internal/edgequest/**
+!internal/edgequest/*.go
+!systemone/bridge.py
 # Runtime builds do not need tests or their fixtures.
 **/*_test.go
 # Finder metadata is never a Go build input, even when its suffix is .go.

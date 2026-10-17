@@ -173,11 +173,40 @@ The cohort counts task ID/revision pairs; it does not deduplicate revisions of
 one business deliverable. Immutable missing effort cannot be retrospectively
 corrected in this release and continues to make the combined metric unknown.
 
+## SecondGate: durable edge coordination
+
+One authoritative store exports bounded snapshots and accepted-publication
+changes in the authenticated token's scope. Immutable versions and accepted
+audit IDs reconstruct each frozen horizon; signed cursors retain it across
+pages and process restarts. Each private edge database persists a complete
+immutable publish request before forwarding it to the broker's existing CAS.
+The dedicated pinned publish route checks an authority/scope/receipt-agent
+tuple in the CAS transaction; older brokers reject that unknown route before
+writing, and the SDK never falls back to an unpinned publication. Uncertain
+requests survive restart for explicit exact retry; first-attempt known conflicts
+block until a caller decision. There is no automatic overwrite or fresh op ID.
+
+Pull stages a frozen snapshot privately, then promotes it atomically. Each
+accepted change page and its checkpoint commit together. Historical publication
+receipts never update the read cache. Each edge has its own owned private
+SQLite files, one live owner, hard retained-intent/cache/byte limits and usage
+counts suitable for an optional shared admission controller. Pressure can delay
+new work; it cannot discard durable intents or relax the authoritative CAS.
+
+![One authority exports snapshots and changes; writers retain the existing CAS path](diagrams/second-gate.svg)
+
+Run `questlock edge quest` without Go or a model for six real loopback/private-
+SQLite scenarios. See the [SDK, protocol and offline cases](second-gate.md), with
+[editable draw.io source](diagrams/second-gate.drawio). Pages contain raw artifact
+content. This adds no multi-writer acceptance, scheduler, or failover; real
+two-host integration remains unvalidated.
+
 ## What grows next
 
 SQLite serializes writers. Each scope's artifact and journal history grow without
-retention or quotas. Lists are bounded, but there is no pagination or historical
-content endpoint. This is intentionally one host without a scheduler or failover.
+retention or quotas. The current-key list remains capped; SecondGate provides
+scoped snapshot/change pagination rather than an arbitrary history-query API.
+This retains one authoritative host without a scheduler or failover.
 
 Future experiments include task-generation fencing, explicit storage budgets,
 retention with preserved retry semantics, and measuring coordination across two
@@ -191,3 +220,12 @@ local model, fixed loopback Ollama, private temporary client home, no imported
 credentials or active client config writes. Its tool execution uses Codex's
 selected sandbox. It does not proxy the hosted desktop chat or replicate model
 weights; successful tool use still needs task-specific review.
+
+## Local resource admission and explicit policy
+
+The opt-in [shared local control loop](local-coordination.md) connects exact reuse,
+checked revisions, local typed choices, deliberate local reasoning and accepted
+shared state. [Adaptive admission](adaptive-admission.md) samples host/container
+signals and protects broker headroom. It changes admission, not task content,
+permissions, CAS or existing MCP single-active behavior. Operators select their
+own [personal policy presets](../examples/preferences/README.md).

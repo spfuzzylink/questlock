@@ -1,0 +1,79 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Local control loop" id="local-control-loop">
+    <mxGraphModel pageWidth="1200" pageHeight="700">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="task" value="Task + exact snapshot&#10;Approved inputs and revision" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="140" width="215" height="95" />
+        </mxCell>
+        <mxCell id="reuse" value="Reuse / checked edit&#10;No new model call when valid" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="315" y="140" width="230" height="95" />
+        </mxCell>
+        <mxCell id="queue" value="Bounded waiting work&#10;Durable edge intents stay intact" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="615" y="140" width="230" height="95" />
+        </mxCell>
+        <mxCell id="admit" value="Adaptive admission&#10;CPU, memory and lane limits" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="915" y="140" width="240" height="95" />
+        </mxCell>
+        <mxCell id="decision" value="Local typed decision&#10;Allowed choices or abstain" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="915" y="355" width="240" height="100" />
+        </mxCell>
+        <mxCell id="reason" value="Local reasoning&#10;Explicit task, model and checks" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="615" y="355" width="230" height="100" />
+        </mxCell>
+        <mxCell id="broker" value="Authoritative broker&#10;CAS + immutable retry receipts" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="315" y="355" width="230" height="100" />
+        </mxCell>
+        <mxCell id="edge" value="Edge read cache&#10;Snapshot + accepted changes" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="355" width="215" height="100" />
+        </mxCell>
+        <mxCell id="probe" value="Host / container signals&#10;Reserve broker headroom" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="915" y="35" width="240" height="65" />
+        </mxCell>
+        <mxCell id="outcome" value="Outcomes + human feedback&#10;Count failed work and later rewrites" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="315" y="565" width="530" height="85" />
+        </mxCell>
+        <mxCell id="e0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontSize=12;" edge="1" parent="1" source="task" target="reuse">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e1" value="New reasoning" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontSize=12;" edge="1" parent="1" source="reuse" target="queue">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontSize=12;" edge="1" parent="1" source="queue" target="admit">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e3" value="Admit when it fits" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontSize=12;" edge="1" parent="1" source="admit" target="decision">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e4" value="Caller chooses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontSize=12;" edge="1" parent="1" source="decision" target="reason">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e5" value="Checked result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontSize=12;" edge="1" parent="1" source="reason" target="broker">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e6" value="Authenticated sync" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontSize=12;" edge="1" parent="1" source="broker" target="edge">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e7" value="Checked result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontSize=12;" edge="1" parent="1" source="reuse" target="broker">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontSize=12;" edge="1" parent="1" source="probe" target="admit">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e9" value="Record attempts" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontSize=12;" edge="1" parent="1" source="broker" target="outcome">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e10" value="Reuse only a valid snapshot" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontSize=12;" edge="1" parent="1" source="outcome" target="reuse">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="abstain" value="Abstain: return to caller" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="915" y="490" width="240" height="55" />
+        </mxCell>
+        <mxCell id="e-abstain" value="" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;strokeColor=#ab95ef;" edge="1" parent="1" source="decision" target="abstain">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
