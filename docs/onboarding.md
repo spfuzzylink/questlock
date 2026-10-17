@@ -15,8 +15,8 @@ This guide covers the experimental **v0.7.0** release.
 | Fresh clone or fork, using your source changes | Install the Go version in `go.mod`, run `go build -trimpath -o bin/questlock ./cmd/questlock`, then `./bin/questlock setup`. |
 
 Release archives need no Go installation. They support macOS and Linux on ARM64
-and x86-64; native Windows archives are not provided. Guided Claude Desktop
-installation is currently qualified for macOS. See [installation](installation.md)
+and x86-64; native Windows archives are not provided. Claude Desktop bundle generation supports macOS; native import and connection
+qualification remain pending. See [installation](installation.md)
 for downloads, checksums, and platform details.
 
 The examples below use `questlock`. Substitute `./questlock` from an extracted
