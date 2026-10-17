@@ -1,6 +1,13 @@
 # Questlock 0.7.0 — a first task before a first token
 
-**Experimental release candidate.**
+**Published experimental release.**
+[Release and downloads](https://github.com/spfuzzylink/questlock/releases/tag/v0.7.0) ·
+[Verified publication](validation.md#v070-observations--2026-10-17)
+
+The four native archives and two macOS MCPB extensions are published. Native
+Claude Desktop import/connection remains pending; package and protocol checks
+alone do not qualify it. Immutable archives retain their source-era candidate
+wording; the web documents record publication without replacing old assets.
 
 Run `questlock setup`, choose Codex, Claude Code or Claude Desktop, and finish a
 checked task without a model call or provider account. Codex/Claude Code setup

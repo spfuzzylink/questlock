@@ -77,14 +77,14 @@ separate runtime validation.
 For example, on Linux x86-64, from the download directory:
 
 ```sh
-sha256sum questlock_0.6.0_linux_amd64.tar.gz
+sha256sum questlock_0.7.0_linux_amd64.tar.gz
 ```
 
 On macOS use `shasum -a 256` instead. Compare the result with the **matching
 filename's entry** in `checksums.txt` before extracting. Then:
 
 ```sh
-tar -xzf questlock_0.6.0_linux_amd64.tar.gz
+tar -xzf questlock_0.7.0_linux_amd64.tar.gz
 ./questlock version
 ./questlock quest
 ./questlock model quest

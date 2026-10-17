@@ -21,9 +21,71 @@ read-only native baseline verification is currently qualified. Automatic
 failure rollback still checks exact installed bytes and preserves divergent
 repairs.
 
-Publication, all-platform release assets and GHCR validation will be recorded
-here after their actual gates complete. Previous release evidence below is
-preserved.
+Release source: `659e8d3944bdec690d6bda15c059ac87500c5d70`, the peeled
+`v0.7.0` tag. Independently reviewed head
+`5e59a9cdd2452ee6cfc3f1a7e8cc0ff557ea7701` and the release commit share tree
+`e798470385a0797247d5bed8393b4b3ec8bf468b`.
+
+[Source CI](https://github.com/spfuzzylink/questlock/actions/runs/38992770514) and
+[PR CI](https://github.com/spfuzzylink/questlock/actions/runs/38992773802) passed
+all seven required gates. [Tagged CI](https://github.com/spfuzzylink/questlock/actions/runs/38993151077)
+published the release after one failed-job rerun on the unchanged tag. The first
+Intel macOS attempt expired a 400 ms test deadline before reaching its stalled
+verifier. It reported `not_installed` and preserved the complete original bytes
+and `0640` mode. The failure is retained; no tag, production timeout or assertion
+was changed to pass. The next-release fixture adds an explicit verifier-entry
+barrier and a larger startup budget, with startup-timeout coverage separate.
+
+[Container CI](https://github.com/spfuzzylink/questlock/actions/runs/38993779586)
+passed native Linux AMD64/ARM64 execution and publication. All five offline quests,
+fixture evaluation, source-container checks and disposable real Langfuse readback
+remain required. No paid provider generation was used for qualification.
+
+### Actual published artifacts
+
+All seven actual assets were downloaded anonymously: checksums, four native
+Darwin/Linux AMD64/ARM64 archives and two native macOS MCPB extensions. Checksums,
+executable target headers, clean Go 1.27.1/CGO-disabled BUILDINFO, normalized
+archive metadata and all **76 public files** match the tagged source. MCPB members,
+manifest contracts, legal files and exact corresponding archive binaries pass;
+native Desktop import and connection remain unverified.
+
+| Asset | SHA-256 |
+| --- | --- |
+| `questlock_0.7.0_darwin_amd64.tar.gz` | `5e8a4b3f0ab0be6b775f74e92062bf6585cfcf2368fe606749510866d3884694` |
+| `questlock_0.7.0_darwin_arm64.tar.gz` | `97e86280a76b25c0182f3e2d04e4330d4c5d681b91fabd1a541c914b77fd6faa` |
+| `questlock_0.7.0_linux_amd64.tar.gz` | `092f1ebce8e4039ef33b42f85b98de660da5f78c772c9377e04f0724799ecd9f` |
+| `questlock_0.7.0_linux_arm64.tar.gz` | `e75ab21236699fbc8583ac584d9e8037ac7ddb9f3ebf41b752aa51283b1cbbec` |
+| `questlock_0.7.0_darwin_amd64.mcpb` | `f63860c1ead7316a8c0563645c8651965d8acee58d4e02facd5190a85a536080` |
+| `questlock_0.7.0_darwin_arm64.mcpb` | `fae69b69fbcaef47853f4519a5f4c6f0f98465042764b5185f560ba926832025` |
+
+Anonymous GHCR checks verified both configs and all 16 layers, compressed and
+uncompressed hashes, and extracted root filesystems. The exact archive binaries,
+BUILDINFO and legal files match. Both images use UID/GID 65532, `/data` mode
+`0755`, and `HOME=/data` / `TMPDIR=/data`. `v0.7.0` and `experimental` resolved to:
+
+`sha256:d724b6520b5e0573b261a945ef7481d8fe18bb69fe3c19a146ee47fc2f585db2`
+
+| Native image | Manifest digest |
+| --- | --- |
+| Linux AMD64 | `sha256:c24b3d19b5b0dc0be2913068068c7aeb8ef0c8cb559354b5ecd3cc682f677f63` |
+| Linux ARM64 | `sha256:27e5763a528c59d6f5c9e74e88f8bc53e7def4adb4e78f1c766fda569e0cd5bd` |
+
+The previously verified v0.2.0–v0.6.0 indexes remain unchanged. The installed
+macOS ARM64 binary has SHA-256
+`225f52a387dac98653ce1f2066da59bbcba15256f2f7b71cedd6640ff4f6f0f7`.
+Its 19-file binary/skill activation retained a complete 19-file private known-good
+backup and committed under an independent detached rollback watchdog. A fresh
+native MCP process returned a checked exact reuse with zero new generation and
+recorded outcome metadata. All four observed client-setting files retained their
+before/after hashes and modes: **this activation made no client-setting writes**.
+An older already-running MCP process still needs its normal controlled restart.
+
+The GitHub profile update is [merged](https://github.com/spfuzzylink/spfuzzylink/pull/5).
+Project and profile serve the same canonical brand bytes, SHA-256
+`e8121dd023da8f1d76aa33e633ae03c44fffcc5f7794377e3b2ccb89b145ab29`.
+Historical releases and artwork are preserved. Current web documents record this
+publication; immutable archives retain their source-era candidate wording.
 
 ## v0.6.0 observations — 2026-10-16
 
