@@ -29,7 +29,7 @@ COPY --from=build /usr/share/doc/ca-certificates/copyright /CA_CERTIFICATES_COPY
 COPY --from=build --chown=65532:65532 /out/data /data
 USER 65532:65532
 WORKDIR /data
-ENV TMPDIR=/data
+ENV TMPDIR=/data HOME=/data
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/questlock"]
 CMD ["serve", "--db", "/data/state.db", "--listen", "0.0.0.0:8080", "--allow-remote-http"]

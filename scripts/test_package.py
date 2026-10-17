@@ -15,6 +15,8 @@ spec.loader.exec_module(package)
 class PackageTests(unittest.TestCase):
     def test_inference_release_material_is_packaged_without_private_inputs(self):
         required = {
+            "assets/questlock-brand.svg", "docs/onboarding.md", "docs/success-report-v0.7.0.md",
+            "docs/diagrams/onboarding.drawio", "docs/diagrams/onboarding.svg",
             "docs/inference-observability.md", "docs/delegation.md", "docs/measurements-v0.3.0.md",
             "assets/questlock-v0.3.0.svg",
             "assets/questlock-v0.4.0.svg",

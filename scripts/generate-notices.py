@@ -275,7 +275,7 @@ def render_notices(graphs, goroot, go_version):
         lines.append("Source: [upstream license text](" + url + "). "
                      "Snapshot SHA256: `" + expected_sha256 + "`.\n\n")
         lines.append(verbatim(text))
-    return "".join(lines).encode("utf-8")
+    return ("".join(lines).rstrip() + "\n").encode("utf-8")
 
 
 def main():

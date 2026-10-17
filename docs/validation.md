@@ -1,5 +1,30 @@
 # Validation record
 
+## v0.7.0 observations — 2026-10-17
+
+Candidate qualification includes Go race/vet and real-process CLI tests, native
+isolated Codex and Claude Code 2.1.302 configuration/MCP checks, private managed
+broker concurrency/authentication/restart tests, and independent detached
+rollback tests including parent death and concurrent human edits.
+
+The first-task and exact repeat passed through the actual MCP process with
+zero generation, durable artifacts and recorded outcome metadata. A separate
+native Codex OSS run completed a read-only file/tool task using local Ollama;
+its local tokens and quality limits are recorded in the
+[build success report](success-report-v0.7.0.md).
+
+Desktop packaging/protocol checks do not qualify native Desktop import or
+connection. Claude Code's native commands can add bookkeeping fields; only
+observed *new* fields are permitted, while existing unrelated values must remain
+exact. A committed Claude Code restore is refused before mutation because no
+read-only native baseline verification is currently qualified. Automatic
+failure rollback still checks exact installed bytes and preserves divergent
+repairs.
+
+Publication, all-platform release assets and GHCR validation will be recorded
+here after their actual gates complete. Previous release evidence below is
+preserved.
+
 ## v0.6.0 observations — 2026-10-16
 
 Release source: `ac70ba19f9e82a671bc21f0f5dcc897c2e551551`, the peeled

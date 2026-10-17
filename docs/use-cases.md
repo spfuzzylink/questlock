@@ -1,3 +1,13 @@
+# Use cases
+
+## First-time setup without a provider account
+
+Run `questlock setup`, choose your coding client, and finish a checked JSON edit
+without a model call. Repeat it to see exact durable reuse. Doctor checks local
+configuration without starting a model or changing settings. Codex and Claude
+Code use complete native candidate validation and independent rollback;
+Claude Desktop uses the native extension installer. [Walkthrough](onboarding.md).
+
 # Where Questlock fits
 
 ## Exact edits of reviewed work (v0.6.0)

@@ -18,6 +18,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS = ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64")
 PUBLIC_FILES = (
+    "assets/questlock-brand.svg", "docs/onboarding.md", "docs/success-report-v0.7.0.md",
+    "docs/diagrams/onboarding.drawio", "docs/diagrams/onboarding.svg",
     "LICENSE", "ATTRIBUTION.md", "BRANDING.md", "THIRD_PARTY_NOTICES.md",
     "README.md", "CONTRIBUTING.md", "SECURITY.md", "VERSION",
     "assets/questlock-banner.svg", "assets/questlock-evolution.svg", "assets/questlock-v0.3.0.svg", "assets/questlock-v0.4.0.svg", "docs/release-notes.md",

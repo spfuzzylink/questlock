@@ -14,11 +14,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/spfuzzylink/questlock/internal/configguard"
 	"github.com/spfuzzylink/questlock/internal/httpapi"
 	"github.com/spfuzzylink/questlock/internal/store"
 )
 
-var version = "0.6.0" // Release builds set this from VERSION using -ldflags.
+var version = "0.7.0" // Release builds set this from VERSION using -ldflags.
 const defaultDB = ".questlock/state.db"
 
 func main() {
@@ -47,6 +48,11 @@ Usage:
   questlock outcome quest
   questlock model quest
   questlock model install [--agents codex,claude] [--replace]
+  questlock setup [--client codex|claude-code|claude-desktop] [--plan]
+  questlock doctor [--client codex|claude-code|claude-desktop]
+  questlock try [--state-dir PATH] [--workspace PATH]
+  questlock local start|status|stop [--state-dir PATH]
+  questlock local-agent --model NAME --workspace PATH --prompt TEXT
   questlock quest
   questlock version
 
@@ -70,6 +76,23 @@ func run(args []string) error {
 	case "version":
 		fmt.Println(version)
 		return nil
+	case "setup":
+		return setupCommand(args[1:])
+	case "doctor":
+		return doctorCommand(args[1:])
+	case "try":
+		return tryCommand(args[1:])
+	case "local-agent":
+		return localAgentCommand(args[1:])
+	case "local":
+		return localCommand(args[1:])
+	case "__local-broker":
+		return localBrokerChild(args[1:])
+	case "__config-watch":
+		if len(args) != 2 {
+			return errors.New("invalid config watchdog invocation")
+		}
+		return configguard.Watch(args[1])
 	case "revise":
 		return reviseCommand(args[1:])
 	case "worker":
