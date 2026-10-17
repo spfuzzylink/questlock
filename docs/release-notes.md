@@ -1,6 +1,13 @@
 # Questlock 0.8.0 — local work, shared results, your policy
 
-**Experimental release candidate.** Published v0.7.0 remains available unchanged.
+**Published experimental release.**
+[Release and downloads](https://github.com/spfuzzylink/questlock/releases/tag/v0.8.0) ·
+[Verified publication](validation.md#v080-observations--2026-10-17)
+
+Four native archives, two macOS MCPB extensions and both Linux container
+architectures are published and verified against the tagged source. Older
+releases stay unchanged. Immutable archives retain their source-era candidate
+wording; these web guides record publication.
 
 - **SecondGate:** a private durable edge outbox, pinned writes to one authoritative
   broker, and atomic paginated snapshot/change consumption. Offline intent is

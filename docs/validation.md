@@ -1,6 +1,6 @@
 # Validation record
 
-## v0.8.0 candidate observations — 2026-10-17
+## v0.8.0 observations — 2026-10-17
 
 Local combined Go race/vet, 73 publication/packaging tests, five official-adapter
 offline contracts, notices and workflow syntax checks passed. Each runtime lane
@@ -31,9 +31,84 @@ is private maintainer preference, not instructions imposed on library users.
 Whole-build hosted-token savings, counterfactual invoices and human rework cost
 remain unmeasured. Operators select their own explicit budgets and settings.
 
-Four-platform publication, exact actual downloads and registry digests will be
-recorded after their gates complete. Native Claude Desktop import/connection
-remains pending. Earlier release evidence below is preserved.
+Release source: `94ac966add2fd29dc0e12bf6bd7ec94cfa1ca8be`, the peeled
+`v0.8.0` tag. Independently reviewed head
+`a838a2ec6ef0effcf2e02bdb22d177a7e32b377b` shares tree
+`c75b2130e44dcc8a8333c277a1f99168fbcddf8c`.
+
+[PR CI](https://github.com/spfuzzylink/questlock/actions/runs/38997252540),
+[main CI](https://github.com/spfuzzylink/questlock/actions/runs/38997594734) and
+[tagged CI](https://github.com/spfuzzylink/questlock/actions/runs/38997628412)
+passed all seven required gates: four native Go platforms, public source/history,
+the actual filtered source container and disposable real Langfuse readback.
+The tag publisher then released the tested assets. The same-head duplicate
+push run was cancelled; the complete PR run remains the prepublication evidence.
+All seven offline quests, fresh-state MCP first/repeat tasks and both macOS
+MCPB packages passed on the native archive runners. The optional official
+adapter's five contract checks ran without a model.
+
+### Actual v0.8 artifacts
+
+Anonymous downloads verified all seven actual assets, their SHA-256 digests,
+normalized metadata, platform headers, Go 1.27.1 clean/CGO-disabled BUILDINFO
+and all **96 exact public files** per archive against the tagged source. Each
+MCPB contains its matching native binary and exact legal files. Immutable
+archives keep source-era candidate wording; the current web guides record
+publication. Earlier versions and assets stay unchanged.
+
+| Asset | SHA-256 |
+| --- | --- |
+| `questlock_0.8.0_darwin_amd64.tar.gz` | `b88a3f97a1e613f494be39d398661ea38958fb86ccb5bf55aa2e1315f6b2e9be` |
+| `questlock_0.8.0_darwin_arm64.tar.gz` | `3fe8c2954b60afd9367a3db83aeb8ebbdd1bb93e91d612880e88a2d10d46f4c7` |
+| `questlock_0.8.0_linux_amd64.tar.gz` | `ca00ae480f67d37c0c75106ade09d08f614c8fe8dfca7b06fc38f890cab759f4` |
+| `questlock_0.8.0_linux_arm64.tar.gz` | `4ebea5efa682df7eab695a47bca3a934ffed352d89664b462387489287573fde` |
+| `questlock_0.8.0_darwin_amd64.mcpb` | `a030aee16d1fbddc22892c8fc72c9ced6a662327b74174100095b6438cbfc65a` |
+| `questlock_0.8.0_darwin_arm64.mcpb` | `712f0047ce4bc58c8c958371ed2816ab4434da0e1600ec934582296ec2a64e74` |
+
+[Container CI](https://github.com/spfuzzylink/questlock/actions/runs/38997810357)
+passed native Linux AMD64/ARM64 execution of all seven quests and fixture
+evaluation before publication. Anonymous registry checks verified both image
+configs, all 16 layers and uncompressed diff IDs, matching release binaries,
+BUILDINFO and legal files, UID/GID `65532:65532`, and `/data` ownership/mode.
+The `v0.8.0` and moving `experimental` tags resolved to:
+
+`sha256:f8e63cdff71d7745ce0feaa359bc2be00418021a00380e2d5d9575504fdb0bef`
+
+| Platform | Child manifest |
+| --- | --- |
+| Linux AMD64 | `sha256:b8efa508a56c0d13d22582f8ef5c55302c2ea703fde8a3e272abf0c8d1496680` |
+| Linux ARM64 | `sha256:c001cccf2a35c0ae601b70dd691a8cc38396d328f767e182c59b1a5caf584ce2` |
+
+All six older versioned indexes, v0.2 through v0.7, were unchanged.
+
+### Installed worker and development use
+
+The maintainer upgrade kept a complete private 19-file v0.7 backup and used an
+independently reviewed detached rollback supervisor. Nineteen disposable safety
+tests and independent race probes passed, including a backup FIFO race found
+and corrected before activation. Exactly one binary changed; all 18 unchanged
+skill files retained their bytes, modes and modification times. All four client
+configurations retained their hashes/modes. No app restart or settings write
+was needed. The installed ARM binary SHA-256 is:
+
+`0c2dd2a7c23b295f557afa8769e804f90cdd5407067bb2a2a53b5f1399b693a8`
+
+A fresh native v0.8 MCP process against the existing authenticated broker
+returned exact durable checked reuse, zero new generation/usage/provider charge,
+and recorded its outcome. Existing processes need their normal controlled
+restart to load a replacement executable.
+
+Questlock also applied nine checked publication/profile file revisions and one
+private development-policy revision without model generation. That private
+policy is not part of public project instructions. These edits establish their
+own zero generation cost, not a whole-build counterfactual. The earlier v0.7
+report separately measured 261 local-model tokens avoided by exact repeats;
+its local baseline also had a $0 provider bill. Hosted-chat tokens saved, invoice
+savings, broad quality parity and cost per accepted task remain unestablished.
+
+Native Claude Desktop import/connection and actual cross-host/TLS deployment
+qualification remain pending. Resource reservations are single-process estimates,
+not OS enforcement or distributed allocation. Earlier release evidence is preserved.
 
 ## v0.7.0 observations — 2026-10-17
 

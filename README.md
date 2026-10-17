@@ -18,7 +18,7 @@ shared SQLite broker underneath.
 
 ## Get going
 
-Download and extract the matching [v0.7.0 archive](https://github.com/spfuzzylink/questlock/releases/tag/v0.7.0), then:
+Download and extract the matching [v0.8.0 archive](https://github.com/spfuzzylink/questlock/releases/tag/v0.8.0), then:
 
 ```sh
 ./questlock setup
@@ -72,9 +72,8 @@ feedback around your chosen route. An independent companion, with credit to the
 Local generation has no provider token bill; your machine still does the work.
 Hosted OpenAI, Claude and OpenRouter calls use their own billing. Only tasks
 routed through Questlock get these controls. This does **not** make the surrounding
-Codex/Claude chat free or remove subscription limits. The target is 99% less
-hosted usage on suitable workflows; that is a measurement goal, not a shipped
-whole-chat savings claim.
+Codex/Claude chat free or remove subscription limits. Measure savings against a
+matched task baseline, with failed attempts and human rework included.
 
 ## Try before connecting anything
 
@@ -84,23 +83,26 @@ whole-chat savings claim.
 ./questlock model quest           # shared work and exact result reuse
 ./questlock outcome quest         # acceptance, rejection and human rework
 ./questlock model runtime-quest   # runtime contracts, using HTTP fixtures
+./questlock edge quest           # durable edge intent and accepted-state sync
+./questlock resources quest      # bounded queues and pressure-aware admission
 ```
 
 These demos use temporary state and no model account. Local inference needs
 installed Ollama weights. Paid generation requires explicit credentials and
 policy; guided setup enables no paid escalation.
 
-## New in the 0.8 source candidate
+## New in 0.8.0
 
 Queue edge writes safely, share accepted results, and admit local work according
 to CPU and memory headroom. Optional typed decisions use the official TypeSafe
-adapter with local Ollama. [Your policy is explicit configuration](examples/preferences/README.md),
+adapter with local Ollama. Configuration over convention:
+[your policy is explicit](examples/preferences/README.md),
 including a local-only preset; forks choose their own preferences.
 [Design and limits](docs/local-coordination.md).
 
 ## Go deeper
 
-- [What changed in 0.7.0](docs/release-notes.md) · [Measured build report](docs/success-report-v0.7.0.md)
+- [What changed in 0.8.0](docs/release-notes.md) · [Measured build report](docs/success-report-v0.7.0.md)
 - [Checked revisions](docs/checked-revisions.md) · [Bounded delegation](docs/delegation.md)
 - [Model workflows](docs/model-workflows.md) · [Acceptance and human rework](docs/outcomes.md)
 - [Langfuse and timings](docs/inference-observability.md) · [SGLang/KV cache integration](docs/runtime-cache.md)
