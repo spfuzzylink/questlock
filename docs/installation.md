@@ -1,8 +1,20 @@
 # Install and try Questlock
 
-This guide covers the experimental **v0.6.0** release. The installer selects
+This guide covers the experimental **v0.7.0** release. The installer selects
 the version in `VERSION`; older published versions remain available, including
 v0.5.0 with `./scripts/install.sh --version v0.5.0`.
+
+## Connect your client in one command
+
+After extracting the binary, run `./questlock setup`. Choose Codex, Claude Code,
+or Claude Desktop. Setup runs a zero-model-call first task automatically.
+Use `--client codex`, `--client claude-code`, or `--client claude-desktop` to skip
+the menu. [Guided setup, doctor and rollback](onboarding.md) covers the full flow.
+From a fork, run `./scripts/install.sh` then `./bin/questlock setup`.
+
+`questlock try` needs no client, model download, or provider account. Native
+coding clients must be installed separately. Desktop uses its native extension
+installer, with connection verification in the app. [Measured build report](success-report-v0.7.0.md).
 
 ## Try checked revisions without a model
 

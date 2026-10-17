@@ -1,5 +1,10 @@
 # Bounded local-first delegation
 
+For a new local setup, run `questlock setup` and choose your client. The
+[guided onboarding](onboarding.md) provisions the private broker and validates
+the first task without a model call. The manual setup below remains available
+for operators who need an explicit broker and credential boundary.
+
 ## Prefer exact revisions before generating (v0.6.0)
 
 For a precisely specified presentation or literal edit of reviewed text, use

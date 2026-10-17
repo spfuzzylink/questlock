@@ -1,5 +1,20 @@
 # Architecture
 
+## Guided local onboarding (v0.7.0)
+
+`questlock setup` connects Codex or Claude Code through a complete isolated
+candidate, native configuration validation, and a guarded live swap. Claude
+Desktop uses a bundled native extension and its own installer. All three routes
+use the same private loopback broker and approved request boundary; onboarding
+does not enable paid escalation. The first task checks the worker protocol with
+no model call. That evidence stays separate from a native client connection.
+
+![Questlock guided setup, first-task checks, diagnostics and recovery](diagrams/onboarding.svg)
+
+Follow the [onboarding guide](onboarding.md) for the shortest setup route,
+read-only diagnostics and recovery. The diagram has
+[editable draw.io source](diagrams/onboarding.drawio).
+
 ## Checked deterministic revisions (v0.6.0)
 
 The new Go `revision` path composes with the same scoped publication boundary.
@@ -170,3 +185,9 @@ machines. Those are questions, not implemented guarantees.
 
 See [SECURITY.md](../SECURITY.md) for the trusted operator/worker boundary and the
 difference between publication controls and an execution sandbox.
+
+`local-agent` is a separate native Codex OSS harness launch: explicit installed
+local model, fixed loopback Ollama, private temporary client home, no imported
+credentials or active client config writes. Its tool execution uses Codex's
+selected sandbox. It does not proxy the hosted desktop chat or replicate model
+weights; successful tool use still needs task-specific review.

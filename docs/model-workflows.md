@@ -146,7 +146,7 @@ questlock worker run --request "$HOME/questlock-workspace/approved-task.json" \
 
 Evaluation defaults to six simulated public cases. Live mode needs an intentionally fresh broker scope and explicit installed/configured models. Report files are private and existing paths are refused. JSON/literal checks establish only the supplied expectations; no eligible selection is a nonzero result. The [recorded local run](measurements-v0.3.0.md) qualified neither configuration.
 
-The [delegation request](delegation.md) declares local and optional escalation tiers, budgets, context, TTL, and checks. Only an error-free complete, durable, valid-known-usage answer failing those checks can reach the one explicit next tier. Hosted escalation also requires process `--allow-paid` and explicit prices/caps. `worker serve --workspace ROOT` exposes only `questlock_delegate` with `request_path`; it does not discover or edit files, execute commands, or proxy an assistant session.
+The [delegation request](delegation.md) declares local and optional escalation tiers, budgets, context, TTL, and checks. Only an error-free complete, durable, valid-known-usage answer failing those checks can reach the one explicit next tier. Hosted escalation also requires process `--allow-paid` and explicit prices/caps. `worker serve --workspace ROOT` exposes `questlock_delegate` and `questlock_revise`, each with `request_path`; it does not discover or edit files, execute commands, or proxy an assistant session.
 
 ## Use from Codex or Claude Code
 

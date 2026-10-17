@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="880" viewBox="0 0 1400 880" role="img" aria-labelledby="title desc">
+<title id="title">Questlock guided local onboarding</title>
+<desc id="desc">Separate guarded coding-client setup and native Claude Desktop extension installation feed a shared local worker. A model-free first task, read-only doctor, and guarded recovery provide distinct evidence without claiming a native client session is connected.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8" fill="none" stroke="#61718d" stroke-width="1.4"/></marker></defs>
+<rect width="1400" height="880" rx="18" fill="#f8fafc"/>
+<g font-family="Arial, sans-serif" fill="#18243b">
+<text x="55" y="48" font-size="30" font-weight="700">Questlock guided local onboarding</text>
+<text x="55" y="77" font-size="18">Configuration, worker protocol and native client connection are separate checks.</text>
+<path d="M590 180V210H362V235" fill="none" stroke="#61718d" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M810 180V210H1038V235" fill="none" stroke="#61718d" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M362 390V425H520V465" fill="none" stroke="#61718d" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M1038 390V425H880V465" fill="none" stroke="#61718d" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M460 570V610H255V650" fill="none" stroke="#61718d" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M700 570V650" fill="none" stroke="#61718d" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="7 5"/>
+<path d="M940 570V610H1145V650" fill="none" stroke="#61718d" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="7 5"/>
+<rect x="480" y="95" width="440" height="85" rx="12" fill="#eef0ff" stroke="#7970c2" stroke-width="2"/>
+<text x="500" y="128" font-size="22" font-weight="700">questlock setup</text>
+<text x="500" y="157" font-size="18">Client menu or --client</text>
+<rect x="55" y="235" width="615" height="155" rx="12" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="75" y="268" font-size="22" font-weight="700">Codex / Claude Code</text>
+<text x="75" y="297" font-size="18">Validate complete candidate in isolation</text>
+<text x="75" y="326" font-size="18">Preserve settings; watchdog; guarded swap</text>
+<text x="75" y="355" font-size="18">Read live native settings before commit</text>
+<rect x="730" y="235" width="615" height="155" rx="12" fill="#eef0ff" stroke="#7970c2" stroke-width="2"/>
+<text x="750" y="268" font-size="22" font-weight="700">Claude Desktop (macOS)</text>
+<text x="750" y="297" font-size="18">Build a platform-matched .mcpb</text>
+<text x="750" y="326" font-size="18">Open the native extension installer</text>
+<text x="750" y="355" font-size="18">Verify connector and both tools in the app</text>
+<rect x="330" y="465" width="740" height="105" rx="12" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="350" y="498" font-size="22" font-weight="700">Shared local worker and private broker</text>
+<text x="350" y="527" font-size="18">Loopback service, scoped credential, approved request directory</text>
+<text x="350" y="556" font-size="18">One task per worker; 45-second bound; no paid escalation</text>
+<rect x="55" y="650" width="400" height="155" rx="12" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="75" y="683" font-size="22" font-weight="700">Model-free first task</text>
+<text x="75" y="712" font-size="18">Discover both tools; call revise</text>
+<text x="75" y="741" font-size="18">Exact text and passing checks</text>
+<text x="75" y="770" font-size="18">Durable artifact; zero generation</text>
+<rect x="500" y="650" width="400" height="155" rx="12" fill="#eef0ff" stroke="#7970c2" stroke-width="2"/>
+<text x="520" y="683" font-size="22" font-weight="700">doctor: read-only</text>
+<text x="520" y="712" font-size="18">Config, permissions and broker</text>
+<text x="520" y="741" font-size="18">Live client session unverified</text>
+<text x="520" y="770" font-size="18">Desktop native check stays pending</text>
+<rect x="945" y="650" width="400" height="155" rx="12" fill="#fff5e6" stroke="#bd8543" stroke-width="2"/>
+<text x="965" y="683" font-size="22" font-weight="700">Recovery and lifecycle</text>
+<text x="965" y="712" font-size="18">Hash-checked backup; keep repairs</text>
+<text x="965" y="741" font-size="18">setup --restore RECOVERY_DIR</text>
+<text x="965" y="770" font-size="18">local stop retains results</text>
+<text x="55" y="848" font-size="18">A worker self-test does not verify a native client session. The hosted assistant keeps its normal allowance.</text>
+</g></svg>

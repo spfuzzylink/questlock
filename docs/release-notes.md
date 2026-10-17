@@ -1,3 +1,28 @@
+# Questlock 0.7.0 — a first task before a first token
+
+**Experimental release candidate.**
+
+Run `questlock setup`, choose Codex, Claude Code or Claude Desktop, and finish a
+checked task without a model call or provider account. Codex/Claude Code setup
+validates complete isolated candidates, preserves unrelated settings and uses
+an independent rollback watchdog before committing a live native read.
+
+New commands: `setup`, `doctor`, `try`, `local start|status|stop`, and
+`worker local-serve`. `local-agent` optionally runs the main native Codex CLI
+loop against an installed local Ollama model in an isolated home. The managed broker provisions private credentials and
+shares one local SQLite owner across clients. Paid escalation stays disabled.
+Claude Desktop uses a platform-specific binary MCPB extension and its native
+installer; native Desktop import/connection qualification remains pending.
+
+The repository now uses one permanent versionless brand image and a shorter
+README. Historical releases and artwork remain available. Existing manual
+broker, model, revision, outcome and runtime commands remain supported.
+
+[Start here](onboarding.md) · [What we measured, including failures](success-report-v0.7.0.md) ·
+[Architecture](diagrams/onboarding.drawio)
+
+---
+
 # Questlock 0.6.0 — checked edits without another generation
 
 **Published experimental release.**

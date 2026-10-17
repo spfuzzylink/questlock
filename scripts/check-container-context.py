@@ -13,10 +13,14 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 TOP_LEVEL = {"go.mod", "go.sum", "LICENSE", "ATTRIBUTION.md", "THIRD_PARTY_NOTICES.md"}
 GO_DIRECTORIES = {
-    "cmd/questlock", "internal/store", "internal/httpapi", "internal/agentsetup",
+    "cmd/questlock", "internal/store", "internal/httpapi", "internal/agentsetup", "internal/configguard", "internal/onboardingclient",
+    "internal/localruntime", "internal/desktopbundle",
     "client", "protocol", "inference", "observability", "evaluation", "delegation", "worker", "outcomes", "revision",
 }
 EMBEDDED_FILES = {
+    "internal/desktopbundle/legalassets/LICENSE",
+    "internal/desktopbundle/legalassets/ATTRIBUTION.md",
+    "internal/desktopbundle/legalassets/THIRD_PARTY_NOTICES.md",
     "internal/agentsetup/assets/SKILL.md",
     "internal/agentsetup/assets/scripts/run.sh",
     "internal/agentsetup/assets/agents/openai.yaml",
@@ -29,6 +33,8 @@ EMBEDDED_FILES = {
     "evaluation/fixtures/quickstart.json",
 }
 REQUIRED_FILES = TOP_LEVEL | EMBEDDED_FILES | {
+    "internal/configguard/guard.go", "internal/onboardingclient/client.go",
+    "internal/localruntime/runtime.go", "internal/desktopbundle/bundle.go",
     "cmd/questlock/main.go", "internal/store/store.go", "internal/httpapi/httpapi.go",
     "internal/agentsetup/install.go", "client/client.go", "protocol/protocol.go", "inference/runner.go",
     "observability/langfuse.go", "evaluation/fixtures.go", "delegation/router.go", "worker/worker.go", "outcomes/store.go", "revision/types.go",

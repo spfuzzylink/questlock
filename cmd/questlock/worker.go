@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/spfuzzylink/questlock/client"
 	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/inference"
 	"github.com/spfuzzylink/questlock/observability"
@@ -21,6 +22,13 @@ import (
 func workerCommand(args []string) error { return workerCommandIO(args, os.Stdin, os.Stdout, os.Stderr) }
 
 func workerCommandIO(args []string, input io.ReadCloser, output, diagnostics io.Writer) error {
+	if len(args) > 0 && args[0] == "local-serve" {
+		return localWorkerCommand(args[1:], input, output, diagnostics)
+	}
+	return workerCommandBroker(args, input, output, diagnostics, nil)
+}
+
+func workerCommandBroker(args []string, input io.ReadCloser, output, diagnostics io.Writer, suppliedBroker *client.Client) error {
 	if len(args) == 1 && (args[0] == "help" || args[0] == "--help" || args[0] == "-h") {
 		_, err := fmt.Fprintln(diagnostics, "Usage: questlock worker run --request PATH [--broker URL] [--allow-paid] [--langfuse]\n       questlock worker serve --workspace ROOT [--broker URL] [--allow-paid] [--langfuse]")
 		return err
@@ -66,9 +74,12 @@ func workerCommandIO(args []string, input io.ReadCloser, output, diagnostics io.
 	if err != nil {
 		return err
 	}
-	broker, _, err := modelBroker(*brokerURL)
-	if err != nil {
-		return err
+	broker := suppliedBroker
+	if broker == nil {
+		broker, _, err = modelBroker(*brokerURL)
+		if err != nil {
+			return err
+		}
 	}
 	process, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

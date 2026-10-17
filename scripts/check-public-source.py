@@ -59,6 +59,7 @@ EMAIL = re.compile(rb"[A-Za-z0-9._%+\[\]-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 # are immutable and remain subject to this guard. This only permits those email
 # addresses; credentials, home paths, and configured private strings still fail.
 REVIEWED_PUBLIC_NOTICE_SHA256 = frozenset({
+    "e80e75f5b30f91b3c9f0257940d20b7cc9db25dbf71ecc231ea35add187ea398",
     "dba84d51f9acb52be9d6494effa48069be60ac4731b805fe16f2c4259f028cb2",
     "0b89e9c8634e08215a6c3e0f2a4a033c9a1694bc5897c296f2670b0bcf315c00",
     "6f08764e5e10798efb674a778d7b16ace350766ac48ed9c7a3087878afd38745",
