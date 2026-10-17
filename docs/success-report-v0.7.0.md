@@ -47,7 +47,7 @@ recorded **0 new input tokens, 0 output tokens and $0 provider charge**.
 | --- | --- |
 | `onboarding-contract-1` | `8cf442551102dec442665bf931422cf6a13c6864450b433d5b700e2114a7aae9` |
 | `onboarding-final-contract-2` | `f22789276114291b3af1fc045eb5a48877dc66bd0f86c38b614c9e741f0cad0d` |
-| `brand-canonical-1` | `e8121dd023da8f1d76aa33e633ae03c44fffcc5f7794377e3b2ccb89b145ab29` |
+| `timeless-canonical-1` | `e8121dd023da8f1d76aa33e633ae03c44fffcc5f7794377e3b2ccb89b145ab29` |
 | `guided-links-1` | `970d50eb81692e4f8cee3a0202b243f44aefffddd9e1744e066054d1559bfe54` |
 | `guided-links-2` | `71dc4de63c5c05b62ea6a5c11dd6443ce39a544c1b8d570d87819253e9d4fa3f` |
 | `guided-links-3` | `0e12e0839a7f35731f97db190477fd400ffc4d5e1665ff31c66b24280de2767c` |
