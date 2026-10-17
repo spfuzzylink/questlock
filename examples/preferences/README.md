@@ -1,7 +1,8 @@
 # Your preferences, your policy
 
-These are opt-in examples. Questlock does not load them from a clone or impose
-the maintainer's personal settings.
+Configuration over convention: choose the behavior you want and keep it in your
+own private policy. These are opt-in examples. Questlock does not load them from
+a clone or impose the maintainer's personal settings.
 
 `local-only.request.json` is a real bounded-worker request: installed Ollama
 model, explicit token/context limits, a one-hour exact-snapshot reuse window,

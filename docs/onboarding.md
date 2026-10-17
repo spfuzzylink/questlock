@@ -4,7 +4,7 @@ Questlock gives your assistant a checked path for exact text edits and bounded
 tasks. The easiest start is `questlock setup`: choose your client, let setup
 configure it, and get a first successful task without an API key or model download.
 
-This guide covers the experimental **v0.7.0** release.
+This guide covers the experimental **v0.8.0** release.
 
 ## Get the executable
 

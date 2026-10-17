@@ -2,10 +2,10 @@
 
 ## Checked revisions without a model
 
-The published v0.7.0 image includes `revise quest`: three simple and three complex
+The published v0.8.0 image includes `revise quest`: three simple and three complex
 offline deterministic edit scenarios with temporary broker state. It needs no
 model account. Use the network-disabled/read-only command below, replacing its
-final `quest` arguments with `revise quest`. The [published artifact evidence](validation.md#v070-observations--2026-10-17)
+final `quest` arguments with `revise quest`. The [published artifact evidence](validation.md#v080-observations--2026-10-17)
 includes both native architectures and anonymous registry verification.
 
 A persistent revision worker talks to the broker through scoped HTTP. Give only
@@ -14,7 +14,8 @@ needed for literal revisions. Upgrade all readers/writers before sharing new
 revision outcome cohorts; older versions do not understand `deterministic_edit`.
 See [checked revisions](checked-revisions.md).
 
-This guide covers the experimental **v0.7.0** image. The preserved
+This guide covers the experimental **v0.8.0** image. The preserved
+[v0.7.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.7.0),
 [v0.6.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.6.0),
 [v0.5.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.5.0),
 [v0.4.0](https://github.com/spfuzzylink/questlock/releases/tag/v0.4.0),
@@ -23,7 +24,7 @@ This guide covers the experimental **v0.7.0** image. The preserved
 their corresponding container tags remain available.
 
 The current experimental image in [GitHub Packages](https://github.com/spfuzzylink/questlock/pkgs/container/questlock)
-is `ghcr.io/spfuzzylink/questlock:v0.7.0`, with native Linux ARM64 and x86-64 images.
+is `ghcr.io/spfuzzylink/questlock:v0.8.0`, with native Linux ARM64 and x86-64 images.
 Podman and Docker select the matching CPU image. On macOS, the container engine
 runs Linux in its own VM; native macOS binaries use the separate release archives.
 
@@ -36,7 +37,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.7.0 quest
+  ghcr.io/spfuzzylink/questlock:v0.8.0 quest
 ```
 
 The same command works with `docker` in place of `podman`. Pulling the public
@@ -54,7 +55,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.7.0 model quest
+  ghcr.io/spfuzzylink/questlock:v0.8.0 model quest
 ```
 
 Look for six `PASS` lines and `QUEST CLEARED`. This quest starts a real local HTTP
@@ -75,7 +76,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.7.0 outcome quest
+  ghcr.io/spfuzzylink/questlock:v0.8.0 outcome quest
 ```
 
 Look for six `PASS` lines and `QUEST CLEARED`. Three simple and three complex
@@ -101,7 +102,7 @@ podman run --rm --network none --read-only \
   --cap-drop all --security-opt no-new-privileges \
   --memory 256m --cpus 1 --pids-limit 128 \
   --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 \
-  ghcr.io/spfuzzylink/questlock:v0.7.0 revise quest
+  ghcr.io/spfuzzylink/questlock:v0.8.0 revise quest
 ```
 
 Three simple cases cover exact product/sentence emphasis and a checked JSON
@@ -118,8 +119,8 @@ Follow the [rootless Podman deployment guide](deployment.md). Replace its initia
 image-build command with:
 
 ```sh
-podman pull ghcr.io/spfuzzylink/questlock:v0.7.0
-podman tag ghcr.io/spfuzzylink/questlock:v0.7.0 localhost/questlock:dev
+podman pull ghcr.io/spfuzzylink/questlock:v0.8.0
+podman tag ghcr.io/spfuzzylink/questlock:v0.8.0 localhost/questlock:dev
 ```
 
 Then continue with the volume, credential provisioning, and Quadlet steps in that
@@ -129,7 +130,7 @@ host port automatically. Keep any explicit host binding on `127.0.0.1`.
 
 ## Tags, updates, and provenance
 
-- `v0.7.0` is the release tag; `experimental` is a moving tag
+- `v0.8.0` is the release tag; `experimental` is a moving tag
   for subsequent experimental publications. Neither implies a stable API.
 - Registry tags can change. For a repeatable deployment, record the image digest
   shown by `podman images --digests` and use the corresponding digest reference.
@@ -138,12 +139,12 @@ host port automatically. Keep any explicit host binding on `127.0.0.1`.
   and `/THIRD_PARTY_NOTICES.md` accompany the binary.
 - Native Linux ARM64 and x86-64 runners check the binary version, non-root user,
   writable data directory, seven recovery checks, six offline model checks, six
-  offline outcome checks, six runtime protocol checks, six revision checks, and
-  the embedded fixture evaluation before publication.
-  All five quests run from the image's packaged executable. See the
+  offline outcome checks, six runtime protocol checks, six revision checks, six
+  edge checks, four resource-admission checks and the embedded fixture evaluation
+  before publication. All seven quests run from the image's packaged executable. See the
   [container workflow](https://github.com/spfuzzylink/questlock/actions/workflows/container.yml).
 
-See the [v0.7.0 validation record](validation.md#v070-observations--2026-10-17)
+See the [v0.8.0 validation record](validation.md#v080-observations--2026-10-17)
 for the tagged source, native publication checks, and immutable registry digests.
 
 The broker runs as UID/GID 65532. Containers are an operating environment, not a
@@ -174,13 +175,13 @@ It has six content-pinned services, needs substantial local resources, and is
 validated through an isolated wrapper. It needs no hosted Langfuse account.
 The actual-server CI readback contract passed; see [setup and limits](inference-observability.md#validate-a-self-hosted-endpoint).
 
-## Version 0.8 source candidate
+## Edge coordination and resource admission
 
-The source candidate adds `edge quest` and `resources quest`, both offline with
+Version 0.8 adds `edge quest` and `resources quest`, both offline with
 temporary state and no model. Native publication checks run them with the same
 network-disabled, read-only settings above. The optional TypeSafe decision bridge
 requires a separately prepared Python environment and installed Ollama weights;
 the small broker image contains neither Python nor model weights. Follow the
 [local decision guide](system-one.md) on the host. Resource fixtures are not
-GPU emulation or a multi-host performance benchmark. Current verified published
-image commands above retain v0.7.0 until v0.8 publication is verified.
+GPU emulation or a multi-host performance benchmark. Replace the final command
+in a network-disabled example above with `edge quest` or `resources quest`.
