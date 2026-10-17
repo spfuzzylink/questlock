@@ -4,7 +4,11 @@ The Questlock name and gate artwork identify the upstream project at
 [spfuzzylink/questlock](https://github.com/spfuzzylink/questlock), created and
 maintained by [@spfuzzylink](https://github.com/spfuzzylink).
 
-## Canonical artwork: reuse unchanged
+These conventions describe the upstream project's identity. Forks and users
+choose their own branding and contributor instructions; personal maintainer
+preferences are not part of this library's requirements.
+
+## Upstream canonical artwork
 
 The canonical project banner is [`assets/questlock-brand.svg`](assets/questlock-brand.svg).
 Its exact SHA-256 is:
@@ -18,11 +22,11 @@ is **lower cost per accepted task, including human rework**. The artwork is
 versionless and does not advertise a particular release, provider, or feature.
 The mission is a project objective, not a claim of measured savings.
 
-Future releases must reuse this exact file and checksum. Do not regenerate,
+Upstream releases reuse this exact file and checksum. Do not regenerate,
 redesign, retheme, add a version badge, or replace it as part of feature work.
 Put release-specific copy in documentation or separate release material.
-Changing the canonical identity requires an explicit user request; updating a
-checksum test alone is not authorization. Keep the older versioned artwork as
+Changes to the upstream identity need a reviewed maintainer decision; updating
+a checksum test alone does not establish that decision. Keep the older versioned artwork as
 historical material, without rewriting published releases.
 
 The README must reference the canonical asset. `python3 scripts/test_branding.py`
