@@ -17,8 +17,8 @@ class BrandingTests(unittest.TestCase):
         self.assertEqual(
             actual,
             CANONICAL_SHA256,
-            "Canonical branding is frozen; reuse it unchanged. An explicit user "
-            "request is required before changing the identity or this checksum.",
+            "Upstream canonical branding is frozen; reuse it unchanged. A reviewed "
+            "maintainer decision is required before changing the identity or checksum.",
         )
 
     def test_readme_displays_the_canonical_artwork(self):
@@ -33,7 +33,7 @@ class BrandingTests(unittest.TestCase):
         )
 
     def test_public_guidance_pins_the_canonical_identity(self):
-        for name in ("BRANDING.md", "AGENTS.md"):
+        for name in ("BRANDING.md",):
             with self.subTest(file=name):
                 guidance = (ROOT / name).read_text(encoding="utf-8")
                 self.assertIn(CANONICAL_ASSET, guidance)

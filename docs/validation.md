@@ -1,5 +1,40 @@
 # Validation record
 
+## v0.8.0 candidate observations — 2026-10-17
+
+Local combined Go race/vet, 73 publication/packaging tests, five official-adapter
+offline contracts, notices and workflow syntax checks passed. Each runtime lane
+received independent review; malformed/null protocol data, unpaired Unicode,
+legacy brokers ignoring headers and blocking FIFO configuration inputs gained
+negative regressions before qualification.
+
+`edge quest` runs six real loopback/private-SQLite scenarios. `resources quest`
+uses explicit resource fixtures, real bounded admission and temporary scoped
+HTTP/SQLite to verify overflow, pressure pause, protected work and exact reuse.
+Neither calls a model. Actual cross-host/TLS deployment and distributed resource
+admission are not qualified by these tests.
+
+The optional official TypeSafe adapter used three actual local Ollama calls:
+170/41 input/output tokens for initial compatibility, 188/65 for a four-choice
+request that safely abstained, and 170/41 for a separate full-CLI two-choice
+request that passed. Total: **675 local tokens, three calls, zero retries, $0
+provider charge**. An explicit subsequent MCP replay reused a checked result
+without generation. The model is `qwen3.5:4b`, not Jev weights. These observations
+establish transport/policy behavior, not broad selector quality or calibrated
+confidence. Native Mac resource admission retained both a low-headroom refusal
+and a later successful checked-publication/reuse path; no threshold was relaxed
+to force success.
+
+A new development-policy checked revision also produced the exact reviewed
+local document with zero model calls and recorded outcome metadata. Its content
+is private maintainer preference, not instructions imposed on library users.
+Whole-build hosted-token savings, counterfactual invoices and human rework cost
+remain unmeasured. Operators select their own explicit budgets and settings.
+
+Four-platform publication, exact actual downloads and registry digests will be
+recorded after their gates complete. Native Claude Desktop import/connection
+remains pending. Earlier release evidence below is preserved.
+
 ## v0.7.0 observations — 2026-10-17
 
 Candidate qualification includes Go race/vet and real-process CLI tests, native

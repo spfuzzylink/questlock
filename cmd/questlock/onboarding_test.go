@@ -108,6 +108,39 @@ func TestOnboardingCLIIntegration(t *testing.T) {
 		t.Fatalf("build CLI: %v\n%s", err, out)
 	}
 
+	t.Run("durable edge quest has six offline checks", func(t *testing.T) {
+		f := newOnboardingCLIFixture(t, binary)
+		var report struct {
+			Evidence             string `json:"evidence"`
+			ModelCalls           int    `json:"model_calls"`
+			RemoteHostsValidated bool   `json:"remote_hosts_validated"`
+			Cases                []struct {
+				ID         string `json:"id"`
+				Complexity string `json:"complexity"`
+				Passed     bool   `json:"passed"`
+			} `json:"cases"`
+		}
+		onboardingCLIMust(t, json.Unmarshal(f.command(t, "edge", "quest"), &report))
+		if report.Evidence != "loopback_http_and_private_sqlite_fixture" || report.ModelCalls != 0 || report.RemoteHostsValidated || len(report.Cases) != 6 {
+			t.Fatalf("invalid evidence: %+v", report)
+		}
+		counts := map[string]int{}
+		ids := map[string]bool{}
+		for _, c := range report.Cases {
+			if !c.Passed || c.ID == "" || ids[c.ID] {
+				t.Fatalf("invalid fixture case: %+v", c)
+			}
+			ids[c.ID] = true
+			counts[c.Complexity]++
+		}
+		if counts["simple"] != 3 || counts["complex"] != 3 {
+			t.Fatal(counts)
+		}
+		if entries, err := os.ReadDir(f.tmp); err != nil || len(entries) != 0 {
+			t.Fatalf("fixture did not clean private state: %v %v", entries, err)
+		}
+	})
+
 	t.Run("try and exact durable reuse", func(t *testing.T) {
 		f := newOnboardingCLIFixture(t, binary)
 		var first firstTaskReport

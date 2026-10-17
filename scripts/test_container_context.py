@@ -29,7 +29,7 @@ class ContainerContextTests(unittest.TestCase):
     def test_required_sources_and_only_named_nested_embedded_files_are_allowed(self):
         self.assertTrue(all(context.allowed_file(name) for name in context.REQUIRED_FILES))
         self.assertEqual(context.validate_context(self.root), context.REQUIRED_FILES)
-        for name in ("observability/score.go", "delegation/validate.go", "worker/path_unix.go", "evaluation/checks.go", "revision/types.go"):
+        for name in ("observability/score.go", "delegation/validate.go", "worker/path_unix.go", "evaluation/checks.go", "revision/types.go", "admission/probe_linux.go"):
             self.assertTrue(context.allowed_file(name))
         for name in (*context.PRIVATE_SENTINELS, "evaluation/fixtures/other.json",
                      "evaluation/fixtures/nested/quickstart.json", "worker/nested/worker.go",

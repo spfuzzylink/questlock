@@ -15,9 +15,10 @@ TOP_LEVEL = {"go.mod", "go.sum", "LICENSE", "ATTRIBUTION.md", "THIRD_PARTY_NOTIC
 GO_DIRECTORIES = {
     "cmd/questlock", "internal/store", "internal/httpapi", "internal/agentsetup", "internal/configguard", "internal/onboardingclient",
     "internal/localruntime", "internal/desktopbundle",
-    "client", "protocol", "inference", "observability", "evaluation", "delegation", "worker", "outcomes", "revision",
+    "client", "protocol", "inference", "admission", "edge", "internal/edgequest", "systemone", "observability", "evaluation", "delegation", "worker", "outcomes", "revision",
 }
 EMBEDDED_FILES = {
+    "systemone/bridge.py",
     "internal/desktopbundle/legalassets/LICENSE",
     "internal/desktopbundle/legalassets/ATTRIBUTION.md",
     "internal/desktopbundle/legalassets/THIRD_PARTY_NOTICES.md",
@@ -35,11 +36,15 @@ EMBEDDED_FILES = {
 REQUIRED_FILES = TOP_LEVEL | EMBEDDED_FILES | {
     "internal/configguard/guard.go", "internal/onboardingclient/client.go",
     "internal/localruntime/runtime.go", "internal/desktopbundle/bundle.go",
+    "edge/edge.go", "internal/edgequest/quest.go", "systemone/runner.go",
     "cmd/questlock/main.go", "internal/store/store.go", "internal/httpapi/httpapi.go",
     "internal/agentsetup/install.go", "client/client.go", "protocol/protocol.go", "inference/runner.go",
-    "observability/langfuse.go", "evaluation/fixtures.go", "delegation/router.go", "worker/worker.go", "outcomes/store.go", "revision/types.go",
+    "observability/langfuse.go", "evaluation/fixtures.go", "delegation/router.go", "worker/worker.go", "outcomes/store.go", "revision/types.go", "admission/scheduler.go",
 }
 PRIVATE_SENTINELS = (
+    "edge/context-private.db", "edge/nested/context-private.go",
+    "systemone/context-private-request.json", "systemone/nested/context-private.go",
+    "systemone/context-private.py", "internal/edgequest/context-private.db",
     ".local/context-private.txt", "cmd/.DS_Store", "cmd/questlock/.context-private.go",
     "internal/store/context-private.db", "internal/agentsetup/assets/context-private.json",
     "observability/context-private.env", "evaluation/context-private.json",
@@ -48,6 +53,7 @@ PRIVATE_SENTINELS = (
     "delegation/context-private.env", "worker/context-private-request.json",
     "worker/nested/context-private.go", "scripts/langfuse/context-private.env",
     "revision/context-private-request.json", "revision/nested/context-private.go",
+    "admission/context-private-request.json", "admission/nested/context-private.go",
     "outcomes/context-private-feedback.json", "outcomes/nested/context-private.go",
     "scripts/langfuse/context-private-request.json",
 )

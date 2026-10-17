@@ -1,3 +1,42 @@
+# Questlock 0.8.0 — local work, shared results, your policy
+
+**Experimental release candidate.** Published v0.7.0 remains available unchanged.
+
+- **SecondGate:** a private durable edge outbox, pinned writes to one authoritative
+  broker, and atomic paginated snapshot/change consumption. Offline intent is
+  not acceptance. Exact uncertain retries retain their operation ID; conflicts
+  require an explicit caller decision. A dedicated pinned route makes older
+  brokers reject the operation before mutation.
+- **Local decisions:** optional TypeSafe System One Adapter integration with an
+  installed Ollama model. Go returns an advisory choice or abstains. This is a
+  local alternative, not Jev weights; scores are uncalibrated and authorize no
+  action. Larger local reasoning remains an explicit separate request.
+- **Adaptive admission:** opt-in CPU/memory-aware queues across named local lanes,
+  with protected broker headroom, hard bounds, immediate pressure pause and
+  gradual recovery. One controller coordinates one process. Reservations are
+  estimates; OS/container resource enforcement stays separate.
+- **Your policy:** copyable local-only worker and personal-instruction examples.
+  Provider, model, limits, checks and reuse remain explicit configuration. Personal
+  maintainer preferences stay outside public repository instructions.
+
+`questlock edge quest` and `questlock resources quest` exercise real temporary
+HTTP/SQLite workflows without a model. Existing setup, manual publishing, worker,
+revision, outcome and runtime commands remain supported; existing MCP single-active
+admission is unchanged. Ordinary Go commands require no Python. The optional
+System One bridge has its own pinned environment and setup inputs.
+
+Local smoke tests retain a malformed four-choice abstention alongside passing
+two-choice calls. CPU/memory pressure refusals are retained too. These establish
+protocol and safety behavior, not quality parity, invoice savings, faster inference
+or a whole-chat hosted-usage percentage. Native Claude Desktop connection and
+real cross-host/TLS deployment qualification remain unverified.
+
+[One local control loop](local-coordination.md) · [Edge coordination](second-gate.md) ·
+[Local decisions](system-one.md) · [Resource policy](adaptive-admission.md) ·
+[Personal policy examples](../examples/preferences/README.md)
+
+---
+
 # Questlock 0.7.0 — a first task before a first token
 
 **Published experimental release.**

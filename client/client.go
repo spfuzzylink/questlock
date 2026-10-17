@@ -118,6 +118,14 @@ func (c *Client) Audit(ctx context.Context, limit int) ([]protocol.AuditEvent, e
 }
 
 func (c *Client) do(ctx context.Context, method, path string, query url.Values, input, output any) error {
+	return c.doMax(ctx, method, path, query, input, output, MaxResponseBytes)
+}
+
+func (c *Client) doMax(ctx context.Context, method, path string, query url.Values, input, output any, maxResponseBytes int) error {
+	return c.doHeaders(ctx, method, path, query, input, output, maxResponseBytes, nil)
+}
+
+func (c *Client) doHeaders(ctx context.Context, method, path string, query url.Values, input, output any, maxResponseBytes int, headers map[string]string) error {
 	endpoint := *c.baseURL
 	endpoint.Path = strings.TrimRight(endpoint.Path, "/") + path
 	endpoint.RawPath = ""
@@ -136,6 +144,9 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 	}
 	request.Header.Set("Authorization", "Bearer "+c.token)
 	request.Header.Set("Accept", "application/json")
+	for name, value := range headers {
+		request.Header.Set(name, value)
+	}
 	if input != nil {
 		request.Header.Set("Content-Type", "application/json")
 	}
@@ -144,16 +155,23 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 		return fmt.Errorf("questlock: request failed: %w", err)
 	}
 	defer response.Body.Close()
-	data, err := io.ReadAll(io.LimitReader(response.Body, MaxResponseBytes+1))
+	data, err := io.ReadAll(io.LimitReader(response.Body, int64(maxResponseBytes)+1))
 	if err != nil {
 		return fmt.Errorf("questlock: read response: %w", err)
 	}
-	if len(data) > MaxResponseBytes {
-		return errors.New("questlock: response exceeds 16MiB limit")
+	if len(data) > maxResponseBytes {
+		if maxResponseBytes == MaxResponseBytes {
+			return errors.New("questlock: response exceeds 16MiB limit")
+		}
+		return errors.New("questlock: response exceeds configured byte limit")
 	}
 	if response.StatusCode < 200 || response.StatusCode >= 300 {
 		var body protocol.ErrorBody
-		if json.Unmarshal(data, &body) != nil || body.Code == "" {
+		decodeErr := json.Unmarshal(data, &body)
+		if len(headers) != 0 {
+			decodeErr = decodePinnedError(data, &body)
+		}
+		if decodeErr != nil || body.Code == "" {
 			body = protocol.ErrorBody{Code: "http_error", Message: http.StatusText(response.StatusCode)}
 		}
 		return &Error{Code: body.Code, Message: body.Message, CurrentVersion: body.CurrentVersion, Status: response.StatusCode}

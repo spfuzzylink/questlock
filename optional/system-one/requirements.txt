@@ -1,0 +1,16 @@
+# Optional only; no Python dependency is needed for the ordinary Go CLI.
+# Official TypeSafe adapter v0.2.1, commit e1d4cc938204b22fc5a3c3aca7044072fe3f712d.
+system-one-adapter @ https://files.pythonhosted.org/packages/66/cf/02fe7b96187f855789d566cefa86e3d14692ae4a6ff8bbfc0afff864784f/system_one_adapter-0.2.1-py3-none-any.whl#sha256=555b24c29096b8e7fd83105243e4a5367209f050f8de1bdedb829f64470bba84
+typesafe-sdk==0.7.0
+annotated-types==0.8.0
+anyio==4.15.1
+h11==0.16.0
+httpcore2==2.13.1
+httpx2==2.13.1
+idna==3.20
+pydantic==2.14.1
+pydantic_core==2.50.1
+tenacity==9.2.1
+truststore==0.10.5
+typing_extensions==4.16.0
+typing-inspection==0.4.4

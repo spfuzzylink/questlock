@@ -99,9 +99,8 @@ outside this cutoff.
 - Human acceptance and rework cost: **not measured for this build**; cost per
   accepted task remains unknown.
 
-The next target is **at most 1% of an equivalent workflow's previous hosted
-Codex usage**, while keeping added paid calls at $0. It is a target, not a result
-claimed by this release. A valid comparison needs the same starting work and
+This release does not establish a 99% reduction in hosted Codex usage. A valid
+comparison needs the same starting work and
 acceptance criteria, all failed attempts, comparable quality, native hosted
 usage counters and explicit human rework. Local agents and shared results are
 useful ingredients; replication alone does not produce a stronger model.

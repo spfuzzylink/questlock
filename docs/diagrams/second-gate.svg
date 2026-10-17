@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="640" viewBox="0 0 1240 640" role="img" aria-labelledby="title desc">
+<title id="title">SecondGate: one authority, durable edges</title>
+<desc id="desc">One authoritative SQLite store exports token-scoped snapshots and accepted changes to a private edge cache with atomic checkpoints. A pinned durable outbox forwards exact intent through the existing publication CAS, receipts and accepted journal. Pages carry raw artifact content; remote endpoints require HTTPS. Actual two-host validation remains pending.</desc>
+<defs><marker id="read-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="#61718d"/></marker><marker id="write-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="#bd8543"/></marker></defs>
+<rect width="1240" height="640" rx="18" fill="#f8fafc"/>
+<g font-family="Arial, sans-serif" fill="#18243b">
+<path d="M285 227.5H350" fill="none" stroke="#61718d" stroke-width="2" marker-end="url(#read-arrow)"/>
+<path d="M585 227.5H650" fill="none" stroke="#61718d" stroke-width="2" marker-end="url(#read-arrow)"/>
+<path d="M885 227.5H950" fill="none" stroke="#61718d" stroke-width="2" marker-end="url(#read-arrow)"/>
+<path d="M285 470H350" fill="none" stroke="#bd8543" stroke-width="2" marker-end="url(#write-arrow)"/>
+<path d="M585 470H615V340H162.5V300" fill="none" stroke="#bd8543" stroke-width="2" marker-end="url(#write-arrow)"/>
+<rect x="40" y="155" width="245" height="145" rx="12" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="58" y="192" font-size="21" font-weight="700">One authority</text>
+<text x="58" y="228" font-size="16">Private SQLite store</text>
+<text x="58" y="252" font-size="16">Token: scope + agent</text>
+<text x="58" y="276" font-size="16">Immutable accepted history</text>
+<rect x="350" y="155" width="235" height="145" rx="12" fill="#eef0ff" stroke="#7970c2" stroke-width="2"/>
+<text x="368" y="192" font-size="21" font-weight="700">Snapshot</text>
+<text x="368" y="228" font-size="16">Latest version per key</text>
+<text x="368" y="252" font-size="16">Fixed horizon; key order</text>
+<text x="368" y="276" font-size="16">Bounded; signed cursor</text>
+<rect x="650" y="155" width="235" height="145" rx="12" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="668" y="192" font-size="21" font-weight="700">Accepted changes</text>
+<text x="668" y="228" font-size="16">Frozen batch horizon</text>
+<text x="668" y="252" font-size="16">Sequence order</text>
+<text x="668" y="276" font-size="16">No replay/rejection entries</text>
+<rect x="950" y="155" width="245" height="145" rx="12" fill="#eef0ff" stroke="#7970c2" stroke-width="2"/>
+<text x="968" y="192" font-size="21" font-weight="700">Reader checkpoint</text>
+<text x="968" y="228" font-size="16">Atomic page + cursor</text>
+<text x="968" y="252" font-size="16">Stage before promotion</text>
+<text x="968" y="276" font-size="16">Resume after restart</text>
+<rect x="40" y="420" width="245" height="100" rx="12" fill="#fff5e6" stroke="#bd8543" stroke-width="2"/>
+<text x="58" y="457" font-size="21" font-weight="700">Durable edge outbox</text>
+<text x="58" y="493" font-size="16">Exact intent before send</text>
+<rect x="350" y="420" width="235" height="100" rx="12" fill="#fff5e6" stroke="#bd8543" stroke-width="2"/>
+<text x="368" y="457" font-size="19" font-weight="700">Existing Publish CAS</text>
+<text x="368" y="493" font-size="16">Version + receipt + journal</text>
+<text x="40" y="55" font-size="30" font-weight="700">SecondGate: one authority, durable edges</text>
+<text x="40" y="84" font-size="18">Pinned durable intent; atomic pull cache; existing CAS and operation receipts.</text>
+<text x="40" y="133" font-size="18" font-weight="700">READ: token-authorized artifact content</text>
+<text x="350" y="329" font-size="16">Commit once on the same authority</text>
+<text x="40" y="396" font-size="18" font-weight="700">PUSH: durable intent, same authoritative CAS</text>
+<text x="650" y="442" font-size="18">Lost response stays uncertain until exact retry.</text>
+<text x="650" y="472" font-size="18">Conflicts require an explicit caller decision.</text>
+<text x="650" y="502" font-size="18">Local fixtures; real two-host validation pending.</text>
+<text x="40" y="584" font-size="18">Pages contain raw artifact content. Remote endpoints require HTTPS.</text>
+<text x="40" y="614" font-size="18">One authoritative database; no multi-writer replication or demonstrated remote scale.</text>
+</g></svg>

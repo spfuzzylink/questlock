@@ -158,11 +158,19 @@ func TestLiveFailureRollsBackCompleteOriginalAndMode(t *testing.T) {
 
 func TestTimeoutRollsBackWhileVerifierIsStalled(t *testing.T) {
 	o, original := fixture(t, true)
-	o.Timeout = 400 * time.Millisecond
+	// The deadline includes detached race-instrumented process startup. Leave
+	// startup time so this case exercises an installed candidate's stalled read.
+	o.Timeout = 5 * time.Second
 	blocked := make(chan struct{})
+	entered := make(chan struct{})
 	defer close(blocked)
-	o.Verify = func(context.Context, string) error { <-blocked; return nil }
+	o.Verify = func(context.Context, string) error { close(entered); <-blocked; return nil }
 	result, err := Apply(context.Background(), o)
+	select {
+	case <-entered:
+	default:
+		t.Fatalf("live verifier was never entered: %+v %v", result, err)
+	}
 	if err == nil || result.Status.State != "rolled_back" {
 		t.Fatalf("stalled verifier: %+v %v", result, err)
 	}

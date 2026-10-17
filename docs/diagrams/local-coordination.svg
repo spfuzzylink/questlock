@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+<title id="title">One local control loop</title>
+<desc id="desc">Resource admission bounds local model and replication work; the broker remains the sole write authority.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9" fill="#64ddc0" /></marker></defs>
+<rect width="1200" height="700" fill="#101b31" />
+<text x="40" y="52" fill="#eff5ff" font-family="Arial,sans-serif" font-size="27" font-weight="700">One host budget. Durable shared work.</text>
+<text x="40" y="86" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="16">Local first · no paid fallback · one authority per shared scope</text>
+<path d="M255,187.5 L315,187.5" fill="none" stroke="#64ddc0" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M545,187.5 L615,187.5" fill="none" stroke="#64ddc0" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M845,187.5 L915,187.5" fill="none" stroke="#64ddc0" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M1035,235 L1035,355" fill="none" stroke="#64ddc0" stroke-width="2" marker-end="url(#arrow)" />
+<text x="1043" y="295" text-anchor="middle" fill="#bfcce0" font-family="Arial,sans-serif" font-size="12">Admit when it fits</text>
+<path d="M915,405 L845,405" fill="none" stroke="#64ddc0" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M615,405 L545,405" fill="none" stroke="#64ddc0" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M315,405 L255,405" fill="none" stroke="#64ddc0" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M430,235 L430,355" fill="none" stroke="#64ddc0" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M1035,100 L1035,140" fill="none" stroke="#64ddc0" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M430,455 L430,565" fill="none" stroke="#64ddc0" stroke-width="2" marker-end="url(#arrow)" />
+<text x="438" y="510" text-anchor="middle" fill="#bfcce0" font-family="Arial,sans-serif" font-size="12">Record attempts</text>
+<path d="M845,607.5 L870,607.5 L870,280 L430,280 L430,225" fill="none" stroke="#64ddc0" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrow)" />
+<rect x="40" y="140" width="215" height="95" rx="11" fill="#172740" stroke="#64ddc0" stroke-width="1.5" />
+<text x="147.5" y="180.5" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Task + exact snapshot</text>
+<text x="147.5" y="206.5" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="12">Approved inputs and revision</text>
+<rect x="315" y="140" width="230" height="95" rx="11" fill="#172740" stroke="#64ddc0" stroke-width="1.5" />
+<text x="430" y="180.5" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Reuse / checked edit</text>
+<text x="430" y="206.5" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="12">No new model call when valid</text>
+<rect x="615" y="140" width="230" height="95" rx="11" fill="#172740" stroke="#64ddc0" stroke-width="1.5" />
+<text x="730" y="180.5" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Bounded waiting work</text>
+<text x="730" y="206.5" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="12">Durable edge intents stay intact</text>
+<rect x="915" y="140" width="240" height="95" rx="11" fill="#172740" stroke="#ab95ef" stroke-width="1.5" />
+<text x="1035" y="180.5" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Adaptive admission</text>
+<text x="1035" y="206.5" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="12">CPU, memory and lane limits</text>
+<rect x="915" y="355" width="240" height="100" rx="11" fill="#172740" stroke="#ab95ef" stroke-width="1.5" />
+<text x="1035" y="398" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Local typed decision</text>
+<text x="1035" y="424" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="12">Allowed choices or abstain</text>
+<rect x="615" y="355" width="230" height="100" rx="11" fill="#172740" stroke="#64ddc0" stroke-width="1.5" />
+<text x="730" y="398" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Local reasoning</text>
+<text x="730" y="424" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="12">Explicit task, model and checks</text>
+<rect x="315" y="355" width="230" height="100" rx="11" fill="#172740" stroke="#64ddc0" stroke-width="1.5" />
+<text x="430" y="398" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Authoritative broker</text>
+<text x="430" y="424" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="12">CAS + immutable retry receipts</text>
+<rect x="40" y="355" width="215" height="100" rx="11" fill="#172740" stroke="#64ddc0" stroke-width="1.5" />
+<text x="147.5" y="398" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Edge read cache</text>
+<text x="147.5" y="424" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="12">Snapshot + accepted changes</text>
+<rect x="915" y="35" width="240" height="65" rx="11" fill="#172740" stroke="#ab95ef" stroke-width="1.5" />
+<text x="1035" y="60.5" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Host / container signals</text>
+<text x="1035" y="86.5" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="12">Reserve broker headroom</text>
+<rect x="315" y="565" width="530" height="85" rx="11" fill="#172740" stroke="#64ddc0" stroke-width="1.5" />
+<text x="580" y="600.5" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Outcomes + human feedback</text>
+<text x="580" y="626.5" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="12">Count failed work and later rewrites</text>
+<text text-anchor="middle" font-family="Arial,sans-serif" font-size="12" x="580" y="125" fill="#bdcbe0">Needs reasoning</text><text text-anchor="middle" font-family="Arial,sans-serif" font-size="12" x="510" y="295" fill="#bdcbe0">Checked result</text><text text-anchor="middle" font-family="Arial,sans-serif" font-size="12" x="880" y="340" fill="#bdcbe0">Caller chooses</text><path stroke-width="2" marker-end="url(#arrow)" d="M1035,455 L1035,490" fill="none" stroke="#ab95ef" /><rect x="915" y="490" width="240" height="55" rx="10" fill="#172740" stroke="#ab95ef" /><text text-anchor="middle" font-family="Arial,sans-serif" font-size="16" x="1035" y="523" fill="#eff5ff">Abstain: return to caller</text></svg>

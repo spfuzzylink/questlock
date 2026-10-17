@@ -158,6 +158,14 @@ jobs:
               --memory=256m --cpus=1 --pids-limit=128 \
               --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" revise quest
           fi
+          if python3 -c 'import sys; sys.exit(tuple(map(int, sys.argv[1].split("."))) < (0, 8, 0))' "$RELEASE_VERSION"; then
+            docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+              --memory=256m --cpus=1 --pids-limit=128 \
+              --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" edge quest
+            docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+              --memory=256m --cpus=1 --pids-limit=128 \
+              --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" resources quest
+          fi
       - name: Export only the image that passed its native smoke test
         run: |
           mkdir tested-image

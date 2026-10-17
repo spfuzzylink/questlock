@@ -19,7 +19,7 @@ import (
 	"github.com/spfuzzylink/questlock/internal/store"
 )
 
-var version = "0.7.0" // Release builds set this from VERSION using -ldflags.
+var version = "0.8.0" // Release builds set this from VERSION using -ldflags.
 const defaultDB = ".questlock/state.db"
 
 func main() {
@@ -47,12 +47,16 @@ Usage:
   questlock outcome record|feedback|show|report [flags]
   questlock outcome quest
   questlock model quest
+  questlock edge quest
   questlock model install [--agents codex,claude] [--replace]
   questlock setup [--client codex|claude-code|claude-desktop] [--plan]
   questlock doctor [--client codex|claude-code|claude-desktop]
   questlock try [--state-dir PATH] [--workspace PATH]
   questlock local start|status|stop [--state-dir PATH]
   questlock local-agent --model NAME --workspace PATH --prompt TEXT
+  questlock system-one choose --request PATH --python ABSOLUTE_PINNED_VENV_PYTHON
+  questlock resources config|inspect|quest
+  questlock queue revise --workspace PATH --request FILE [--config PATH]
   questlock quest
   questlock version
 
@@ -84,6 +88,12 @@ func run(args []string) error {
 		return tryCommand(args[1:])
 	case "local-agent":
 		return localAgentCommand(args[1:])
+	case "system-one":
+		return systemOneCommand(args[1:])
+	case "resources":
+		return resourcesCommand(args[1:])
+	case "queue":
+		return queueCommand(args[1:])
 	case "local":
 		return localCommand(args[1:])
 	case "__local-broker":
@@ -97,6 +107,8 @@ func run(args []string) error {
 		return reviseCommand(args[1:])
 	case "worker":
 		return workerCommand(args[1:])
+	case "edge":
+		return edgeCommand(args[1:])
 	case "outcome":
 		return outcomeCommand(args[1:])
 	case "serve":

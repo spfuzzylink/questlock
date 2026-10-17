@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="860" viewBox="0 0 1320 860" role="img" aria-labelledby="title desc">
+<title id="title">Questlock local selector and reasoning routes</title>
+<desc id="desc">A caller chooses permitted labels. Optional host admission protects resources. A local TypeSafe selector returns scores. Go checks them; the caller independently authorizes exact reuse, checked edits, local reasoning, or abstention.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#93f9e5"/></marker></defs>
+<rect width="1320" height="860" rx="18" fill="#080c19"/>
+<text x="40" y="49" fill="#f4f3ff" font-family="Arial,sans-serif" font-size="27" font-weight="700">QUESTLOCK · Local typed choice + deliberate reasoning</text>
+<text x="40" y="78" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="17">Caller-controlled routes · local provider API cost $0 · no automatic actions</text>
+<path d="M350 165H420" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M730 165H800" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M1020 230V270H640V310" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M470 440V480H180V520" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M570 440V480H500V520" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M680 440V480H820V520" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M800 440V480H1140V520" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M180 640V690H500V720" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M500 640V720" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M820 640V720" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="100" width="310" height="130" rx="12" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="58" y="131" fill="#f4f3ff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Caller-approved facts</text>
+<text x="58" y="162" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Bounded context + permitted labels</text>
+<text x="58" y="187" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Explicit local model; no credentials</text>
+<rect x="420" y="100" width="310" height="130" rx="12" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="438" y="131" fill="#f4f3ff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Optional host admission</text>
+<text x="438" y="162" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Shared process; max 1 model worker</text>
+<text x="438" y="187" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Pause on unavailable resources</text>
+<rect x="800" y="100" width="440" height="130" rx="12" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="818" y="131" fill="#f4f3ff" font-family="Arial,sans-serif" font-size="20" font-weight="700">System One style selector</text>
+<text x="818" y="162" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Official TypeSafe adapter + local Ollama</text>
+<text x="818" y="187" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">One structured call; no retry or fallback</text>
+<rect x="420" y="310" width="440" height="130" rx="12" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="438" y="341" fill="#f4f3ff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Go validates; caller decides</text>
+<text x="438" y="372" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Exact labels, model digest, score heuristics</text>
+<text x="438" y="397" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Advisory choice or abstention; no authority</text>
+<rect x="40" y="520" width="280" height="120" rx="12" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="58" y="551" fill="#f4f3ff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Exact result reuse</text>
+<text x="58" y="582" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Recheck digest and provenance</text>
+<text x="58" y="607" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Zero generation when reused</text>
+<rect x="360" y="520" width="280" height="120" rx="12" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="378" y="551" fill="#f4f3ff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Checked literal edit</text>
+<text x="378" y="582" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Prior caller authorization</text>
+<text x="378" y="607" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Exact text + declared checks</text>
+<rect x="680" y="520" width="280" height="120" rx="12" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="698" y="551" fill="#f4f3ff" font-family="Arial,sans-serif" font-size="20" font-weight="700">System Two reasoning</text>
+<text x="698" y="582" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Only approved input subset</text>
+<text x="698" y="607" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Existing worker / Codex OSS</text>
+<rect x="1000" y="520" width="280" height="120" rx="12" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="1018" y="551" fill="#f4f3ff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Abstain</text>
+<text x="1018" y="582" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Malformed, unclear or unsupported</text>
+<text x="1018" y="607" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Return to caller for judgment</text>
+<rect x="360" y="720" width="600" height="100" rx="12" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="378" y="751" fill="#f4f3ff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Caller verifies before accepting</text>
+<text x="378" y="782" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Existing permissions and checks still apply</text>
+<text x="378" y="807" fill="#cbc6e2" font-family="Arial,sans-serif" font-size="16">Local tokens do not measure hosted Codex usage</text>
+</svg>
