@@ -30,7 +30,7 @@ const (
 	// HarnessReserve is a conservative admission estimate for native instructions
 	// and tool schemas, not an exact tokenizer count or a generation-time ceiling.
 	HarnessReserve int64 = 16_384
-	policyVersion        = "text-only-1"
+	policyVersion        = "text-only-2"
 )
 
 // Provider binds the local model snapshot and a particular native executable.
@@ -265,7 +265,7 @@ func (p *Provider) invoke(ctx context.Context, args []string, prompt string, con
 			return nil, errors.New("cannot create isolated native directories")
 		}
 	}
-	config := "approval_policy = \"never\"\ncheck_for_update_on_startup = false\nproject_doc_max_bytes = 0\nweb_search = \"disabled\"\n"
+	config := "approval_policy = \"never\"\ncheck_for_update_on_startup = false\nsuppress_unstable_features_warning = true\nproject_doc_max_bytes = 0\nweb_search = \"disabled\"\n"
 	if contextWindow > 0 {
 		config = "model_context_window = " + strconv.FormatInt(contextWindow, 10) + "\n" + config
 	}

@@ -24,6 +24,43 @@ func TestNativeEventsRequireCompletedAnswerAndUsage(t *testing.T) {
 	}
 }
 
+func TestNativeRecognizesOnlyEstablishedNonfatalStartupWarnings(t *testing.T) {
+	const feature = `{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set ` + "`suppress_unstable_features_warning = true`" + ` in /tmp/questlock-native-fixture/codex/config.toml."}}` + "\n"
+	const metadata = `{"type":"item.completed","item":{"id":"item_1","type":"error","message":"Model metadata for ` + "`qwen3.5:4b`" + ` not found. Defaulting to fallback metadata; this can degrade performance and cause issues."}}` + "\n"
+	withWarnings := strings.Replace(validEvents, `{"type":"turn.started"}`, feature+metadata+`{"type":"turn.started"}`, 1)
+	response, err := DecodeEvents([]byte(withWarnings), "qwen3.5:4b")
+	if err != nil || !response.Complete || response.StopReason != "completed_with_startup_warnings" || response.Usage.InputTokens != 100 {
+		t.Fatalf("startup warnings rejected: %+v %v", response, err)
+	}
+	for name, stream := range map[string]string{
+		"unknown startup error":     strings.Replace(withWarnings, "Model metadata for", "Cannot connect: Model metadata for", 1),
+		"wrong model warning":       strings.Replace(withWarnings, "`qwen3.5:4b`", "`different:4b`", 1),
+		"warning during turn":       strings.Replace(validEvents, `{"type":"turn.started"}`, `{"type":"turn.started"}`+"\n"+metadata, 1),
+		"top-level error":           strings.Replace(withWarnings, `"type":"item.completed","item":{"id":"item_1","type":"error"`, `"type":"error","item":{"id":"item_1","type":"error"`, 1),
+		"too many startup warnings": strings.Replace(withWarnings, `{"type":"turn.started"}`, metadata+`{"type":"turn.started"}`, 1),
+	} {
+		t.Run(name, func(t *testing.T) {
+			if r, err := DecodeEvents([]byte(stream), "qwen3.5:4b"); err == nil || r.Complete {
+				t.Fatal("unexpected error accepted")
+			}
+		})
+	}
+}
+
+func TestNativeCacheWriteUsageIsValidatedAndPartitioned(t *testing.T) {
+	stream := strings.Replace(validEvents, `"cached_input_tokens":30`, `"cached_input_tokens":30,"cache_write_input_tokens":10`, 1)
+	r, err := DecodeEvents([]byte(stream), "qwen3.5:4b")
+	if err != nil || r.Usage.UncachedInputTokens != 60 || r.Usage.CacheReadTokens != 30 || r.Usage.CacheWriteTokens != 10 {
+		t.Fatalf("cache partition: %+v %v", r, err)
+	}
+	for _, count := range []string{"null", "-1", "71", "1000000001", "0.5"} {
+		stream := strings.Replace(validEvents, `"cached_input_tokens":30`, `"cached_input_tokens":30,"cache_write_input_tokens":`+count, 1)
+		if r, err := DecodeEvents([]byte(stream), "qwen3.5:4b"); err == nil || r.Complete {
+			t.Fatalf("invalid cache write usage accepted: %s", count)
+		}
+	}
+}
+
 func TestNativeEventsRejectUncertainResults(t *testing.T) {
 	cases := map[string]string{
 		"missing final":            strings.Replace(validEvents, `"type":"agent_message"`, `"type":"reasoning"`, 1),

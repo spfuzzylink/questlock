@@ -130,7 +130,7 @@ func TestNativeClientIsIsolatedAndPinned(t *testing.T) {
 	if strings.Contains(args, req.Input) || !strings.Contains(prompt, req.Input) || !strings.Contains(prompt, `"instructions":`) {
 		t.Fatal("prompt was not sent solely through structured stdin")
 	}
-	for _, setting := range []string{`approval_policy = "never"`, `check_for_update_on_startup = false`, `project_doc_max_bytes = 0`, `web_search = "disabled"`, `model_context_window = 32768`} {
+	for _, setting := range []string{`approval_policy = "never"`, `check_for_update_on_startup = false`, `suppress_unstable_features_warning = true`, `project_doc_max_bytes = 0`, `web_search = "disabled"`, `model_context_window = 32768`} {
 		if !strings.Contains(config, setting) {
 			t.Fatalf("missing policy %q", setting)
 		}

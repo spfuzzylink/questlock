@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
@@ -34,7 +35,7 @@ func parseEvents(data []byte, model string) (inference.Response, error) {
 	}
 	scanner := bufio.NewScanner(bytes.NewReader(data))
 	scanner.Buffer(make([]byte, 4096), maxLineBytes+1)
-	starts, completions, threads := 0, 0, 0
+	starts, completions, threads, startupWarnings := 0, 0, 0, 0
 	final := ""
 	for scanner.Scan() {
 		line := scanner.Bytes()
@@ -83,15 +84,30 @@ func parseEvents(data []byte, model string) (inference.Response, error) {
 		case "turn.failed", "error":
 			return fail()
 		case "item.started", "item.updated", "item.completed":
-			if starts != 1 {
-				return fail()
-			}
 			var item map[string]json.RawMessage
 			if json.Unmarshal(event["item"], &item) != nil || item == nil {
 				return fail()
 			}
 			itemType, ok := requiredString(item, "type")
 			if !ok {
+				return fail()
+			}
+			// Codex 0.163 emits these two nonfatal startup warnings using
+			// item.type=error before turn.started, even when generation then
+			// completes successfully. Do not generalize this exception to
+			// unknown messages, errors inside a turn, or top-level failures.
+			if starts == 0 && threads == 1 && typ == "item.completed" && itemType == "error" {
+				message, ok := requiredString(item, "message")
+				if !ok || !knownStartupWarning(message, model) {
+					return fail()
+				}
+				startupWarnings++
+				if startupWarnings > 2 {
+					return fail()
+				}
+				continue
+			}
+			if starts != 1 {
 				return fail()
 			}
 			// These roles have no tools. An unexpected tool item is never
@@ -136,7 +152,22 @@ func parseEvents(data []byte, model string) (inference.Response, error) {
 	result.Text = final
 	result.Complete = true
 	result.StopReason = "completed"
+	if startupWarnings > 0 {
+		result.StopReason = "completed_with_startup_warnings"
+	}
 	return result, nil
+}
+
+func knownStartupWarning(message, model string) bool {
+	if message == fmt.Sprintf("Model metadata for `%s` not found. Defaulting to fallback metadata; this can degrade performance and cause issues.", model) {
+		return true
+	}
+	const prefix = "Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in "
+	if !strings.HasPrefix(message, prefix) || !strings.HasSuffix(message, "/codex/config.toml.") {
+		return false
+	}
+	path := strings.TrimPrefix(message, prefix)
+	return len(path) <= 4096 && !strings.ContainsAny(path, "\r\n\x00")
 }
 
 func requiredString(fields map[string]json.RawMessage, key string) (string, bool) {
@@ -157,7 +188,7 @@ func parseUsage(data []byte) (inference.Usage, error) {
 	if json.Unmarshal(data, &raw) != nil || raw == nil {
 		return inference.Usage{}, fail
 	}
-	keys := []string{"input_tokens", "cached_input_tokens", "output_tokens", "reasoning_output_tokens", "reasoning_tokens"}
+	keys := []string{"input_tokens", "cached_input_tokens", "output_tokens", "reasoning_output_tokens", "reasoning_tokens", "cache_write_input_tokens"}
 	for actual := range raw {
 		for _, key := range keys {
 			if actual != key && strings.EqualFold(actual, key) {
@@ -176,6 +207,14 @@ func parseUsage(data []byte) (inference.Usage, error) {
 	if values[1] > values[0] {
 		return inference.Usage{}, fail
 	}
+	var cacheWrite int64
+	if value, present := raw["cache_write_input_tokens"]; present {
+		var count *int64
+		if json.Unmarshal(value, &count) != nil || count == nil || *count < 0 || *count > 1_000_000_000 || *count > values[0]-values[1] {
+			return inference.Usage{}, fail
+		}
+		cacheWrite = *count
+	}
 	var reasoning int64
 	if raw["reasoning_output_tokens"] != nil && raw["reasoning_tokens"] != nil {
 		return inference.Usage{}, fail
@@ -190,7 +229,7 @@ func parseUsage(data []byte) (inference.Usage, error) {
 		}
 		reasoning = *n
 	}
-	return inference.Usage{InputTokens: values[0], UncachedInputTokens: values[0] - values[1], CacheReadTokens: values[1], OutputTokens: values[2], ReasoningTokens: reasoning}, nil
+	return inference.Usage{InputTokens: values[0], UncachedInputTokens: values[0] - values[1] - cacheWrite, CacheReadTokens: values[1], CacheWriteTokens: cacheWrite, OutputTokens: values[2], ReasoningTokens: reasoning}, nil
 }
 
 func validateEventJSON(data []byte) error {
