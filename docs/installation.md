@@ -16,6 +16,11 @@ From a fork, run `./scripts/install.sh` then `./bin/questlock setup`.
 coding clients must be installed separately. Desktop uses its native extension
 installer, with connection verification in the app. [Measured build report](success-report-v0.7.0.md).
 
+For an approved text task with a local master and two local reviewers, see
+[local agent teams](local-agent-teams.md) and the
+[six-case walkthrough](../examples/teams/README.md). This route requires installed
+local weights; it neither changes active client defaults nor enables paid fallback.
+
 ## Try checked revisions without a model
 
 After extracting an archive, run:

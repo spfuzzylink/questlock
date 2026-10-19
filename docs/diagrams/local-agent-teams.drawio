@@ -1,0 +1,61 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Local agent teams" id="local-agent-teams">
+    <mxGraphModel pageWidth="1200" pageHeight="780" background="#101b31">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="task" value="Approved task snapshot&#10;Facts + checks + pinned local model&#10;Explicit revision and reuse window" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="155" width="280" height="105" />
+        </mxCell>
+        <mxCell id="broker" value="Authoritative broker&#10;Scoped CAS claims + durable results&#10;Only this host owns SQLite" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="450" y="155" width="300" height="105" />
+        </mxCell>
+        <mxCell id="answer" value="Checked answer&#10;Master checks + every review pass&#10;Exact repeat: no generation" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="880" y="155" width="280" height="105" />
+        </mxCell>
+        <mxCell id="master" value="Node A · master&#10;Local Ollama or native Codex OSS&#10;CPU/memory admission before work" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="350" width="300" height="140" />
+        </mxCell>
+        <mxCell id="correct" value="Node B · correctness&#10;Same task + master candidate&#10;No other reviewer votes" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="450" y="350" width="300" height="140" />
+        </mxCell>
+        <mxCell id="risk" value="Node C · risk review&#10;Same task + master candidate&#10;No other reviewer votes" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="860" y="350" width="300" height="140" />
+        </mxCell>
+        <mxCell id="stop" value="Uncertain, rejected or expired? Stop.&#10;No automatic takeover, regeneration, or paid fallback.&#10;Inspect the original record before approving a new revision." style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#efbd73;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="600" width="1120" height="95" />
+        </mxCell>
+        <mxCell id="e0" value="Approved bytes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontColor=#bdcbe0;fontSize=12;" edge="1" parent="1" source="task" target="broker">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e1" value="All gates pass" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontColor=#bdcbe0;fontSize=12;" edge="1" parent="1" source="broker" target="answer">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontColor=#bdcbe0;fontSize=12;" edge="1" parent="1" source="master" target="broker">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontColor=#bdcbe0;fontSize=12;" edge="1" parent="1" source="correct" target="broker">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontColor=#bdcbe0;fontSize=12;" edge="1" parent="1" source="risk" target="broker">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="heading" value="Local reasoning. Durable shared results." style="text;html=0;strokeColor=none;fillColor=none;fontColor=#bdcbe0;fontSize=28;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="30" width="1120" height="40" />
+        </mxCell>
+        <mxCell id="subheading" value="Text-only roles · one write authority · no paid fallback" style="text;html=0;strokeColor=none;fillColor=none;fontColor=#bdcbe0;fontSize=17;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="75" width="1120" height="30" />
+        </mxCell>
+        <mxCell id="transport" value="HTTPS + distinct scoped bearer credentials; workers never mount the broker database." style="text;html=0;strokeColor=none;fillColor=none;fontColor=#bdcbe0;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="520" width="1120" height="35" />
+        </mxCell>
+        <mxCell id="review-boundary" value="Reviewers wait for the checked master; each sees the same candidate, independently." style="text;html=0;strokeColor=none;fillColor=none;fontColor=#bdcbe0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="550" width="1120" height="35" />
+        </mxCell>
+        <mxCell id="evidence" value="Isolated-node qualification uses one physical host. Physical multi-machine deployment needs its own validation." style="text;html=0;strokeColor=none;fillColor=none;fontColor=#bdcbe0;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="720" width="1120" height="35" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

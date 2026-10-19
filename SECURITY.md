@@ -4,6 +4,13 @@ Questlock is a single-host publication gate for cooperating agent workers. It
 protects the versioned artifacts stored through its API. It does not execute or
 sandbox arbitrary agent code, inspect prompts, or authorize external tool calls.
 
+The optional [local team runner](docs/local-agent-teams.md) executes bounded text
+roles through installed Ollama weights or a pinned native Codex OSS client.
+Native roles use an isolated home/workspace without imported credentials,
+configuration, project instructions or enabled tools. This relies on the trusted
+native executable and host OS; read-only execution is not a confidentiality
+sandbox. Active Codex/Claude configurations are not changed by a team run.
+
 ## Trust boundaries
 
 The broker process, local operator, host OS, filesystem, and SQLite library are
@@ -14,6 +21,13 @@ journal. There are no per-key roles or read-only tokens in this version.
 An authenticated worker is allowed to submit content. Version checks stop stale
 publication, not malicious or incorrect content from a worker that knows the
 current version. Task generation fencing and leases are not implemented.
+
+Team role claims bind the approved snapshot and candidate but do not add
+per-role ACLs or authenticated machine attestations. `--worker-id` is an operator
+label; the broker authenticates bearer agents. Scope members remain cooperating,
+trusted writers. Pending or uncertain roles have no automatic takeover. A model
+review is advisory quality evidence, never a person's acceptance or permission
+for an external action.
 
 The operator must prevent direct worker access to the database/volume, broker
 credentials, container engine, host secrets, and alternative mutation paths.
@@ -28,6 +42,10 @@ Giving a worker the broker's host identity defeats this separation.
 - The client requires HTTPS for non-loopback destinations, rejects redirects,
   uses certificate verification, and disables environment proxies. Localhost
   hostnames are not accepted for plaintext HTTP; use `127.0.0.1` or `[::1]`.
+  Team clients can explicitly add a private CA PEM with `--ca-file` for an HTTPS
+  broker. This adds trust to that client only; it neither changes system trust
+  nor disables certificate or hostname verification. Protect the CA distribution
+  path and retain server private keys on the trusted proxy host.
 - Random tokens are issued once, stored as SHA-256 digests, and revocable. They do
   not expire automatically. Store tokens outside source control and rotate using
   a new agent identity. Existing prototype `af_` token strings remain valid; the
