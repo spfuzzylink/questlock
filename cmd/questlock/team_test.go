@@ -64,6 +64,8 @@ func TestTeamBenchmarkKeepsMissingFilesAsFailedRows(t *testing.T) {
 func TestTeamGenerationPolicyFlagsCannotBeSilentlyIgnored(t *testing.T) {
 	for _, args := range [][]string{
 		{"run", "--json-output"},
+		{"run", "--canonical-prompt"},
+		{"status", "--canonical-prompt=false"},
 		{"plan", "--release-model"},
 		{"status", "--policy-revision", "new-policy"},
 		{"status", "--think"},
@@ -73,6 +75,7 @@ func TestTeamGenerationPolicyFlagsCannotBeSilentlyIgnored(t *testing.T) {
 		{"init", "--output-tokens", "0"},
 		{"suite", "--output-tokens", "8193"},
 		{"init", "--driver", "codex-oss", "--json-output"},
+		{"init", "--driver", "codex-oss", "--canonical-prompt"},
 		{"suite", "--driver", "codex-oss", "--release-model"},
 		{"init", "--driver", "codex-oss", "--think"},
 	} {

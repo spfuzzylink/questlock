@@ -61,6 +61,7 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 	model := f.String("model", "", "installed model tag for init; no automatic download")
 	driver := f.String("driver", "ollama", "init role driver: ollama or codex-oss")
 	jsonOutput := f.Bool("json-output", false, "init/suite: direct Ollama JSON output with temperature zero")
+	canonicalPrompt := f.Bool("canonical-prompt", false, "init/suite: send the exact canonical user prompt used by native baselines")
 	releaseModel := f.Bool("release-model", false, "init/suite: release the requested Ollama model after each response to recover memory")
 	think := f.Bool("think", false, "init/suite: explicitly enable bounded non-streaming local reasoning")
 	outputTokens := f.Int64("output-tokens", 512, "init/suite: per-role total output allowance, including reasoning; 16..4096 normally, 16..8192 only with --driver ollama --think")
@@ -86,7 +87,7 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 	preparationFlag := false
 	f.Visit(func(option *flag.Flag) {
 		switch option.Name {
-		case "json-output", "release-model", "think", "output-tokens", "policy-revision":
+		case "json-output", "canonical-prompt", "release-model", "think", "output-tokens", "policy-revision":
 			preparationFlag = true
 		}
 	})
@@ -105,8 +106,8 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 		if (*driver != "ollama" && *driver != "codex-oss") || *outputTokens < 16 || *outputTokens > outputLimit {
 			return errors.New("init/suite requires ollama or codex-oss driver and output-tokens between 16 and 4096, or up to 8192 only with direct ollama --think")
 		}
-		if (*jsonOutput || *releaseModel || *think) && *driver != "ollama" {
-			return errors.New("json-output, release-model and think require the direct ollama driver")
+		if (*jsonOutput || *canonicalPrompt || *releaseModel || *think) && *driver != "ollama" {
+			return errors.New("json-output, canonical-prompt, release-model and think require the direct ollama driver")
 		}
 		p, err := inference.NewOllamaProviderContext(ctx, "", *model)
 		if err != nil {
@@ -129,6 +130,12 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 			}
 			zero := int64(0)
 			r.Master.Ollama.KeepAliveSeconds = &zero
+		}
+		if *canonicalPrompt {
+			if r.Master.Ollama == nil {
+				r.Master.Ollama = &inference.OllamaOptions{}
+			}
+			r.Master.Ollama.PromptMode = "bounded_text"
 		}
 		if *think {
 			if r.Master.Ollama == nil {
