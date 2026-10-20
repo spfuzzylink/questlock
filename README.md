@@ -64,6 +64,8 @@ Read-only by default, with no imported provider credentials or paid fallback.
 | Multiple agents on one task | Coordinates claims and rejects stale writes; exact publish retries recover their original receipt. |
 | Evidence of a win | Records usage and timing, plus explicit acceptance or later human rework. |
 
+[Put a local agent team to work on your own machines](docs/use-cases.md#a-local-agent-team-using-the-machines-you-already-have).
+
 **OpenRouter routes the model. Questlock coordinates the work.** We build alongside
 OpenRouter: shared task admission, checked revisions, reusable results and human
 feedback around your chosen route. An independent companion, with credit to the

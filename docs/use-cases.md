@@ -8,6 +8,32 @@ configuration without starting a model or changing settings. Codex and Claude
 Code use complete native candidate validation and independent rollback;
 Claude Desktop uses the native extension installer. [Walkthrough](onboarding.md).
 
+## A local agent team, using the machines you already have
+
+A support queue needs a short handoff: what happened, what is due, and what to
+do next. Give a local master the ticket snapshot, check the required fields,
+and have two local reviewers examine its proposed answer. Your application
+supplies the source and declared quality checks, then decides what reaches a person
+or ticket system.
+
+Run every role on one machine, or put reviewers on spare machines at home.
+Each inference node uses its own installed local weights. Remote workers connect
+over authenticated HTTPS to one authoritative broker; only that broker owns
+SQLite. Fresh roles wait for CPU and memory headroom before claiming work.
+Failed checks or reviews withhold the answer, and paid fallback stays disabled.
+An exact completed repeat reuses the checked result without a new model call.
+
+Measurements used three worker identities on **one Mac**. Six sample tasks,
+tuned on the same fixtures, passed their original checks and both reviews.
+The same saved Codex baseline used **65,800 hosted tokens**; the selected local
+workflows used **0 hosted tokens**. The final run reused five completed results
+and ran three fresh roles for the remaining task, with manual answer contracts.
+Whole-chat credit savings remain unmeasured. Physical second-machine validation
+remains open.
+
+[Run a team locally or across nodes](local-agent-teams.md) ·
+[Read the results, failures and limits](local-team-validation-v0.9.1.md)
+
 # Where Questlock fits
 
 ## Exact edits of reviewed work (v0.6.0)
@@ -28,7 +54,8 @@ need a new approved task. [Contract and limits](checked-revisions.md).
 
 Questlock is useful when cooperating workers publish small pieces of shared text
 and need to detect stale updates or recover the result of an uncertain publish.
-It runs on one trusted host and stores UTF-8 artifacts of up to 1 MiB each.
+One authoritative broker runs on a trusted host and stores UTF-8 artifacts of
+up to 1 MiB each; workers can connect remotely over authenticated HTTPS.
 
 The workflows below are plausible integration patterns, not bundled agent
 framework integrations or claims of production adoption. The published foundation
@@ -206,7 +233,7 @@ intent storage to recover across a real worker restart. See the
 
 An assistant can prepare an approved extraction, handoff, or summary request from
 current supplied facts, name its local model and resource limits, and declare
-deterministic task checks. `worker run` or the sole MCP `questlock_delegate` tool
+deterministic task checks. `worker run` or the MCP `questlock_delegate` tool
 executes that request; identical valid snapshots retain normal durable reuse.
 
 **Implemented in v0.3.0:** bounded local-first generation, at most one
@@ -327,8 +354,9 @@ is for offline planning; live paid routing and invoice savings remain unvalidate
   inspect or alter the database.
 - **Large or binary artifacts:** content is limited to 1 MiB of UTF-8 text. This
   is not an object store or a binary transfer service.
-- **Fleet management or high availability:** there is no scheduler, replication,
-  consensus, multi-host coordination, or automatic failover.
+- **Fleet management or high availability:** remote workers can share one
+  authoritative HTTPS broker. There is no fleet manager, multi-writer database
+  replication, distributed consensus, or automatic broker failover.
 - **Bounded long-running storage:** versions, receipts, and journal entries grow
   without quotas or automatic retention. Lists are capped and have no pagination;
   the API does not expose a general historical-content browser.
