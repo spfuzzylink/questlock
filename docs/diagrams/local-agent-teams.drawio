@@ -13,7 +13,7 @@
         <mxCell id="answer" value="Checked answer&#10;Master checks + every review pass&#10;Exact repeat: no generation" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="880" y="155" width="280" height="105" />
         </mxCell>
-        <mxCell id="master" value="Node A · master&#10;Local Ollama or native Codex OSS&#10;Admission before durable claim&#10;Ollama: types + source guidance" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
+        <mxCell id="master" value="Node A · master&#10;Local Ollama or native Codex OSS&#10;Admission before durable claim&#10;Ollama: typed fields + roles" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="40" y="350" width="300" height="140" />
         </mxCell>
         <mxCell id="correct" value="Node B · correctness&#10;Same task + master candidate&#10;No other reviewer votes&#10;JSON mode: parsed candidate value" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">

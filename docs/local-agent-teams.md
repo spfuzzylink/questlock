@@ -14,96 +14,131 @@ edit the repository, or publish external actions. The existing tool-capable
 [`local-agent` launcher](local-models.md) remains separate. Starting a team does
 not switch the backend of an existing hosted Codex or Claude conversation.
 
-The initial live suite did not qualify the tested small model. Read the
-[actual failures and resource refusals](local-team-validation-v0.9.0.md) before
-choosing a model. `questlock team quest` exercises three HTTPS worker identities
-and six scripted cases without a model, account or local weights.
-
-The JSON/release-only follow-up, `local-json-release-2`, completed two of six
-cases without resource blocks. `local-json-reasoning-3` completed three of six.
-Its deadline-stopped roles retain their pending or uncertain records with
-unknown usage; those records are never reset. Formatting and reasoning controls
-alone do not establish a successful benchmark.
+Read the [latest measurements](local-team-validation-v0.9.1.md) for the exact
+models, execution policies, failures and quality limits. The original
+[v0.9.0 result](local-team-validation-v0.9.0.md) stays available unchanged.
+`questlock team quest` runs six scripted cases through three HTTPS identities
+without a model or account.
 
 ## Try one task
 
-Install Questlock and Ollama, then deliberately install a model that fits your
-hardware. These commands assume `qwen3.5:4b` is already installed and Ollama is
-listening on `127.0.0.1:11434`; Questlock never downloads weights automatically.
-Run from a private working directory:
+Start with the supplied request that completed all three local roles. It uses
+installed `qwen3.5:9b` weights and Ollama on `127.0.0.1:11434`. Questlock never
+downloads weights automatically. Review the model license, hardware needs and
+pinned digest before installing a model; a changed digest stops this snapshot.
+
+From the repository or extracted archive root, with `questlock` on your PATH:
 
 ```sh
 umask 077
-mkdir -p tasks receipts
-questlock team init --model qwen3.5:4b --driver ollama \
-  --json-output --release-model --think --output-tokens 4096 \
-  --policy-revision local-json-reasoning-3 \
-  > tasks/first.json
-questlock team plan --workspace tasks --request first.json
+set -C
+mkdir -p .questlock-demo/tasks .questlock-demo/receipts
+cat examples/teams/local-uncertain.request.json > .questlock-demo/tasks/first.json
+questlock team plan --workspace .questlock-demo/tasks --request first.json
+questlock team run --workspace .questlock-demo/tasks --request first.json \
+  --config examples/teams/reasoning-resources.json --timeout 8m \
+  > .questlock-demo/receipts/first.json
+questlock team run --workspace .questlock-demo/tasks --request first.json \
+  --config examples/teams/reasoning-resources.json --timeout 8m \
+  > .questlock-demo/receipts/repeat.json
 ```
 
-Review `tasks/first.json`. It contains the task, an explicit revision, deterministic
-checks, a master and two reviewers, model digests, token limits, and a reuse
-window. `init` inspects installed model metadata without generation; `plan` is
-offline.
+Inspect the request and offline plan before the first run. A fresh run calls the
+master, correctness reviewer and risk reviewer. The completed exact repeat
+reports zero new generation. Neither run accesses provider account credentials
+or changes Codex/Claude configuration. A recorded success is an observation,
+not a guarantee that another model or machine will pass.
 
-The example opts into JSON output at temperature zero, bounded local reasoning,
-and model release after each response. `--json-output` sets generic JSON mode;
-it does not supply the expected answer or weaken the answer checks. Reviewers
-receive the candidate as its parsed JSON value—an object, array or scalar—and
-judge that value against the source task. Existing text-mode requests keep their
-original candidate representation.
+The supplied admission configuration gives each admitted role five minutes;
+`--timeout 8m` bounds the invocation. The ordinary admitted-task default is 45
+seconds, so increasing only the invocation timeout is insufficient for long
+reasoning. The supplied file changes only that task deadline; memory headroom,
+queue bounds and pressure thresholds retain their defaults.
 
-`--think` requires installed model metadata advertising support for `think:true`.
-It uses nonstreaming generation; streamed reasoning is rejected. Only the final
-answer is published and included in receipts; raw thinking is discarded.
-`--output-tokens` defaults to `512` and normally accepts `16` through `4096`.
-Only direct, nonstreaming Ollama roles with explicit `think:true` may use up to
-`8192`; native and nonreasoning roles keep the `4096` ceiling. The limit bounds
-each role's total output allowance. Ollama's `eval_count` includes reasoning and
-final answer tokens; a separate reasoning count is not reported. A larger
-allowance can improve completion, but JSON mode and reasoning do not guarantee correctness.
-Every original answer check and reviewer gate still applies.
-
-`--release-model` sets each role's `ollama.keep_alive_seconds` to `0`.
-This can recover resident model memory, but affects retention in the shared
-Ollama daemon and can add cold-start latency to later requests. It is neither a
-generation retry nor a global memory reservation.
-
-JSON, reasoning and release switches require direct `ollama` roles and apply
-only when preparing `init` or `suite` requests. Leaving these controls out
-preserves existing request and runtime defaults. A role can instead specify an
-optional `ollama.keep_alive_seconds` value from `0` through `300`; an omitted
-value leaves Ollama's default retention unchanged. Inspect these controls before approving
-the snapshot, then run it explicitly:
+For a new task, `team init` creates an editable request after reading installed
+model metadata, without inference:
 
 ```sh
-questlock team run --workspace tasks --request first.json > receipts/first.json
-questlock team run --workspace tasks --request first.json > receipts/repeat.json
+questlock team init --model qwen3.5:9b --driver ollama \
+  --json-output --canonical-prompt --release-model --think \
+  --output-tokens 4096 --policy-revision my-local-policy-1 \
+  > .questlock-demo/tasks/new.json
 ```
 
-Without `--broker`, Questlock starts or reuses its private managed loopback
-broker. A successful first run calls the master, `review-correctness`, then
-`review-risk`. Reviewers receive the approved task and candidate, without each
-other's votes. The master must pass all declared checks; each reviewer must
-return exactly `{"approved":true,"issues":[]}` to approve it. A rejection or
-malformed answer stops the workflow. Check the exit status and JSON report;
-only `status: "completed"` exposes final text.
+Approve its task, checks, role instructions, model digests, limits and revision
+before running it. `--json-output` requests generic JSON; it preserves installed
+sampling defaults. A request may explicitly set `ollama.temperature` from `0`
+through `2`. Model-specific sampling matters; JSON mode guarantees no semantic
+correctness. When the master requests JSON, reviewers receive its parsed JSON value.
+Other requests keep their original string representation.
 
-Before a fresh role claims work, resource admission waits for enough healthy
-capacity within the invocation deadline. `--timeout` defaults to five minutes
-and accepts at most thirty minutes. If capacity never returns, the report is
-`blocked` without a claim or model call. Only admission is polled; an admitted
-model call is never retried. The approved request stays on disk for a deliberate
-later submission. An uncertain claim needs investigation instead.
+`--canonical-prompt` uses the same provider-independent user prompt emitted by
+`team prompt`. Optional decoder contracts add separately disclosed system
+context. These preparation flags work only with direct Ollama `init`/`suite`;
+leaving them out preserves existing defaults.
 
-A completed exact repeat reports zero new generation. Reuse includes the entire
-request, including policy, role instructions, model digests and checks. Keep
-`revision` for task/data changes; use `policy_revision` for a reviewed execution
-policy change, such as `local-json-reasoning-3`. Both change execution identity,
-so a new policy cannot silently reuse or reset the original failed workflow.
-Retain that failure. Machine checks and model votes do not establish human
-acceptance.
+### Make a field's meaning explicit
+
+A direct Ollama master can opt into manually declared JSON types and field
+roles. For example, inside that master's `ollama` object:
+
+```json
+{
+  "format": "json",
+  "output_types": {"count": "integer", "handling": "string"},
+  "field_roles": {"count": "quantity", "handling": "policy_action"}
+}
+```
+
+Types permit `integer`, `number`, `string` and `boolean`; all declared fields
+are required and extra fields are rejected. There may be 1–32 fields, with
+lowercase ASCII snake_case names of at most 64 bytes. The decoder schema is
+bounded to 4096 bytes and contains no answer values, enums, defaults or bounds.
+
+Field roles are optional manual interpretation: `quantity` requires an integer
+or number, while `policy_action` and `identifier` require strings. Role keys
+must already exist in `output_types`; at most 32 roles and 4096 serialized bytes
+are allowed. Numeric-looking identifiers and policy codes remain valid strings.
+Questlock supplies fixed generic definitions and source-grounding instructions,
+never derives annotations from expected checks, and never rewrites an answer.
+
+`team plan` and `team prompt` show these declarations separately. They change
+the execution fingerprint; the canonical task and user prompt stay unchanged.
+Reviewers see the same declarations as reference data and retain the fixed
+approval response contract. Reviewer decoder/field-role overrides are rejected.
+The benchmark discloses this extra operator assistance; it is not
+identical-information model parity. The original answer checks still decide
+whether a well-typed answer is correct.
+
+### Bound reasoning and memory
+
+`--think` requires metadata advertising boolean thinking support. It uses
+nonstreaming generation. Only final text is published; raw thinking is discarded.
+The total output allowance includes both reasoning and answer tokens. It
+defaults to `512`, normally permits `16..4096`, and permits up to `8192` only for
+explicit direct Ollama thinking. Native and nonthinking roles retain the `4096`
+ceiling. Longer deliberation can still produce the wrong answer.
+
+`--release-model` sets `keep_alive_seconds: 0`, asking the shared daemon to
+release that model after its response. This can free memory and add cold-start
+latency. Explicit values `0..300` are accepted; omission keeps daemon defaults.
+This affects shared model retention, rather than reserving machine-wide memory.
+
+A successful master must pass every declared check. Each independent reviewer
+must return exactly `{"approved":true,"issues":[]}`. A rejection, malformed
+answer or uncertain completion stops without fallback. Require a successful
+exit and `status: "completed"` before using final text. Machine checks and model
+votes are separate from a person's acceptance or later rewrite.
+
+Before a fresh claim, admission waits for healthy capacity within the invocation
+deadline. If it never returns, the report is `blocked` without generation.
+Polling applies to admission; a model call is never retried. Keep the approved
+request and inspect an uncertain claim before deciding on any later work.
+
+A repeat reuses the entire exact request: facts, checks, model digests, role
+instructions and policy. Change `revision` for task/data changes and
+`policy_revision` for a reviewed execution change. Retain earlier failures;
+changing policy must not reset or relabel them.
 
 ## Choose the local driver
 
@@ -115,9 +150,9 @@ acceptance.
 For the native route, generate a separate request:
 
 ```sh
-questlock team init --model qwen3.5:4b --driver codex-oss > tasks/native.json
-questlock team run --workspace tasks --request native.json \
-  --client-bin /absolute/path/to/codex > receipts/native.json
+questlock team init --model qwen3.5:4b --driver codex-oss > .questlock-demo/tasks/native.json
+questlock team run --workspace .questlock-demo/tasks --request native.json \
+  --client-bin /absolute/path/to/codex > .questlock-demo/receipts/native.json
 ```
 
 The native adapter currently accepts Codex CLI `0.163.0`, including its prerelease
@@ -180,8 +215,8 @@ persistence. With a private CA, distribute only its public PEM certificate to
 workers; keep server private keys on the broker host. No system trust-store
 change or certificate-verification bypass is needed.
 
-Securely give each worker its own token file, the identical approved request,
-and the CA PEM. Each inference node needs its own installed local model matching
+Securely give each worker its own token file, the identical approved request, the reviewed complete
+admission configuration, and the CA PEM. Each inference node needs its own installed local model matching
 the pinned digest. Synchronize their clocks; records more than 30 seconds in the
 future or with an expiry inconsistent with the approved reuse window are
 rejected. Replace the example endpoint and local file paths below:
@@ -189,21 +224,24 @@ rejected. Replace the example endpoint and local file paths below:
 ```sh
 # Node A: master
 QUESTLOCK_TOKEN= QUESTLOCK_TOKEN_FILE=/private/node-a.token \
-questlock team run --workspace tasks --request first.json \
+questlock team run --workspace .questlock-demo/tasks --request first.json \
   --broker https://questlock-broker.internal --ca-file /private/ca.pem \
-  --role master --worker-id node-a > receipts/master.json
+  --config /private/reasoning-resources.json --timeout 8m \
+  --role master --worker-id node-a > .questlock-demo/receipts/master.json
 
 # Node B: correctness review
 QUESTLOCK_TOKEN= QUESTLOCK_TOKEN_FILE=/private/node-b.token \
-questlock team run --workspace tasks --request first.json \
+questlock team run --workspace .questlock-demo/tasks --request first.json \
   --broker https://questlock-broker.internal --ca-file /private/ca.pem \
-  --role review-correctness --worker-id node-b > receipts/correctness.json
+  --config /private/reasoning-resources.json --timeout 8m \
+  --role review-correctness --worker-id node-b > .questlock-demo/receipts/correctness.json
 
 # Node C: risk review
 QUESTLOCK_TOKEN= QUESTLOCK_TOKEN_FILE=/private/node-c.token \
-questlock team run --workspace tasks --request first.json \
+questlock team run --workspace .questlock-demo/tasks --request first.json \
   --broker https://questlock-broker.internal --ca-file /private/ca.pem \
-  --role review-risk --worker-id node-c > receipts/risk.json
+  --config /private/reasoning-resources.json --timeout 8m \
+  --role review-risk --worker-id node-c > .questlock-demo/receipts/risk.json
 ```
 
 Use `team status` with the same request, endpoint, CA and credential arguments to
@@ -265,18 +303,12 @@ does not change `TaskDigest` or the exact `MasterPrompt`; the comparator still
 requires both saved hashes to match. Changed facts, task revision, checks or
 emitted master prompt need a new comparison contract, not a relabeled receipt.
 
-The mixed-policy follow-up keeps the three completed simple requests from
-`local-json-reasoning-3` unchanged and retrieves them with zero new model calls.
-Only the three bounded reasoning cases get a reviewed `local-deadline-5` policy:
-masters use reasoning with an `8192` total-output cap. Reviewers use `512` without
-reasoning for `uncertain` and `resources`; the accounting case opts into reasoning
-and `8192` for both reviews after a nonreasoning reviewer contradicted explicit
-task rules. Every role has `generation_timeout_seconds: 300`. JSON mode,
-temperature zero and model release remain enabled. Review these per-role JSON
-edits before running. All six task
-and baseline-prompt bindings, original checks and earlier failures stay intact.
-This is a deliberate new policy for the stopped cases, not an automatic retry
-or escalation; its settings alone do not establish that all six passed.
+The supplied qualified-suite snapshot keeps each recorded role policy explicit.
+Read the latest report for originating generations, exact reuses, extra runtime
+contracts and all failed policies. The suite was iteratively tuned on these six
+fixtures; it is not held-out evidence of arbitrary coding quality. Two separately
+designed validation tasks have no Codex baseline and stay outside the six-case
+percentage.
 
 Comparison requires matching task/revision, facts, checks and canonical master prompt,
 successful local master and reviews, a checked baseline answer, and known hosted
