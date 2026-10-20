@@ -143,7 +143,7 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 		risk.ID = "review-risk"
 		risk.Instructions = "Check boundary conditions, missing requirements and misleading claims. Reject any concrete defect."
 		if *jsonOutput {
-			const encoding = " The candidate field contains the parsed JSON value returned by the master. Evaluate its contents against the source task; JSON transport representation is not an output defect."
+			const encoding = " The candidate field contains the parsed JSON value returned by the master. Evaluate its contents against the source task; JSON transport representation is not an output defect. Apply the task's explicit rules to the input before judging the candidate. Do not invent requirements or replace explicit rules with assumptions."
 			correct.Instructions += encoding
 			risk.Instructions += encoding
 		}
