@@ -86,7 +86,10 @@ func MasterPrompt(r Request) (string, error) {
 	if err := Validate(r); err != nil {
 		return "", err
 	}
-	w := workerRequest(r, r.Master, "")
+	w, err := workerRequest(r, r.Master, "")
+	if err != nil {
+		return "", err
+	}
 	spec := w.Policy.Local.Spec
 	spec.Task = w.Spec.Task
 	spec.Revision = w.Spec.Revision

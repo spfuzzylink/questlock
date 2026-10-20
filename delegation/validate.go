@@ -38,7 +38,7 @@ func Load(reader io.Reader) (Request, error) {
 // even when the local tier could produce a passing answer.
 func Validate(request Request, allowPaid bool) error {
 	base := request.Spec
-	if base.Provider != "" || base.Model != "" || base.Stream || base.ReasoningEffort != "" || base.MaxContextBytes != 0 || base.MaxInputTokens != 0 || base.MaxOutputTokens != 0 || base.CacheMode != "" || base.ReuseForSeconds != 0 || base.Prices != nil || base.MaxCostUSD != 0 || base.DailyBudgetUSD != 0 || base.SGLang != nil || base.OpenRouter != nil {
+	if base.Provider != "" || base.Model != "" || base.Stream || base.ReasoningEffort != "" || base.MaxContextBytes != 0 || base.MaxInputTokens != 0 || base.MaxOutputTokens != 0 || base.CacheMode != "" || base.ReuseForSeconds != 0 || base.Prices != nil || base.MaxCostUSD != 0 || base.DailyBudgetUSD != 0 || base.SGLang != nil || base.OpenRouter != nil || base.Ollama != nil {
 		return errors.New("request spec supplies task, revision, instructions, input and context only; model/resource settings belong to each tier spec")
 	}
 	if !inference.SelfHosted(request.Policy.Local.Spec) {

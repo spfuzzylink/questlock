@@ -161,7 +161,7 @@ func (p *Provider) RefreshIdentity(ctx context.Context) error {
 }
 
 func (p *Provider) request(req inference.Request) (inference.Request, string, error) {
-	if req.Stream || req.OpenRouter != nil || req.SGLang != nil {
+	if req.Stream || req.OpenRouter != nil || req.SGLang != nil || req.Ollama != nil {
 		return req, "", errors.New("native local roles require text-only Ollama requests")
 	}
 	if req.Provider != "ollama" || req.Model != p.model || req.ReasoningEffort != "" || req.CacheMode != "" && req.CacheMode != "default" {

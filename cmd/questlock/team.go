@@ -60,6 +60,11 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 	clientBin := f.String("client-bin", "", "absolute native Codex executable for codex-oss roles")
 	model := f.String("model", "", "installed model tag for init; no automatic download")
 	driver := f.String("driver", "ollama", "init role driver: ollama or codex-oss")
+	jsonOutput := f.Bool("json-output", false, "init/suite: direct Ollama JSON output with temperature zero")
+	releaseModel := f.Bool("release-model", false, "init/suite: release the requested Ollama model after each response to recover memory")
+	think := f.Bool("think", false, "init/suite: explicitly enable bounded non-streaming local reasoning")
+	outputTokens := f.Int64("output-tokens", 512, "init/suite: per-role total output allowance, including reasoning; 16..4096")
+	policyRevision := f.String("policy-revision", "", "init/suite: reviewed runtime policy revision, separate from task facts")
 	state := f.String("state-dir", "", "private managed local broker directory")
 	configPath := f.String("config", "", "explicit complete resource admission JSON")
 	timeout := f.Duration("timeout", 5*time.Minute, "whole invocation deadline, at most 30m")
@@ -78,11 +83,27 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 	if f.NArg() != 0 || *timeout <= 0 || *timeout > 30*time.Minute {
 		return errors.New("team commands take flags only and need a bounded positive timeout")
 	}
+	preparationFlag := false
+	f.Visit(func(option *flag.Flag) {
+		switch option.Name {
+		case "json-output", "release-model", "think", "output-tokens", "policy-revision":
+			preparationFlag = true
+		}
+	})
+	if args[0] != "init" && args[0] != "suite" && preparationFlag {
+		return errors.New("generation policy flags apply to init/suite only; review the request file before running")
+	}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	ctx, cancel := context.WithTimeout(ctx, *timeout)
 	defer cancel()
 	if args[0] == "init" || args[0] == "suite" {
+		if (*driver != "ollama" && *driver != "codex-oss") || *outputTokens < 16 || *outputTokens > 4096 {
+			return errors.New("init requires ollama or codex-oss driver and output-tokens between 16 and 4096")
+		}
+		if (*jsonOutput || *releaseModel || *think) && *driver != "ollama" {
+			return errors.New("json-output, release-model and think require the direct ollama driver")
+		}
 		p, err := inference.NewOllamaProviderContext(ctx, "", *model)
 		if err != nil {
 			return errors.New("team init requires an installed local model")
@@ -92,12 +113,36 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 			inputLimit = 32768
 		}
 		r := team.Request{Schema: 1, Task: "my-project/first-team-task", Revision: "snapshot-1", Instructions: "Return only a JSON object with issue and deadline strings copied from the input.", Input: "Ticket OPS-17 must be completed on 2030-04-03.", ReuseForSeconds: 86400, Checks: []evaluation.Check{{ID: "expected-values", Kind: "json_equals", Expected: json.RawMessage(`{"issue":"OPS-17","deadline":"2030-04-03"}`)}}}
-		r.Master = team.Role{ID: "master", Driver: *driver, Model: *model, ModelDigest: p.ModelDigest(), Instructions: "Solve the approved task. Return only the requested answer, without Markdown fences.", MaxInputTokens: inputLimit, MaxOutputTokens: 512}
+		r.Master = team.Role{ID: "master", Driver: *driver, Model: *model, ModelDigest: p.ModelDigest(), Instructions: "Solve the approved task. Return only the requested answer, without Markdown fences.", MaxInputTokens: inputLimit, MaxOutputTokens: *outputTokens}
+		r.PolicyRevision = *policyRevision
+		if *jsonOutput {
+			zero := float64(0)
+			r.Master.Ollama = &inference.OllamaOptions{Format: "json", Temperature: &zero}
+		}
+		if *releaseModel {
+			if r.Master.Ollama == nil {
+				r.Master.Ollama = &inference.OllamaOptions{}
+			}
+			zero := int64(0)
+			r.Master.Ollama.KeepAliveSeconds = &zero
+		}
+		if *think {
+			if r.Master.Ollama == nil {
+				r.Master.Ollama = &inference.OllamaOptions{}
+			}
+			yes := true
+			r.Master.Ollama.Think = &yes
+		}
 		correct, risk := r.Master, r.Master
 		correct.ID = "review-correctness"
 		correct.Instructions = "Check that every requirement and source fact is satisfied. Reject unsupported or incorrect statements."
 		risk.ID = "review-risk"
 		risk.Instructions = "Check boundary conditions, missing requirements and misleading claims. Reject any concrete defect."
+		if *jsonOutput {
+			const encoding = " The candidate field contains the parsed JSON value returned by the master. Evaluate its contents against the source task; JSON transport representation is not an output defect."
+			correct.Instructions += encoding
+			risk.Instructions += encoding
+		}
 		r.Reviewers = []team.Role{correct, risk}
 		if err := team.Validate(r); err != nil {
 			return err
@@ -219,24 +264,7 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 		return err
 	}
 	e.Admit = func(callCtx context.Context, perform func(context.Context) error) error {
-		controller, e := admission.New(c, func(jobCtx context.Context, _ admission.Job) error { return perform(jobCtx) })
-		if e != nil {
-			return e
-		}
-		runCtx, stopRun := context.WithCancel(callCtx)
-		defer stopRun()
-		done := make(chan error, 1)
-		go func() { done <- controller.Run(runCtx, admission.SystemSource()) }()
-		defer func() { stopRun(); <-done }()
-		if e = waitAdmissionReady(callCtx, controller); e != nil {
-			return e
-		}
-		future, e := controller.Submit(callCtx, admission.Job{ID: "approved-team-role", Lane: admission.LaneInference})
-		if e != nil {
-			return e
-		}
-		result := <-future
-		return result.Err
+		return admitTeamRole(callCtx, c, admission.SystemSource(), perform)
 	}
 	selected := *role
 	if args[0] == "status" {
@@ -247,4 +275,43 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 		return err
 	}
 	return runErr
+}
+
+// Waiting for capacity is bounded by the invocation deadline and precedes the
+// durable role claim. Only admission is polled; an admitted model is never retried.
+func admitTeamRole(ctx context.Context, c admission.Config, source admission.Source, perform func(context.Context) error) error {
+	validLane := false
+	for _, l := range c.Lanes {
+		if l.Name == admission.LaneInference && !l.Protected && l.MemoryBytes >= admission.QueueEntryBytes+int64(len("approved-team-role")+len(admission.LaneInference)) {
+			validLane = true
+		}
+	}
+	if !validLane {
+		return errors.New("team requires an unprotected inference lane with capacity for its queue entry")
+	}
+	controller, err := admission.New(c, func(jobCtx context.Context, _ admission.Job) error { return perform(jobCtx) })
+	if err != nil {
+		return err
+	}
+	runCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	done := make(chan error, 1)
+	go func() { done <- controller.Run(runCtx, source) }()
+	defer func() { cancel(); <-done }()
+	tick := time.NewTicker(c.SampleInterval)
+	defer tick.Stop()
+	for {
+		future, err := controller.Submit(ctx, admission.Job{ID: "approved-team-role", Lane: admission.LaneInference})
+		if err == nil {
+			return (<-future).Err
+		}
+		if !errors.Is(err, admission.ErrPaused) && !errors.Is(err, admission.ErrDoesNotFit) && !errors.Is(err, admission.ErrQueueFull) {
+			return err
+		}
+		select {
+		case <-ctx.Done():
+			return errors.Join(errors.New("team remained blocked before claim"), ctx.Err())
+		case <-tick.C:
+		}
+	}
 }

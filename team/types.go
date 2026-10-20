@@ -21,16 +21,20 @@ var (
 )
 
 type Role struct {
-	ID              string `json:"id"`
-	Driver          string `json:"driver"` // ollama or codex-oss; no hosted driver
-	Model           string `json:"model"`
-	ModelDigest     string `json:"model_digest"`
-	Instructions    string `json:"instructions"`
-	MaxInputTokens  int64  `json:"max_input_tokens"`
-	MaxOutputTokens int64  `json:"max_output_tokens"`
+	Ollama          *inference.OllamaOptions `json:"ollama,omitempty"`
+	ID              string                   `json:"id"`
+	Driver          string                   `json:"driver"` // ollama or codex-oss; no hosted driver
+	Model           string                   `json:"model"`
+	ModelDigest     string                   `json:"model_digest"`
+	Instructions    string                   `json:"instructions"`
+	MaxInputTokens  int64                    `json:"max_input_tokens"`
+	MaxOutputTokens int64                    `json:"max_output_tokens"`
 }
 
 type Request struct {
+	// PolicyRevision names a reviewed execution-policy change without changing
+	// the task/data revision bound to a previously measured baseline.
+	PolicyRevision  string                  `json:"policy_revision,omitempty"`
 	Schema          int                     `json:"schema"`
 	Task            string                  `json:"task"`
 	Revision        string                  `json:"revision"`

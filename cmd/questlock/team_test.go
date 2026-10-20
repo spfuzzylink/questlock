@@ -59,3 +59,25 @@ func TestTeamBenchmarkKeepsMissingFilesAsFailedRows(t *testing.T) {
 		t.Fatalf("missing cases dropped %s", out.String())
 	}
 }
+
+func TestTeamGenerationPolicyFlagsCannotBeSilentlyIgnored(t *testing.T) {
+	for _, args := range [][]string{
+		{"run", "--json-output"},
+		{"plan", "--release-model"},
+		{"status", "--policy-revision", "new-policy"},
+		{"status", "--think"},
+		{"status", "--think=false"},
+		{"run", "--output-tokens", "2048"},
+		{"run", "--output-tokens", "512"},
+		{"init", "--output-tokens", "0"},
+		{"suite", "--output-tokens", "4097"},
+		{"init", "--driver", "codex-oss", "--json-output"},
+		{"suite", "--driver", "codex-oss", "--release-model"},
+		{"init", "--driver", "codex-oss", "--think"},
+	} {
+		var out, diag bytes.Buffer
+		if err := teamCommandIO(args, &out, &diag); err == nil || out.Len() != 0 {
+			t.Fatal("inapplicable generation policy flags were ignored", args, err)
+		}
+	}
+}
