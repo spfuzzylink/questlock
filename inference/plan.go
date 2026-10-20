@@ -235,6 +235,9 @@ func validateOllamaOptions(options *OllamaOptions) error {
 	if _, err := ollamaOutputTypesSchema(options); err != nil {
 		return err
 	}
+	if err := validateOllamaFieldRoles(options); err != nil {
+		return err
+	}
 	return nil
 }
 

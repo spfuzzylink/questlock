@@ -77,6 +77,9 @@ type ollamaRenderedRequest struct {
 func renderOllamaRequest(req Request, installedSystem string) (ollamaRenderedRequest, error) {
 	system, prompt := ollamaPrompt(req)
 	rendered := ollamaRenderedRequest{system: system, prompt: prompt}
+	if err := validateOllamaFieldRoles(req.Ollama); err != nil {
+		return rendered, err
+	}
 	if req.Ollama != nil && req.Ollama.Format != "" {
 		rendered.format = req.Ollama.Format
 	}
@@ -96,6 +99,10 @@ func renderOllamaRequest(req Request, installedSystem string) (ollamaRenderedReq
 		if part != "" {
 			parts = append(parts, part)
 		}
+	}
+	if req.Ollama.FieldRoles != nil {
+		roles, _ := json.Marshal(req.Ollama.FieldRoles)
+		parts = append(parts, "Field roles:\n"+string(roles), ollamaFieldRoleDefinitions)
 	}
 	rendered.system = strings.Join(parts, "\n\n")
 	rendered.format, rendered.schemaBytes = schema, len(schema)

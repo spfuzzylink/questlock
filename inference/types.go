@@ -75,6 +75,8 @@ type Request struct {
 // 32 lower snake_case fields with primitive integer/string/number/boolean types.
 // It requires Format=json and supplies no answer values or property constraints.
 // The serialized decoder schema is limited to 4096 bytes; empty maps are invalid.
+// FieldRoles optionally declares quantity, policy_action, or identifier roles
+// for a subset of OutputTypes, supplying generic semantic context without values.
 type OllamaOptions struct {
 	Format                   string            `json:"format,omitempty"`
 	Temperature              *float64          `json:"temperature,omitempty"`
@@ -83,6 +85,7 @@ type OllamaOptions struct {
 	GenerationTimeoutSeconds *int64            `json:"generation_timeout_seconds,omitempty"`
 	PromptMode               string            `json:"prompt_mode,omitempty"`
 	OutputTypes              map[string]string `json:"output_types,omitempty"`
+	FieldRoles               map[string]string `json:"field_roles,omitempty"`
 }
 
 type Plan struct {
