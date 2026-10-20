@@ -75,6 +75,12 @@ func BuildPlan(s Spec) (Plan, error) {
 	if len(prefix)+len(input) > 512<<10 {
 		return Plan{}, errors.New("planned prompt exceeds 512KiB")
 	}
+	if provider == "ollama" && s.Ollama != nil && s.Ollama.PromptMode == "bounded_text" {
+		system, prompt := ollamaPrompt(p.Request)
+		if len(system)+len(prompt) > 512<<10 {
+			return Plan{}, errors.New("rendered Ollama prompt exceeds 512KiB")
+		}
+	}
 	encoded, _ := json.Marshal(struct {
 		Task, Revision string
 		Request        Request
@@ -207,6 +213,9 @@ func validateOllamaOptions(options *OllamaOptions) error {
 	}
 	if options.Format != "" && options.Format != "json" {
 		return errors.New("ollama format must be empty or json")
+	}
+	if options.PromptMode != "" && options.PromptMode != "bounded_text" {
+		return errors.New("ollama prompt_mode must be empty or bounded_text")
 	}
 	if options.Temperature != nil {
 		temperature := *options.Temperature

@@ -68,12 +68,15 @@ type Request struct {
 // installed model metadata advertising boolean true; reasoning is discarded.
 // GenerationTimeoutSeconds accepts 1..600 for generation HTTP only; omission
 // preserves the 120-second default. Earlier caller deadlines still apply.
+// PromptMode accepts empty for legacy framing or "bounded_text" for the exact
+// BoundedTextPrompt user prompt with an empty request system field.
 type OllamaOptions struct {
 	Format                   string   `json:"format,omitempty"`
 	Temperature              *float64 `json:"temperature,omitempty"`
 	KeepAliveSeconds         *int64   `json:"keep_alive_seconds,omitempty"`
 	Think                    *bool    `json:"think,omitempty"`
 	GenerationTimeoutSeconds *int64   `json:"generation_timeout_seconds,omitempty"`
+	PromptMode               string   `json:"prompt_mode,omitempty"`
 }
 
 type Plan struct {

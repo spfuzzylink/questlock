@@ -304,6 +304,10 @@ func (p *OllamaProvider) validate(req Request) error {
 	if len(req.Prefix) > maxProviderRequestBytes || len(req.Input) > maxProviderRequestBytes || len(req.Prefix)+len(req.Input) > maxProviderRequestBytes {
 		return errors.New("Ollama request exceeds the byte limit")
 	}
+	system, prompt := ollamaPrompt(req)
+	if len(system) > maxProviderRequestBytes || len(prompt) > maxProviderRequestBytes || len(system)+len(prompt) > maxProviderRequestBytes {
+		return errors.New("Ollama request exceeds the byte limit")
+	}
 	if req.MaxOutputTokens < 1 || req.MaxOutputTokens > 1_000_000 {
 		return errors.New("Ollama max output tokens must be between 1 and 1000000")
 	}
@@ -311,6 +315,13 @@ func (p *OllamaProvider) validate(req Request) error {
 		return errors.New("Ollama requires a context window between 1 and 65536 to bound local memory use")
 	}
 	return nil
+}
+
+func ollamaPrompt(req Request) (system, prompt string) {
+	if req.Ollama != nil && req.Ollama.PromptMode == "bounded_text" {
+		return "", BoundedTextPrompt(req)
+	}
+	return req.Prefix, req.Input
 }
 
 // CountInputTokens is a conservative local policy ESTIMATE, not an Ollama
@@ -333,7 +344,8 @@ func ollamaInputEstimate(req Request, metadata ollamaMetadata) (int64, error) {
 	if ollamaThinkingEnabled(req.Ollama) && !metadata.canThink {
 		return 0, errors.New("Ollama model does not advertise support for think:true")
 	}
-	estimate := int64(len(req.Prefix)+len(req.Input)+len(metadata.template)+len(metadata.system)) + 512
+	system, prompt := ollamaPrompt(req)
+	estimate := int64(len(system)+len(prompt)+len(metadata.template)+len(metadata.system)) + 512
 	if req.ContextWindow > metadata.contextLength {
 		return 0, errors.New("requested Ollama context window exceeds the model's reported capacity")
 	}
@@ -390,6 +402,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 		body.Format, body.Options.Temperature = req.Ollama.Format, req.Ollama.Temperature
 		body.KeepAlive = req.Ollama.KeepAliveSeconds
 	}
+	body.System, body.Prompt = ollamaPrompt(req)
 	var raw ollamaGenerationFrame
 	var timing *GenerationTiming
 	if req.Stream {
