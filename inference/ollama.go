@@ -304,8 +304,11 @@ func (p *OllamaProvider) validate(req Request) error {
 	if len(req.Prefix) > maxProviderRequestBytes || len(req.Input) > maxProviderRequestBytes || len(req.Prefix)+len(req.Input) > maxProviderRequestBytes {
 		return errors.New("Ollama request exceeds the byte limit")
 	}
-	system, prompt := ollamaPrompt(req)
-	if len(system) > maxProviderRequestBytes || len(prompt) > maxProviderRequestBytes || len(system)+len(prompt) > maxProviderRequestBytes {
+	rendered, err := renderOllamaRequest(req, "")
+	if err != nil {
+		return err
+	}
+	if rendered.inputBytes() > maxProviderRequestBytes {
 		return errors.New("Ollama request exceeds the byte limit")
 	}
 	if req.MaxOutputTokens < 1 || req.MaxOutputTokens > 1_000_000 {
@@ -344,8 +347,19 @@ func ollamaInputEstimate(req Request, metadata ollamaMetadata) (int64, error) {
 	if ollamaThinkingEnabled(req.Ollama) && !metadata.canThink {
 		return 0, errors.New("Ollama model does not advertise support for think:true")
 	}
-	system, prompt := ollamaPrompt(req)
-	estimate := int64(len(system)+len(prompt)+len(metadata.template)+len(metadata.system)) + 512
+	rendered, err := renderOllamaRequest(req, metadata.system)
+	if err != nil {
+		return 0, err
+	}
+	if rendered.inputBytes() > maxProviderRequestBytes {
+		return 0, errors.New("rendered Ollama request exceeds the byte limit")
+	}
+	estimate := int64(rendered.inputBytes()+len(metadata.template)) + 512
+	if req.Ollama == nil || req.Ollama.OutputTypes == nil {
+		// Declared output types count the effective system in rendered.system;
+		// legacy requests reserve installed system bytes separately as before.
+		estimate += int64(len(metadata.system))
+	}
 	if req.ContextWindow > metadata.contextLength {
 		return 0, errors.New("requested Ollama context window exceeds the model's reported capacity")
 	}
@@ -365,6 +379,10 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 		return Response{}, err
 	}
 	if _, err = ollamaInputEstimate(req, metadata); err != nil {
+		return Response{}, err
+	}
+	rendered, err := renderOllamaRequest(req, metadata.system)
+	if err != nil {
 		return Response{}, err
 	}
 	client := p.client
@@ -389,7 +407,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 		Prompt    string `json:"prompt"`
 		Stream    bool   `json:"stream"`
 		Think     bool   `json:"think"`
-		Format    string `json:"format,omitempty"`
+		Format    any    `json:"format,omitempty"`
 		KeepAlive *int64 `json:"keep_alive,omitempty"`
 		Options   struct {
 			NumPredict  int64    `json:"num_predict"`
@@ -399,10 +417,10 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 	}{Model: p.model, System: req.Prefix, Prompt: req.Input, Stream: req.Stream, Think: ollamaThinkingEnabled(req.Ollama)}
 	body.Options.NumPredict, body.Options.NumCtx = req.MaxOutputTokens, req.ContextWindow
 	if req.Ollama != nil {
-		body.Format, body.Options.Temperature = req.Ollama.Format, req.Ollama.Temperature
+		body.Options.Temperature = req.Ollama.Temperature
 		body.KeepAlive = req.Ollama.KeepAliveSeconds
 	}
-	body.System, body.Prompt = ollamaPrompt(req)
+	body.System, body.Prompt, body.Format = rendered.system, rendered.prompt, rendered.format
 	var raw ollamaGenerationFrame
 	var timing *GenerationTiming
 	if req.Stream {
@@ -455,6 +473,13 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 	}
 	id := sha256.Sum256([]byte(raw.CreatedAt + "\x00" + raw.Model + "\x00" + raw.Response))
 	result.ID = "ollama-" + hex.EncodeToString(id[:12])
+	if req.Ollama != nil && req.Ollama.OutputTypes != nil && !validOllamaOutputTypes(raw.Response, req.Ollama.OutputTypes) {
+		result.Text = ""
+		if result.Complete {
+			result.StopReason = "output_types_mismatch"
+		}
+		result.Complete = false
+	}
 	if u.OutputTokens > req.MaxOutputTokens || u.InputTokens+u.OutputTokens > req.ContextWindow {
 		result.Complete = false
 		result.StopReason = "usage_limit_exceeded"

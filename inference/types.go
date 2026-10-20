@@ -70,13 +70,18 @@ type Request struct {
 // preserves the 120-second default. Earlier caller deadlines still apply.
 // PromptMode accepts empty for legacy framing or "bounded_text" for the exact
 // BoundedTextPrompt user prompt with an empty request system field.
+// OutputTypes is an optional manually declared JSON object contract: at most
+// 32 lower snake_case fields with primitive integer/string/number/boolean types.
+// It requires Format=json and supplies no answer values or property constraints.
+// The serialized decoder schema is limited to 4096 bytes; empty maps are invalid.
 type OllamaOptions struct {
-	Format                   string   `json:"format,omitempty"`
-	Temperature              *float64 `json:"temperature,omitempty"`
-	KeepAliveSeconds         *int64   `json:"keep_alive_seconds,omitempty"`
-	Think                    *bool    `json:"think,omitempty"`
-	GenerationTimeoutSeconds *int64   `json:"generation_timeout_seconds,omitempty"`
-	PromptMode               string   `json:"prompt_mode,omitempty"`
+	Format                   string            `json:"format,omitempty"`
+	Temperature              *float64          `json:"temperature,omitempty"`
+	KeepAliveSeconds         *int64            `json:"keep_alive_seconds,omitempty"`
+	Think                    *bool             `json:"think,omitempty"`
+	GenerationTimeoutSeconds *int64            `json:"generation_timeout_seconds,omitempty"`
+	PromptMode               string            `json:"prompt_mode,omitempty"`
+	OutputTypes              map[string]string `json:"output_types,omitempty"`
 }
 
 type Plan struct {

@@ -75,9 +75,12 @@ func BuildPlan(s Spec) (Plan, error) {
 	if len(prefix)+len(input) > 512<<10 {
 		return Plan{}, errors.New("planned prompt exceeds 512KiB")
 	}
-	if provider == "ollama" && s.Ollama != nil && s.Ollama.PromptMode == "bounded_text" {
-		system, prompt := ollamaPrompt(p.Request)
-		if len(system)+len(prompt) > 512<<10 {
+	if provider == "ollama" && s.Ollama != nil && (s.Ollama.PromptMode == "bounded_text" || s.Ollama.OutputTypes != nil) {
+		rendered, err := renderOllamaRequest(p.Request, "")
+		if err != nil {
+			return Plan{}, err
+		}
+		if rendered.inputBytes() > 512<<10 {
 			return Plan{}, errors.New("rendered Ollama prompt exceeds 512KiB")
 		}
 	}
@@ -228,6 +231,9 @@ func validateOllamaOptions(options *OllamaOptions) error {
 	}
 	if options.GenerationTimeoutSeconds != nil && (*options.GenerationTimeoutSeconds < 1 || *options.GenerationTimeoutSeconds > 600) {
 		return errors.New("ollama generation_timeout_seconds must be between 1 and 600")
+	}
+	if _, err := ollamaOutputTypesSchema(options); err != nil {
+		return err
 	}
 	return nil
 }
