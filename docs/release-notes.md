@@ -1,8 +1,11 @@
 # Questlock 0.9.1 — local quality gates
 
-**Experimental release candidate.** Publication and artifact verification are
-recorded separately in [validation](validation.md). Published v0.9.0 and older
-assets remain unchanged.
+**Experimental release, published and verified.** Four native archives, two macOS
+MCPB bundles, checksums and both Linux container architectures passed their
+release gates. [Validation](validation.md) records the exact source, pipelines,
+anonymous asset checks and guarded local upgrade. Immutable archives retain
+their source-era candidate wording. Published v0.9.0 and older assets remain
+unchanged.
 
 Local team quality controls now include opt-in canonical framing, JSON output,
 manual primitive types and semantic field roles, bounded nonstreaming reasoning,
