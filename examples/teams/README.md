@@ -55,17 +55,29 @@ Reviewers evaluate the candidate's parsed JSON value. Reasoning requires an
 installed model that advertises support; raw thinking is discarded, while the
 reported output count includes reasoning and answer tokens together. The
 4096-token allowance applies to that total, not just the visible answer.
+The default is `512`; only direct nonstreaming Ollama roles with explicit
+`think:true` can raise it to `8192`. Native and nonreasoning roles stop at `4096`.
 Releasing can free memory but adds cold starts and changes model retention in
 the shared daemon. JSON, reasoning and release switches are unavailable with
 `codex-oss`; omitting the new controls preserves the existing defaults.
 
 Keep the same task/data revision when changing only the reviewed execution
 policy. All source facts and checks stay unchanged, as does the exact emitted
-master prompt used to bind the saved baseline. If reasoning needs more than the
-default 45-second task deadline, use `--config` with a reviewed complete
-admission configuration and a bounded deadline, such as two minutes. Keep its
-memory headroom and pressure thresholds intact. Increasing the whole invocation
-`--timeout` alone does not extend the admitted task deadline.
+master prompt used to bind the saved baseline. The current mixed-policy follow-up
+keeps the completed `ticket`, `route` and `queue` requests from
+`local-json-reasoning-3` unchanged for zero-call reuse. For `uncertain`, `resources`
+and `rework`, review JSON edits to `policy_revision: "local-hybrid-4"`: the master
+has `ollama.think: true` and `max_output_tokens: 8192`; both reviewers explicitly
+have `ollama.think: false` and `max_output_tokens: 512`. Keep JSON mode,
+temperature zero and `keep_alive_seconds: 0` for each role. The original failed
+and deadline-stopped records remain intact, including unknown usage.
+
+For that hybrid policy, start with the complete output of `resources config` and
+change only `task_timeout` to `300000000000` nanoseconds (five minutes). Pass the
+reviewed file with `--config` and use `--timeout 8m`; keep memory headroom and
+pressure thresholds unchanged. Defaults remain 45 seconds per admitted task;
+the whole invocation timeout alone does not extend it. This is a deliberate new
+policy, not an automatic retry or escalation, and does not itself prove success.
 
 Run each approved local case exactly once, preserving output even on failure:
 

@@ -20,9 +20,10 @@ choosing a model. `questlock team quest` exercises three HTTPS worker identities
 and six scripted cases without a model, account or local weights.
 
 The JSON/release-only follow-up, `local-json-release-2`, completed two of six
-cases without resource blocks. Correct formatting did not fix the remaining
-reasoning failures. The explicit reasoning profile below keeps the same checks;
-its settings alone do not establish a successful benchmark.
+cases without resource blocks. `local-json-reasoning-3` completed three of six.
+Its deadline-stopped roles retain their pending or uncertain records with
+unknown usage; those records are never reset. Formatting and reasoning controls
+alone do not establish a successful benchmark.
 
 ## Try one task
 
@@ -56,10 +57,12 @@ original candidate representation.
 `--think` requires installed model metadata advertising support for `think:true`.
 It uses nonstreaming generation; streamed reasoning is rejected. Only the final
 answer is published and included in receipts; raw thinking is discarded.
-`--output-tokens` accepts `16` through `4096`, defaults to `512`, and bounds each
-role's total output allowance. Ollama's `eval_count` includes reasoning and final
-answer tokens; a separate reasoning count is not reported. A larger allowance
-can improve completion, but JSON mode and reasoning do not guarantee correctness.
+`--output-tokens` defaults to `512` and normally accepts `16` through `4096`.
+Only direct, nonstreaming Ollama roles with explicit `think:true` may use up to
+`8192`; native and nonreasoning roles keep the `4096` ceiling. The limit bounds
+each role's total output allowance. Ollama's `eval_count` includes reasoning and
+final answer tokens; a separate reasoning count is not reported. A larger
+allowance can improve completion, but JSON mode and reasoning do not guarantee correctness.
 Every original answer check and reviewer gate still applies.
 
 `--release-model` sets each role's `ollama.keep_alive_seconds` to `0`.
@@ -70,9 +73,8 @@ generation retry nor a global memory reservation.
 JSON, reasoning and release switches require direct `ollama` roles and apply
 only when preparing `init` or `suite` requests. Leaving these controls out
 preserves existing request and runtime defaults. A role can instead specify an
-optional
-`ollama.keep_alive_seconds` value from `0` through `300`; an omitted value leaves
-Ollama's default retention unchanged. Inspect these controls before approving
+optional `ollama.keep_alive_seconds` value from `0` through `300`; an omitted
+value leaves Ollama's default retention unchanged. Inspect these controls before approving
 the snapshot, then run it explicitly:
 
 ```sh
@@ -137,12 +139,13 @@ have operating costs. Resource admission reserves local CPU/memory headroom
 before fresh work. `--config` selects an explicit complete
 [admission configuration](adaptive-admission.md). The default admitted task
 deadline is 45 seconds; a longer whole-run timeout alone does not extend that
-policy. For a slower reasoning workload, review a complete admission config
-with a bounded task deadline, such as two minutes, while preserving memory
-headroom and pressure thresholds; pass it with `--config`. No timeout or quality
-failure triggers a generation retry or provider fallback. These estimates are
-per process, rather than OS allocation or a distributed scheduler. Retrieval of already checked results
-needs no model admission.
+policy. The hybrid follow-up uses a complete config from `resources config` with
+only `task_timeout` changed to `300000000000` nanoseconds (five minutes), passed
+with `--config` and `--timeout 8m`. Memory headroom and pressure thresholds stay
+unchanged. No timeout or quality failure triggers a generation retry or provider
+fallback. These estimates are
+per process, rather than OS allocation or a distributed scheduler. Retrieval of
+already checked results needs no model admission.
 
 ## Share work across nodes
 
@@ -258,6 +261,16 @@ output tokens**, without another hosted call. A runtime-only `policy_revision`
 does not change `TaskDigest` or the exact `MasterPrompt`; the comparator still
 requires both saved hashes to match. Changed facts, task revision, checks or
 emitted master prompt need a new comparison contract, not a relabeled receipt.
+
+The mixed-policy follow-up keeps the three completed simple requests from
+`local-json-reasoning-3` unchanged and retrieves them with zero new model calls.
+Only the three bounded reasoning cases get a reviewed `local-hybrid-4` policy:
+master reasoning enabled with an `8192` total-output cap; reviewers explicitly
+set to `think:false` with `512` each. JSON mode, temperature zero and model release
+remain enabled. Review these per-role JSON edits before running. All six task
+and baseline-prompt bindings, original checks and earlier failures stay intact.
+This is a deliberate new policy for the stopped cases, not an automatic retry
+or escalation; its settings alone do not establish that all six passed.
 
 Comparison requires matching task/revision, facts, checks and emitted user prompt,
 successful local master and reviews, a checked baseline answer, and known hosted
