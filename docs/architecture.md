@@ -1,6 +1,6 @@
 # Architecture
 
-## Local master and reviewers (v0.9.0)
+## Local master and reviewers
 
 An approved text snapshot can now run through a local master and independent
 reviewers, using direct Ollama or an isolated native Codex OSS harness. Scoped
@@ -8,6 +8,16 @@ broker CAS claims coordinate roles across worker processes; only the broker
 owns SQLite. Deterministic checks and every review must pass before the final
 answer is exposed. Exact checked reuse needs no generation. Pending or uncertain
 claims stop without automatic takeover, regeneration or paid fallback.
+
+Each fresh role waits for healthy local CPU/memory capacity before publishing its
+claim; the invocation deadline bounds that wait. Direct Ollama roles can opt into
+JSON output and nonstreaming reasoning. JSON reviewers receive the parsed
+candidate value. The total output cap includes reasoning and final-answer tokens;
+raw thinking is discarded rather than published. An optional
+`keep_alive_seconds: 0` asks the shared Ollama daemon to release the requested
+model after its response, trading resident memory for later cold starts. This
+changes model retention, not global memory reservation or retry behavior. Requests
+that omit these controls keep their existing defaults and representation.
 
 ![Local text roles share one authoritative publication boundary](diagrams/local-agent-teams.svg)
 

@@ -13,13 +13,13 @@
         <mxCell id="answer" value="Checked answer&#10;Master checks + every review pass&#10;Exact repeat: no generation" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=15;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="880" y="155" width="280" height="105" />
         </mxCell>
-        <mxCell id="master" value="Node A · master&#10;Local Ollama or native Codex OSS&#10;CPU/memory admission before work" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
+        <mxCell id="master" value="Node A · master&#10;Local Ollama or native Codex OSS&#10;Admission before durable claim" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="40" y="350" width="300" height="140" />
         </mxCell>
-        <mxCell id="correct" value="Node B · correctness&#10;Same task + master candidate&#10;No other reviewer votes" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
+        <mxCell id="correct" value="Node B · correctness&#10;Same task + master candidate&#10;No other reviewer votes&#10;JSON mode: parsed candidate value" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="450" y="350" width="300" height="140" />
         </mxCell>
-        <mxCell id="risk" value="Node C · risk review&#10;Same task + master candidate&#10;No other reviewer votes" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
+        <mxCell id="risk" value="Node C · risk review&#10;Same task + master candidate&#10;No other reviewer votes&#10;JSON mode: parsed candidate value" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#ab95ef;fontSize=15;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="860" y="350" width="300" height="140" />
         </mxCell>
         <mxCell id="stop" value="Uncertain, rejected or expired? Stop.&#10;No automatic takeover, regeneration, or paid fallback.&#10;Inspect the original record before approving a new revision." style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#efbd73;fontSize=15;" vertex="1" parent="1">
@@ -40,17 +40,29 @@
         <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;fontColor=#bdcbe0;fontSize=12;" edge="1" parent="1" source="risk" target="broker">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
+        <mxCell id="capacity" value="Each role waits for capacity&#10;CPU/memory + invocation deadline" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="510" width="300" height="70" />
+        </mxCell>
+        <mxCell id="local-compute" value="Claim + local inference&#10;Optional JSON + bounded reasoning&#10;Total output cap includes reasoning" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="450" y="510" width="300" height="70" />
+        </mxCell>
+        <mxCell id="release-check" value="Release + check result&#10;Optional keep_alive: 0 releases model&#10;Final text only; raw thinking discarded" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#172740;fontColor=#eff5ff;strokeColor=#64ddc0;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="860" y="510" width="300" height="70" />
+        </mxCell>
+        <mxCell id="capacity-to-compute" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;" edge="1" parent="1" source="capacity" target="local-compute">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="compute-to-check" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#64ddc0;" edge="1" parent="1" source="local-compute" target="release-check">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
         <mxCell id="heading" value="Local reasoning. Durable shared results." style="text;html=0;strokeColor=none;fillColor=none;fontColor=#bdcbe0;fontSize=28;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="40" y="30" width="1120" height="40" />
         </mxCell>
         <mxCell id="subheading" value="Text-only roles · one write authority · no paid fallback" style="text;html=0;strokeColor=none;fillColor=none;fontColor=#bdcbe0;fontSize=17;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="40" y="75" width="1120" height="30" />
         </mxCell>
-        <mxCell id="transport" value="HTTPS + distinct scoped bearer credentials; workers never mount the broker database." style="text;html=0;strokeColor=none;fillColor=none;fontColor=#bdcbe0;fontSize=15;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="40" y="520" width="1120" height="35" />
-        </mxCell>
-        <mxCell id="review-boundary" value="Reviewers wait for the checked master; each sees the same candidate, independently." style="text;html=0;strokeColor=none;fillColor=none;fontColor=#bdcbe0;fontSize=14;" vertex="1" parent="1">
-          <mxGeometry as="geometry" x="40" y="550" width="1120" height="35" />
+        <mxCell id="transport" value="HTTPS + distinct scoped bearer credentials; workers never mount the broker database." style="text;html=0;strokeColor=none;fillColor=none;fontColor=#bdcbe0;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="700" width="1120" height="25" />
         </mxCell>
         <mxCell id="evidence" value="Isolated-node qualification uses one physical host. Physical multi-machine deployment needs its own validation." style="text;html=0;strokeColor=none;fillColor=none;fontColor=#bdcbe0;fontSize=13;" vertex="1" parent="1">
           <mxGeometry as="geometry" x="40" y="720" width="1120" height="35" />
