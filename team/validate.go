@@ -40,8 +40,12 @@ func Validate(r Request) error {
 		if role.Ollama != nil && role.Driver != "ollama" {
 			return errors.New("direct Ollama generation options require the ollama driver")
 		}
-		if !identifier.MatchString(role.ID) || role.ID == "status" || role.ID == "all" || strings.ContainsAny(role.ID, "/.") || ids[role.ID] || (role.Driver != "ollama" && role.Driver != "codex-oss") || !text(role.Model, 128) || strings.Contains(strings.ToLower(role.Model), "cloud") || !digestPattern.MatchString(role.ModelDigest) || !text(role.Instructions, 4096) || role.MaxInputTokens < 1024 || role.MaxInputTokens > 32768 || role.MaxOutputTokens < 16 || role.MaxOutputTokens > 4096 {
-			return errors.New("roles require unique IDs, pinned installed local models, instructions and explicit limits")
+		outputLimit := int64(4096)
+		if role.Driver == "ollama" && role.Ollama != nil && role.Ollama.Think != nil && *role.Ollama.Think {
+			outputLimit = 8192
+		}
+		if !identifier.MatchString(role.ID) || role.ID == "status" || role.ID == "all" || strings.ContainsAny(role.ID, "/.") || ids[role.ID] || (role.Driver != "ollama" && role.Driver != "codex-oss") || !text(role.Model, 128) || strings.Contains(strings.ToLower(role.Model), "cloud") || !digestPattern.MatchString(role.ModelDigest) || !text(role.Instructions, 4096) || role.MaxInputTokens < 1024 || role.MaxInputTokens > 32768 || role.MaxOutputTokens < 16 || role.MaxOutputTokens > outputLimit {
+			return errors.New("roles require unique IDs, pinned installed local models, instructions and explicit limits; output tokens must be 16..4096, or up to 8192 only for direct Ollama thinking")
 		}
 		ids[role.ID] = true
 		w, err := workerRequest(r, role, `{}`)

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -70,7 +71,7 @@ func TestTeamGenerationPolicyFlagsCannotBeSilentlyIgnored(t *testing.T) {
 		{"run", "--output-tokens", "2048"},
 		{"run", "--output-tokens", "512"},
 		{"init", "--output-tokens", "0"},
-		{"suite", "--output-tokens", "4097"},
+		{"suite", "--output-tokens", "8193"},
 		{"init", "--driver", "codex-oss", "--json-output"},
 		{"suite", "--driver", "codex-oss", "--release-model"},
 		{"init", "--driver", "codex-oss", "--think"},
@@ -78,6 +79,48 @@ func TestTeamGenerationPolicyFlagsCannotBeSilentlyIgnored(t *testing.T) {
 		var out, diag bytes.Buffer
 		if err := teamCommandIO(args, &out, &diag); err == nil || out.Len() != 0 {
 			t.Fatal("inapplicable generation policy flags were ignored", args, err)
+		}
+	}
+}
+
+func TestTeamOutputTokenFlagsUseDriverBoundsBeforeMetadata(t *testing.T) {
+	for _, command := range []string{"init", "suite"} {
+		for _, profile := range []struct{ driver, think string }{{"ollama", ""}, {"ollama", "false"}, {"ollama", "true"}, {"codex-oss", ""}} {
+			for _, tokens := range []int64{-1, 15, 16, 4096, 4097, 8192, 8193} {
+				t.Run(command+"/"+profile.driver+"/think="+profile.think+"/"+strconv.FormatInt(tokens, 10), func(t *testing.T) {
+					var out, diag bytes.Buffer
+					// A cloud marker is rejected by the local constructor before
+					// metadata HTTP, even when the output allowance is valid.
+					args := []string{command, "--driver", profile.driver, "--output-tokens", strconv.FormatInt(tokens, 10), "--model", "fixture:cloud"}
+					if profile.think != "" {
+						args = append(args, "--think="+profile.think)
+					}
+					err := teamCommandIO(args, &out, &diag)
+					valid := tokens >= 16 && tokens <= 8192 && (tokens <= 4096 || (profile.driver == "ollama" && profile.think == "true"))
+					if err == nil || out.Len() != 0 {
+						t.Fatalf("fixture unexpectedly prepared a team: %v", err)
+					}
+					if valid {
+						if err.Error() != "team init requires an installed local model" {
+							t.Fatalf("valid allowance rejected before constructor validation: %v", err)
+						}
+					} else if !strings.Contains(err.Error(), "output-tokens between 16 and 4096, or up to 8192 only with direct ollama --think") {
+						t.Fatalf("invalid allowance reached model discovery: %v", err)
+					}
+				})
+			}
+		}
+	}
+}
+
+func TestTeamOutputTokenHelpKeepsDefaultAndDriverBounds(t *testing.T) {
+	for _, command := range []string{"init", "suite"} {
+		var out, diag bytes.Buffer
+		if err := teamCommandIO([]string{command, "--help"}, &out, &diag); err != nil {
+			t.Fatal(err)
+		}
+		if !strings.Contains(diag.String(), "16..4096 normally, 16..8192 only with --driver ollama --think (default 512)") {
+			t.Fatalf("output allowance default or driver bounds missing: %s", diag.String())
 		}
 	}
 }

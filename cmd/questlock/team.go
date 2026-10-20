@@ -63,7 +63,7 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 	jsonOutput := f.Bool("json-output", false, "init/suite: direct Ollama JSON output with temperature zero")
 	releaseModel := f.Bool("release-model", false, "init/suite: release the requested Ollama model after each response to recover memory")
 	think := f.Bool("think", false, "init/suite: explicitly enable bounded non-streaming local reasoning")
-	outputTokens := f.Int64("output-tokens", 512, "init/suite: per-role total output allowance, including reasoning; 16..4096")
+	outputTokens := f.Int64("output-tokens", 512, "init/suite: per-role total output allowance, including reasoning; 16..4096 normally, 16..8192 only with --driver ollama --think")
 	policyRevision := f.String("policy-revision", "", "init/suite: reviewed runtime policy revision, separate from task facts")
 	state := f.String("state-dir", "", "private managed local broker directory")
 	configPath := f.String("config", "", "explicit complete resource admission JSON")
@@ -98,8 +98,12 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 	ctx, cancel := context.WithTimeout(ctx, *timeout)
 	defer cancel()
 	if args[0] == "init" || args[0] == "suite" {
-		if (*driver != "ollama" && *driver != "codex-oss") || *outputTokens < 16 || *outputTokens > 4096 {
-			return errors.New("init requires ollama or codex-oss driver and output-tokens between 16 and 4096")
+		outputLimit := int64(4096)
+		if *driver == "ollama" && *think {
+			outputLimit = 8192
+		}
+		if (*driver != "ollama" && *driver != "codex-oss") || *outputTokens < 16 || *outputTokens > outputLimit {
+			return errors.New("init/suite requires ollama or codex-oss driver and output-tokens between 16 and 4096, or up to 8192 only with direct ollama --think")
 		}
 		if (*jsonOutput || *releaseModel || *think) && *driver != "ollama" {
 			return errors.New("json-output, release-model and think require the direct ollama driver")
