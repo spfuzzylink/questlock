@@ -28,6 +28,16 @@ import (
 
 func teamCommand(args []string) error { return teamCommandIO(args, os.Stdout, os.Stderr) }
 func teamCommandIO(args []string, out, diag io.Writer) error {
+	return teamCommandIOWithModelDigest(args, out, diag, func(ctx context.Context, model string) (string, error) {
+		p, err := inference.NewOllamaProviderContext(ctx, "", model)
+		if err != nil {
+			return "", err
+		}
+		return p.ModelDigest(), nil
+	})
+}
+
+func teamCommandIOWithModelDigest(args []string, out, diag io.Writer, modelDigest func(context.Context, string) (string, error)) error {
 	if len(args) == 1 && args[0] == "quest" {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
@@ -60,7 +70,7 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 	clientBin := f.String("client-bin", "", "absolute native Codex executable for codex-oss roles")
 	model := f.String("model", "", "installed model tag for init; no automatic download")
 	driver := f.String("driver", "ollama", "init role driver: ollama or codex-oss")
-	jsonOutput := f.Bool("json-output", false, "init/suite: direct Ollama JSON output with temperature zero")
+	jsonOutput := f.Bool("json-output", false, "init/suite: direct Ollama JSON output using installed sampling defaults")
 	canonicalPrompt := f.Bool("canonical-prompt", false, "init/suite: send the exact canonical user prompt used by native baselines")
 	releaseModel := f.Bool("release-model", false, "init/suite: release the requested Ollama model after each response to recover memory")
 	think := f.Bool("think", false, "init/suite: explicitly enable bounded non-streaming local reasoning")
@@ -109,7 +119,7 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 		if (*jsonOutput || *canonicalPrompt || *releaseModel || *think) && *driver != "ollama" {
 			return errors.New("json-output, canonical-prompt, release-model and think require the direct ollama driver")
 		}
-		p, err := inference.NewOllamaProviderContext(ctx, "", *model)
+		digest, err := modelDigest(ctx, *model)
 		if err != nil {
 			return errors.New("team init requires an installed local model")
 		}
@@ -118,11 +128,10 @@ func teamCommandIO(args []string, out, diag io.Writer) error {
 			inputLimit = 32768
 		}
 		r := team.Request{Schema: 1, Task: "my-project/first-team-task", Revision: "snapshot-1", Instructions: "Return only a JSON object with issue and deadline strings copied from the input.", Input: "Ticket OPS-17 must be completed on 2030-04-03.", ReuseForSeconds: 86400, Checks: []evaluation.Check{{ID: "expected-values", Kind: "json_equals", Expected: json.RawMessage(`{"issue":"OPS-17","deadline":"2030-04-03"}`)}}}
-		r.Master = team.Role{ID: "master", Driver: *driver, Model: *model, ModelDigest: p.ModelDigest(), Instructions: "Solve the approved task. Return only the requested answer, without Markdown fences.", MaxInputTokens: inputLimit, MaxOutputTokens: *outputTokens}
+		r.Master = team.Role{ID: "master", Driver: *driver, Model: *model, ModelDigest: digest, Instructions: "Solve the approved task. Return only the requested answer, without Markdown fences.", MaxInputTokens: inputLimit, MaxOutputTokens: *outputTokens}
 		r.PolicyRevision = *policyRevision
 		if *jsonOutput {
-			zero := float64(0)
-			r.Master.Ollama = &inference.OllamaOptions{Format: "json", Temperature: &zero}
+			r.Master.Ollama = &inference.OllamaOptions{Format: "json"}
 		}
 		if *releaseModel {
 			if r.Master.Ollama == nil {
