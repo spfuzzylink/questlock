@@ -74,6 +74,9 @@ func (p *OpenRouterProvider) Identity() string {
 }
 
 func (p *OpenRouterProvider) validate(req Request) error {
+	if req.Ollama != nil {
+		return errors.New("ollama settings require the ollama provider")
+	}
 	if req.Provider != "openrouter" || req.OpenRouter == nil || *req.OpenRouter != p.config {
 		return errors.New("OpenRouter request must match the explicitly configured route and counting policy")
 	}

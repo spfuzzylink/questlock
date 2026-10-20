@@ -290,6 +290,9 @@ func (p *SGLangProvider) inspect(ctx context.Context) (sglangObservation, error)
 }
 
 func (p *SGLangProvider) validate(req Request) error {
+	if req.Ollama != nil {
+		return errors.New("ollama settings require the ollama provider")
+	}
 	if req.Provider != "sglang" || req.Model != p.model || req.SGLang == nil || *req.SGLang != p.cfg {
 		return errors.New("SGLang request does not match the configured deployment")
 	}
