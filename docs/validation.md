@@ -1,6 +1,6 @@
 # Validation record
 
-## v0.9.0 candidate observations — 2026-10-19
+## v0.9.0 observations — 2026-10-19
 
 Local Go race/vet and 73 Python publication/packaging checks passed before
 publication. The new six-case scripted team demo passed through a real HTTPS
@@ -11,8 +11,73 @@ calls. Live model qualification did not complete the team suite.
 The local lanes retain $0 paid API charges and no fallback. Six deliberate Codex
 subscription baselines reported 65,800 hosted input-plus-output tokens; no
 equivalent completed local team establishes a reduction. The 99% target, credit
-reduction and invoice savings remain unestablished. Active client configuration,
-stable installed v0.8 binary and permanent branding were not changed.
+reduction and invoice savings remain unestablished. Active client configuration and permanent branding were not changed. The
+installed binary was subsequently upgraded with the guarded transaction below.
+
+
+### Published artifacts and release checks
+
+Release source: `fbdd53ed883f78d0f401f45a630cad3bb7c13605`, the peeled `v0.9.0`
+tag. Its tree `4a7e0db0045695de0876786dabfe32622ec21385` exactly matches
+independently reviewed commit `5f2259469e3e75e39f1e0525f7c23c2d16561054`.
+
+[PR CI](https://github.com/spfuzzylink/questlock/actions/runs/39350441825),
+[main CI](https://github.com/spfuzzylink/questlock/actions/runs/39351192025) and
+[tagged CI](https://github.com/spfuzzylink/questlock/actions/runs/39351247628)
+passed all seven required gates before the tag publisher released the tested
+assets. All eight model-free quests, first-task/reuse tests and macOS extension
+package checks passed on the native archive runners. A duplicate branch-push
+run was cancelled; the complete PR run is the prepublication evidence.
+
+Anonymous downloads verified all seven actual assets, SHA-256 manifests,
+normalized archive metadata, native executable target headers, clean Go 1.27.1
+BUILDINFO and all **102 exact public files** per archive against the tag.
+Each MCPB contains its matching native binary and exact legal files. Native
+Claude Desktop import/connection still requires separate qualification.
+
+| Asset | SHA-256 |
+| --- | --- |
+| `questlock_0.9.0_darwin_amd64.mcpb` | `2d6c3990518456929a79b84b08dc62cc9f6b84e4953d490f0a20fb6c50717fbd` |
+| `questlock_0.9.0_darwin_amd64.tar.gz` | `42fde56c169422b709d78bf4a5c5b3b121afcaae8916492135f28d54e98f32f6` |
+| `questlock_0.9.0_darwin_arm64.mcpb` | `411560b08aa38c61359d2705287ea1e29ecfb68e8cf8207303b5290b28bca9f8` |
+| `questlock_0.9.0_darwin_arm64.tar.gz` | `3f44e3aed499aec25bac597749921fd84bc30e1f641846e35ecbbf76dc59b485` |
+| `questlock_0.9.0_linux_amd64.tar.gz` | `adb3ad59e51e25b35c0a799ae7c1f09624b9360880afa0793cb0dc6ec9da48a8` |
+| `questlock_0.9.0_linux_arm64.tar.gz` | `ebb59aaddecf9e36b8c763312a872b4636e47d711edc6c4c8b45d810c9e48ba7` |
+
+[Container CI](https://github.com/spfuzzylink/questlock/actions/runs/39351639525)
+passed native execution of the eight model-free quests on Linux AMD64 and
+ARM64. Anonymous registry verification checked both image configs, all 16
+layers and their uncompressed diff IDs, matching published binaries/BUILDINFO,
+legal files and UID/GID `65532:65532`. Both `v0.9.0` and `experimental` resolved to:
+
+`sha256:18540730d6b6cbe7c5c9f59da522fa7c81c7e28eb3537f8817debe40329decdb`
+
+All seven older versioned indexes, v0.2 through v0.8, were unchanged. This is
+container/transport qualification, not a physical second-machine model run.
+
+### Installed binary and development use
+
+The upgrade kept a private complete 19-file known-good v0.8 backup. An
+independently reviewed detached watchdog held rollback authority before the
+single binary swap; 19 disposable safety tests passed, including parent loss,
+deadlines, corrupt/FIFO backups and concurrent human repairs. All 18 skill files
+retained their bytes, modes and modification times. All four client settings
+retained their hashes/modes. Native Codex read the existing configuration after
+the swap, and a fresh v0.9 MCP process verified exact durable revision reuse,
+recorded accounting, zero model calls and zero new tokens/provider charge.
+The installed ARM binary SHA-256 is:
+
+`cbac82fd0b12df5ab75a6aa8bf259e2dad0d41d3a6787c7633d428173cfb65f4`
+
+The installed `team quest` also passed all six scripted HTTPS cases. Existing
+long-running MCP processes need their normal controlled restart to load a new
+executable; installation does not switch the hosted conversation backend.
+
+The profile README update used three counted Questlock literal edits and an
+exact checked replay. Both completed durably with recorded outcome metadata,
+zero model calls, zero tokens and $0 provider charge. This proves deterministic
+work/reuse behavior; it supplies no counterfactual invoice or whole-build savings.
+
 
 ## v0.8.0 observations — 2026-10-17
 
