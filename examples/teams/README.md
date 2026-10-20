@@ -20,11 +20,19 @@ distinguish them within this small set.
 
 ## Prepare and approve
 
+For a matched rerun, start from the saved suite and request files. Keep their
+task/data revisions, facts, checks and master instructions; review only the new
+local execution options, reviewer transport instructions and `policy_revision`.
+The following creates a new suite with revision `snapshot-1`; it does not
+automatically match an older baseline with a different task/data revision.
+
 ```sh
 umask 077
 set -C
 mkdir -p requests local baseline events
-questlock team suite --model qwen3.5:4b --driver ollama > suite.json
+questlock team suite --model qwen3.5:4b --driver ollama \
+  --json-output --release-model --policy-revision local-json-release-2 \
+  > suite.json
 python3 - <<'PY'
 import json
 from pathlib import Path
@@ -40,6 +48,12 @@ PY
 Inspect every request before running. Use `--driver ollama` for the direct local
 route. `codex-oss` requires the compatible native client described in the guide.
 `suite` reads local model metadata; it neither generates nor downloads a model.
+The two optional Ollama switches request JSON at temperature zero and release
+the requested model after each response. Releasing can free memory but adds
+cold starts and changes that model's retention in the shared daemon. Omit the
+switches for the existing defaults; they are unavailable with `codex-oss`.
+Keep the same task/data revision when changing only the reviewed
+`policy_revision`. The checks and source facts stay unchanged.
 
 Run each approved local case exactly once, preserving output even on failure:
 
@@ -56,7 +70,18 @@ Do not add a retry loop. Retain failed reports and investigate them. For separat
 nodes, use the role-by-role HTTPS commands in the guide and save all phase
 receipts; then save `team status` as `local/CASE.json`.
 
-## Obtain a deliberate Codex baseline
+## Reuse a matching Codex baseline
+
+Use saved baseline receipts first. The six-case follow-up reuses the v0.9.0
+Codex baseline, which reported 65,800 input plus output tokens; it does not call
+Codex again. If you have matching original receipts, copy them into `baseline/`
+unchanged and keep their event streams. The published observation summary is
+not an importable baseline receipt. `team benchmark` verifies the task contract
+and exact emitted master-prompt hashes even when the local execution policy
+changes.
+
+If no matching baseline exists, the following separate, deliberate procedure
+obtains one. It is not part of the local inference run or a paid fallback.
 
 For each case, emit its exact approved baseline user prompt without a model call:
 

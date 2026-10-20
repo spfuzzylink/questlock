@@ -29,14 +29,32 @@ Run from a private working directory:
 ```sh
 umask 077
 mkdir -p tasks receipts
-questlock team init --model qwen3.5:4b > tasks/first.json
+questlock team init --model qwen3.5:4b --driver ollama \
+  --json-output --release-model --policy-revision local-json-release-2 \
+  > tasks/first.json
 questlock team plan --workspace tasks --request first.json
 ```
 
 Review `tasks/first.json`. It contains the task, an explicit revision, deterministic
 checks, a master and two reviewers, model digests, token limits, and a reuse
 window. `init` inspects installed model metadata without generation; `plan` is
-offline. To approve the snapshot, run it explicitly:
+offline.
+
+The example opts into JSON output at temperature zero and asks Ollama to release
+the requested model after each response. `--json-output` sets generic JSON mode;
+it does not supply the expected answer or weaken the answer checks. It also tells
+reviewers to decode the candidate's JSON transport string once before judging
+the answer. `--release-model` sets each role's `ollama.keep_alive_seconds` to `0`.
+This can recover resident model memory, but affects retention in the shared
+Ollama daemon and can add cold-start latency to later requests. It is neither a
+generation retry nor a global memory reservation.
+
+These two switches apply only to direct `ollama` roles and only when preparing
+`init` or `suite` requests. Leaving them out preserves the existing request and
+runtime defaults. A role can instead specify an optional
+`ollama.keep_alive_seconds` value from `0` through `300`; an omitted value leaves
+Ollama's default retention unchanged. Inspect these controls before approving
+the snapshot, then run it explicitly:
 
 ```sh
 questlock team run --workspace tasks --request first.json > receipts/first.json
@@ -51,14 +69,20 @@ return exactly `{"approved":true,"issues":[]}` to approve it. A rejection or
 malformed answer stops the workflow. Check the exit status and JSON report;
 only `status: "completed"` exposes final text.
 
-Resource refusal reports `blocked` before a claim is made. The explicit request
-stays on disk and can be submitted deliberately when headroom returns; this
-differs from an uncertain claim, which must never be retried blindly.
+Before a fresh role claims work, resource admission waits for enough healthy
+capacity within the invocation deadline. `--timeout` defaults to five minutes
+and accepts at most thirty minutes. If capacity never returns, the report is
+`blocked` without a claim or model call. Only admission is polled; an admitted
+model call is never retried. The approved request stays on disk for a deliberate
+later submission. An uncertain claim needs investigation instead.
 
 A completed exact repeat reports zero new generation. Reuse includes the entire
-request, including policy, role instructions, model digests and checks. Changed
-facts or policy need a deliberately reviewed revision. Machine checks and model
-votes do not establish human acceptance.
+request, including policy, role instructions, model digests and checks. Keep
+`revision` for task/data changes; use `policy_revision` for a reviewed execution
+policy change, such as `local-json-release-2`. Both change execution identity,
+so a new policy cannot silently reuse or reset the original failed workflow.
+Retain that failure. Machine checks and model votes do not establish human
+acceptance.
 
 ## Choose the local driver
 
@@ -92,10 +116,10 @@ Both drivers are local-only. The team schema has no hosted role, provider key,
 paid fallback, or automatic escalation. Local hardware and electricity still
 have operating costs. Resource admission reserves local CPU/memory headroom
 before fresh work. `--config` selects an explicit complete
-[admission configuration](adaptive-admission.md); `--timeout` bounds the whole
-invocation. The default admitted task deadline is 45 seconds; a longer whole-run
-timeout alone does not extend that policy. Set measured per-role limits before
-approving a slower workload. These estimates are per process, rather than OS
+[admission configuration](adaptive-admission.md). The default admitted task
+deadline is 45 seconds; a longer whole-run timeout alone does not extend that
+policy. Set measured per-role limits before approving a slower workload. These
+estimates are per process, rather than OS
 allocation or a distributed scheduler. Retrieval of already checked results
 needs no model admission.
 
@@ -206,6 +230,13 @@ it is not an offline fixture or a claim of repository-scale coding quality.
 baseline is a separate deliberate use of the operator's subscription or account,
 never an automatic fallback. Inspect its authentication and model policy before
 authorizing that run.
+
+Reuse an existing baseline when its bindings still match. The current six-case
+follow-up uses the saved v0.9.0 Codex baseline of **65,800 reported input plus
+output tokens**, without another hosted call. A runtime-only `policy_revision`
+does not change `TaskDigest` or the exact `MasterPrompt`; the comparator still
+requires both saved hashes to match. Changed facts, task revision, checks or
+emitted master prompt need a new comparison contract, not a relabeled receipt.
 
 Comparison requires matching task/revision, facts, checks and emitted user prompt,
 successful local master and reviews, a checked baseline answer, and known hosted
