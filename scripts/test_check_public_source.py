@@ -208,6 +208,18 @@ class RepositoryTests(unittest.TestCase):
         self.assertNotIn(".local/auth.sh", output)
         self.assertNotIn("credential-helper.py", output)
 
+    def test_forced_demo_tasks_are_rejected_even_after_history_deletion(self):
+        self.write(".gitignore", "/.questlock-demo/\n")
+        self.git("add", ".gitignore")
+        self.write(".questlock-demo/tasks/first.json", "Private operator-approved task data")
+        self.git("add", "--force", ".questlock-demo/tasks/first.json")
+        self.assertIn("credential or local-state path", self.check(1))
+        self.git("commit", "-m", "Accidental private demo task fixture")
+        self.git("rm", ".questlock-demo/tasks/first.json")
+        self.git("commit", "-m", "Remove private demo task fixture")
+        output = self.check(1)
+        self.assertIn('".questlock-demo/tasks/first.json" (history)', output)
+
     def test_force_added_local_auth_helpers_are_rejected_by_path(self):
         self.write(".gitignore", "/.local/\n")
         self.write(".locality/notes.txt", "Public file with a similar directory name")

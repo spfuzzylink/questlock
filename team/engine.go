@@ -181,6 +181,10 @@ func (e Engine) read(ctx context.Context, fp, role, candidate string, ttl int64)
 }
 
 func (e Engine) execute(ctx context.Context, r Request, role Role, fp, candidate, candidateSHA string) (record, error) {
+	request, err := workerRequest(r, role, candidate)
+	if err != nil {
+		return record{}, err
+	}
 	started := e.now()
 	rec := record{Schema: 1, RequestSHA256: fp, Role: role.ID, WorkerID: e.WorkerID, CandidateSHA256: candidateSHA, State: "pending", CreatedAt: started, ExpiresAt: started.Add(time.Duration(r.ReuseForSeconds) * time.Second)}
 	claimID := "team-claim-" + hash(fp + "/" + role.ID + "/" + e.WorkerID)[:40]
@@ -193,7 +197,6 @@ func (e Engine) execute(ctx context.Context, r Request, role Role, fp, candidate
 	if claim.Replayed || claim.Artifact.Version != 1 || claim.Artifact.Content != string(b) {
 		return record{}, ErrPending
 	}
-	request := workerRequest(r, role, candidate)
 	router := delegation.Router{Factory: func(delegation.Tier) (delegation.Runner, error) { return e.Factory(ctx, role) }}
 	result, _ := router.Run(ctx, request)
 	if result.Status == "completed" && role.ID != "master" && (result.Response == nil || !reviewApproved(result.Response.Text)) {

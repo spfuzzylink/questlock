@@ -1,0 +1,70 @@
+{
+  "accounting_complete": true,
+  "schema": 1,
+  "request_sha256": "51c83964c1a208ec5a31f819d6da34f1ef45d075bec3f087e205d3ec70d88cf3",
+  "status": "completed",
+  "steps": [
+    {
+      "outcome_tracking_status": "recorded",
+      "role": "master",
+      "state": "completed",
+      "worker_id": "node-a",
+      "reused": true,
+      "output_sha256": "e95b46674a3232145aea1d94a763e56c311dd05e03c3931963a984b0385a56f8",
+      "this_run_local_usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    },
+    {
+      "outcome_tracking_status": "recorded",
+      "role": "review-correctness",
+      "state": "completed",
+      "worker_id": "node-b",
+      "reused": true,
+      "output_sha256": "adf2e170d97c6e12be0dc019e23a65fefb6ead8e5decd80e6ec0787456673c62",
+      "this_run_local_usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    },
+    {
+      "outcome_tracking_status": "recorded",
+      "role": "review-risk",
+      "state": "completed",
+      "worker_id": "node-c",
+      "reused": true,
+      "output_sha256": "adf2e170d97c6e12be0dc019e23a65fefb6ead8e5decd80e6ec0787456673c62",
+      "this_run_local_usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    }
+  ],
+  "text": "{\"waiting_count\": 6}",
+  "output_sha256": "e95b46674a3232145aea1d94a763e56c311dd05e03c3931963a984b0385a56f8",
+  "checks": [
+    {
+      "id": "expected",
+      "kind": "json_equals",
+      "passed": true
+    }
+  ],
+  "this_run_local_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "known": true,
+    "generation_calls": 0
+  },
+  "this_run_hosted_tokens": 0,
+  "hosted_usage_known": true,
+  "provider_cost_usd": 0,
+  "paid_fallback_enabled": false,
+  "human_acceptance": "not_reported"
+}

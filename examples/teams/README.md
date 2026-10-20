@@ -1,109 +1,148 @@
 # Six tasks, one checked contract
 
-Run this walkthrough from a private working directory with Questlock, Ollama and
-an already installed model. It deliberately performs local inference. Start
-with the [team guide](../../docs/local-agent-teams.md) for failure and trust
-boundaries. Keep tasks, tokens, logs and receipts outside source control.
+Start from the supplied snapshots. Keep the original facts, checks, task revision
+and master prompt; choose execution settings explicitly. The
+[validation report](../../docs/local-team-validation-v0.9.1.md) records every
+policy, failure and unknown counter. The original v0.9.0 report is unchanged.
 
-| Case | Class | What must be checked |
-| --- | --- | --- |
-| `ticket` | Simple | Copy the exact issue and deadline |
-| `route` | Simple | Select only the permitted local provider |
-| `queue` | Simple | Calculate the waiting count |
-| `uncertain` | Bounded reasoning | Preserve an uncertain publication's identity |
-| `resources` | Bounded reasoning | Respect both CPU and memory capacity |
-| `rework` | Bounded reasoning | Remove rewritten work from acceptance; leave unknown cost null |
+| Case | What must be checked |
+| --- | --- |
+| `ticket` | Copy the exact issue and deadline |
+| `route` | Select only the permitted local provider |
+| `queue` | Calculate the waiting count |
+| `uncertain` | Preserve an uncertain publication's identity |
+| `resources` | Respect CPU, memory and every reserve; preserve queued work |
+| `rework` | Remove rewritten work from acceptance; leave unknown cost null |
 
-These are explicit extraction and policy cases, not a representative software
-engineering benchmark. The JSON suite calls the latter three `complex` only to
-distinguish them within this small set.
+These are three simple extraction cases and three bounded reasoning cases.
+They are not a representative coding benchmark or evidence of human acceptance.
 
-## Prepare and approve
+## Inspect the saved comparison without a model
+
+From the repository or extracted archive root:
+
+```sh
+questlock team benchmark \
+  --suite examples/teams/qualified-suite-v0.9.1.json \
+  --local-dir examples/teams/local-observations-v0.9.1 \
+  --baseline-dir examples/teams/codex-baseline-v0.9.0
+```
+
+This reads historical operator-provided receipts. It performs no inference,
+download or account access. The baseline is the same six saved Codex runs,
+reporting 65,800 input-plus-output tokens. Their original JSONL streams remain
+private. These receipts are importable observations, not remote attestation.
+Final status reads have zero fresh usage; the report separately totals the
+originating master/reviewer generations and every failed development policy.
+
+## Run your own local experiment
+
+The saved suite pins its model digests and per-role settings. Review it before
+using it. Install the listed weights deliberately and check hardware needs and
+model licenses; Questlock never downloads models automatically. The
+[team guide](../../docs/local-agent-teams.md) starts with one actually completed
+9B task and explains the full failure, timeout and trust boundaries.
+
+Keep task files and receipts private. The following creates a new working copy
+without overwriting previous evidence:
 
 ```sh
 umask 077
 set -C
-mkdir -p requests local baseline events
-questlock team suite --model qwen3.5:4b --driver ollama > suite.json
-python3 - <<'PY'
+mkdir -p .questlock-demo/requests .questlock-demo/local .questlock-demo/plans
+cat examples/teams/qualified-suite-v0.9.1.json > .questlock-demo/suite.json
+cat examples/teams/reasoning-resources.json > .questlock-demo/resources.json
+python3 - <<'PYTHON'
 import json
 from pathlib import Path
-suite = json.loads(Path("suite.json").read_text())
+suite = json.loads(Path(".questlock-demo/suite.json").read_text())
 for case in suite["cases"]:
-    target = Path("requests") / (case["id"] + ".json")
+    target = Path(".questlock-demo/requests") / (case["id"] + ".json")
     with target.open("x") as out:
         json.dump(case["request"], out, indent=2)
         out.write("\n")
-PY
-```
-
-Inspect every request before running. Use `--driver ollama` for the direct local
-route. `codex-oss` requires the compatible native client described in the guide.
-`suite` reads local model metadata; it neither generates nor downloads a model.
-
-Run each approved local case exactly once, preserving output even on failure:
-
-```sh
+PYTHON
 for case in ticket route queue uncertain resources rework; do
-  questlock team run --workspace requests --request "$case.json" \
-    --client-bin /absolute/path/to/codex > "local/$case.json" \
-    2> "local/$case.stderr"
+  questlock team plan --workspace .questlock-demo/requests \
+    --request "$case.json" > ".questlock-demo/plans/$case.json"
 done
 ```
 
-The default managed broker keeps claims and results durable between invocations.
-Do not add a retry loop. Retain failed reports and investigate them. For separate
-nodes, use the role-by-role HTTPS commands in the guide and save all phase
-receipts; then save `team status` as `local/CASE.json`.
-
-## Obtain a deliberate Codex baseline
-
-For each case, emit its exact approved baseline user prompt without a model call:
+Review every request and plan before these intentional model calls:
 
 ```sh
-questlock team prompt --workspace requests --request ticket.json > ticket.prompt.json
+for case in ticket route queue uncertain resources rework; do
+  questlock team run --workspace .questlock-demo/requests --request "$case.json" \
+    --config .questlock-demo/resources.json --timeout 8m \
+    > ".questlock-demo/local/$case.json" 2> ".questlock-demo/local/$case.stderr"
+done
+questlock team benchmark --suite .questlock-demo/suite.json \
+  --local-dir .questlock-demo/local \
+  --baseline-dir examples/teams/codex-baseline-v0.9.0 \
+  > .questlock-demo/comparison.json
 ```
 
-Run the `prompt` value once through your explicitly approved native Codex model
-using noninteractive JSONL output. Keep the supplied task and data unchanged,
-use an empty workspace with tools disabled, and save the complete event stream
-as `events/ticket.jsonl`. Select the model and authentication policy deliberately:
-this step consumes hosted allowance if the chosen model is hosted. Questlock
-does not start this baseline or access your account credentials.
+There is no retry loop. Retain failures and stderr; an uncertain claim requires
+inspection. A fresh broker needs real master and reviewer generations. A
+matching completed snapshot in the same scope may instead be reused. Changed
+or expired snapshots do not become permission to regenerate automatically.
 
-The importer accepts bounded event files of at most 1 MiB. Keep the complete
-original stream private; an oversized or invalid stream is a failed baseline,
-not permission to remove inconvenient events or retry generation.
+The supplied configuration extends only the admitted task deadline to five
+minutes. The normal default is 45 seconds; `--timeout` alone does not change it.
+Each role also declares its generation HTTP deadline. Memory headroom, pressure
+thresholds and queue bounds keep their defaults. `keep_alive_seconds: 0` asks the
+shared daemon to release the model after each response, which can add cold starts.
 
-Import that observed run, even if the model failed:
+For three workers, use the role-by-role authenticated HTTPS commands in the
+[guide](../../docs/local-agent-teams.md#share-work-across-nodes). Save all phase
+receipts, then save `team status` as `local/CASE.json`. Workers keep private files;
+only the broker owns SQLite. The published topology used three scoped identities
+on one physical Mac. Physical second-machine qualification remains separate.
+
+## Read execution contracts honestly
+
+The saved suite uses mixed models, framing and runtime policies. Exact completed
+results remain reusable; failed or uncertain policies remain in the history.
+`policy_revision` changes execution identity while preserving the same approved
+task/data/check contract. Changing facts, checks, task revision or canonical
+master instructions invalidates a saved baseline binding.
+
+Optional `output_types` and `field_roles` are manually declared operator input,
+not annotations inferred from expected answers. They add a decoder contract and
+system guidance; reviewers see the declarations as reference data. The original
+semantic checks and every reviewer approval still have to pass. Comparison rows
+show the extra assistance and explicitly reject identical-information model
+parity. The six-case policies were tuned on these same fixtures.
+
+Two independently designed contracts are saved separately in
+`independent-validation-v0.9.1.json`. They were frozen before their first local
+inference, with no later task/policy changes and no Codex baseline. Their results,
+including failures, do not enter the six-case percentage.
+
+## Use another baseline only deliberately
+
+Prefer the supplied matching baseline; this walkthrough makes no new hosted
+call. For another approved task, `team prompt` emits its exact canonical user
+prompt without inference. An independently authorized Codex run can save bounded
+native JSONL output, which `team baseline-record` imports:
 
 ```sh
-questlock team baseline-record --request requests/ticket.json \
-  --codex-events events/ticket.jsonl --model YOUR_CODEX_MODEL \
-  > baseline/ticket.json
+questlock team prompt --workspace .questlock-demo/requests --request ticket.json
+questlock team baseline-record --request .questlock-demo/requests/ticket.json \
+  --codex-events /private/approved-ticket.events.jsonl --model YOUR_CODEX_MODEL
 ```
 
-Repeat the capture/import for `route`, `queue`, `uncertain`, `resources` and
-`rework`. Keep every original event file and every failure. The importer binds
-the approved task and emitted prompt hashes to the supplied receipt; the
-operator must verify that those are what was actually sent. This is not
-cryptographic proof of the remote model or account used.
+The operator must verify the actual model, authentication, prompt and complete
+event stream. A hosted run consumes its own allowance; it is a separate
+experiment, never a fallback. Invalid/oversized streams stay failed evidence.
 
-## Compare and replay
+`benchmark` retains all six rows and exits unsuccessfully if any result is
+missing, failed, mismatched or has unknown hosted usage. It then leaves the
+reduction percentage null. Repeating a completed exact request reports no new
+generation. Sum originating phase receipts as well as repeats; local reasoning
+tokens and failed work still count as computation.
 
-```sh
-questlock team benchmark --suite suite.json --local-dir local \
-  --baseline-dir baseline > comparison.json
-
-# After a completed case, exact replay needs no generation.
-questlock team run --workspace requests --request ticket.json \
-  --client-bin /absolute/path/to/codex > local/ticket-repeat.json
-```
-
-`benchmark` writes the comparison and exits unsuccessfully when any case is
-ineligible. Missing receipt files remain failed rows. Only a complete matched,
-checked, known-usage suite can establish the observed hosted-token reduction.
-Invoice savings and Codex credit reduction remain unknown. Local reviewers add
-work that the single-answer baseline does not perform; report both workflows
-and their quality limits. Human acceptance and later rework need separate
-[outcome records](../../docs/outcomes.md).
+The metric covers observed hosted input plus output for these bounded tasks.
+Subscription-credit reduction, whole-build hosted usage, hypothetical USD
+invoices and cost per human-accepted task remain unmeasured. Human acceptance
+and later rework need separate [outcome records](../../docs/outcomes.md).

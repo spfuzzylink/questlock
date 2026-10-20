@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "task_sha256": "e6f932b07f9ef7a263e7e45c4f3c5c21217ef9136fa6248167f6e392bbdc7bf1",
+  "prompt_sha256": "a69d4025b1d82ee9866561d751417808c24174e7814f168d7d0926066e2b95a9",
+  "model": "gpt-6.1-sol",
+  "source": "operator_recorded_codex_subscription_jsonl",
+  "complete": true,
+  "usage_known": true,
+  "usage": {
+    "input_tokens": 10930,
+    "uncached_input_tokens": 2610,
+    "cache_read_tokens": 8320,
+    "cache_write_tokens": 0,
+    "output_tokens": 63,
+    "reasoning_tokens": 41
+  },
+  "text": "{\"accepted_tasks\":8,\"cost_per_accepted_task_usd\":null}"
+}

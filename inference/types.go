@@ -14,6 +14,7 @@ import (
 type Spec struct {
 	OpenRouter      *OpenRouterConfig `json:"openrouter,omitempty"`
 	SGLang          *SGLangConfig     `json:"sglang,omitempty"`
+	Ollama          *OllamaOptions    `json:"ollama,omitempty"`
 	Stream          bool              `json:"stream,omitempty"` // Optional local Ollama content streaming.
 	Task            string            `json:"task"`
 	Revision        string            `json:"revision"`
@@ -47,6 +48,7 @@ type ContextItem struct {
 type Request struct {
 	OpenRouter      *OpenRouterConfig `json:"openrouter,omitempty"`
 	SGLang          *SGLangConfig     `json:"sglang,omitempty"`
+	Ollama          *OllamaOptions    `json:"ollama,omitempty"`
 	Stream          bool              `json:"stream,omitempty"`
 	Provider        string            `json:"provider"`
 	Model           string            `json:"model"`
@@ -56,6 +58,34 @@ type Request struct {
 	Input           string            `json:"input"`
 	MaxOutputTokens int64             `json:"max_output_tokens"`
 	CacheMode       string            `json:"cache_mode"`
+}
+
+// OllamaOptions opts into local generation controls without changing runtime
+// defaults for requests that omit them. Format accepts only "json" or empty;
+// a non-nil Temperature must be finite and between 0 and 2, inclusive.
+// KeepAliveSeconds accepts 0..300; 0 requests unloading after generation.
+// Think defaults to false. Explicit true requires nonstream generation and
+// installed model metadata advertising boolean true; reasoning is discarded.
+// GenerationTimeoutSeconds accepts 1..600 for generation HTTP only; omission
+// preserves the 120-second default. Earlier caller deadlines still apply.
+// PromptMode accepts empty for legacy framing or "bounded_text" for the exact
+// BoundedTextPrompt user prompt. Its request system is empty unless an explicit
+// OutputTypes contract adds the declared type hint and effective model system.
+// OutputTypes is an optional manually declared JSON object contract: at most
+// 32 lower snake_case fields with primitive integer/string/number/boolean types.
+// It requires Format=json and supplies no answer values or property constraints.
+// The serialized decoder schema is limited to 4096 bytes; empty maps are invalid.
+// FieldRoles optionally declares quantity, policy_action, or identifier roles
+// for a subset of OutputTypes, supplying generic semantic context without values.
+type OllamaOptions struct {
+	Format                   string            `json:"format,omitempty"`
+	Temperature              *float64          `json:"temperature,omitempty"`
+	KeepAliveSeconds         *int64            `json:"keep_alive_seconds,omitempty"`
+	Think                    *bool             `json:"think,omitempty"`
+	GenerationTimeoutSeconds *int64            `json:"generation_timeout_seconds,omitempty"`
+	PromptMode               string            `json:"prompt_mode,omitempty"`
+	OutputTypes              map[string]string `json:"output_types,omitempty"`
+	FieldRoles               map[string]string `json:"field_roles,omitempty"`
 }
 
 type Plan struct {

@@ -36,6 +36,7 @@ type ollamaMetadata struct {
 	template      string
 	system        string
 	contextLength int64
+	canThink      bool
 }
 
 const (
@@ -207,8 +208,12 @@ func (p *OllamaProvider) inspect(ctx context.Context) (ollamaMetadata, error) {
 		canDisable := false
 		if ok {
 			for _, value := range values {
-				if disabled, ok := value.(bool); ok && !disabled {
-					canDisable = true
+				if enabled, ok := value.(bool); ok {
+					if enabled {
+						metadata.canThink = true
+					} else {
+						canDisable = true
+					}
 				}
 			}
 		}
@@ -278,11 +283,17 @@ func (p *OllamaProvider) validate(req Request) error {
 	if req.Provider != "" && req.Provider != "ollama" {
 		return errors.New("request provider does not match Ollama")
 	}
+	if err := validateOllamaOptions(req.Ollama); err != nil {
+		return err
+	}
+	if req.Stream && ollamaThinkingEnabled(req.Ollama) {
+		return errors.New("Ollama thinking requires nonstream generation")
+	}
 	if !validOllamaModel(req.Model) || canonicalOllamaModel(req.Model) != p.model {
 		return errors.New("request model does not match the installed Ollama snapshot")
 	}
 	if req.ReasoningEffort != "" {
-		return errors.New("Ollama local mode uses think:false and does not accept reasoning_effort")
+		return errors.New("Ollama local mode does not accept reasoning_effort")
 	}
 	if req.CacheMode != "" && req.CacheMode != "default" {
 		return errors.New("Ollama uses automatic local caching; cache mode must be default")
@@ -293,6 +304,13 @@ func (p *OllamaProvider) validate(req Request) error {
 	if len(req.Prefix) > maxProviderRequestBytes || len(req.Input) > maxProviderRequestBytes || len(req.Prefix)+len(req.Input) > maxProviderRequestBytes {
 		return errors.New("Ollama request exceeds the byte limit")
 	}
+	rendered, err := renderOllamaRequest(req, "")
+	if err != nil {
+		return err
+	}
+	if rendered.inputBytes() > maxProviderRequestBytes {
+		return errors.New("Ollama request exceeds the byte limit")
+	}
 	if req.MaxOutputTokens < 1 || req.MaxOutputTokens > 1_000_000 {
 		return errors.New("Ollama max output tokens must be between 1 and 1000000")
 	}
@@ -300,6 +318,13 @@ func (p *OllamaProvider) validate(req Request) error {
 		return errors.New("Ollama requires a context window between 1 and 65536 to bound local memory use")
 	}
 	return nil
+}
+
+func ollamaPrompt(req Request) (system, prompt string) {
+	if req.Ollama != nil && req.Ollama.PromptMode == "bounded_text" {
+		return "", BoundedTextPrompt(req)
+	}
+	return req.Prefix, req.Input
 }
 
 // CountInputTokens is a conservative local policy ESTIMATE, not an Ollama
@@ -319,7 +344,22 @@ func (p *OllamaProvider) CountInputTokens(ctx context.Context, req Request) (int
 }
 
 func ollamaInputEstimate(req Request, metadata ollamaMetadata) (int64, error) {
-	estimate := int64(len(req.Prefix)+len(req.Input)+len(metadata.template)+len(metadata.system)) + 512
+	if ollamaThinkingEnabled(req.Ollama) && !metadata.canThink {
+		return 0, errors.New("Ollama model does not advertise support for think:true")
+	}
+	rendered, err := renderOllamaRequest(req, metadata.system)
+	if err != nil {
+		return 0, err
+	}
+	if rendered.inputBytes() > maxProviderRequestBytes {
+		return 0, errors.New("rendered Ollama request exceeds the byte limit")
+	}
+	estimate := int64(rendered.inputBytes()+len(metadata.template)) + 512
+	if req.Ollama == nil || req.Ollama.OutputTypes == nil {
+		// Declared output types count the effective system in rendered.system;
+		// legacy requests reserve installed system bytes separately as before.
+		estimate += int64(len(metadata.system))
+	}
 	if req.ContextWindow > metadata.contextLength {
 		return 0, errors.New("requested Ollama context window exceeds the model's reported capacity")
 	}
@@ -341,24 +381,52 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 	if _, err = ollamaInputEstimate(req, metadata); err != nil {
 		return Response{}, err
 	}
+	rendered, err := renderOllamaRequest(req, metadata.system)
+	if err != nil {
+		return Response{}, err
+	}
+	client := p.client
+	if req.Ollama != nil && req.Ollama.GenerationTimeoutSeconds != nil {
+		transport, ok := p.client.Transport.(*http.Transport)
+		if !ok {
+			return Response{}, errors.New("Ollama generation timeout requires the configured HTTP transport")
+		}
+		// Isolate the generation override from concurrent requests and metadata
+		// discovery. Both header waits and the complete HTTP exchange are bounded.
+		privateTransport := transport.Clone()
+		privateClient := *p.client
+		privateClient.Timeout = time.Duration(*req.Ollama.GenerationTimeoutSeconds) * time.Second
+		privateTransport.ResponseHeaderTimeout = privateClient.Timeout
+		privateClient.Transport = privateTransport
+		client = &privateClient
+		defer privateTransport.CloseIdleConnections()
+	}
 	body := struct {
-		Model   string `json:"model"`
-		System  string `json:"system"`
-		Prompt  string `json:"prompt"`
-		Stream  bool   `json:"stream"`
-		Think   bool   `json:"think"`
-		Options struct {
-			NumPredict int64 `json:"num_predict"`
-			NumCtx     int64 `json:"num_ctx"`
+		Model     string `json:"model"`
+		System    string `json:"system"`
+		Prompt    string `json:"prompt"`
+		Stream    bool   `json:"stream"`
+		Think     bool   `json:"think"`
+		Format    any    `json:"format,omitempty"`
+		KeepAlive *int64 `json:"keep_alive,omitempty"`
+		Options   struct {
+			NumPredict  int64    `json:"num_predict"`
+			NumCtx      int64    `json:"num_ctx"`
+			Temperature *float64 `json:"temperature,omitempty"`
 		} `json:"options"`
-	}{Model: p.model, System: req.Prefix, Prompt: req.Input, Stream: req.Stream}
+	}{Model: p.model, System: req.Prefix, Prompt: req.Input, Stream: req.Stream, Think: ollamaThinkingEnabled(req.Ollama)}
 	body.Options.NumPredict, body.Options.NumCtx = req.MaxOutputTokens, req.ContextWindow
+	if req.Ollama != nil {
+		body.Options.Temperature = req.Ollama.Temperature
+		body.KeepAlive = req.Ollama.KeepAliveSeconds
+	}
+	body.System, body.Prompt, body.Format = rendered.system, rendered.prompt, rendered.format
 	var raw ollamaGenerationFrame
 	var timing *GenerationTiming
 	if req.Stream {
-		raw, timing, err = p.requestStream(ctx, body, started)
+		raw, timing, err = p.requestStream(ctx, client, body, started)
 	} else {
-		err = p.request(ctx, http.MethodPost, "/api/generate", body, &raw)
+		err = p.requestWithClient(ctx, client, http.MethodPost, "/api/generate", body, &raw)
 	}
 	// Timing can survive an uncertain stream. Unvalidated content and usage
 	// cannot: the Runner retains the claim rather than treating a partial answer
@@ -375,6 +443,9 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 	if raw.PromptEvalCount == nil || raw.EvalCount == nil {
 		return failure(errors.New("Ollama response is missing token usage"))
 	}
+	// Ollama reports generated token counts before splitting thinking from the
+	// final answer. Keep that total as output usage; it provides no separate
+	// reasoning-token count. Thinking text never enters the returned response.
 	u := Usage{InputTokens: *raw.PromptEvalCount, OutputTokens: *raw.EvalCount}
 	if raw.PromptEvalCachedCount != nil {
 		u.CacheReadTokens = *raw.PromptEvalCachedCount
@@ -383,7 +454,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 		return failure(errors.New("Ollama response contains invalid token usage"))
 	}
 	u.UncachedInputTokens = u.InputTokens - u.CacheReadTokens
-	result := Response{Model: raw.Model, Text: raw.Response, Usage: u, Timing: timing, Complete: raw.Done != nil && *raw.Done && raw.DoneReason == "stop" && raw.Response != "" && canonicalOllamaModel(raw.Model) == p.model && !nonNullJSON(raw.Error) && !nonNullJSON(raw.ToolCalls) && raw.Thinking == ""}
+	result := Response{Model: raw.Model, Text: raw.Response, Usage: u, Timing: timing, Complete: raw.Done != nil && *raw.Done && raw.DoneReason == "stop" && raw.Response != "" && canonicalOllamaModel(raw.Model) == p.model && !nonNullJSON(raw.Error) && !nonNullJSON(raw.ToolCalls) && (body.Think || raw.Thinking == "")}
 	switch raw.DoneReason {
 	case "stop", "length", "load":
 		result.StopReason = raw.DoneReason
@@ -394,7 +465,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 		result.Complete = false
 		result.StopReason = "incomplete"
 	}
-	if raw.Thinking != "" {
+	if raw.Thinking != "" && !body.Think {
 		result.StopReason = "unexpected_thinking"
 	}
 	if nonNullJSON(raw.ToolCalls) {
@@ -402,6 +473,13 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 	}
 	id := sha256.Sum256([]byte(raw.CreatedAt + "\x00" + raw.Model + "\x00" + raw.Response))
 	result.ID = "ollama-" + hex.EncodeToString(id[:12])
+	if req.Ollama != nil && req.Ollama.OutputTypes != nil && !validOllamaOutputTypes(raw.Response, req.Ollama.OutputTypes) {
+		result.Text = ""
+		if result.Complete {
+			result.StopReason = "output_types_mismatch"
+		}
+		result.Complete = false
+	}
 	if u.OutputTokens > req.MaxOutputTokens || u.InputTokens+u.OutputTokens > req.ContextWindow {
 		result.Complete = false
 		result.StopReason = "usage_limit_exceeded"
@@ -420,7 +498,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 // overhead. OutputMS is the first-to-last content-chunk interval. Neither is
 // server-only compute time, token throughput, or time to the first reasoning
 // token. Empty metadata/terminal chunks do not start or extend that interval.
-func (p *OllamaProvider) requestStream(ctx context.Context, payload any, started time.Time) (ollamaGenerationFrame, *GenerationTiming, error) {
+func (p *OllamaProvider) requestStream(ctx context.Context, client *http.Client, payload any, started time.Time) (ollamaGenerationFrame, *GenerationTiming, error) {
 	timing := &GenerationTiming{Streaming: true, Basis: "client_observed_content_chunks"}
 	failure := func(err error) (ollamaGenerationFrame, *GenerationTiming, error) {
 		return ollamaGenerationFrame{}, timing, err
@@ -436,7 +514,7 @@ func (p *OllamaProvider) requestStream(ctx context.Context, payload any, started
 	req.GetBody = nil
 	req.Header.Set("Accept", "application/x-ndjson")
 	req.Header.Set("Content-Type", "application/json")
-	resp, err := p.client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		return failure(ollamaStreamError(ctx, err))
 	}
@@ -528,6 +606,10 @@ func ollamaStreamError(ctx context.Context, err error) error {
 }
 
 func (p *OllamaProvider) request(ctx context.Context, method, path string, payload, result any) error {
+	return p.requestWithClient(ctx, p.client, method, path, payload, result)
+}
+
+func (p *OllamaProvider) requestWithClient(ctx context.Context, client *http.Client, method, path string, payload, result any) error {
 	var body []byte
 	var err error
 	if payload != nil {
@@ -548,7 +630,7 @@ func (p *OllamaProvider) request(ctx context.Context, method, path string, paylo
 	if payload != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
-	resp, err := p.client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		if ctx.Err() != nil {
 			return fmt.Errorf("Ollama request interrupted: %w", ctx.Err())

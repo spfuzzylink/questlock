@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "task_sha256": "0b0f8c5dc86e188e99b5eb7a3fb141d77871b746e5fe4492547691093efd4c07",
+  "prompt_sha256": "182f6e54a49ebf7b61f9885ceaba17b4c0987a4b70aee592a1f083c2f73ebdae",
+  "model": "gpt-6.1-sol",
+  "source": "operator_recorded_codex_subscription_jsonl",
+  "complete": true,
+  "usage_known": true,
+  "usage": {
+    "input_tokens": 10884,
+    "uncached_input_tokens": 2564,
+    "cache_read_tokens": 8320,
+    "cache_write_tokens": 0,
+    "output_tokens": 68,
+    "reasoning_tokens": 46
+  },
+  "text": "{\"issue\":\"OPS-17\",\"deadline\":\"2030-04-03\"}"
+}

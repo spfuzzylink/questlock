@@ -1,6 +1,6 @@
 # Architecture
 
-## Local master and reviewers (v0.9.0)
+## Local master and reviewers
 
 An approved text snapshot can now run through a local master and independent
 reviewers, using direct Ollama or an isolated native Codex OSS harness. Scoped
@@ -8,6 +8,28 @@ broker CAS claims coordinate roles across worker processes; only the broker
 owns SQLite. Deterministic checks and every review must pass before the final
 answer is exposed. Exact checked reuse needs no generation. Pending or uncertain
 claims stop without automatic takeover, regeneration or paid fallback.
+
+Each fresh role waits for healthy local CPU/memory capacity before publishing its
+claim; the invocation deadline bounds that wait. Direct Ollama roles can opt into
+JSON output and nonstreaming reasoning. When the master requests JSON, reviewers
+receive its parsed candidate value. The total output cap includes reasoning and final-answer tokens;
+raw thinking is discarded rather than published. An optional
+`keep_alive_seconds: 0` asks the shared Ollama daemon to release the requested
+model after its response, trading resident memory for later cold starts. This
+changes model retention, not global memory reservation or retry behavior. Requests
+that omit these controls keep their existing defaults and representation.
+
+A direct Ollama master can declare primitive `output_types` explicitly. Questlock
+adds a bounded types-only decoder schema and generic source-grounding system
+instructions, while keeping the canonical user prompt unchanged. It supplies no
+answer values, never derives types from expected checks, and never rewrites a
+response to make it pass. Optional manual `field_roles` distinguish quantities,
+policy actions and copied identifiers, including numeric-looking source codes.
+Reviewers see these declarations as reference data; their fixed approval
+contract stays separate. The comparison discloses the extra operator
+interpretation and runtime guidance; it does not claim identical-information
+model parity. Original semantic checks remain the final gate for a well-typed
+but incorrect answer.
 
 ![Local text roles share one authoritative publication boundary](diagrams/local-agent-teams.svg)
 

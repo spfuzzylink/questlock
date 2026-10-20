@@ -298,10 +298,23 @@ func parseCPUSet(b []byte) (int64, error) {
 }
 
 func parseDarwin(sysctl, vm []byte, now time.Time) (Snapshot, error) {
-	s := Snapshot{At: now, Source: "darwin_sysctl_vm_stat_conservative_free"}
+	s := Snapshot{At: now, Source: "darwin_sysctl_vm_stat_free_speculative_purgeable"}
 	lines := strings.Split(strings.TrimSpace(string(sysctl)), "\n")
-	if len(lines) != 4 {
+	if len(lines) != 4 && len(lines) != 5 {
 		return s, ErrSignals
+	}
+	var reusable int64
+	if len(lines) == 5 {
+		value, ok := strings.CutPrefix(lines[4], "reusable_pages=")
+		if !ok {
+			return s, ErrSignals
+		}
+		var err error
+		reusable, err = nonnegative(value)
+		if err != nil {
+			return s, ErrSignals
+		}
+		s.Source = "darwin_sysctl_vm_stat_free_speculative_max_purgeable_reusable"
 	}
 	cpus, e := nonnegative(lines[0])
 	if e != nil || cpus < 1 || cpus > 1e6 {
@@ -348,38 +361,49 @@ func parseDarwin(sysctl, vm []byte, now time.Time) (Snapshot, error) {
 	if e != nil || page < 1 || page > 1<<20 {
 		return s, ErrSignals
 	}
-	free, purgeable := int64(-1), int64(-1)
+	counts := map[string]int64{}
 	for _, line := range rows[1:] {
 		key, value, ok := strings.Cut(line, ":")
 		if !ok {
 			continue
 		}
-		if key != "Pages free" && key != "Pages purgeable" {
+		if key != "Pages free" && key != "Pages speculative" && key != "Pages purgeable" {
 			continue
 		}
-		n, e := nonnegative(strings.TrimSuffix(strings.TrimSpace(value), "."))
+		if _, duplicate := counts[key]; duplicate {
+			return s, ErrSignals
+		}
+		value = strings.TrimSpace(value)
+		if !strings.HasSuffix(value, ".") {
+			return s, ErrSignals
+		}
+		n, e := nonnegative(strings.TrimSuffix(value, "."))
 		if e != nil {
 			return s, e
 		}
-		if key == "Pages free" {
-			if free >= 0 {
-				return s, ErrSignals
-			}
-			free = n
-		} else {
-			if purgeable >= 0 {
-				return s, ErrSignals
-			}
-			purgeable = n
+		counts[key] = n
+	}
+	if len(counts) != 3 {
+		return s, ErrSignals
+	}
+	// vm_stat's Pages free subtracts speculative_count from HOST_VM_INFO64's
+	// free_count. Restore that distinct free queue once, rather than estimating
+	// reclaimable capacity from all inactive or file-backed pages. See Apple's
+	// system_cmds/vm_stat/vm_stat.c snapshot() and xnu/osfmk/kern/host.c vm_stats().
+	// MADV_FREE_REUSABLE marks resident internal pages as discardable. XNU
+	// removes their reusable count before freeing; speculative pages instead
+	// belong to external objects. See vm_object.c deactivate_pages_in_object()
+	// and vm_resident.c vm_page_remove()/vm_page_speculate(). Use the larger
+	// purgeable/reusable count, not their sum: their mutual overlap is unknown.
+	// All counters are advisory snapshots; pressure/recovery guards still apply.
+	var availablePages int64
+	for _, n := range []int64{counts["Pages free"], counts["Pages speculative"], max(counts["Pages purgeable"], reusable)} {
+		if n > total/page-availablePages {
+			return s, ErrSignals
 		}
+		availablePages += n
 	}
-	if free < 0 || purgeable < 0 || free > math.MaxInt64-purgeable || free+purgeable > math.MaxInt64/page {
-		return s, ErrSignals
-	}
-	s.AvailableMemoryBytes = (free + purgeable) * page
-	if s.AvailableMemoryBytes > total {
-		return s, ErrSignals
-	}
+	s.AvailableMemoryBytes = availablePages * page
 	s.Known = true
 	return s, nil
 }

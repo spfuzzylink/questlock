@@ -1,0 +1,176 @@
+{
+  "schema": 1,
+  "id": "independent-semantic-contract-v1",
+  "cases": [
+    {
+      "id": "dispatch-numeric-id",
+      "complexity": "complex",
+      "request": {
+        "schema": 1,
+        "task": "independent-validation/dispatch-numeric-id",
+        "revision": "frozen-1",
+        "instructions": "Return JSON with batch, slots, and overflow. Copy the batch code exactly. Compute usable slots by subtracting reserved slots from total slots. For overflow, return the handling policy stated in the input.",
+        "input": "Batch code 007. Rack slots: 17 total, 5 reserved. There are 18 parcels. Handling policy for parcels beyond usable slots: quarantine.",
+        "master": {
+          "ollama": {
+            "format": "json",
+            "temperature": 0.7,
+            "keep_alive_seconds": 0,
+            "prompt_mode": "bounded_text",
+            "think": false,
+            "generation_timeout_seconds": 300,
+            "output_types": {
+              "batch": "string",
+              "slots": "integer",
+              "overflow": "string"
+            },
+            "field_roles": {
+              "batch": "identifier",
+              "slots": "quantity",
+              "overflow": "policy_action"
+            }
+          },
+          "id": "master",
+          "driver": "ollama",
+          "model": "qwen3:14b",
+          "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+          "instructions": "Solve the approved task. Return only the requested answer, without Markdown fences.",
+          "max_input_tokens": 6144,
+          "max_output_tokens": 512
+        },
+        "reviewers": [
+          {
+            "ollama": {
+              "format": "json",
+              "keep_alive_seconds": 0,
+              "prompt_mode": "bounded_text",
+              "think": true,
+              "generation_timeout_seconds": 300
+            },
+            "id": "review-correctness",
+            "driver": "ollama",
+            "model": "qwen3.5:9b",
+            "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+            "instructions": "Check that every requirement and source fact is satisfied. Reject unsupported or incorrect statements. The candidate field contains the parsed JSON value returned by the master. Evaluate its contents against the source task; JSON transport representation is not an output defect. Apply the task's explicit rules to the input before judging the candidate. Do not invent requirements or replace explicit rules with assumptions.",
+            "max_input_tokens": 4096,
+            "max_output_tokens": 4096
+          },
+          {
+            "ollama": {
+              "format": "json",
+              "keep_alive_seconds": 0,
+              "prompt_mode": "bounded_text",
+              "think": true,
+              "generation_timeout_seconds": 300
+            },
+            "id": "review-risk",
+            "driver": "ollama",
+            "model": "qwen3.5:9b",
+            "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+            "instructions": "Check boundary conditions, missing requirements and misleading claims. Reject any concrete defect. The candidate field contains the parsed JSON value returned by the master. Evaluate its contents against the source task; JSON transport representation is not an output defect. Apply the task's explicit rules to the input before judging the candidate. Do not invent requirements or replace explicit rules with assumptions.",
+            "max_input_tokens": 4096,
+            "max_output_tokens": 4096
+          }
+        ],
+        "checks": [
+          {
+            "id": "independent-original-semantics",
+            "kind": "json_equals",
+            "expected": {
+              "batch": "007",
+              "slots": 12,
+              "overflow": "quarantine"
+            }
+          }
+        ],
+        "reuse_for_seconds": 86400,
+        "policy_revision": "local-semantic-contract-19"
+      }
+    },
+    {
+      "id": "invoice-numeric-policy",
+      "complexity": "complex",
+      "request": {
+        "schema": 1,
+        "task": "independent-validation/invoice-numeric-policy",
+        "revision": "frozen-1",
+        "instructions": "Return JSON with receipt, amount, and resolution. Copy the receipt identifier exactly. Sum the line amounts. Use the stated resolution policy when the total exceeds the approval limit.",
+        "input": "Receipt identifier 00042. Line amounts: 12.50, 7.25, 0.25. Approval limit: 18.00. The resolution policy code for totals above the limit is 009; preserve this code exactly as text.",
+        "master": {
+          "ollama": {
+            "format": "json",
+            "temperature": 0.7,
+            "keep_alive_seconds": 0,
+            "prompt_mode": "bounded_text",
+            "think": false,
+            "generation_timeout_seconds": 300,
+            "output_types": {
+              "receipt": "string",
+              "amount": "number",
+              "resolution": "string"
+            },
+            "field_roles": {
+              "receipt": "identifier",
+              "amount": "quantity",
+              "resolution": "policy_action"
+            }
+          },
+          "id": "master",
+          "driver": "ollama",
+          "model": "qwen3:14b",
+          "model_digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+          "instructions": "Solve the approved task. Return only the requested answer, without Markdown fences.",
+          "max_input_tokens": 6144,
+          "max_output_tokens": 512
+        },
+        "reviewers": [
+          {
+            "ollama": {
+              "format": "json",
+              "keep_alive_seconds": 0,
+              "prompt_mode": "bounded_text",
+              "think": true,
+              "generation_timeout_seconds": 300
+            },
+            "id": "review-correctness",
+            "driver": "ollama",
+            "model": "qwen3.5:9b",
+            "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+            "instructions": "Check that every requirement and source fact is satisfied. Reject unsupported or incorrect statements. The candidate field contains the parsed JSON value returned by the master. Evaluate its contents against the source task; JSON transport representation is not an output defect. Apply the task's explicit rules to the input before judging the candidate. Do not invent requirements or replace explicit rules with assumptions.",
+            "max_input_tokens": 4096,
+            "max_output_tokens": 4096
+          },
+          {
+            "ollama": {
+              "format": "json",
+              "keep_alive_seconds": 0,
+              "prompt_mode": "bounded_text",
+              "think": true,
+              "generation_timeout_seconds": 300
+            },
+            "id": "review-risk",
+            "driver": "ollama",
+            "model": "qwen3.5:9b",
+            "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+            "instructions": "Check boundary conditions, missing requirements and misleading claims. Reject any concrete defect. The candidate field contains the parsed JSON value returned by the master. Evaluate its contents against the source task; JSON transport representation is not an output defect. Apply the task's explicit rules to the input before judging the candidate. Do not invent requirements or replace explicit rules with assumptions.",
+            "max_input_tokens": 4096,
+            "max_output_tokens": 4096
+          }
+        ],
+        "checks": [
+          {
+            "id": "independent-original-semantics",
+            "kind": "json_equals",
+            "expected": {
+              "receipt": "00042",
+              "amount": 20,
+              "resolution": "009"
+            }
+          }
+        ],
+        "reuse_for_seconds": 86400,
+        "policy_revision": "local-semantic-contract-19"
+      }
+    }
+  ]
+}

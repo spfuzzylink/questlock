@@ -1,3 +1,41 @@
+# Questlock 0.9.1 — local quality gates
+
+**Experimental release candidate.** Publication and artifact verification are
+recorded separately in [validation](validation.md). Published v0.9.0 and older
+assets remain unchanged.
+
+Local team quality controls now include opt-in canonical framing, JSON output,
+manual primitive types and semantic field roles, bounded nonstreaming reasoning,
+explicit sampling and HTTP deadlines, and optional model release. Every original
+semantic check and reviewer approval remains required. Nil options preserve
+existing identities, wire bytes and defaults; paid fallback stays unavailable.
+
+macOS admission now includes bounded reusable memory, retaining headroom and
+pressure limits. Fresh roles can wait for admission before claiming; generation
+is not retried. Command arrays, active client settings and the permanent brand
+image remain unchanged.
+
+The six original bounded task contracts completed with local masters and both
+reviews against the same saved 65,800-token Codex baseline: zero hosted tokens
+and $0 provider API spend in the selected local workflows. The final invocation
+reused five completed cases and generated three resource roles. That case uses
+extra operator-declared types/semantics. All deliberate failed policies remain
+in the report; this is tuned workflow evidence, not model parity or general
+coding quality. Separate frozen validation completed 1 of 2 cases; one risk reviewer
+exhausted its output cap. Whole-build credit and invoice savings remain unknown.
+
+The archives now include a completed single-task request, complete reasoning
+admission settings, the exact matched suite and synthetic historical receipts.
+`team benchmark` can inspect the saved comparison offline without models or
+account access. New experiments keep private task data in ignored directories;
+the publication guard also rejects forced/deleted private demo data in history.
+
+[Measurements and failures](local-team-validation-v0.9.1.md) ·
+[Team guide](local-agent-teams.md) · [Offline comparison](../examples/teams/README.md) ·
+[Architecture](diagrams/local-agent-teams.svg) · [Editable draw.io](diagrams/local-agent-teams.drawio)
+
+---
+
 # Questlock 0.9.0 — local roles, shared gates
 
 **Published experimental release.**

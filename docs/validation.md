@@ -1,5 +1,23 @@
 # Validation record
 
+## v0.9.1 candidate observations — 2026-10-19
+
+The six original task/check contracts completed with local masters and both
+reviewers. The same saved Codex baseline reports 65,800 hosted tokens; the selected
+local workflows report 0 hosted tokens and $0 provider API spend, with paid fallback
+disabled. Five exact case reuses and one fresh three-role resource run are
+reported separately from 18 originating successful calls and all failed trials.
+Manual type/semantic contracts add operator assistance; this is a bounded tuned
+workflow comparison, not held-out model parity, account-credit or invoice proof.
+[Full observations, unknowns and independent 1/2 result](local-team-validation-v0.9.1.md).
+
+Latest local Go race/vet checks and 74 Python publication/packaging regressions
+passed. The independent release review remains in progress; no v0.9.1 assets
+are claimed published by this candidate entry. Active client settings and the
+permanent branding remain unchanged. Final CI and shipped-asset checks will be
+recorded after publication.
+
+
 ## v0.9.0 observations — 2026-10-19
 
 Local Go race/vet and 73 Python publication/packaging checks passed before

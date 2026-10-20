@@ -30,7 +30,7 @@ SENSITIVE_EXTENSIONS = (
     ".sqlite3-shm", ".sqlite3-journal", ".log",
 )
 SENSITIVE_COMPONENTS = {
-    ".questlock", ".agent-fence", ".ssh", ".aws", ".gnupg",
+    ".questlock", ".questlock-demo", ".agent-fence", ".ssh", ".aws", ".gnupg",
     "secrets", "credentials", "id_rsa", "id_dsa", "id_ecdsa", "id_ed25519",
     ".netrc", ".npmrc", ".pypirc", ".git-credentials", "credentials.json",
 }

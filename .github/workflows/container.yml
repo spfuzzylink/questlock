@@ -6,7 +6,7 @@ on:
       version:
         description: Published experimental release tag (vX.Y.Z)
         required: true
-        default: v0.9.0
+        default: v0.9.1
         type: string
   # release:published is suppressed when the CI release uses GITHUB_TOKEN.
   workflow_run:

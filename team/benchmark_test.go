@@ -2,10 +2,14 @@ package team
 
 import (
 	"context"
-	"github.com/spfuzzylink/questlock/inference"
+	"encoding/json"
 	"math"
+	"reflect"
+	"strings"
 	"sync/atomic"
 	"testing"
+
+	"github.com/spfuzzylink/questlock/inference"
 )
 
 func matchedPair(t *testing.T) Pair {
@@ -89,5 +93,62 @@ func TestDefaultSuiteHasThreeSimpleAndThreeBoundedComplexCases(t *testing.T) {
 	}
 	if counts["simple"] != 3 || counts["complex"] != 3 {
 		t.Fatal(counts)
+	}
+}
+
+func TestComparisonDisclosesAdditionalLocalTypesWithoutClaimingModelParity(t *testing.T) {
+	p := matchedPair(t)
+	p.Case.Request.Master.Ollama = &inference.OllamaOptions{Format: "json", OutputTypes: map[string]string{"answer": "integer"}}
+	fp, err := Fingerprint(p.Case.Request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p.Local.RequestSHA256 = fp
+	r, err := Compare([]Pair{p})
+	if err != nil || !r.Eligible || !r.Cases[0].Matched || !reflect.DeepEqual(r.Cases[0].AdditionalLocalOutputTypes, map[string]string{"answer": "integer"}) || !strings.Contains(r.WorkflowComparison, "decoder-assisted") || !strings.Contains(r.WorkflowComparison, "source-grounding system instructions") || !strings.Contains(r.WorkflowComparison, "not identical-information model parity") {
+		t.Fatal("additional local decoding information was hidden or broke the same-task comparison", r, err)
+	}
+	encoded, err := json.Marshal(r)
+	if err != nil || !strings.Contains(string(encoded), `"additional_local_output_types":{"answer":"integer"}`) {
+		t.Fatal("runtime contract omitted from comparison JSON", string(encoded), err)
+	}
+	p.Local.Text = `{"answer":18}`
+	p.Local.OutputSHA256 = hash(p.Local.Text)
+	r, err = Compare([]Pair{p})
+	if err != nil || r.Eligible || r.Cases[0].LocalPassed || r.Target99Established || r.ReductionPercent != nil {
+		t.Fatal("extra type contract weakened original numerical checks", r, err)
+	}
+}
+
+func TestComparisonOmitsAdditionalTypeMetadataForLegacyPairs(t *testing.T) {
+	r, err := Compare([]Pair{matchedPair(t)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	encoded, err := json.Marshal(r)
+	if err != nil || r.WorkflowComparison != "" || strings.Contains(string(encoded), "additional_local_output_types") || strings.Contains(string(encoded), "additional_local_field_roles") || strings.Contains(string(encoded), "workflow_comparison") {
+		t.Fatal("legacy comparison acquired an undeclared runtime contract", string(encoded), err)
+	}
+}
+
+func TestComparisonDisclosesAdditionalFieldRolesAcrossMixedCases(t *testing.T) {
+	semantic, typed := matchedPair(t), matchedPair(t)
+	semantic.Case.Request.Master.Ollama = &inference.OllamaOptions{Format: "json", OutputTypes: map[string]string{"answer": "integer"}, FieldRoles: map[string]string{"answer": "quantity"}}
+	typed.Case.ID = "two"
+	typed.Case.Request.Master.Ollama = &inference.OllamaOptions{Format: "json", OutputTypes: map[string]string{"answer": "integer"}}
+	for _, p := range []*Pair{&semantic, &typed} {
+		fp, err := Fingerprint(p.Case.Request)
+		if err != nil {
+			t.Fatal(err)
+		}
+		p.Local.RequestSHA256 = fp
+	}
+	r, err := Compare([]Pair{semantic, typed})
+	if err != nil || !r.Eligible || !reflect.DeepEqual(r.Cases[0].AdditionalLocalFieldRoles, map[string]string{"answer": "quantity"}) || r.Cases[1].AdditionalLocalFieldRoles != nil || !strings.Contains(r.WorkflowComparison, "semantic field roles") || !strings.Contains(r.WorkflowComparison, "source-grounding system instructions") || !strings.Contains(r.WorkflowComparison, "not identical-information model parity") {
+		t.Fatal("semantic disclosure was hidden or overwritten by a later types-only case", r, err)
+	}
+	encoded, err := json.Marshal(r)
+	if err != nil || !strings.Contains(string(encoded), `"additional_local_field_roles":{"answer":"quantity"}`) {
+		t.Fatal("manual roles missing from comparison JSON", string(encoded), err)
 	}
 }

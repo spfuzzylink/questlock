@@ -1,6 +1,7 @@
 /bin/
 /dist/
 /.questlock/
+/.questlock-demo/
 *.db
 *.db-wal
 *.db-shm

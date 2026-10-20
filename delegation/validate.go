@@ -38,7 +38,7 @@ func Load(reader io.Reader) (Request, error) {
 // even when the local tier could produce a passing answer.
 func Validate(request Request, allowPaid bool) error {
 	base := request.Spec
-	if base.Provider != "" || base.Model != "" || base.Stream || base.ReasoningEffort != "" || base.MaxContextBytes != 0 || base.MaxInputTokens != 0 || base.MaxOutputTokens != 0 || base.CacheMode != "" || base.ReuseForSeconds != 0 || base.Prices != nil || base.MaxCostUSD != 0 || base.DailyBudgetUSD != 0 || base.SGLang != nil || base.OpenRouter != nil {
+	if base.Provider != "" || base.Model != "" || base.Stream || base.ReasoningEffort != "" || base.MaxContextBytes != 0 || base.MaxInputTokens != 0 || base.MaxOutputTokens != 0 || base.CacheMode != "" || base.ReuseForSeconds != 0 || base.Prices != nil || base.MaxCostUSD != 0 || base.DailyBudgetUSD != 0 || base.SGLang != nil || base.OpenRouter != nil || base.Ollama != nil {
 		return errors.New("request spec supplies task, revision, instructions, input and context only; model/resource settings belong to each tier spec")
 	}
 	if !inference.SelfHosted(request.Policy.Local.Spec) {
@@ -60,8 +60,12 @@ func Validate(request Request, allowPaid bool) error {
 		if tier.Spec.ReuseForSeconds < 1 {
 			return errors.New("delegation requires an explicit positive snapshot reuse TTL for every tier")
 		}
-		if tier.Spec.MaxInputTokens > 32768 || tier.Spec.MaxOutputTokens > 4096 || tier.Spec.MaxContextBytes > 131072 {
-			return errors.New("delegation limits are at most 32768 input tokens, 4096 output tokens, and 131072 context bytes")
+		outputLimit := int64(4096)
+		if tier.Spec.Provider == "ollama" && !tier.Spec.Stream && tier.Spec.Ollama != nil && tier.Spec.Ollama.Think != nil && *tier.Spec.Ollama.Think {
+			outputLimit = 8192
+		}
+		if tier.Spec.MaxInputTokens > 32768 || tier.Spec.MaxOutputTokens > outputLimit || tier.Spec.MaxContextBytes > 131072 {
+			return errors.New("delegation limits are at most 32768 input tokens, 4096 output tokens (8192 only for explicit nonstream Ollama thinking), and 131072 context bytes")
 		}
 		if !inference.SelfHosted(tier.Spec) {
 			if !allowPaid {

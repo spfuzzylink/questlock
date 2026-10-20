@@ -68,11 +68,21 @@ func BuildPlan(s Spec) (Plan, error) {
 	}
 	p.Request = Request{Stream: s.Stream, Provider: provider, Model: s.Model, ReasoningEffort: s.ReasoningEffort, Prefix: prefix, Input: input, MaxOutputTokens: s.MaxOutputTokens, CacheMode: mode}
 	p.Request.OpenRouter, p.Request.SGLang = s.OpenRouter, s.SGLang
+	p.Request.Ollama = s.Ollama
 	if provider == "ollama" {
 		p.Request.ContextWindow = s.MaxInputTokens + s.MaxOutputTokens + 512
 	}
 	if len(prefix)+len(input) > 512<<10 {
 		return Plan{}, errors.New("planned prompt exceeds 512KiB")
+	}
+	if provider == "ollama" && s.Ollama != nil && (s.Ollama.PromptMode == "bounded_text" || s.Ollama.OutputTypes != nil) {
+		rendered, err := renderOllamaRequest(p.Request, "")
+		if err != nil {
+			return Plan{}, err
+		}
+		if rendered.inputBytes() > 512<<10 {
+			return Plan{}, errors.New("rendered Ollama prompt exceeds 512KiB")
+		}
 	}
 	encoded, _ := json.Marshal(struct {
 		Task, Revision string
@@ -90,6 +100,17 @@ func renderChunk(c ContextItem) string {
 func validateSpec(s Spec) error {
 	if s.Stream && s.Provider != "ollama" {
 		return errors.New("stream measurements are supported only by the local Ollama adapter")
+	}
+	if s.Ollama != nil {
+		if s.Provider != "ollama" {
+			return errors.New("ollama settings require the ollama provider")
+		}
+		if err := validateOllamaOptions(s.Ollama); err != nil {
+			return err
+		}
+		if s.Stream && ollamaThinkingEnabled(s.Ollama) {
+			return errors.New("Ollama thinking requires nonstream generation")
+		}
 	}
 	for _, v := range []string{s.Task, s.Revision, s.Model} {
 		if !validID(v, 128) {
@@ -187,6 +208,41 @@ func validateSpec(s Spec) error {
 		}
 	}
 	return nil
+}
+
+func validateOllamaOptions(options *OllamaOptions) error {
+	if options == nil {
+		return nil
+	}
+	if options.Format != "" && options.Format != "json" {
+		return errors.New("ollama format must be empty or json")
+	}
+	if options.PromptMode != "" && options.PromptMode != "bounded_text" {
+		return errors.New("ollama prompt_mode must be empty or bounded_text")
+	}
+	if options.Temperature != nil {
+		temperature := *options.Temperature
+		if math.IsNaN(temperature) || math.IsInf(temperature, 0) || temperature < 0 || temperature > 2 {
+			return errors.New("ollama temperature must be finite and between 0 and 2")
+		}
+	}
+	if options.KeepAliveSeconds != nil && (*options.KeepAliveSeconds < 0 || *options.KeepAliveSeconds > 300) {
+		return errors.New("ollama keep_alive_seconds must be between 0 and 300")
+	}
+	if options.GenerationTimeoutSeconds != nil && (*options.GenerationTimeoutSeconds < 1 || *options.GenerationTimeoutSeconds > 600) {
+		return errors.New("ollama generation_timeout_seconds must be between 1 and 600")
+	}
+	if _, err := ollamaOutputTypesSchema(options); err != nil {
+		return err
+	}
+	if err := validateOllamaFieldRoles(options); err != nil {
+		return err
+	}
+	return nil
+}
+
+func ollamaThinkingEnabled(options *OllamaOptions) bool {
+	return options != nil && options.Think != nil && *options.Think
 }
 
 func validID(s string, limit int) bool {

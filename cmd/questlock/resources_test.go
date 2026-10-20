@@ -124,17 +124,31 @@ func TestQueueCLIValidatesBatchAndExecutesOnceWithExactReuse(t *testing.T) {
 		t.Fatal(e, out.String(), diag.String())
 	}
 	decoder := json.NewDecoder(&out)
+	fresh, reused := 0, 0
+	jobs := map[string]bool{}
 	for i := 0; i < 2; i++ {
 		var report struct {
+			JobID  string `json:"job_id"`
 			Result struct {
 				Status, Text     string
 				Durable, Reused  bool
 				GenerationCalled bool `json:"generation_called"`
 			} `json:"result"`
 		}
-		if e = decoder.Decode(&report); e != nil || report.Result.Status != "completed" || !report.Result.Durable || report.Result.GenerationCalled || report.Result.Reused != (i == 1) || report.Result.Text != `{"status":"ready","model_calls":0}` {
+		if e = decoder.Decode(&report); e != nil || report.Result.Status != "completed" || !report.Result.Durable || report.Result.GenerationCalled || report.Result.Text != `{"status":"ready","model_calls":0}` || jobs[report.JobID] || (report.JobID != "request-1" && report.JobID != "request-2") {
 			t.Fatal("CLI lost durable, generation-free publication or exact reuse", report, e)
 		}
+		jobs[report.JobID] = true
+		if report.Result.Reused {
+			reused++
+		} else {
+			fresh++
+		}
+	}
+	// Concurrent completions may arrive in either order. Exactly one publish
+	// must be fresh and the other must reuse its durable receipt.
+	if fresh != 1 || reused != 1 {
+		t.Fatal("queue lost single fresh publication or exact reuse", fresh, reused)
 	}
 	var summary struct {
 		Status           string
