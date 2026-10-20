@@ -142,8 +142,11 @@ deadline is 45 seconds; a longer whole-run timeout alone does not extend that
 policy. The hybrid follow-up uses a complete config from `resources config` with
 only `task_timeout` changed to `300000000000` nanoseconds (five minutes), passed
 with `--config` and `--timeout 8m`. Memory headroom and pressure thresholds stay
-unchanged. No timeout or quality failure triggers a generation retry or provider
-fallback. These estimates are
+unchanged. Separately, `ollama.generation_timeout_seconds` accepts `1..600`
+seconds and overrides both generation HTTP deadlines using a private client.
+Omission preserves 120 seconds; metadata and hosted defaults stay unchanged.
+The caller deadline still wins. No timeout or quality failure triggers a
+generation retry or provider fallback. These estimates are
 per process, rather than OS allocation or a distributed scheduler. Retrieval of
 already checked results needs no model admission.
 
@@ -264,15 +267,18 @@ emitted master prompt need a new comparison contract, not a relabeled receipt.
 
 The mixed-policy follow-up keeps the three completed simple requests from
 `local-json-reasoning-3` unchanged and retrieves them with zero new model calls.
-Only the three bounded reasoning cases get a reviewed `local-hybrid-4` policy:
-master reasoning enabled with an `8192` total-output cap; reviewers explicitly
-set to `think:false` with `512` each. JSON mode, temperature zero and model release
-remain enabled. Review these per-role JSON edits before running. All six task
+Only the three bounded reasoning cases get a reviewed `local-deadline-5` policy:
+masters use reasoning with an `8192` total-output cap. Reviewers use `512` without
+reasoning for `uncertain` and `resources`; the accounting case opts into reasoning
+and `8192` for both reviews after a nonreasoning reviewer contradicted explicit
+task rules. Every role has `generation_timeout_seconds: 300`. JSON mode,
+temperature zero and model release remain enabled. Review these per-role JSON
+edits before running. All six task
 and baseline-prompt bindings, original checks and earlier failures stay intact.
 This is a deliberate new policy for the stopped cases, not an automatic retry
 or escalation; its settings alone do not establish that all six passed.
 
-Comparison requires matching task/revision, facts, checks and emitted user prompt,
+Comparison requires matching task/revision, facts, checks and canonical master prompt,
 successful local master and reviews, a checked baseline answer, and known hosted
 input/output counters for every case. Local and hosted native harness overhead
 may differ. Receipts are operator-supplied evidence, not remote attestation. A

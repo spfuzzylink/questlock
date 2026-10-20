@@ -66,17 +66,20 @@ policy. All source facts and checks stay unchanged, as does the exact emitted
 master prompt used to bind the saved baseline. The current mixed-policy follow-up
 keeps the completed `ticket`, `route` and `queue` requests from
 `local-json-reasoning-3` unchanged for zero-call reuse. For `uncertain`, `resources`
-and `rework`, review JSON edits to `policy_revision: "local-hybrid-4"`: the master
-has `ollama.think: true` and `max_output_tokens: 8192`; both reviewers explicitly
-have `ollama.think: false` and `max_output_tokens: 512`. Keep JSON mode,
-temperature zero and `keep_alive_seconds: 0` for each role. The original failed
+and `rework`, review JSON edits to `policy_revision: "local-deadline-5"`: masters
+have `ollama.think: true` and `max_output_tokens: 8192`. The `uncertain` and
+`resources` reviewers use `think: false` and `512`; accounting reviewers use
+`think: true` and `8192`. Each role sets `generation_timeout_seconds: 300`. Keep
+JSON mode, temperature zero and `keep_alive_seconds: 0` for each role. The original failed
 and deadline-stopped records remain intact, including unknown usage.
 
 For that hybrid policy, start with the complete output of `resources config` and
 change only `task_timeout` to `300000000000` nanoseconds (five minutes). Pass the
 reviewed file with `--config` and use `--timeout 8m`; keep memory headroom and
 pressure thresholds unchanged. Defaults remain 45 seconds per admitted task;
-the whole invocation timeout alone does not extend it. This is a deliberate new
+the whole invocation timeout alone does not extend it. The separate generation
+HTTP timeout defaults to 120 seconds; the explicit `generation_timeout_seconds`
+override accepts `1..600`, while earlier caller deadlines still win. This is a deliberate new
 policy, not an automatic retry or escalation, and does not itself prove success.
 
 Run each approved local case exactly once, preserving output even on failure:
