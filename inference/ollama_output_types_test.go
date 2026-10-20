@@ -56,7 +56,7 @@ func TestOllamaOutputTypesWireGroundingAndEstimate(t *testing.T) {
 					prompt = BoundedTextPrompt(req)
 					system = "Model default instructions."
 				}
-				system += "\n\nOutput field types (JSON object):\n" + string(declared)
+				system += "\n\nOutput field types (JSON object):\n" + string(declared) + "\n\n" + ollamaOutputTypesGuidance
 				want := map[string]any{"model": req.Model, "system": system, "prompt": prompt, "stream": stream, "think": false, "format": wantSchema, "options": map[string]any{"num_predict": float64(req.MaxOutputTokens), "num_ctx": float64(req.ContextWindow)}}
 				body := <-recorded
 				if !reflect.DeepEqual(body, want) {
@@ -89,7 +89,7 @@ func TestOllamaOutputTypesPreserveEffectiveSystem(t *testing.T) {
 			if explicit == "" || mode == "bounded_text" {
 				want = "installed default system"
 			}
-			want += "\n\nOutput field types (JSON object):\n" + `{"value":"string"}`
+			want += "\n\nOutput field types (JSON object):\n" + `{"value":"string"}` + "\n\n" + ollamaOutputTypesGuidance
 			if rendered.system != want {
 				t.Fatalf("type grounding changed effective system: %q, want %q", rendered.system, want)
 			}
@@ -285,6 +285,7 @@ func TestRunnerOllamaOutputTypesStoresFailureWithoutBadTextOrRetry(t *testing.T)
 	r.Provider = p
 	s := ollamaOptionsSpec()
 	s.Ollama = &OllamaOptions{Format: "json", OutputTypes: map[string]string{"value": "integer"}}
+	s.MaxInputTokens = 2048
 	got, err := r.Run(context.Background(), s)
 	if !errors.Is(err, ErrIncomplete) || got.Response.Text != "" || got.GenerationUsage.OutputTokens != 20 || !got.Durable || calls.generate.Load() != 1 {
 		t.Fatalf("type failure lost usage or escaped as approved text: %+v, %v", got, err)

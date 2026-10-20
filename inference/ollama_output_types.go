@@ -12,6 +12,8 @@ import (
 
 const maxOllamaOutputTypesSchemaBytes = 4096
 
+const ollamaOutputTypesGuidance = "The type contract specifies representation only. Derive values from the approved task and supplied input. Preserve copied strings exactly, including numeric-looking codes. Use the task's stated action or policy when a field requests one; do not substitute an unrelated computed quantity. Compute numeric quantities only where requested. Recheck every requested field against its source before returning the object."
+
 type ollamaOutputProperty struct {
 	Type string `json:"type"`
 }
@@ -90,7 +92,7 @@ func renderOllamaRequest(req Request, installedSystem string) (ollamaRenderedReq
 		system = installedSystem
 	}
 	parts := []string{}
-	for _, part := range []string{system, "Output field types (JSON object):\n" + string(declared)} {
+	for _, part := range []string{system, "Output field types (JSON object):\n" + string(declared), ollamaOutputTypesGuidance} {
 		if part != "" {
 			parts = append(parts, part)
 		}

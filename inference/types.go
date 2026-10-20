@@ -69,7 +69,8 @@ type Request struct {
 // GenerationTimeoutSeconds accepts 1..600 for generation HTTP only; omission
 // preserves the 120-second default. Earlier caller deadlines still apply.
 // PromptMode accepts empty for legacy framing or "bounded_text" for the exact
-// BoundedTextPrompt user prompt with an empty request system field.
+// BoundedTextPrompt user prompt. Its request system is empty unless an explicit
+// OutputTypes contract adds the declared type hint and effective model system.
 // OutputTypes is an optional manually declared JSON object contract: at most
 // 32 lower snake_case fields with primitive integer/string/number/boolean types.
 // It requires Format=json and supplies no answer values or property constraints.
