@@ -15,6 +15,9 @@ spec.loader.exec_module(package)
 class PackageTests(unittest.TestCase):
     def test_inference_release_material_is_packaged_without_private_inputs(self):
         required = {
+            "docs/local-agent-teams.md", "docs/diagrams/local-agent-teams.drawio",
+            "docs/diagrams/local-agent-teams.svg", "examples/teams/README.md",
+            "docs/local-team-validation-v0.9.0.md", "docs/local-team-validation-v0.9.0.json",
             "assets/questlock-brand.svg", "docs/onboarding.md", "docs/success-report-v0.7.0.md",
             "docs/diagrams/onboarding.drawio", "docs/diagrams/onboarding.svg",
             "docs/second-gate.md", "docs/diagrams/second-gate.drawio", "docs/diagrams/second-gate.svg",

@@ -7,6 +7,11 @@ unfinished writes durable so the next worker does not start from scratch.
 
 [Editable draw.io source](diagrams/local-coordination.drawio).
 
+For explicit master/reviewer handoff, use [local agent teams](local-agent-teams.md).
+The same broker carries scoped claims and checked results while each node admits
+its own local inference. A shared broker is not a shared CPU/memory scheduler;
+uncertain claims stop rather than moving automatically to another worker.
+
 ## The same policy across the services
 
 Start with the exact task snapshot. Reuse a still-valid result or apply a checked

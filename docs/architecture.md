@@ -1,5 +1,24 @@
 # Architecture
 
+## Local master and reviewers (v0.9.0)
+
+An approved text snapshot can now run through a local master and independent
+reviewers, using direct Ollama or an isolated native Codex OSS harness. Scoped
+broker CAS claims coordinate roles across worker processes; only the broker
+owns SQLite. Deterministic checks and every review must pass before the final
+answer is exposed. Exact checked reuse needs no generation. Pending or uncertain
+claims stop without automatic takeover, regeneration or paid fallback.
+
+![Local text roles share one authoritative publication boundary](diagrams/local-agent-teams.svg)
+
+The [team guide](local-agent-teams.md) covers role handoff, HTTPS/private CA
+deployment, failure recovery and matched baseline receipts, with
+[editable draw.io source](diagrams/local-agent-teams.drawio). Role names and
+worker labels are not per-role authorization. Local resource admission remains
+per process; this does not add distributed placement, broker failover or an
+automatic replacement for the active hosted chat. Qualification uses isolated
+nodes on one physical host; physical multi-machine validation remains separate.
+
 ## Guided local onboarding (v0.7.0)
 
 `questlock setup` connects Codex or Claude Code through a complete isolated

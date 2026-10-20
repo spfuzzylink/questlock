@@ -1,0 +1,304 @@
+{
+  "schema": 1,
+  "release": "0.9.0",
+  "observed_date": "2026-10-19",
+  "physical_hosts": 1,
+  "isolated_worker_identities": 3,
+  "local_model": "qwen3.5:4b",
+  "ollama_version": "0.40.3",
+  "native_codex_version": "0.163.0-alpha.10.2",
+  "baseline_model": "gpt-6.1-sol",
+  "baseline_reasoning_effort": "xhigh",
+  "baseline_auth_mode": "chatgpt_subscription",
+  "paid_api_provider_cost_usd": 0,
+  "baseline_hosted_input_tokens": 65400,
+  "baseline_hosted_output_tokens": 400,
+  "baseline_cached_input_tokens": 33280,
+  "baseline_reasoning_tokens_included_in_output": 296,
+  "native_suite_local_input_tokens": 6362,
+  "native_suite_local_output_tokens": 1384,
+  "native_suite_generate_invocations": 4,
+  "local_suite_hosted_tokens": 0,
+  "ollama_profile_generate_invocations": 0,
+  "total_cases_per_profile": 6,
+  "target_99_percent_established": false,
+  "hosted_token_reduction_percent": null,
+  "hosted_credit_reduction_percent": null,
+  "invoice_savings_usd": null,
+  "bootstrap_hosted_usage": "excluded_unmeasured",
+  "human_acceptance": "not_reported",
+  "cases": [
+    {
+      "case_id": "ticket",
+      "native_local_final_status": "stopped",
+      "native_local_phases": [
+        {
+          "phase": "master",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 1555,
+            "output_tokens": 111,
+            "known": true,
+            "generation_calls": 1
+          },
+          "report_sha256": "c2b23a69e5fcb7da0a59f3c5b7030e3a346f26c3f70a4adfe4cf8c308dcfc172"
+        },
+        {
+          "phase": "review-correctness",
+          "status": "stopped",
+          "usage": {
+            "input_tokens": 1658,
+            "output_tokens": 548,
+            "known": true,
+            "generation_calls": 1
+          },
+          "report_sha256": "227bd6f56fea10231dc318ff55d8d426adbf690ed334b6dd7da24008d7083610",
+          "reason_category": "team quality checks did not pass; no fallback was attempted"
+        }
+      ],
+      "ollama_profile_final_status": "waiting",
+      "baseline": {
+        "complete": true,
+        "usage_known": true,
+        "usage": {
+          "input_tokens": 10884,
+          "uncached_input_tokens": 2564,
+          "cache_read_tokens": 8320,
+          "cache_write_tokens": 0,
+          "output_tokens": 68,
+          "reasoning_tokens": 46
+        },
+        "checks_passed": true
+      },
+      "ollama_profile_attempt": {
+        "status": "blocked",
+        "report_sha256": "96e2ebc5ee7c7cdce84d30d99dd55265b26fba40cd3b7a7e25e3d5d5a398aead",
+        "this_run_local_usage": {
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "known": true,
+          "generation_calls": 0
+        },
+        "reason_category": "admission_paused"
+      }
+    },
+    {
+      "case_id": "route",
+      "native_local_final_status": "quality_failed",
+      "native_local_phases": [
+        {
+          "phase": "master",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 1549,
+            "output_tokens": 350,
+            "known": true,
+            "generation_calls": 1
+          },
+          "report_sha256": "1f248e483434614335a97dbf995befe8b2907b22a47a8631e214e2fe59024533",
+          "reason_category": "team quality checks did not pass; no fallback was attempted"
+        }
+      ],
+      "ollama_profile_final_status": "waiting",
+      "baseline": {
+        "complete": true,
+        "usage_known": true,
+        "usage": {
+          "input_tokens": 10880,
+          "uncached_input_tokens": 10880,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 48,
+          "reasoning_tokens": 36
+        },
+        "checks_passed": true
+      },
+      "ollama_profile_attempt": {
+        "status": "blocked",
+        "report_sha256": "1eb72f966c0935963e75b2d6256c47b0a87bac72b3dc7ee1e51786802d152f8e",
+        "this_run_local_usage": {
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "known": true,
+          "generation_calls": 0
+        },
+        "reason_category": "admission_paused"
+      }
+    },
+    {
+      "case_id": "queue",
+      "native_local_final_status": "waiting",
+      "native_local_phases": [
+        {
+          "phase": "master",
+          "status": "pending",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          },
+          "report_sha256": "2bab3659777c59138a54a637c4a4702f8542c5dc1c78f5c195553480be86ddd4",
+          "reason_category": "admission_reservation_does_not_fit"
+        }
+      ],
+      "ollama_profile_final_status": "waiting",
+      "baseline": {
+        "complete": true,
+        "usage_known": true,
+        "usage": {
+          "input_tokens": 10877,
+          "uncached_input_tokens": 2557,
+          "cache_read_tokens": 8320,
+          "cache_write_tokens": 0,
+          "output_tokens": 52,
+          "reasoning_tokens": 40
+        },
+        "checks_passed": true
+      },
+      "ollama_profile_attempt": {
+        "status": "blocked",
+        "report_sha256": "2a953c7e1c8f53ee0c92a08a22f2714cc6c60edb0fff3221fdcf43468dd68c1f",
+        "this_run_local_usage": {
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "known": true,
+          "generation_calls": 0
+        },
+        "reason_category": "admission_paused"
+      }
+    },
+    {
+      "case_id": "uncertain",
+      "native_local_final_status": "waiting",
+      "native_local_phases": [
+        {
+          "phase": "master",
+          "status": "pending",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          },
+          "report_sha256": "1dfd4e56db0ca48c03a69d567886e6cae5fda0fb61da9711734d886dba263d5a",
+          "reason_category": "admission_reservation_does_not_fit"
+        }
+      ],
+      "ollama_profile_final_status": "waiting",
+      "baseline": {
+        "complete": true,
+        "usage_known": true,
+        "usage": {
+          "input_tokens": 10905,
+          "uncached_input_tokens": 2585,
+          "cache_read_tokens": 8320,
+          "cache_write_tokens": 0,
+          "output_tokens": 101,
+          "reasoning_tokens": 83
+        },
+        "checks_passed": true
+      },
+      "ollama_profile_attempt": {
+        "status": "blocked",
+        "report_sha256": "6a339cdeb5e51ec1accbd5e1ed3cc39e8924c491fcdf322219f1a89654c67aa3",
+        "this_run_local_usage": {
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "known": true,
+          "generation_calls": 0
+        },
+        "reason_category": "admission_paused"
+      }
+    },
+    {
+      "case_id": "resources",
+      "native_local_final_status": "waiting",
+      "native_local_phases": [
+        {
+          "phase": "master",
+          "status": "pending",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          },
+          "report_sha256": "35e6c86ff9ef9fa81938d6136a50aaad0d3fd43f98dad8f751e4280bee27a40a",
+          "reason_category": "admission_reservation_does_not_fit"
+        }
+      ],
+      "ollama_profile_final_status": "waiting",
+      "baseline": {
+        "complete": true,
+        "usage_known": true,
+        "usage": {
+          "input_tokens": 10924,
+          "uncached_input_tokens": 10924,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 68,
+          "reasoning_tokens": 50
+        },
+        "checks_passed": true
+      },
+      "ollama_profile_attempt": {
+        "status": "blocked",
+        "report_sha256": "6eb08ee73e2bbe62a5157d6a7703526971cbfc3cd1a49845f22b828953cdff88",
+        "this_run_local_usage": {
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "known": true,
+          "generation_calls": 0
+        },
+        "reason_category": "admission_paused"
+      }
+    },
+    {
+      "case_id": "rework",
+      "native_local_final_status": "quality_failed",
+      "native_local_phases": [
+        {
+          "phase": "master",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 1600,
+            "output_tokens": 375,
+            "known": true,
+            "generation_calls": 1
+          },
+          "report_sha256": "d51087f86fe239d325f131b06c37a428f1c20479e63d93b2c068f24ce91b90e2",
+          "reason_category": "team quality checks did not pass; no fallback was attempted"
+        }
+      ],
+      "ollama_profile_final_status": "waiting",
+      "baseline": {
+        "complete": true,
+        "usage_known": true,
+        "usage": {
+          "input_tokens": 10930,
+          "uncached_input_tokens": 2610,
+          "cache_read_tokens": 8320,
+          "cache_write_tokens": 0,
+          "output_tokens": 63,
+          "reasoning_tokens": 41
+        },
+        "checks_passed": true
+      },
+      "ollama_profile_attempt": {
+        "status": "blocked",
+        "report_sha256": "5940115ba2b7abcdc705fa9d04eda9fcf9a204f70a4031e6df389afbdcb53b53",
+        "this_run_local_usage": {
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "known": true,
+          "generation_calls": 0
+        },
+        "reason_category": "admission_paused"
+      }
+    }
+  ],
+  "completed_local_team_cases": 0,
+  "native_profile_comparison_eligible": false,
+  "baseline_checks_passed": 6
+}

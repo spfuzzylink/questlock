@@ -19,7 +19,7 @@ import (
 	"github.com/spfuzzylink/questlock/internal/store"
 )
 
-var version = "0.8.0" // Release builds set this from VERSION using -ldflags.
+var version = "0.9.0" // Release builds set this from VERSION using -ldflags.
 const defaultDB = ".questlock/state.db"
 
 func main() {
@@ -54,6 +54,7 @@ Usage:
   questlock try [--state-dir PATH] [--workspace PATH]
   questlock local start|status|stop [--state-dir PATH]
   questlock local-agent --model NAME --workspace PATH --prompt TEXT
+  questlock team init|plan|run|status|suite|benchmark [flags]
   questlock system-one choose --request PATH --python ABSOLUTE_PINNED_VENV_PYTHON
   questlock resources config|inspect|quest
   questlock queue revise --workspace PATH --request FILE [--config PATH]
@@ -88,6 +89,8 @@ func run(args []string) error {
 		return tryCommand(args[1:])
 	case "local-agent":
 		return localAgentCommand(args[1:])
+	case "team":
+		return teamCommand(args[1:])
 	case "system-one":
 		return systemOneCommand(args[1:])
 	case "resources":
