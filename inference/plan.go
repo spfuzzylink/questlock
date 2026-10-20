@@ -68,6 +68,7 @@ func BuildPlan(s Spec) (Plan, error) {
 	}
 	p.Request = Request{Stream: s.Stream, Provider: provider, Model: s.Model, ReasoningEffort: s.ReasoningEffort, Prefix: prefix, Input: input, MaxOutputTokens: s.MaxOutputTokens, CacheMode: mode}
 	p.Request.OpenRouter, p.Request.SGLang = s.OpenRouter, s.SGLang
+	p.Request.Ollama = s.Ollama
 	if provider == "ollama" {
 		p.Request.ContextWindow = s.MaxInputTokens + s.MaxOutputTokens + 512
 	}
@@ -90,6 +91,14 @@ func renderChunk(c ContextItem) string {
 func validateSpec(s Spec) error {
 	if s.Stream && s.Provider != "ollama" {
 		return errors.New("stream measurements are supported only by the local Ollama adapter")
+	}
+	if s.Ollama != nil {
+		if s.Provider != "ollama" {
+			return errors.New("ollama settings require the ollama provider")
+		}
+		if err := validateOllamaOptions(s.Ollama); err != nil {
+			return err
+		}
 	}
 	for _, v := range []string{s.Task, s.Revision, s.Model} {
 		if !validID(v, 128) {
@@ -184,6 +193,22 @@ func validateSpec(s Spec) error {
 		}
 		if s.Prices.Input <= 0 || s.Prices.CacheWrite <= 0 || s.Prices.Output <= 0 {
 			return errors.New("input, cache-write, and output prices must be positive")
+		}
+	}
+	return nil
+}
+
+func validateOllamaOptions(options *OllamaOptions) error {
+	if options == nil {
+		return nil
+	}
+	if options.Format != "" && options.Format != "json" {
+		return errors.New("ollama format must be empty or json")
+	}
+	if options.Temperature != nil {
+		temperature := *options.Temperature
+		if math.IsNaN(temperature) || math.IsInf(temperature, 0) || temperature < 0 || temperature > 2 {
+			return errors.New("ollama temperature must be finite and between 0 and 2")
 		}
 	}
 	return nil

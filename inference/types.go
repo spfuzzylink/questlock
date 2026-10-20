@@ -14,6 +14,7 @@ import (
 type Spec struct {
 	OpenRouter      *OpenRouterConfig `json:"openrouter,omitempty"`
 	SGLang          *SGLangConfig     `json:"sglang,omitempty"`
+	Ollama          *OllamaOptions    `json:"ollama,omitempty"`
 	Stream          bool              `json:"stream,omitempty"` // Optional local Ollama content streaming.
 	Task            string            `json:"task"`
 	Revision        string            `json:"revision"`
@@ -47,6 +48,7 @@ type ContextItem struct {
 type Request struct {
 	OpenRouter      *OpenRouterConfig `json:"openrouter,omitempty"`
 	SGLang          *SGLangConfig     `json:"sglang,omitempty"`
+	Ollama          *OllamaOptions    `json:"ollama,omitempty"`
 	Stream          bool              `json:"stream,omitempty"`
 	Provider        string            `json:"provider"`
 	Model           string            `json:"model"`
@@ -56,6 +58,14 @@ type Request struct {
 	Input           string            `json:"input"`
 	MaxOutputTokens int64             `json:"max_output_tokens"`
 	CacheMode       string            `json:"cache_mode"`
+}
+
+// OllamaOptions opts into local generation controls without changing runtime
+// defaults for requests that omit them. Format accepts only "json" or empty;
+// a non-nil Temperature must be finite and between 0 and 2, inclusive.
+type OllamaOptions struct {
+	Format      string   `json:"format,omitempty"`
+	Temperature *float64 `json:"temperature,omitempty"`
 }
 
 type Plan struct {

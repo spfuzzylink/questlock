@@ -278,6 +278,9 @@ func (p *OllamaProvider) validate(req Request) error {
 	if req.Provider != "" && req.Provider != "ollama" {
 		return errors.New("request provider does not match Ollama")
 	}
+	if err := validateOllamaOptions(req.Ollama); err != nil {
+		return err
+	}
 	if !validOllamaModel(req.Model) || canonicalOllamaModel(req.Model) != p.model {
 		return errors.New("request model does not match the installed Ollama snapshot")
 	}
@@ -347,12 +350,17 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 		Prompt  string `json:"prompt"`
 		Stream  bool   `json:"stream"`
 		Think   bool   `json:"think"`
+		Format  string `json:"format,omitempty"`
 		Options struct {
-			NumPredict int64 `json:"num_predict"`
-			NumCtx     int64 `json:"num_ctx"`
+			NumPredict  int64    `json:"num_predict"`
+			NumCtx      int64    `json:"num_ctx"`
+			Temperature *float64 `json:"temperature,omitempty"`
 		} `json:"options"`
 	}{Model: p.model, System: req.Prefix, Prompt: req.Input, Stream: req.Stream}
 	body.Options.NumPredict, body.Options.NumCtx = req.MaxOutputTokens, req.ContextWindow
+	if req.Ollama != nil {
+		body.Format, body.Options.Temperature = req.Ollama.Format, req.Ollama.Temperature
+	}
 	var raw ollamaGenerationFrame
 	var timing *GenerationTiming
 	if req.Stream {
