@@ -24,7 +24,7 @@ distinguish them within this small set.
 umask 077
 set -C
 mkdir -p requests local baseline events
-questlock team suite --model qwen3.5:4b --driver codex-oss > suite.json
+questlock team suite --model qwen3.5:4b --driver ollama > suite.json
 python3 - <<'PY'
 import json
 from pathlib import Path

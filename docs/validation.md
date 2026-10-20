@@ -1,5 +1,19 @@
 # Validation record
 
+## v0.9.0 candidate observations — 2026-10-19
+
+Local Go race/vet and 73 Python publication/packaging checks passed before
+publication. The new six-case scripted team demo passed through a real HTTPS
+broker with three scoped identities on one physical host and no actual model
+calls. Live model qualification did not complete the team suite.
+[All observations and limits](local-team-validation-v0.9.0.md).
+
+The local lanes retain $0 paid API charges and no fallback. Six deliberate Codex
+subscription baselines reported 65,800 hosted input-plus-output tokens; no
+equivalent completed local team establishes a reduction. The 99% target, credit
+reduction and invoice savings remain unestablished. Active client configuration,
+stable installed v0.8 binary and permanent branding were not changed.
+
 ## v0.8.0 observations — 2026-10-17
 
 Local combined Go race/vet, 73 publication/packaging tests, five official-adapter

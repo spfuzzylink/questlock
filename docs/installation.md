@@ -1,6 +1,6 @@
 # Install and try Questlock
 
-This guide covers the experimental **v0.8.0** release. The installer selects
+This guide covers the experimental **v0.9.0** release. The installer selects
 the version in `VERSION`; older published versions remain available, including
 v0.5.0 with `./scripts/install.sh --version v0.5.0`.
 
@@ -82,14 +82,14 @@ separate runtime validation.
 For example, on Linux x86-64, from the download directory:
 
 ```sh
-sha256sum questlock_0.8.0_linux_amd64.tar.gz
+sha256sum questlock_0.9.0_linux_amd64.tar.gz
 ```
 
 On macOS use `shasum -a 256` instead. Compare the result with the **matching
 filename's entry** in `checksums.txt` before extracting. Then:
 
 ```sh
-tar -xzf questlock_0.8.0_linux_amd64.tar.gz
+tar -xzf questlock_0.9.0_linux_amd64.tar.gz
 ./questlock version
 ./questlock quest
 ./questlock model quest
@@ -98,6 +98,7 @@ tar -xzf questlock_0.8.0_linux_amd64.tar.gz
 ./questlock revise quest
 ./questlock edge quest
 ./questlock resources quest
+./questlock team quest
 ```
 
 Use your platform's filename in those commands. Each archive contains the binary,

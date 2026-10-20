@@ -18,7 +18,7 @@ shared SQLite broker underneath.
 
 ## Get going
 
-Download and extract the matching [v0.8.0 archive](https://github.com/spfuzzylink/questlock/releases/tag/v0.8.0), then:
+Download and extract the matching [v0.9.0 archive](https://github.com/spfuzzylink/questlock/releases/tag/v0.9.0), then:
 
 ```sh
 ./questlock setup
@@ -85,24 +85,29 @@ matched task baseline, with failed attempts and human rework included.
 ./questlock model runtime-quest   # runtime contracts, using HTTP fixtures
 ./questlock edge quest           # durable edge intent and accepted-state sync
 ./questlock resources quest      # bounded queues and pressure-aware admission
+./questlock team quest           # three scoped HTTPS workers; scripted providers
 ```
 
 These demos use temporary state and no model account. Local inference needs
 installed Ollama weights. Paid generation requires explicit credentials and
 policy; guided setup enables no paid escalation.
 
-## New in 0.8.0
+## New in 0.9.0
 
-Queue edge writes safely, share accepted results, and admit local work according
-to CPU and memory headroom. Optional typed decisions use the official TypeSafe
-adapter with local Ollama. Configuration over convention:
-[your policy is explicit](examples/preferences/README.md),
-including a local-only preset; forks choose their own preferences.
-[Design and limits](docs/local-coordination.md).
+A local master, two independent reviewers, and one shared checked result.
+Run bounded text tasks through installed Ollama or the native Codex OSS harness;
+hand roles between machines over an authenticated HTTPS broker. Paid fallback
+stays disabled. Try the model-free demo with `questlock team quest`.
+
+[Run a local team](docs/local-agent-teams.md) ·
+[Six matched tasks and honest results](docs/local-team-validation-v0.9.0.md)
+
+The tested small model did not complete the live team suite. The 99% hosted-usage
+target remains unproven; failures and memory refusals are included in the report.
 
 ## Go deeper
 
-- [What changed in 0.8.0](docs/release-notes.md) · [Measured build report](docs/success-report-v0.7.0.md)
+- [What changed in 0.9.0](docs/release-notes.md) · [Measured build report](docs/success-report-v0.7.0.md)
 - [Checked revisions](docs/checked-revisions.md) · [Bounded delegation](docs/delegation.md)
 - [Model workflows](docs/model-workflows.md) · [Acceptance and human rework](docs/outcomes.md)
 - [Langfuse and timings](docs/inference-observability.md) · [SGLang/KV cache integration](docs/runtime-cache.md)

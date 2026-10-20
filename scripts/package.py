@@ -18,6 +18,9 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS = ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64")
 PUBLIC_FILES = (
+    "docs/local-agent-teams.md", "docs/diagrams/local-agent-teams.drawio",
+    "docs/diagrams/local-agent-teams.svg", "examples/teams/README.md",
+    "docs/local-team-validation-v0.9.0.md", "docs/local-team-validation-v0.9.0.json",
     "assets/questlock-brand.svg", "docs/onboarding.md", "docs/success-report-v0.7.0.md",
     "docs/diagrams/onboarding.drawio", "docs/diagrams/onboarding.svg",
     "docs/second-gate.md", "docs/diagrams/second-gate.drawio", "docs/diagrams/second-gate.svg",

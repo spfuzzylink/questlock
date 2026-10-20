@@ -6,6 +6,8 @@ package client
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -50,6 +52,29 @@ type Client struct {
 // Plain HTTP is accepted only for literal loopback IP addresses. All other
 // hosts require HTTPS. Environment proxy settings are deliberately ignored.
 func New(baseURL, token string) (*Client, error) {
+	return newClient(baseURL, token, nil)
+}
+
+// NewWithTLSRoots adds explicit PEM roots to the system trust store. It never
+// disables hostname/certificate verification or changes the OS trust settings.
+func NewWithTLSRoots(baseURL, token string, rootPEM []byte) (*Client, error) {
+	if len(rootPEM) == 0 || len(rootPEM) > 1<<20 {
+		return nil, errors.New("questlock: explicit TLS roots must be nonempty PEM of at most1MiB")
+	}
+	roots, err := x509.SystemCertPool()
+	if err != nil {
+		roots = x509.NewCertPool()
+	}
+	if !roots.AppendCertsFromPEM(rootPEM) {
+		return nil, errors.New("questlock: invalid explicit TLS roots")
+	}
+	if !strings.HasPrefix(baseURL, "https://") {
+		return nil, errors.New("questlock: explicit TLS roots require HTTPS")
+	}
+	return newClient(baseURL, token, roots)
+}
+
+func newClient(baseURL, token string, roots *x509.CertPool) (*Client, error) {
 	base, err := url.Parse(baseURL)
 	if err != nil {
 		return nil, errors.New("questlock: invalid base URL")
@@ -73,6 +98,9 @@ func New(baseURL, token string) (*Client, error) {
 	transport := baseTransport.Clone()
 	// Do not send credentials through proxies configured by the environment.
 	transport.Proxy = nil
+	if roots != nil {
+		transport.TLSClientConfig = &tls.Config{RootCAs: roots, MinVersion: tls.VersionTLS12}
+	}
 	return &Client{
 		baseURL: base,
 		token:   token,

@@ -1,3 +1,37 @@
+# Questlock 0.9.0 — local roles, shared gates
+
+**Experimental release candidate.** Publication is pending required CI gates.
+
+A bounded local master and one to three independent local reviewers now share
+claims and checked results through the existing broker. `team init` creates an
+inspectable task; `team run` executes selected roles; `team status` reads without
+generation. Installed Ollama and isolated native Codex OSS are supported. The
+team schema permits no hosted role or paid fallback. Native compatibility is
+currently Codex CLI 0.163.0 and its prereleases.
+
+Workers can hand roles across HTTPS with separate scoped credentials and an
+explicit private CA. Pending/uncertain claims never expire into automatic
+regeneration. Rejected answers withhold final text. Exact checked repeats need
+no model, native executable, or inference admission. These text roles cannot
+edit files or replace an existing chat backend.
+
+`team quest` exercises three identities and six cases using a real private
+HTTPS broker and scripted providers, with zero model calls. `team suite`,
+`team prompt`, `team baseline-record` and `team benchmark` make a matched
+comparison explicit and keep failed/missing cases in the denominator.
+
+**The 99% target is not established.** Six deliberate Codex subscription baseline
+answers passed; the tested local model and memory headroom did not complete the
+team suite. $0 paid API charges are not evidence of equivalent accepted work.
+[Measurements, failures and limits](local-team-validation-v0.9.0.md) include the
+65,800 hosted baseline tokens, local usage, pressure refusals and unknowns.
+No active client config or permanent brand image changed.
+
+[Team guide](local-agent-teams.md) · [Six-case walkthrough](../examples/teams/README.md) ·
+[Architecture](diagrams/local-agent-teams.svg) · [Editable draw.io](diagrams/local-agent-teams.drawio)
+
+---
+
 # Questlock 0.8.0 — local work, shared results, your policy
 
 **Published experimental release.**

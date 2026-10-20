@@ -14,6 +14,11 @@ edit the repository, or publish external actions. The existing tool-capable
 [`local-agent` launcher](local-models.md) remains separate. Starting a team does
 not switch the backend of an existing hosted Codex or Claude conversation.
 
+The initial live suite did not qualify the tested small model. Read the
+[actual failures and resource refusals](local-team-validation-v0.9.0.md) before
+choosing a model. `questlock team quest` exercises three HTTPS worker identities
+and six scripted cases without a model, account or local weights.
+
 ## Try one task
 
 Install Questlock and Ollama, then deliberately install a model that fits your
@@ -45,6 +50,10 @@ other's votes. The master must pass all declared checks; each reviewer must
 return exactly `{"approved":true,"issues":[]}` to approve it. A rejection or
 malformed answer stops the workflow. Check the exit status and JSON report;
 only `status: "completed"` exposes final text.
+
+Resource refusal reports `blocked` before a claim is made. The explicit request
+stays on disk and can be submitted deliberately when headroom returns; this
+differs from an uncertain claim, which must never be retried blindly.
 
 A completed exact repeat reports zero new generation. Reuse includes the entire
 request, including policy, role instructions, model digests and checks. Changed

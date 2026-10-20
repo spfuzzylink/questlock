@@ -12,6 +12,12 @@ cmd/questlock/**
 !cmd/questlock/*.go
 !internal/
 internal/**
+!internal/teamquest/
+internal/teamquest/**
+!internal/teamquest/*.go
+!internal/nativeagent/
+internal/nativeagent/**
+!internal/nativeagent/*.go
 !internal/store/
 internal/store/**
 !internal/store/*.go
@@ -98,6 +104,9 @@ systemone/**
 internal/edgequest/**
 !internal/edgequest/*.go
 !systemone/bridge.py
+!team/
+team/**
+!team/*.go
 # Runtime builds do not need tests or their fixtures.
 **/*_test.go
 # Finder metadata is never a Go build input, even when its suffix is .go.

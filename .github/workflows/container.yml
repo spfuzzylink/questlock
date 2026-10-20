@@ -165,6 +165,9 @@ jobs:
             docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
               --memory=256m --cpus=1 --pids-limit=128 \
               --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" resources quest
+            docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+              --memory=256m --cpus=1 --pids-limit=128 \
+              --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" team quest
           fi
       - name: Export only the image that passed its native smoke test
         run: |

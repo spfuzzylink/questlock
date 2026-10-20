@@ -163,7 +163,7 @@ func knownStartupWarning(message, model string) bool {
 		return true
 	}
 	const prefix = "Under-development features enabled: skip_host_skill_discovery. Under-development features are incomplete and may behave unpredictably. To suppress this warning, set `suppress_unstable_features_warning = true` in "
-	if !strings.HasPrefix(message, prefix) || !strings.HasSuffix(message, "/codex/config.toml.") {
+	if !strings.HasPrefix(message, prefix) || !(strings.HasSuffix(message, "/codex/config.toml.") || strings.HasSuffix(message, "/.codex/config.toml.")) {
 		return false
 	}
 	path := strings.TrimPrefix(message, prefix)

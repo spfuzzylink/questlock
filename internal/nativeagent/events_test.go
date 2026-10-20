@@ -32,6 +32,10 @@ func TestNativeRecognizesOnlyEstablishedNonfatalStartupWarnings(t *testing.T) {
 	if err != nil || !response.Complete || response.StopReason != "completed_with_startup_warnings" || response.Usage.InputTokens != 100 {
 		t.Fatalf("startup warnings rejected: %+v %v", response, err)
 	}
+	hostedPath := strings.Replace(withWarnings, "/tmp/questlock-native-fixture/codex/config.toml.", "/tmp/operator/.codex/config.toml.", 1)
+	if r, err := DecodeEvents([]byte(hostedPath), "qwen3.5:4b"); err != nil || !r.Complete {
+		t.Fatalf("standard home warning rejected: %v", err)
+	}
 	for name, stream := range map[string]string{
 		"unknown startup error":     strings.Replace(withWarnings, "Model metadata for", "Cannot connect: Model metadata for", 1),
 		"wrong model warning":       strings.Replace(withWarnings, "`qwen3.5:4b`", "`different:4b`", 1),

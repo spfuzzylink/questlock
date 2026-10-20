@@ -7,7 +7,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -174,14 +173,10 @@ func (p *Provider) request(req inference.Request) (inference.Request, string, er
 	if req.MaxOutputTokens < 1 || req.MaxOutputTokens > 1_000_000 || req.ContextWindow < 1 || req.ContextWindow > 65_536 {
 		return req, "", errors.New("native local token limits are unsupported")
 	}
-	data, err := json.Marshal(struct {
-		Instructions string `json:"instructions"`
-		Input        string `json:"input"`
-	}{req.Prefix, req.Input})
-	if err != nil || len(data) > maxPromptBytes {
+	prompt := inference.BoundedTextPrompt(req)
+	if len(prompt) > maxPromptBytes {
 		return req, "", errors.New("encoded native local request exceeds the byte limit")
 	}
-	prompt := "Answer the explicitly approved request below using only its supplied context. Produce the requested final answer directly. Do not use tools, inspect files, access networks, delegate, or change settings. The JSON separates the request instructions from its input data.\n" + string(data)
 	// Reuse the existing local adapter's installed-model checks and conservative
 	// byte estimate, while counting the actual serialized native prompt.
 	countReq := req

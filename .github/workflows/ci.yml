@@ -92,6 +92,7 @@ jobs:
           unpacked/questlock revise quest
           unpacked/questlock edge quest
           unpacked/questlock resources quest
+          unpacked/questlock team quest
           unpacked/questlock worker --help 2>&1 | grep -F 'questlock worker serve'
           unpacked/questlock model evaluate --suite unpacked/evaluation/fixtures/quickstart.json > evaluation.json
           python3 - <<'PY'
@@ -245,6 +246,9 @@ jobs:
           docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
             --memory=256m --cpus=1 --pids-limit=128 \
             --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" resources quest
+          docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+            --memory=256m --cpus=1 --pids-limit=128 \
+            --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" team quest
           docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
             --memory=256m --cpus=1 --pids-limit=128 \
             --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" model evaluate > evaluation.json
