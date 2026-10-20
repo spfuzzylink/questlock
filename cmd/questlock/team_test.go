@@ -141,9 +141,13 @@ func TestTeamPlanAndPromptDiscloseOnlyExplicitRuntimeOutputTypes(t *testing.T) {
 		t.Fatal(err)
 	}
 	canonicalTask := team.TaskDigest(r)
-	for _, typed := range []bool{false, true} {
+	for _, profile := range []struct{ typed, semantic bool }{{false, false}, {true, false}, {true, true}} {
+		typed := profile.typed
 		if typed {
 			r.Master.Ollama.OutputTypes = map[string]string{"waiting_count": "integer"}
+		}
+		if profile.semantic {
+			r.Master.Ollama.FieldRoles = map[string]string{"waiting_count": "quantity"}
 		}
 		dir := t.TempDir()
 		b, err := json.Marshal(r)
@@ -166,6 +170,11 @@ func TestTeamPlanAndPromptDiscloseOnlyExplicitRuntimeOutputTypes(t *testing.T) {
 			var declared map[string]string
 			if present != typed || typed && (json.Unmarshal(contract, &declared) != nil || len(declared) != 1 || declared["waiting_count"] != "integer") {
 				t.Fatal("declared type map hidden or invented", command, typed, out.String())
+			}
+			roles, present := fields["runtime_field_roles"]
+			var declaredRoles map[string]string
+			if present != profile.semantic || profile.semantic && (json.Unmarshal(roles, &declaredRoles) != nil || len(declaredRoles) != 1 || declaredRoles["waiting_count"] != "quantity") {
+				t.Fatal("declared field roles hidden or invented", command, profile, out.String())
 			}
 			if command == "prompt" {
 				var prompt, task string

@@ -40,8 +40,8 @@ func Validate(r Request) error {
 		if role.Ollama != nil && role.Driver != "ollama" {
 			return errors.New("direct Ollama generation options require the ollama driver")
 		}
-		if index > 0 && role.Ollama != nil && role.Ollama.OutputTypes != nil {
-			return errors.New("output_types is a master-only runtime contract; reviewer approval checks cannot be replaced")
+		if index > 0 && role.Ollama != nil && (role.Ollama.OutputTypes != nil || role.Ollama.FieldRoles != nil) {
+			return errors.New("output_types and field_roles are master-only runtime contracts; reviewer approval checks cannot be replaced")
 		}
 		outputLimit := int64(4096)
 		if role.Driver == "ollama" && role.Ollama != nil && role.Ollama.Think != nil && *role.Ollama.Think {
@@ -115,7 +115,8 @@ func workerRequest(r Request, role Role, candidate string) (delegation.Request, 
 			Context      []inference.ContextItem `json:"context"`
 			Candidate    any                     `json:"candidate"`
 			OutputTypes  map[string]string       `json:"output_types,omitempty"`
-		}{r.Instructions, r.Input, r.Context, reference, runtimeOutputTypes(r)})
+			FieldRoles   map[string]string       `json:"field_roles,omitempty"`
+		}{r.Instructions, r.Input, r.Context, reference, runtimeOutputTypes(r), runtimeFieldRoles(r)})
 		if err != nil {
 			return delegation.Request{}, errors.New("cannot encode reviewer reference")
 		}
@@ -136,6 +137,19 @@ func runtimeOutputTypes(r Request) map[string]string {
 	copy := make(map[string]string, len(r.Master.Ollama.OutputTypes))
 	for name, kind := range r.Master.Ollama.OutputTypes {
 		copy[name] = kind
+	}
+	return copy
+}
+
+// runtimeFieldRoles exposes only manually declared master field meanings. No
+// role, type or value is inferred from expected answers or evaluation checks.
+func runtimeFieldRoles(r Request) map[string]string {
+	if r.Master.Ollama == nil || r.Master.Ollama.FieldRoles == nil {
+		return nil
+	}
+	copy := make(map[string]string, len(r.Master.Ollama.FieldRoles))
+	for name, role := range r.Master.Ollama.FieldRoles {
+		copy[name] = role
 	}
 	return copy
 }

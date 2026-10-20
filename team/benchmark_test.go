@@ -126,7 +126,29 @@ func TestComparisonOmitsAdditionalTypeMetadataForLegacyPairs(t *testing.T) {
 		t.Fatal(err)
 	}
 	encoded, err := json.Marshal(r)
-	if err != nil || r.WorkflowComparison != "" || strings.Contains(string(encoded), "additional_local_output_types") || strings.Contains(string(encoded), "workflow_comparison") {
+	if err != nil || r.WorkflowComparison != "" || strings.Contains(string(encoded), "additional_local_output_types") || strings.Contains(string(encoded), "additional_local_field_roles") || strings.Contains(string(encoded), "workflow_comparison") {
 		t.Fatal("legacy comparison acquired an undeclared runtime contract", string(encoded), err)
+	}
+}
+
+func TestComparisonDisclosesAdditionalFieldRolesAcrossMixedCases(t *testing.T) {
+	semantic, typed := matchedPair(t), matchedPair(t)
+	semantic.Case.Request.Master.Ollama = &inference.OllamaOptions{Format: "json", OutputTypes: map[string]string{"answer": "integer"}, FieldRoles: map[string]string{"answer": "quantity"}}
+	typed.Case.ID = "two"
+	typed.Case.Request.Master.Ollama = &inference.OllamaOptions{Format: "json", OutputTypes: map[string]string{"answer": "integer"}}
+	for _, p := range []*Pair{&semantic, &typed} {
+		fp, err := Fingerprint(p.Case.Request)
+		if err != nil {
+			t.Fatal(err)
+		}
+		p.Local.RequestSHA256 = fp
+	}
+	r, err := Compare([]Pair{semantic, typed})
+	if err != nil || !r.Eligible || !reflect.DeepEqual(r.Cases[0].AdditionalLocalFieldRoles, map[string]string{"answer": "quantity"}) || r.Cases[1].AdditionalLocalFieldRoles != nil || !strings.Contains(r.WorkflowComparison, "semantic field roles") || !strings.Contains(r.WorkflowComparison, "source-grounding system instructions") || !strings.Contains(r.WorkflowComparison, "not identical-information model parity") {
+		t.Fatal("semantic disclosure was hidden or overwritten by a later types-only case", r, err)
+	}
+	encoded, err := json.Marshal(r)
+	if err != nil || !strings.Contains(string(encoded), `"additional_local_field_roles":{"answer":"quantity"}`) {
+		t.Fatal("manual roles missing from comparison JSON", string(encoded), err)
 	}
 }

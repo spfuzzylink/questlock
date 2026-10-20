@@ -38,6 +38,7 @@ type Pair struct {
 }
 type ComparisonRow struct {
 	AdditionalLocalOutputTypes map[string]string `json:"additional_local_output_types,omitempty"`
+	AdditionalLocalFieldRoles  map[string]string `json:"additional_local_field_roles,omitempty"`
 	CaseID                     string            `json:"case_id"`
 	Complexity                 string            `json:"complexity"`
 	Matched                    bool              `json:"matched"`
@@ -128,8 +129,12 @@ func Compare(pairs []Pair) (Comparison, error) {
 		_, baselinePass := evaluation.CheckOutput(p.Baseline.Text, p.Case.Request.Checks)
 		row := ComparisonRow{CaseID: p.Case.ID, Complexity: p.Case.Complexity, Matched: p.Local.Schema == 1 && p.Local.RequestSHA256 == fp && p.Baseline.Schema == 1 && p.Baseline.TaskSHA256 == TaskDigest(p.Case.Request) && p.Baseline.PromptSHA256 == hash(prompt) && p.Baseline.Source == "operator_recorded_codex_subscription_jsonl" && text(p.Baseline.Model, 128)}
 		row.AdditionalLocalOutputTypes = runtimeOutputTypes(p.Case.Request)
-		if row.AdditionalLocalOutputTypes != nil {
+		row.AdditionalLocalFieldRoles = runtimeFieldRoles(p.Case.Request)
+		if row.AdditionalLocalOutputTypes != nil && r.WorkflowComparison == "" {
 			r.WorkflowComparison = "decoder-assisted local workflow with additional declared output types and generic source-grounding system instructions; not identical-information model parity"
+		}
+		if row.AdditionalLocalFieldRoles != nil {
+			r.WorkflowComparison = "decoder-assisted local workflow with additional declared output types and semantic field roles plus generic source-grounding system instructions; not identical-information model parity"
 		}
 		row.LocalPassed = p.Local.Status == "completed" && localPass && p.Local.OutputSHA256 == hash(p.Local.Text) && !p.Local.PaidFallbackEnabled && len(p.Local.Steps) == len(p.Case.Request.Reviewers)+1
 		roles := append([]Role{p.Case.Request.Master}, p.Case.Request.Reviewers...)

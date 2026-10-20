@@ -196,6 +196,9 @@ func teamCommandIOWithModelDigest(args []string, out, diag io.Writer, modelDiges
 		if r.Master.Ollama != nil && r.Master.Ollama.OutputTypes != nil {
 			result["runtime_output_types"] = r.Master.Ollama.OutputTypes
 		}
+		if r.Master.Ollama != nil && r.Master.Ollama.FieldRoles != nil {
+			result["runtime_field_roles"] = r.Master.Ollama.FieldRoles
+		}
 		return writeModelJSON(out, result)
 	}
 	if args[0] == "plan" {
@@ -205,6 +208,9 @@ func teamCommandIOWithModelDigest(args []string, out, diag io.Writer, modelDiges
 		}
 		if r.Master.Ollama != nil && r.Master.Ollama.OutputTypes != nil {
 			d["runtime_output_types"] = r.Master.Ollama.OutputTypes
+		}
+		if r.Master.Ollama != nil && r.Master.Ollama.FieldRoles != nil {
+			d["runtime_field_roles"] = r.Master.Ollama.FieldRoles
 		}
 		return writeModelJSON(out, d)
 	}
