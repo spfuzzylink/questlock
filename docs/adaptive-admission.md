@@ -49,13 +49,20 @@ cgroup CPU/memory PSI `avg10` signals can pause expensive work. Hidden ancestor
 constraints and other processes' reservations are not a shared capacity ledger.
 
 macOS reads the native `sysctl` and `vm_stat` tools through fixed absolute paths,
-with bounded output and a deadline. Its available-memory estimate includes free,
-speculative and purgeable pages. Apple's `vm_stat` subtracts speculative pages
-from its printed free count, so each queue is counted once. Inactive and
-file-backed totals are excluded: they can overlap other queues or require work
-to reclaim. The percentage from `memory_pressure -Q` is also excluded because
-it includes active and inactive memory rather than additional allocation
-headroom. Kernel warning/critical memory pressure still pauses expensive work;
+with bounded output and a deadline. Its available-memory estimate is free plus
+speculative pages plus the **larger** of purgeable and reusable pages, rather
+than their sum. Apple's `vm_stat` subtracts speculative pages from its printed
+free count. Reusable pages are resident internal pages marked discardable through
+`MADV_FREE_REUSABLE`; XNU removes them from that count before freeing them, and
+speculative pages belong to external objects. Taking the larger reusable or
+purgeable count avoids assuming those two groups are disjoint. An unavailable
+optional reusable counter leaves the lower original estimate; a successful but
+malformed reading pauses expensive work. Inactive, file-backed and cleaned
+totals are excluded: their labels do not guarantee immediate reclaimability.
+The percentage from `memory_pressure -Q` is also excluded because it includes
+active and inactive memory rather than additional allocation headroom. Counters
+can race application reuse; they remain estimates, not allocation guarantees.
+Kernel warning/critical memory pressure still pauses expensive work;
 this correction does not lower reservation or pressure thresholds. Load average
 is runnable/waiting demand, not a CPU utilization percentage. Missing, malformed, stale, unsupported or
 unknown readings pause expensive work instead of inventing spare capacity.
@@ -144,5 +151,8 @@ neither dollar savings nor an account-wide hosted token cap. See the opt-in
 - [Apple virtual-memory inspection](https://developer.apple.com/library/archive/documentation/Performance/Conceptual/ManagingMemory/Articles/VMPages.html)
 - [Apple vm_stat implementation](https://github.com/apple-oss-distributions/system_cmds/blob/main/vm_stat/vm_stat.c)
 - [Apple host VM counters](https://github.com/apple-oss-distributions/xnu/blob/main/osfmk/kern/host.c)
+- [Apple reusable-page marking](https://github.com/apple-oss-distributions/xnu/blob/main/osfmk/vm/vm_object.c)
+- [Apple resident-page removal and speculative queues](https://github.com/apple-oss-distributions/xnu/blob/main/osfmk/vm/vm_resident.c)
+- [Apple MADV_FREE contract](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/madvise.2.html)
 - [Apple memory-pressure accounting](https://github.com/apple-oss-distributions/xnu/blob/main/osfmk/vm/vm_page.h)
 - [Apple memory-pressure implementation](https://github.com/apple-oss-distributions/system_cmds/blob/main/memory_pressure/memory_pressure.c)

@@ -243,6 +243,81 @@ func TestDarwinSpeculativeCapacityFitsUnchangedInferenceReservation(t *testing.T
 	}
 }
 
+func TestDarwinReusableUsesMaximumWithPurgeable(t *testing.T) {
+	base := "8\n17179869184\n1\n{ 1.25 1.0 0.75 }\n"
+	vm := []byte("Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free: 10000.\nPages speculative: 3000.\nPages purgeable: 2000.\n")
+	for _, tc := range []struct {
+		name, extra string
+		pages       int64
+	}{
+		{"absent lower bound", "", 15000},
+		{"explicit zero", "reusable_pages=0\n", 15000},
+		{"below purgeable", "reusable_pages=1000\n", 15000},
+		{"equal overlaps", "reusable_pages=2000\n", 15000},
+		{"above purgeable", "reusable_pages=8000\n", 21000},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			s, err := parseDarwin([]byte(base+tc.extra), vm, time.Now())
+			if err != nil || !s.Known || s.AvailableMemoryBytes != tc.pages*16384 {
+				t.Fatal("purgeable/reusable overlap was summed or lower bound lost", s, err)
+			}
+		})
+	}
+}
+
+func TestDarwinReusableMalformedAndImpossibleValuesFailClosed(t *testing.T) {
+	base := "8\n17179869184\n1\n{ 1.25 1.0 0.75 }\n"
+	vm := []byte("Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free: 10000.\nPages speculative: 3000.\nPages purgeable: 2000.\n")
+	for _, extra := range []string{
+		"reusable_pages=", "reusable_pages=-1", "reusable_pages=+1",
+		"reusable_pages=unknown", "reusable_pages=1.5", "reusable_pages=NaN",
+		"reusable_pages=9223372036854775808", "reusable_pages=9223372036854775807",
+		"reusable_pages=1048576", "reusable_pages=1\nreusable_pages=1",
+		"unexpected_pages=1", "1",
+	} {
+		t.Run(extra, func(t *testing.T) {
+			s, err := parseDarwin([]byte(base+extra), vm, time.Now())
+			if err == nil || s.Known {
+				t.Fatal("invalid optional counter became known capacity", s, err)
+			}
+		})
+	}
+}
+
+func TestDarwinReusableCapacityStillHonorsPressureAndDefaultReservations(t *testing.T) {
+	for _, level := range []string{"1", "2", "4"} {
+		now := time.Now()
+		cfg := DefaultConfig()
+		c, err := New(cfg, func(context.Context, Job) error {
+			t.Fatal("capacity test must not execute an inference job")
+			return nil
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		c.now = func() time.Time { return now }
+		// 250 MiB free/speculative plus max(31.25, 406.25) MiB of
+		// discardable memory fits the unchanged default inference estimate.
+		vm := []byte("Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free: 8000.\nPages speculative: 8000.\nPages purgeable: 2000.\n")
+		for i := 0; i < cfg.RecoverySamples; i++ {
+			now = now.Add(time.Second)
+			sys := []byte("8\n17179869184\n" + level + "\n{ 1.25 1.0 0.75 }\nreusable_pages=26000\n")
+			s, err := parseDarwin(sys, vm, now)
+			if err != nil || s.AvailableMemoryBytes != 42000*16384 {
+				t.Fatal(s, err)
+			}
+			c.Update(s)
+		}
+		_, err = c.Submit(context.Background(), Job{"one", LaneInference, nil})
+		if level == "1" && err != nil {
+			t.Fatal("verified reclaimable estimate did not fit original budget", err, c.Status())
+		}
+		if level != "1" && (!errors.Is(err, ErrPaused) || c.Status().Reason != "resource_pressure") {
+			t.Fatal("reusable capacity bypassed kernel pressure", err, c.Status())
+		}
+	}
+}
+
 func TestSystemSourceCancellation(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()

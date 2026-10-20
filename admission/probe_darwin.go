@@ -39,5 +39,14 @@ func sampleSystem(ctx context.Context) (Snapshot, error) {
 	if err != nil {
 		return Snapshot{At: time.Now(), Source: "darwin_sysctl_vm_stat"}, err
 	}
+	// This optional counter is absent on some releases. Omitting it preserves
+	// the lower free/speculative/purgeable estimate; a successful read must be
+	// parsed, so malformed output cannot silently become spare capacity.
+	if reusable, readErr := run("/usr/sbin/sysctl", "-n", "vm.page_reusable_count"); readErr == nil {
+		sys = append(append(bytes.TrimSpace(sys), []byte("\nreusable_pages=")...), bytes.TrimSpace(reusable)...)
+	}
+	if err := ctx.Err(); err != nil {
+		return Snapshot{At: time.Now(), Source: "darwin_sysctl_vm_stat"}, err
+	}
 	return parseDarwin(sys, vm, time.Now())
 }

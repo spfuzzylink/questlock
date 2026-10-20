@@ -300,8 +300,21 @@ func parseCPUSet(b []byte) (int64, error) {
 func parseDarwin(sysctl, vm []byte, now time.Time) (Snapshot, error) {
 	s := Snapshot{At: now, Source: "darwin_sysctl_vm_stat_free_speculative_purgeable"}
 	lines := strings.Split(strings.TrimSpace(string(sysctl)), "\n")
-	if len(lines) != 4 {
+	if len(lines) != 4 && len(lines) != 5 {
 		return s, ErrSignals
+	}
+	var reusable int64
+	if len(lines) == 5 {
+		value, ok := strings.CutPrefix(lines[4], "reusable_pages=")
+		if !ok {
+			return s, ErrSignals
+		}
+		var err error
+		reusable, err = nonnegative(value)
+		if err != nil {
+			return s, ErrSignals
+		}
+		s.Source = "darwin_sysctl_vm_stat_free_speculative_max_purgeable_reusable"
 	}
 	cpus, e := nonnegative(lines[0])
 	if e != nil || cpus < 1 || cpus > 1e6 {
@@ -377,11 +390,14 @@ func parseDarwin(sysctl, vm []byte, now time.Time) (Snapshot, error) {
 	// free_count. Restore that distinct free queue once, rather than estimating
 	// reclaimable capacity from all inactive or file-backed pages. See Apple's
 	// system_cmds/vm_stat/vm_stat.c snapshot() and xnu/osfmk/kern/host.c vm_stats().
-	// A pressure percentage is unsuitable here: on macOS it includes active
-	// and inactive memory, not just additional allocation headroom.
+	// MADV_FREE_REUSABLE marks resident internal pages as discardable. XNU
+	// removes their reusable count before freeing; speculative pages instead
+	// belong to external objects. See vm_object.c deactivate_pages_in_object()
+	// and vm_resident.c vm_page_remove()/vm_page_speculate(). Use the larger
+	// purgeable/reusable count, not their sum: their mutual overlap is unknown.
+	// All counters are advisory snapshots; pressure/recovery guards still apply.
 	var availablePages int64
-	for _, key := range []string{"Pages free", "Pages speculative", "Pages purgeable"} {
-		n := counts[key]
+	for _, n := range []int64{counts["Pages free"], counts["Pages speculative"], max(counts["Pages purgeable"], reusable)} {
 		if n > total/page-availablePages {
 			return s, ErrSignals
 		}
