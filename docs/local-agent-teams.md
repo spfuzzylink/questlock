@@ -19,6 +19,11 @@ The initial live suite did not qualify the tested small model. Read the
 choosing a model. `questlock team quest` exercises three HTTPS worker identities
 and six scripted cases without a model, account or local weights.
 
+The JSON/release-only follow-up, `local-json-release-2`, completed two of six
+cases without resource blocks. Correct formatting did not fix the remaining
+reasoning failures. The explicit reasoning profile below keeps the same checks;
+its settings alone do not establish a successful benchmark.
+
 ## Try one task
 
 Install Questlock and Ollama, then deliberately install a model that fits your
@@ -30,7 +35,8 @@ Run from a private working directory:
 umask 077
 mkdir -p tasks receipts
 questlock team init --model qwen3.5:4b --driver ollama \
-  --json-output --release-model --policy-revision local-json-release-2 \
+  --json-output --release-model --think --output-tokens 4096 \
+  --policy-revision local-json-reasoning-3 \
   > tasks/first.json
 questlock team plan --workspace tasks --request first.json
 ```
@@ -40,18 +46,31 @@ checks, a master and two reviewers, model digests, token limits, and a reuse
 window. `init` inspects installed model metadata without generation; `plan` is
 offline.
 
-The example opts into JSON output at temperature zero and asks Ollama to release
-the requested model after each response. `--json-output` sets generic JSON mode;
-it does not supply the expected answer or weaken the answer checks. It also tells
-reviewers to decode the candidate's JSON transport string once before judging
-the answer. `--release-model` sets each role's `ollama.keep_alive_seconds` to `0`.
+The example opts into JSON output at temperature zero, bounded local reasoning,
+and model release after each response. `--json-output` sets generic JSON mode;
+it does not supply the expected answer or weaken the answer checks. Reviewers
+receive the candidate as its parsed JSON value—an object, array or scalar—and
+judge that value against the source task. Existing text-mode requests keep their
+original candidate representation.
+
+`--think` requires installed model metadata advertising support for `think:true`.
+It uses nonstreaming generation; streamed reasoning is rejected. Only the final
+answer is published and included in receipts; raw thinking is discarded.
+`--output-tokens` accepts `16` through `4096`, defaults to `512`, and bounds each
+role's total output allowance. Ollama's `eval_count` includes reasoning and final
+answer tokens; a separate reasoning count is not reported. A larger allowance
+can improve completion, but JSON mode and reasoning do not guarantee correctness.
+Every original answer check and reviewer gate still applies.
+
+`--release-model` sets each role's `ollama.keep_alive_seconds` to `0`.
 This can recover resident model memory, but affects retention in the shared
 Ollama daemon and can add cold-start latency to later requests. It is neither a
 generation retry nor a global memory reservation.
 
-These two switches apply only to direct `ollama` roles and only when preparing
-`init` or `suite` requests. Leaving them out preserves the existing request and
-runtime defaults. A role can instead specify an optional
+JSON, reasoning and release switches require direct `ollama` roles and apply
+only when preparing `init` or `suite` requests. Leaving these controls out
+preserves existing request and runtime defaults. A role can instead specify an
+optional
 `ollama.keep_alive_seconds` value from `0` through `300`; an omitted value leaves
 Ollama's default retention unchanged. Inspect these controls before approving
 the snapshot, then run it explicitly:
@@ -79,7 +98,7 @@ later submission. An uncertain claim needs investigation instead.
 A completed exact repeat reports zero new generation. Reuse includes the entire
 request, including policy, role instructions, model digests and checks. Keep
 `revision` for task/data changes; use `policy_revision` for a reviewed execution
-policy change, such as `local-json-release-2`. Both change execution identity,
+policy change, such as `local-json-reasoning-3`. Both change execution identity,
 so a new policy cannot silently reuse or reset the original failed workflow.
 Retain that failure. Machine checks and model votes do not establish human
 acceptance.
@@ -118,9 +137,11 @@ have operating costs. Resource admission reserves local CPU/memory headroom
 before fresh work. `--config` selects an explicit complete
 [admission configuration](adaptive-admission.md). The default admitted task
 deadline is 45 seconds; a longer whole-run timeout alone does not extend that
-policy. Set measured per-role limits before approving a slower workload. These
-estimates are per process, rather than OS
-allocation or a distributed scheduler. Retrieval of already checked results
+policy. For a slower reasoning workload, review a complete admission config
+with a bounded task deadline, such as two minutes, while preserving memory
+headroom and pressure thresholds; pass it with `--config`. No timeout or quality
+failure triggers a generation retry or provider fallback. These estimates are
+per process, rather than OS allocation or a distributed scheduler. Retrieval of already checked results
 needs no model admission.
 
 ## Share work across nodes

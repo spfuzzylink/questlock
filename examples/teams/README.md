@@ -31,7 +31,8 @@ umask 077
 set -C
 mkdir -p requests local baseline events
 questlock team suite --model qwen3.5:4b --driver ollama \
-  --json-output --release-model --policy-revision local-json-release-2 \
+  --json-output --release-model --think --output-tokens 4096 \
+  --policy-revision local-json-reasoning-3 \
   > suite.json
 python3 - <<'PY'
 import json
@@ -48,12 +49,23 @@ PY
 Inspect every request before running. Use `--driver ollama` for the direct local
 route. `codex-oss` requires the compatible native client described in the guide.
 `suite` reads local model metadata; it neither generates nor downloads a model.
-The two optional Ollama switches request JSON at temperature zero and release
-the requested model after each response. Releasing can free memory but adds
-cold starts and changes that model's retention in the shared daemon. Omit the
-switches for the existing defaults; they are unavailable with `codex-oss`.
-Keep the same task/data revision when changing only the reviewed
-`policy_revision`. The checks and source facts stay unchanged.
+The optional Ollama switches request JSON at temperature zero, explicit
+nonstreaming reasoning and release of the requested model after each response.
+Reviewers evaluate the candidate's parsed JSON value. Reasoning requires an
+installed model that advertises support; raw thinking is discarded, while the
+reported output count includes reasoning and answer tokens together. The
+4096-token allowance applies to that total, not just the visible answer.
+Releasing can free memory but adds cold starts and changes model retention in
+the shared daemon. JSON, reasoning and release switches are unavailable with
+`codex-oss`; omitting the new controls preserves the existing defaults.
+
+Keep the same task/data revision when changing only the reviewed execution
+policy. All source facts and checks stay unchanged, as does the exact emitted
+master prompt used to bind the saved baseline. If reasoning needs more than the
+default 45-second task deadline, use `--config` with a reviewed complete
+admission configuration and a bounded deadline, such as two minutes. Keep its
+memory headroom and pressure thresholds intact. Increasing the whole invocation
+`--timeout` alone does not extend the admitted task deadline.
 
 Run each approved local case exactly once, preserving output even on failure:
 
