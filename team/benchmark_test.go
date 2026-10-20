@@ -105,7 +105,7 @@ func TestComparisonDisclosesAdditionalLocalTypesWithoutClaimingModelParity(t *te
 	}
 	p.Local.RequestSHA256 = fp
 	r, err := Compare([]Pair{p})
-	if err != nil || !r.Eligible || !r.Cases[0].Matched || !reflect.DeepEqual(r.Cases[0].AdditionalLocalOutputTypes, map[string]string{"answer": "integer"}) || !strings.Contains(r.WorkflowComparison, "decoder-assisted") || !strings.Contains(r.WorkflowComparison, "not identical-information model parity") {
+	if err != nil || !r.Eligible || !r.Cases[0].Matched || !reflect.DeepEqual(r.Cases[0].AdditionalLocalOutputTypes, map[string]string{"answer": "integer"}) || !strings.Contains(r.WorkflowComparison, "decoder-assisted") || !strings.Contains(r.WorkflowComparison, "source-grounding system instructions") || !strings.Contains(r.WorkflowComparison, "not identical-information model parity") {
 		t.Fatal("additional local decoding information was hidden or broke the same-task comparison", r, err)
 	}
 	encoded, err := json.Marshal(r)
