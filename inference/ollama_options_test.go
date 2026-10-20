@@ -11,7 +11,8 @@ import (
 	"testing"
 )
 
-func ollamaTemperature(value float64) *float64 { return &value }
+func ollamaTemperature(value float64) *float64  { return &value }
+func ollamaKeepAliveSeconds(value int64) *int64 { return &value }
 
 func ollamaOptionsSpec() Spec {
 	s := testSpec()
@@ -57,6 +58,9 @@ func TestOllamaOptionsPinPlanIdentityWithoutChangingPrompt(t *testing.T) {
 		{Temperature: ollamaTemperature(0)},
 		{Temperature: ollamaTemperature(2)},
 		{Format: "json", Temperature: ollamaTemperature(0)},
+		{KeepAliveSeconds: ollamaKeepAliveSeconds(0)},
+		{KeepAliveSeconds: ollamaKeepAliveSeconds(300)},
+		{Format: "json", Temperature: ollamaTemperature(0), KeepAliveSeconds: ollamaKeepAliveSeconds(0)},
 	} {
 		s.Ollama = options
 		p, err := BuildPlan(s)
@@ -110,6 +114,9 @@ func TestOllamaOptionsRejectUnsupportedProviderAndInvalidControls(t *testing.T) 
 		{"nan", OllamaOptions{Temperature: ollamaTemperature(math.NaN())}},
 		{"positive infinity", OllamaOptions{Temperature: ollamaTemperature(math.Inf(1))}},
 		{"negative infinity", OllamaOptions{Temperature: ollamaTemperature(math.Inf(-1))}},
+		{"negative keep alive", OllamaOptions{KeepAliveSeconds: ollamaKeepAliveSeconds(-1)}},
+		{"keep alive above maximum", OllamaOptions{KeepAliveSeconds: ollamaKeepAliveSeconds(301)}},
+		{"keep alive maximum integer", OllamaOptions{KeepAliveSeconds: ollamaKeepAliveSeconds(math.MaxInt64)}},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			s := ollamaOptionsSpec()
@@ -132,6 +139,17 @@ func TestOllamaOptionsRejectUnsupportedProviderAndInvalidControls(t *testing.T) 
 	}
 }
 
+func TestOllamaKeepAliveRejectsJSONIntegerOverflowAndNonIntegerValues(t *testing.T) {
+	for _, value := range []string{"9223372036854775808", "-9223372036854775809", "0.5", `"0"`} {
+		var s Spec
+		decoder := json.NewDecoder(strings.NewReader(`{"ollama":{"keep_alive_seconds":` + value + `}}`))
+		decoder.DisallowUnknownFields()
+		if err := decoder.Decode(&s); err == nil {
+			t.Fatalf("non-integer or overflowing keep_alive_seconds decoded: %s", value)
+		}
+	}
+}
+
 const ollamaJSONGenerateFixture = `{"model":"qwen3:4b","response":"{\"message\":\"fixture output\"}","done":true,"done_reason":"stop","prompt_eval_count":100,"eval_count":20}`
 
 func TestOllamaExplicitOptionsSerializeForBothGenerationModes(t *testing.T) {
@@ -146,6 +164,9 @@ func TestOllamaExplicitOptionsSerializeForBothGenerationModes(t *testing.T) {
 			{"zero", &OllamaOptions{Temperature: ollamaTemperature(0)}},
 			{"maximum", &OllamaOptions{Temperature: ollamaTemperature(2)}},
 			{"json and zero", &OllamaOptions{Format: "json", Temperature: ollamaTemperature(0)}},
+			{"unload after request", &OllamaOptions{KeepAliveSeconds: ollamaKeepAliveSeconds(0)}},
+			{"retain maximum", &OllamaOptions{KeepAliveSeconds: ollamaKeepAliveSeconds(300)}},
+			{"json zero and unload", &OllamaOptions{Format: "json", Temperature: ollamaTemperature(0), KeepAliveSeconds: ollamaKeepAliveSeconds(0)}},
 		} {
 			name := "nonstream/" + tt.name
 			if stream {
@@ -187,6 +208,9 @@ func TestOllamaExplicitOptionsSerializeForBothGenerationModes(t *testing.T) {
 					if tt.options.Temperature != nil {
 						options["temperature"] = *tt.options.Temperature
 					}
+					if tt.options.KeepAliveSeconds != nil {
+						want["keep_alive"] = float64(*tt.options.KeepAliveSeconds)
+					}
 				}
 				if body := <-recorded; !reflect.DeepEqual(body, want) {
 					t.Fatalf("generation controls, prompt, or caps changed: %+v", body)
@@ -202,7 +226,7 @@ func TestOllamaExplicitOptionsSerializeForBothGenerationModes(t *testing.T) {
 func TestOllamaOptionsRetainContextAndOutputCaps(t *testing.T) {
 	p, calls := ollamaFixtureProvider(t, strings.Replace(ollamaJSONGenerateFixture, `"eval_count":20`, `"eval_count":65`, 1))
 	req := ollamaTestRequest()
-	req.Ollama = &OllamaOptions{Format: "json", Temperature: ollamaTemperature(0)}
+	req.Ollama = &OllamaOptions{Format: "json", Temperature: ollamaTemperature(0), KeepAliveSeconds: ollamaKeepAliveSeconds(0)}
 	tooSmall := req
 	tooSmall.ContextWindow = 600
 	if _, err := p.CountInputTokens(context.Background(), tooSmall); err == nil {
@@ -230,7 +254,7 @@ func TestOllamaRejectedOptionsNeverFallBackOrRetry(t *testing.T) {
 			}, nil)
 			req := ollamaTestRequest()
 			req.Stream = stream
-			req.Ollama = &OllamaOptions{Format: "json", Temperature: ollamaTemperature(0)}
+			req.Ollama = &OllamaOptions{Format: "json", Temperature: ollamaTemperature(0), KeepAliveSeconds: ollamaKeepAliveSeconds(0)}
 			got, err := p.Generate(context.Background(), req)
 			if err == nil || !strings.Contains(err.Error(), "HTTP 400") || strings.Contains(err.Error(), "private runtime detail") || got.Complete || got.Text != "" || calls.generate.Load() != 1 {
 				t.Fatalf("rejected controls retried, leaked detail or approved output: %+v, %v", got, err)

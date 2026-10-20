@@ -345,13 +345,14 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 		return Response{}, err
 	}
 	body := struct {
-		Model   string `json:"model"`
-		System  string `json:"system"`
-		Prompt  string `json:"prompt"`
-		Stream  bool   `json:"stream"`
-		Think   bool   `json:"think"`
-		Format  string `json:"format,omitempty"`
-		Options struct {
+		Model     string `json:"model"`
+		System    string `json:"system"`
+		Prompt    string `json:"prompt"`
+		Stream    bool   `json:"stream"`
+		Think     bool   `json:"think"`
+		Format    string `json:"format,omitempty"`
+		KeepAlive *int64 `json:"keep_alive,omitempty"`
+		Options   struct {
 			NumPredict  int64    `json:"num_predict"`
 			NumCtx      int64    `json:"num_ctx"`
 			Temperature *float64 `json:"temperature,omitempty"`
@@ -360,6 +361,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 	body.Options.NumPredict, body.Options.NumCtx = req.MaxOutputTokens, req.ContextWindow
 	if req.Ollama != nil {
 		body.Format, body.Options.Temperature = req.Ollama.Format, req.Ollama.Temperature
+		body.KeepAlive = req.Ollama.KeepAliveSeconds
 	}
 	var raw ollamaGenerationFrame
 	var timing *GenerationTiming

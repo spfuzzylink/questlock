@@ -63,9 +63,11 @@ type Request struct {
 // OllamaOptions opts into local generation controls without changing runtime
 // defaults for requests that omit them. Format accepts only "json" or empty;
 // a non-nil Temperature must be finite and between 0 and 2, inclusive.
+// KeepAliveSeconds accepts 0..300; 0 requests unloading after generation.
 type OllamaOptions struct {
-	Format      string   `json:"format,omitempty"`
-	Temperature *float64 `json:"temperature,omitempty"`
+	Format           string   `json:"format,omitempty"`
+	Temperature      *float64 `json:"temperature,omitempty"`
+	KeepAliveSeconds *int64   `json:"keep_alive_seconds,omitempty"`
 }
 
 type Plan struct {

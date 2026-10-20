@@ -211,6 +211,9 @@ func validateOllamaOptions(options *OllamaOptions) error {
 			return errors.New("ollama temperature must be finite and between 0 and 2")
 		}
 	}
+	if options.KeepAliveSeconds != nil && (*options.KeepAliveSeconds < 0 || *options.KeepAliveSeconds > 300) {
+		return errors.New("ollama keep_alive_seconds must be between 0 and 300")
+	}
 	return nil
 }
 
