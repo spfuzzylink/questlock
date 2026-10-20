@@ -49,10 +49,15 @@ cgroup CPU/memory PSI `avg10` signals can pause expensive work. Hidden ancestor
 constraints and other processes' reservations are not a shared capacity ledger.
 
 macOS reads the native `sysctl` and `vm_stat` tools through fixed absolute paths,
-with bounded output and a deadline. Its available-memory estimate includes only
-free and purgeable pages, excluding inactive caches; kernel warning/critical
-memory pressure pauses expensive work. Load average is runnable/waiting demand,
-not a CPU utilization percentage. Missing, malformed, stale, unsupported or
+with bounded output and a deadline. Its available-memory estimate includes free,
+speculative and purgeable pages. Apple's `vm_stat` subtracts speculative pages
+from its printed free count, so each queue is counted once. Inactive and
+file-backed totals are excluded: they can overlap other queues or require work
+to reclaim. The percentage from `memory_pressure -Q` is also excluded because
+it includes active and inactive memory rather than additional allocation
+headroom. Kernel warning/critical memory pressure still pauses expensive work;
+this correction does not lower reservation or pressure thresholds. Load average
+is runnable/waiting demand, not a CPU utilization percentage. Missing, malformed, stale, unsupported or
 unknown readings pause expensive work instead of inventing spare capacity.
 
 Pressure lowers admission immediately. Recovery requires consecutive fresh
@@ -138,4 +143,6 @@ neither dollar savings nor an account-wide hosted token cap. See the opt-in
 - [Go runtime CPU limits and GOMAXPROCS](https://go.dev/src/runtime/debug.go)
 - [Apple virtual-memory inspection](https://developer.apple.com/library/archive/documentation/Performance/Conceptual/ManagingMemory/Articles/VMPages.html)
 - [Apple vm_stat implementation](https://github.com/apple-oss-distributions/system_cmds/blob/main/vm_stat/vm_stat.c)
+- [Apple host VM counters](https://github.com/apple-oss-distributions/xnu/blob/main/osfmk/kern/host.c)
+- [Apple memory-pressure accounting](https://github.com/apple-oss-distributions/xnu/blob/main/osfmk/vm/vm_page.h)
 - [Apple memory-pressure implementation](https://github.com/apple-oss-distributions/system_cmds/blob/main/memory_pressure/memory_pressure.c)

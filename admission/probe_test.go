@@ -130,9 +130,9 @@ func TestBoundedCPUQuotaCPUSetAndPSINumbers(t *testing.T) {
 
 func TestDarwinNativeSignalFixtures(t *testing.T) {
 	sys := []byte("8\n17179869184\n1\n{ 1.25 1.0 0.75 }\n")
-	vm := []byte("Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free: 10000.\nPages purgeable: 2000.\nPages inactive: 999999.\n")
+	vm := []byte("Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free: 10000.\nPages speculative: 3000.\nPages purgeable: 2000.\nPages inactive: 999999.\n")
 	s, e := parseDarwin(sys, vm, time.Now())
-	if e != nil || !s.Known || s.CPUCapacityMilli != 8000 || s.LoadMilli != 1250 || s.AvailableMemoryBytes != 12000*16384 || s.MemoryPressure != Normal {
+	if e != nil || !s.Known || s.CPUCapacityMilli != 8000 || s.LoadMilli != 1250 || s.AvailableMemoryBytes != 15000*16384 || s.MemoryPressure != Normal {
 		t.Fatal(s, e)
 	}
 	s, e = parseDarwin([]byte(strings.Replace(string(sys), "\n1\n", "\n4\n", 1)), vm, time.Now())
@@ -146,6 +146,100 @@ func TestDarwinNativeSignalFixtures(t *testing.T) {
 	}
 	if _, e := parseDarwin(sys, []byte(strings.Replace(string(vm), "10000.", "9223372036854775807.", 1)), time.Now()); e == nil {
 		t.Fatal("page arithmetic overflow accepted")
+	}
+}
+
+func TestDarwinCountsPrintedSpeculativeQueueOnce(t *testing.T) {
+	sys := []byte("8\n17179869184\n1\n{ 1.25 1.0 0.75 }\n")
+	vm := []byte("Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free: 10000.\nPages speculative: 3000.\nPages purgeable: 2000.\nPages inactive: 999999.\nFile-backed pages: 999999.\nPages active: 999999.\nPages occupied by compressor: 999999.\n")
+	s, err := parseDarwin(sys, vm, time.Now())
+	if err != nil || !s.Known || s.AvailableMemoryBytes != 15000*16384 {
+		t.Fatal(s, err)
+	}
+	if s.Source != "darwin_sysctl_vm_stat_free_speculative_purgeable" {
+		t.Fatal("memory-accounting source is not explicit", s.Source)
+	}
+	// File-backed and inactive totals overlap VM queues. Increasing them must
+	// not create additional capacity or add speculative pages a second time.
+	vm = []byte(strings.ReplaceAll(string(vm), "999999.", "9223372036854775807."))
+	unchanged, err := parseDarwin(sys, vm, time.Now())
+	if err != nil || unchanged.AvailableMemoryBytes != s.AvailableMemoryBytes {
+		t.Fatal(unchanged, err)
+	}
+}
+
+func TestDarwinMemoryCountersFailClosed(t *testing.T) {
+	sys := []byte("8\n17179869184\n1\n{ 1.25 1.0 0.75 }\n")
+	vm := "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free: 10000.\nPages speculative: 3000.\nPages purgeable: 2000.\n"
+	for name, bad := range map[string]string{
+		"missing speculative":   strings.Replace(vm, "Pages speculative: 3000.\n", "", 1),
+		"duplicate speculative": vm + "Pages speculative: 3000.\n",
+		"duplicate free":        vm + "Pages free: 10000.\n",
+		"duplicate purgeable":   vm + "Pages purgeable: 2000.\n",
+		"negative speculative":  strings.Replace(vm, "3000.", "-1.", 1),
+		"unknown speculative":   strings.Replace(vm, "3000.", "unknown.", 1),
+		"unsigned overflow":     strings.Replace(vm, "3000.", "9223372036854775808.", 1),
+		"sum overflow":          strings.Replace(vm, "3000.", "9223372036854775807.", 1),
+		"beyond physical RAM":   strings.Replace(vm, "3000.", "1048576.", 1),
+		"missing terminator":    strings.Replace(vm, "3000.", "3000", 1),
+	} {
+		t.Run(name, func(t *testing.T) {
+			s, err := parseDarwin(sys, []byte(bad), time.Now())
+			if err == nil || s.Known {
+				t.Fatal("unsafe macOS memory signal accepted", s, err)
+			}
+		})
+	}
+}
+
+func TestDarwinReclaimableFreeDoesNotOverridePressure(t *testing.T) {
+	vm := []byte("Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free: 10000.\nPages speculative: 500000.\nPages purgeable: 2000.\n")
+	for _, level := range []string{"2", "4"} {
+		s, err := parseDarwin([]byte("8\n17179869184\n"+level+"\n{ 1.25 1.0 0.75 }\n"), vm, time.Now())
+		if err != nil {
+			t.Fatal(err)
+		}
+		c, err := New(DefaultConfig(), func(context.Context, Job) error { return nil })
+		if err != nil {
+			t.Fatal(err)
+		}
+		c.Update(s)
+		if c.Status().ExpensiveWorkerLimit != 0 || c.Status().Reason != "resource_pressure" {
+			t.Fatal("speculative capacity bypassed kernel pressure", c.Status())
+		}
+	}
+}
+
+func TestDarwinSpeculativeCapacityFitsUnchangedInferenceReservation(t *testing.T) {
+	for _, speculative := range []string{"0", "8000"} {
+		t.Run(speculative, func(t *testing.T) {
+			now := time.Now()
+			cfg := DefaultConfig()
+			c, err := New(cfg, func(context.Context, Job) error {
+				t.Fatal("capacity test must not execute an inference job")
+				return nil
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+			c.now = func() time.Time { return now }
+			vm := []byte("Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free: 16000.\nPages speculative: " + speculative + ".\nPages purgeable: 16000.\n")
+			for i := 0; i < cfg.RecoverySamples; i++ {
+				now = now.Add(time.Second)
+				s, err := parseDarwin([]byte("8\n17179869184\n1\n{ 1.25 1.0 0.75 }\n"), vm, now)
+				if err != nil {
+					t.Fatal(err)
+				}
+				c.Update(s)
+			}
+			_, err = c.Submit(context.Background(), Job{"one", LaneInference, nil})
+			if speculative == "0" && !errors.Is(err, ErrDoesNotFit) {
+				t.Fatal("insufficient capacity admitted", err, c.Status())
+			}
+			if speculative != "0" && err != nil {
+				t.Fatal("distinct free queue was not usable", err, c.Status())
+			}
+		})
 	}
 }
 
