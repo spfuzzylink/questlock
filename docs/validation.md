@@ -1,6 +1,6 @@
 # Validation record
 
-## v0.9.1 candidate observations — 2026-10-19
+## v0.9.1 released observations — 2026-10-19
 
 The six original task/check contracts completed with local masters and both
 reviewers. The same saved Codex baseline reports 65,800 hosted tokens; the selected
@@ -11,11 +11,46 @@ Manual type/semantic contracts add operator assistance; this is a bounded tuned
 workflow comparison, not held-out model parity, account-credit or invoice proof.
 [Full observations, unknowns and independent 1/2 result](local-team-validation-v0.9.1.md).
 
-Latest local Go race/vet checks and 74 Python publication/packaging regressions
-passed. The independent release review remains in progress; no v0.9.1 assets
-are claimed published by this candidate entry. Active client settings and the
-permanent branding remain unchanged. Final CI and shipped-asset checks will be
-recorded after publication.
+Local Go race/vet checks and 74 Python publication/packaging regressions passed.
+Independent review approved clean candidate `ba9108624bc3430fb131b4f83c7eed20667edda4`
+after all seven [matching CI gates](https://github.com/spfuzzylink/questlock/actions/runs/39375751388)
+and four packaged-archive smoke checks. The signed GitHub merge
+`faeffcf39d058c581872d313525c9f56c7b7e9f4` has the identical reviewed tree
+`372b3f0258c6477ac2c78801dff745a8d7e19fb9`. The tagged
+[release pipeline](https://github.com/spfuzzylink/questlock/actions/runs/39376414709)
+completed all eight jobs successfully, including asset publication.
+
+The [experimental v0.9.1 release](https://github.com/spfuzzylink/questlock/releases/tag/v0.9.1)
+contains four native archives, two macOS MCPB bundles and checksums. Anonymous
+HTTPS downloads matched GitHub digests and checksums; every archive contains the
+exact 120 reviewed public files, its target binary and clean `BUILDINFO.json`.
+The actual tag resolves to the merge commit above. Bundle binaries and legal
+files match their native archives. Bundle inspection does not establish a new
+native Claude Desktop import or connection. Immutable archives retain their
+source-era candidate wording; these web guides record publication.
+
+Both Linux architectures passed native image smoke tests in the
+[container pipeline](https://github.com/spfuzzylink/questlock/actions/runs/39376913437).
+Anonymous GHCR reads verified both configurations and all 16 layers, matching
+the published archive binary, notices and build metadata. `v0.9.1` and
+`experimental` share index
+`sha256:91c2647a199173f119e8a23a15b5c99dc1e351a1b87d133fd10f038ed95a478e`.
+Previously recorded versioned image digests from v0.2.0 through v0.9.0 stayed
+unchanged.
+
+The published arm64 binary was staged in a private home before the local upgrade.
+A complete 19-file known-good backup, independent detached rollback watchdog,
+22 disposable transaction tests and five native-reader tests preceded the swap.
+Native Codex configuration/skill reads and one fresh MCP deterministic revision
+probe passed without model generation before the watchdog committed. Only the
+binary changed; 18 skill files and all four active Codex/Claude/Desktop client
+configuration hashes and modes stayed unchanged. Existing MCP processes retain
+their running version until their normal controlled restart.
+
+The installed v0.9.1 binary re-read all six completed HTTPS team results and
+reproduced the same saved comparison without invoking generation. The eight
+packaged offline quests, embedded fixture evaluation and zero-model first task
+plus exact reuse also passed. The permanent brand bytes remain unchanged.
 
 
 ## v0.9.0 observations — 2026-10-19
