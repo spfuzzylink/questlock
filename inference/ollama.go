@@ -355,6 +355,22 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 	if _, err = ollamaInputEstimate(req, metadata); err != nil {
 		return Response{}, err
 	}
+	client := p.client
+	if req.Ollama != nil && req.Ollama.GenerationTimeoutSeconds != nil {
+		transport, ok := p.client.Transport.(*http.Transport)
+		if !ok {
+			return Response{}, errors.New("Ollama generation timeout requires the configured HTTP transport")
+		}
+		// Isolate the generation override from concurrent requests and metadata
+		// discovery. Both header waits and the complete HTTP exchange are bounded.
+		privateTransport := transport.Clone()
+		privateClient := *p.client
+		privateClient.Timeout = time.Duration(*req.Ollama.GenerationTimeoutSeconds) * time.Second
+		privateTransport.ResponseHeaderTimeout = privateClient.Timeout
+		privateClient.Transport = privateTransport
+		client = &privateClient
+		defer privateTransport.CloseIdleConnections()
+	}
 	body := struct {
 		Model     string `json:"model"`
 		System    string `json:"system"`
@@ -377,9 +393,9 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 	var raw ollamaGenerationFrame
 	var timing *GenerationTiming
 	if req.Stream {
-		raw, timing, err = p.requestStream(ctx, body, started)
+		raw, timing, err = p.requestStream(ctx, client, body, started)
 	} else {
-		err = p.request(ctx, http.MethodPost, "/api/generate", body, &raw)
+		err = p.requestWithClient(ctx, client, http.MethodPost, "/api/generate", body, &raw)
 	}
 	// Timing can survive an uncertain stream. Unvalidated content and usage
 	// cannot: the Runner retains the claim rather than treating a partial answer
@@ -444,7 +460,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 // overhead. OutputMS is the first-to-last content-chunk interval. Neither is
 // server-only compute time, token throughput, or time to the first reasoning
 // token. Empty metadata/terminal chunks do not start or extend that interval.
-func (p *OllamaProvider) requestStream(ctx context.Context, payload any, started time.Time) (ollamaGenerationFrame, *GenerationTiming, error) {
+func (p *OllamaProvider) requestStream(ctx context.Context, client *http.Client, payload any, started time.Time) (ollamaGenerationFrame, *GenerationTiming, error) {
 	timing := &GenerationTiming{Streaming: true, Basis: "client_observed_content_chunks"}
 	failure := func(err error) (ollamaGenerationFrame, *GenerationTiming, error) {
 		return ollamaGenerationFrame{}, timing, err
@@ -460,7 +476,7 @@ func (p *OllamaProvider) requestStream(ctx context.Context, payload any, started
 	req.GetBody = nil
 	req.Header.Set("Accept", "application/x-ndjson")
 	req.Header.Set("Content-Type", "application/json")
-	resp, err := p.client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		return failure(ollamaStreamError(ctx, err))
 	}
@@ -552,6 +568,10 @@ func ollamaStreamError(ctx context.Context, err error) error {
 }
 
 func (p *OllamaProvider) request(ctx context.Context, method, path string, payload, result any) error {
+	return p.requestWithClient(ctx, p.client, method, path, payload, result)
+}
+
+func (p *OllamaProvider) requestWithClient(ctx context.Context, client *http.Client, method, path string, payload, result any) error {
 	var body []byte
 	var err error
 	if payload != nil {
@@ -572,7 +592,7 @@ func (p *OllamaProvider) request(ctx context.Context, method, path string, paylo
 	if payload != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
-	resp, err := p.client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		if ctx.Err() != nil {
 			return fmt.Errorf("Ollama request interrupted: %w", ctx.Err())

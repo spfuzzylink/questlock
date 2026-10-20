@@ -217,6 +217,9 @@ func validateOllamaOptions(options *OllamaOptions) error {
 	if options.KeepAliveSeconds != nil && (*options.KeepAliveSeconds < 0 || *options.KeepAliveSeconds > 300) {
 		return errors.New("ollama keep_alive_seconds must be between 0 and 300")
 	}
+	if options.GenerationTimeoutSeconds != nil && (*options.GenerationTimeoutSeconds < 1 || *options.GenerationTimeoutSeconds > 600) {
+		return errors.New("ollama generation_timeout_seconds must be between 1 and 600")
+	}
 	return nil
 }
 

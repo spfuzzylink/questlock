@@ -66,11 +66,14 @@ type Request struct {
 // KeepAliveSeconds accepts 0..300; 0 requests unloading after generation.
 // Think defaults to false. Explicit true requires nonstream generation and
 // installed model metadata advertising boolean true; reasoning is discarded.
+// GenerationTimeoutSeconds accepts 1..600 for generation HTTP only; omission
+// preserves the 120-second default. Earlier caller deadlines still apply.
 type OllamaOptions struct {
-	Format           string   `json:"format,omitempty"`
-	Temperature      *float64 `json:"temperature,omitempty"`
-	KeepAliveSeconds *int64   `json:"keep_alive_seconds,omitempty"`
-	Think            *bool    `json:"think,omitempty"`
+	Format                   string   `json:"format,omitempty"`
+	Temperature              *float64 `json:"temperature,omitempty"`
+	KeepAliveSeconds         *int64   `json:"keep_alive_seconds,omitempty"`
+	Think                    *bool    `json:"think,omitempty"`
+	GenerationTimeoutSeconds *int64   `json:"generation_timeout_seconds,omitempty"`
 }
 
 type Plan struct {
