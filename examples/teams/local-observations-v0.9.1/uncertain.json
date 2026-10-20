@@ -1,0 +1,70 @@
+{
+  "accounting_complete": true,
+  "schema": 1,
+  "request_sha256": "0f4e534e4dc5789ccadcf52c52447d44a0d7b774b3342c7babd444dc40b560b9",
+  "status": "completed",
+  "steps": [
+    {
+      "outcome_tracking_status": "recorded",
+      "role": "master",
+      "state": "completed",
+      "worker_id": "node-a",
+      "reused": true,
+      "output_sha256": "12e72af314a68741ef4698dc2372953887ea0f04139b57b223dcd359d2eac241",
+      "this_run_local_usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    },
+    {
+      "outcome_tracking_status": "recorded",
+      "role": "review-correctness",
+      "state": "completed",
+      "worker_id": "node-b",
+      "reused": true,
+      "output_sha256": "adf2e170d97c6e12be0dc019e23a65fefb6ead8e5decd80e6ec0787456673c62",
+      "this_run_local_usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    },
+    {
+      "outcome_tracking_status": "recorded",
+      "role": "review-risk",
+      "state": "completed",
+      "worker_id": "node-c",
+      "reused": true,
+      "output_sha256": "adf2e170d97c6e12be0dc019e23a65fefb6ead8e5decd80e6ec0787456673c62",
+      "this_run_local_usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    }
+  ],
+  "text": "{\"action\": \"inspect\", \"operation_id\": \"op-17\"}",
+  "output_sha256": "12e72af314a68741ef4698dc2372953887ea0f04139b57b223dcd359d2eac241",
+  "checks": [
+    {
+      "id": "expected",
+      "kind": "json_equals",
+      "passed": true
+    }
+  ],
+  "this_run_local_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "known": true,
+    "generation_calls": 0
+  },
+  "this_run_hosted_tokens": 0,
+  "hosted_usage_known": true,
+  "provider_cost_usd": 0,
+  "paid_fallback_enabled": false,
+  "human_acceptance": "not_reported"
+}

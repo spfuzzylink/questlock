@@ -1,0 +1,5080 @@
+{
+  "schema": 1,
+  "release": "0.9.1",
+  "status": "candidate_observation_not_publication",
+  "observed_date": "2026-10-19",
+  "runtime_binary_sha256": "36068b0b3a6f7c392d35c3122dc458422e23cc55313e422b0ce51dc8a24632c6",
+  "environment": {
+    "physical_hosts": 1,
+    "scoped_worker_identities": 3,
+    "logical_cpus": 10,
+    "memory_gib": 24,
+    "ollama_version": "0.40.3",
+    "native_codex_baseline_version": "0.163.0-alpha.10.2"
+  },
+  "paid_fallback_enabled": false,
+  "provider_api_spend_usd": 0,
+  "comparison": {
+    "workflow_comparison": "decoder-assisted local workflow with additional declared output types and semantic field roles plus generic source-grounding system instructions; not identical-information model parity",
+    "schema": 1,
+    "metric": "observed_hosted_input_plus_output_tokens",
+    "scope": "explicit_bounded_suite_only; not account credits or whole development",
+    "cases": [
+      {
+        "case_id": "ticket",
+        "complexity": "simple",
+        "matched": true,
+        "local_passed": true,
+        "baseline_passed": true,
+        "usage_known": true,
+        "baseline_hosted_tokens": 10952,
+        "local_hosted_tokens": 0,
+        "eligible": true
+      },
+      {
+        "case_id": "route",
+        "complexity": "simple",
+        "matched": true,
+        "local_passed": true,
+        "baseline_passed": true,
+        "usage_known": true,
+        "baseline_hosted_tokens": 10928,
+        "local_hosted_tokens": 0,
+        "eligible": true
+      },
+      {
+        "case_id": "queue",
+        "complexity": "simple",
+        "matched": true,
+        "local_passed": true,
+        "baseline_passed": true,
+        "usage_known": true,
+        "baseline_hosted_tokens": 10929,
+        "local_hosted_tokens": 0,
+        "eligible": true
+      },
+      {
+        "case_id": "uncertain",
+        "complexity": "complex",
+        "matched": true,
+        "local_passed": true,
+        "baseline_passed": true,
+        "usage_known": true,
+        "baseline_hosted_tokens": 11006,
+        "local_hosted_tokens": 0,
+        "eligible": true
+      },
+      {
+        "additional_local_output_types": {
+          "excess_work": "string",
+          "max_workers": "integer"
+        },
+        "additional_local_field_roles": {
+          "excess_work": "policy_action",
+          "max_workers": "quantity"
+        },
+        "case_id": "resources",
+        "complexity": "complex",
+        "matched": true,
+        "local_passed": true,
+        "baseline_passed": true,
+        "usage_known": true,
+        "baseline_hosted_tokens": 10992,
+        "local_hosted_tokens": 0,
+        "eligible": true
+      },
+      {
+        "case_id": "rework",
+        "complexity": "complex",
+        "matched": true,
+        "local_passed": true,
+        "baseline_passed": true,
+        "usage_known": true,
+        "baseline_hosted_tokens": 10993,
+        "local_hosted_tokens": 0,
+        "eligible": true
+      }
+    ],
+    "eligible": true,
+    "baseline_hosted_tokens": 65800,
+    "local_hosted_tokens": 0,
+    "hosted_token_reduction_percent": 100,
+    "target_99_percent_established": true,
+    "hosted_credit_reduction_percent": null,
+    "invoice_savings_usd": null,
+    "cost_per_accepted_task_usd": null,
+    "human_rework": "not measured; checks/model reviews are not human acceptance",
+    "bootstrap_hosted_usage": "excluded and unmeasured; hosted build coordinator/reviewers consume normal allowance"
+  },
+  "cases": [
+    {
+      "case_id": "ticket",
+      "complexity": "simple",
+      "status": "completed",
+      "task_sha256": "0b0f8c5dc86e188e99b5eb7a3fb141d77871b746e5fe4492547691093efd4c07",
+      "canonical_prompt_sha256": "182f6e54a49ebf7b61f9885ceaba17b4c0987a4b70aee592a1f083c2f73ebdae",
+      "request_sha256": "3396f8b5ddc430ddda886f2f0309f9963f762d86f80396e5eba890beeafb4ddb",
+      "policy_revision": "local-json-reasoning-3",
+      "additional_local_field_roles": null,
+      "role_policies": [
+        {
+          "id": "master",
+          "driver": "ollama",
+          "model": "qwen3.5:4b",
+          "model_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "think": true
+          }
+        },
+        {
+          "id": "review-correctness",
+          "driver": "ollama",
+          "model": "qwen3.5:4b",
+          "model_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "think": true
+          }
+        },
+        {
+          "id": "review-risk",
+          "driver": "ollama",
+          "model": "qwen3.5:4b",
+          "model_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "think": true
+          }
+        }
+      ],
+      "ollama_prompt_mode": "legacy_split",
+      "baseline_receipt_sha256": "0e15cb35731dfba6381e905f77046c0e61b393ee704e1c5868ce89d476e3d3e2",
+      "baseline_usage": {
+        "input_tokens": 10884,
+        "uncached_input_tokens": 2564,
+        "cache_read_tokens": 8320,
+        "cache_write_tokens": 0,
+        "output_tokens": 68,
+        "reasoning_tokens": 46
+      },
+      "final_receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+      "output_sha256": "866a70c9d77e15ed95a227d57eac0030711f59ec3f7df32671394847a1fb4da9",
+      "phase_receipts": [
+        {
+          "role": "master",
+          "origin_receipt": "qualified-reasoning/ticket.master.json",
+          "origin_receipt_sha256": "83481c65e805de8072ae98f2a70772d3a3915e1896a02765353eaf066cdd929e",
+          "usage": {
+            "input_tokens": 68,
+            "output_tokens": 379,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-reasoning",
+          "outer_cli_elapsed_seconds": null
+        },
+        {
+          "role": "review-correctness",
+          "origin_receipt": "qualified-reasoning/ticket.review-correctness.json",
+          "origin_receipt_sha256": "6e625676360d399745ad608bf4740077b7e82cd68285f3c694a1b365bffb4003",
+          "usage": {
+            "input_tokens": 183,
+            "output_tokens": 3780,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-reasoning",
+          "outer_cli_elapsed_seconds": null
+        },
+        {
+          "role": "review-risk",
+          "origin_receipt": "qualified-reasoning/ticket.review-risk.json",
+          "origin_receipt_sha256": "81b2826187b7031c683d9e8c16fc02d0ccebfa0fd75fbd3251a9a4523f21e45c",
+          "usage": {
+            "input_tokens": 182,
+            "output_tokens": 2689,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-reasoning",
+          "outer_cli_elapsed_seconds": null
+        }
+      ],
+      "exact_repeat": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    },
+    {
+      "case_id": "route",
+      "complexity": "simple",
+      "status": "completed",
+      "task_sha256": "b8d7e1e4716ad20eb0276b84d8d8548e019822a30e9b006c5b490ab2db5fbd53",
+      "canonical_prompt_sha256": "1597d84e6f36383c667fd3e2e8f719ea6b739d87c0dce176e8441af327a1ff97",
+      "request_sha256": "2eb69ce8dde524817ea998dc2fefbe06e45fa85796117451ce80675c16fca87c",
+      "policy_revision": "local-json-reasoning-3",
+      "additional_local_field_roles": null,
+      "role_policies": [
+        {
+          "id": "master",
+          "driver": "ollama",
+          "model": "qwen3.5:4b",
+          "model_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "think": true
+          }
+        },
+        {
+          "id": "review-correctness",
+          "driver": "ollama",
+          "model": "qwen3.5:4b",
+          "model_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "think": true
+          }
+        },
+        {
+          "id": "review-risk",
+          "driver": "ollama",
+          "model": "qwen3.5:4b",
+          "model_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "think": true
+          }
+        }
+      ],
+      "ollama_prompt_mode": "legacy_split",
+      "baseline_receipt_sha256": "1aac3ba83ebc50e8771942ecc21f0cb81e389c033ca6cfc8a7d72b798e241f53",
+      "baseline_usage": {
+        "input_tokens": 10880,
+        "uncached_input_tokens": 10880,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "output_tokens": 48,
+        "reasoning_tokens": 36
+      },
+      "final_receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+      "output_sha256": "574268d3eb039436c86aac1dbdab398557f24bd8edb42bfae949484e945d1f08",
+      "phase_receipts": [
+        {
+          "role": "master",
+          "origin_receipt": "qualified-reasoning/route.master.json",
+          "origin_receipt_sha256": "5130b6e6b9f96e94cf21106acfb9ef8d5fdf0c479ed06c9713efa73d2e193f18",
+          "usage": {
+            "input_tokens": 64,
+            "output_tokens": 324,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-reasoning",
+          "outer_cli_elapsed_seconds": null
+        },
+        {
+          "role": "review-correctness",
+          "origin_receipt": "qualified-reasoning/route.review-correctness.json",
+          "origin_receipt_sha256": "159dbf437606f1c0dc75815d24ef747ed2931a9dc1675555df58ec7b545ffe39",
+          "usage": {
+            "input_tokens": 164,
+            "output_tokens": 271,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-reasoning",
+          "outer_cli_elapsed_seconds": null
+        },
+        {
+          "role": "review-risk",
+          "origin_receipt": "qualified-reasoning/route.review-risk.json",
+          "origin_receipt_sha256": "651ccc294ca86da0906b61e0083524ac1b21e6defa1a6b55c2e0c4f3ba5ad887",
+          "usage": {
+            "input_tokens": 163,
+            "output_tokens": 296,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-reasoning",
+          "outer_cli_elapsed_seconds": null
+        }
+      ],
+      "exact_repeat": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    },
+    {
+      "case_id": "queue",
+      "complexity": "simple",
+      "status": "completed",
+      "task_sha256": "ea9ca842eb3e66ea05f44069e1d1a41447ccf5d96f0c54b924696819154a9908",
+      "canonical_prompt_sha256": "1ce4e600037545faa8acdfa5f3657a6a250ca1ae2321fb92d1021ae2518414b4",
+      "request_sha256": "51c83964c1a208ec5a31f819d6da34f1ef45d075bec3f087e205d3ec70d88cf3",
+      "policy_revision": "local-json-reasoning-3",
+      "additional_local_field_roles": null,
+      "role_policies": [
+        {
+          "id": "master",
+          "driver": "ollama",
+          "model": "qwen3.5:4b",
+          "model_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "think": true
+          }
+        },
+        {
+          "id": "review-correctness",
+          "driver": "ollama",
+          "model": "qwen3.5:4b",
+          "model_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "think": true
+          }
+        },
+        {
+          "id": "review-risk",
+          "driver": "ollama",
+          "model": "qwen3.5:4b",
+          "model_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "think": true
+          }
+        }
+      ],
+      "ollama_prompt_mode": "legacy_split",
+      "baseline_receipt_sha256": "faec04c9a7b69f862de55bfbd375a03fd85a3016b8e9bfa260f5991067082668",
+      "baseline_usage": {
+        "input_tokens": 10877,
+        "uncached_input_tokens": 2557,
+        "cache_read_tokens": 8320,
+        "cache_write_tokens": 0,
+        "output_tokens": 52,
+        "reasoning_tokens": 40
+      },
+      "final_receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+      "output_sha256": "e95b46674a3232145aea1d94a763e56c311dd05e03c3931963a984b0385a56f8",
+      "phase_receipts": [
+        {
+          "role": "master",
+          "origin_receipt": "qualified-reasoning/queue.master.json",
+          "origin_receipt_sha256": "c51ab71cfcd4505bddfec15eab2279212e8766f58c17c1eaff4b0a3b22028d30",
+          "usage": {
+            "input_tokens": 59,
+            "output_tokens": 395,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-reasoning",
+          "outer_cli_elapsed_seconds": null
+        },
+        {
+          "role": "review-correctness",
+          "origin_receipt": "qualified-reasoning/queue.review-correctness.json",
+          "origin_receipt_sha256": "18a60f0ec674e862e459011c23320a06448c42aee7c45ac80bd4a17d18f92907",
+          "usage": {
+            "input_tokens": 159,
+            "output_tokens": 1817,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-reasoning",
+          "outer_cli_elapsed_seconds": null
+        },
+        {
+          "role": "review-risk",
+          "origin_receipt": "qualified-reasoning/queue.review-risk.json",
+          "origin_receipt_sha256": "b14e3445f5fba62db39961e6b14cfdc33885cb52fc92216037f0fe1bb5566545",
+          "usage": {
+            "input_tokens": 158,
+            "output_tokens": 337,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-reasoning",
+          "outer_cli_elapsed_seconds": null
+        }
+      ],
+      "exact_repeat": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    },
+    {
+      "case_id": "uncertain",
+      "complexity": "complex",
+      "status": "completed",
+      "task_sha256": "4ff6dc404448b48bd4fd98035a12516dd32271cd0d839153e0e0bcc8d1152b2d",
+      "canonical_prompt_sha256": "7ceeb28fe3d780768111d644ac1371d856df34520356bc44d40947ddd6689823",
+      "request_sha256": "0f4e534e4dc5789ccadcf52c52447d44a0d7b774b3342c7babd444dc40b560b9",
+      "policy_revision": "local-9b-reasoning-9",
+      "additional_local_field_roles": null,
+      "role_policies": [
+        {
+          "id": "master",
+          "driver": "ollama",
+          "model": "qwen3.5:9b",
+          "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "prompt_mode": "bounded_text",
+            "think": true,
+            "generation_timeout_seconds": 300
+          }
+        },
+        {
+          "id": "review-correctness",
+          "driver": "ollama",
+          "model": "qwen3.5:9b",
+          "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "prompt_mode": "bounded_text",
+            "think": true,
+            "generation_timeout_seconds": 300
+          }
+        },
+        {
+          "id": "review-risk",
+          "driver": "ollama",
+          "model": "qwen3.5:9b",
+          "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "prompt_mode": "bounded_text",
+            "think": true,
+            "generation_timeout_seconds": 300
+          }
+        }
+      ],
+      "ollama_prompt_mode": "bounded_text",
+      "baseline_receipt_sha256": "c6439f04fc1854f1f43e8101554b6e22111542bdec046a10f52a500f5563c18c",
+      "baseline_usage": {
+        "input_tokens": 10905,
+        "uncached_input_tokens": 2585,
+        "cache_read_tokens": 8320,
+        "cache_write_tokens": 0,
+        "output_tokens": 101,
+        "reasoning_tokens": 83
+      },
+      "final_receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+      "output_sha256": "12e72af314a68741ef4698dc2372953887ea0f04139b57b223dcd359d2eac241",
+      "phase_receipts": [
+        {
+          "role": "master",
+          "origin_receipt": "qualified-9b-reasoning/uncertain.master.json",
+          "origin_receipt_sha256": "31cd5d0b743754558039b695558987722d6fa238db86711d54557a8dd388e807",
+          "usage": {
+            "input_tokens": 142,
+            "output_tokens": 3518,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-canonical-memory",
+          "outer_cli_elapsed_seconds": 116.536
+        },
+        {
+          "role": "review-correctness",
+          "origin_receipt": "qualified-9b-reasoning/uncertain.review-correctness.json",
+          "origin_receipt_sha256": "1800f5248eaeec90245967a0ad611798d1b7cf6ec5cade4f5d647d427d92d08c",
+          "usage": {
+            "input_tokens": 278,
+            "output_tokens": 1541,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-canonical-memory",
+          "outer_cli_elapsed_seconds": 57.821
+        },
+        {
+          "role": "review-risk",
+          "origin_receipt": "qualified-9b-reasoning/uncertain.review-risk.json",
+          "origin_receipt_sha256": "976a00cc00d310f60087f9cee53ae8cc4f31457bf46edce179a7f49f97d4fac0",
+          "usage": {
+            "input_tokens": 277,
+            "output_tokens": 3168,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-canonical-memory",
+          "outer_cli_elapsed_seconds": 124.341
+        }
+      ],
+      "exact_repeat": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    },
+    {
+      "case_id": "resources",
+      "complexity": "complex",
+      "status": "completed",
+      "task_sha256": "633cee80b8a8bee3509a32870676a1371a88f19ca0620a9d309214b0957a4d6e",
+      "canonical_prompt_sha256": "06f666b877700df5681d80bd20b2464cf61ceac5d1d37b8a7a632fb877b27c31",
+      "request_sha256": "bd8aa7bc12f770195e3b572efa801328eb7a9744f18a3cad43c2b40e3f77c0ae",
+      "policy_revision": "local-semantic-9b-21",
+      "additional_local_field_roles": {
+        "max_workers": "quantity",
+        "excess_work": "policy_action"
+      },
+      "role_policies": [
+        {
+          "id": "master",
+          "driver": "ollama",
+          "model": "qwen3.5:9b",
+          "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+          "max_input_tokens": 4096,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0.6,
+            "keep_alive_seconds": 0,
+            "prompt_mode": "bounded_text",
+            "think": true,
+            "generation_timeout_seconds": 300,
+            "output_types": {
+              "max_workers": "integer",
+              "excess_work": "string"
+            },
+            "field_roles": {
+              "max_workers": "quantity",
+              "excess_work": "policy_action"
+            }
+          }
+        },
+        {
+          "id": "review-correctness",
+          "driver": "ollama",
+          "model": "qwen3.5:9b",
+          "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+          "max_input_tokens": 4096,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "keep_alive_seconds": 0,
+            "prompt_mode": "bounded_text",
+            "think": true,
+            "generation_timeout_seconds": 300
+          }
+        },
+        {
+          "id": "review-risk",
+          "driver": "ollama",
+          "model": "qwen3.5:9b",
+          "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+          "max_input_tokens": 4096,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "keep_alive_seconds": 0,
+            "prompt_mode": "bounded_text",
+            "think": true,
+            "generation_timeout_seconds": 300
+          }
+        }
+      ],
+      "ollama_prompt_mode": "bounded_text",
+      "baseline_receipt_sha256": "ba772f802bbc11f7ce3f6a14ed1b96eb847b39602150705b32f595efa5dd4932",
+      "baseline_usage": {
+        "input_tokens": 10924,
+        "uncached_input_tokens": 10924,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "output_tokens": 68,
+        "reasoning_tokens": 50
+      },
+      "final_receipt_sha256": "eff3a6e982f9d15e822185b1c2c0a830113c997043217b412d502971a0353e90",
+      "output_sha256": "9befc6ac3b1301988d99814a6978412458d30f767933768a4d91fb2e44c4025f",
+      "phase_receipts": [
+        {
+          "role": "master",
+          "origin_receipt": "qualified-semantic-9b/resources.master.json",
+          "origin_receipt_sha256": "5ed538634f4c51e873a17208caf65157325e2b95c7037eaed5b1e6da142d8f11",
+          "usage": {
+            "input_tokens": 330,
+            "output_tokens": 391,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-semantic",
+          "outer_cli_elapsed_seconds": 18.852
+        },
+        {
+          "role": "review-correctness",
+          "origin_receipt": "qualified-semantic-9b/resources.review-correctness.json",
+          "origin_receipt_sha256": "98444818001749d2fe9970ff90755e05fc1b5023fbfaa3694430f313d2d07688",
+          "usage": {
+            "input_tokens": 338,
+            "output_tokens": 2779,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-semantic",
+          "outer_cli_elapsed_seconds": 94.551
+        },
+        {
+          "role": "review-risk",
+          "origin_receipt": "qualified-semantic-9b/resources.review-risk.json",
+          "origin_receipt_sha256": "b9ac55bfb83001ed00e1fbbfc8ea582182a80275a6021c82a83ab453fe8c8221",
+          "usage": {
+            "input_tokens": 337,
+            "output_tokens": 2869,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-semantic",
+          "outer_cli_elapsed_seconds": 141.526
+        }
+      ],
+      "exact_repeat": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    },
+    {
+      "case_id": "rework",
+      "complexity": "complex",
+      "status": "completed",
+      "task_sha256": "e6f932b07f9ef7a263e7e45c4f3c5c21217ef9136fa6248167f6e392bbdc7bf1",
+      "canonical_prompt_sha256": "a69d4025b1d82ee9866561d751417808c24174e7814f168d7d0926066e2b95a9",
+      "request_sha256": "c6c35e2cf069eb9a0255d62cfb04a6780bf5866e51b700df8111fa4cf9f30bc0",
+      "policy_revision": "local-9b-reasoning-9",
+      "additional_local_field_roles": null,
+      "role_policies": [
+        {
+          "id": "master",
+          "driver": "ollama",
+          "model": "qwen3.5:9b",
+          "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "prompt_mode": "bounded_text",
+            "think": true,
+            "generation_timeout_seconds": 300
+          }
+        },
+        {
+          "id": "review-correctness",
+          "driver": "ollama",
+          "model": "qwen3.5:9b",
+          "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "prompt_mode": "bounded_text",
+            "think": true,
+            "generation_timeout_seconds": 300
+          }
+        },
+        {
+          "id": "review-risk",
+          "driver": "ollama",
+          "model": "qwen3.5:9b",
+          "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "ollama": {
+            "format": "json",
+            "temperature": 0,
+            "keep_alive_seconds": 0,
+            "prompt_mode": "bounded_text",
+            "think": true,
+            "generation_timeout_seconds": 300
+          }
+        }
+      ],
+      "ollama_prompt_mode": "bounded_text",
+      "baseline_receipt_sha256": "d2c8cdb6cca920bf73ed75f6e7178767afda2a357edbe130d3ecf0234a95fc4d",
+      "baseline_usage": {
+        "input_tokens": 10930,
+        "uncached_input_tokens": 2610,
+        "cache_read_tokens": 8320,
+        "cache_write_tokens": 0,
+        "output_tokens": 63,
+        "reasoning_tokens": 41
+      },
+      "final_receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+      "output_sha256": "b105df0ca9e845c1e9a361aace88b8c3fdce6d2594d1412508cd71995b8dd743",
+      "phase_receipts": [
+        {
+          "role": "master",
+          "origin_receipt": "qualified-9b-reasoning/rework.master.json",
+          "origin_receipt_sha256": "3b7cfc8af544672a7fb39bff01cdd534ff44807a86fda09098e79b14b6e9c1b9",
+          "usage": {
+            "input_tokens": 166,
+            "output_tokens": 1476,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-canonical-memory",
+          "outer_cli_elapsed_seconds": 66.468
+        },
+        {
+          "role": "review-correctness",
+          "origin_receipt": "qualified-9b-reasoning/rework.review-correctness.json",
+          "origin_receipt_sha256": "2935ff48248cd4579a4f2844359e87a3c65d2d906b7466901be8ecd47a51f83d",
+          "usage": {
+            "input_tokens": 303,
+            "output_tokens": 1125,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-canonical-memory",
+          "outer_cli_elapsed_seconds": 56.318
+        },
+        {
+          "role": "review-risk",
+          "origin_receipt": "qualified-9b-reasoning/rework.review-risk.json",
+          "origin_receipt_sha256": "72714ad719280e95b63c3b579f88ddd7d34bc8cfc2abc93745c27dd59d39174c",
+          "usage": {
+            "input_tokens": 302,
+            "output_tokens": 2041,
+            "known": true,
+            "generation_calls": 1
+          },
+          "runtime_binary": "questlock-canonical-memory",
+          "outer_cli_elapsed_seconds": 99.002
+        }
+      ],
+      "exact_repeat": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "known": true,
+        "generation_calls": 0
+      }
+    }
+  ],
+  "qualifying_originating_local_usage": {
+    "input_tokens": 3673,
+    "output_tokens": 29196,
+    "generation_calls": 18,
+    "known": true
+  },
+  "final_invocation_local_usage": {
+    "input_tokens": 1005,
+    "output_tokens": 6039,
+    "generation_calls": 3,
+    "known": true
+  },
+  "all_current_development_trials_local_usage": {
+    "known_input_tokens_lower_bound": 16845,
+    "known_output_tokens_lower_bound": 72183,
+    "generation_calls": 88,
+    "calls_with_unknown_local_usage": 5,
+    "total_usage_known": false
+  },
+  "history": [
+    {
+      "profile": "local-json-memory-1",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "route",
+          "status": "not_attempted_or_no_final_status"
+        },
+        {
+          "case_id": "queue",
+          "status": "not_attempted_or_no_final_status"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "not_attempted_or_no_final_status"
+        },
+        {
+          "case_id": "resources",
+          "status": "not_attempted_or_no_final_status"
+        },
+        {
+          "case_id": "rework",
+          "status": "not_attempted_or_no_final_status"
+        }
+      ],
+      "completed_cases": 0,
+      "denominator": 6,
+      "known_local_input_tokens": 385,
+      "known_local_output_tokens": 111,
+      "generation_calls": 3,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "125124170d13ec27c5341c7d34940ba16c3dc49940340b3b271243ed1d80a3eb",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 70,
+            "output_tokens": 21,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "b05092eb4b24b9bd2a614d6f17e8e6722bbef16fe58b83c36a7e42d07176582d",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 158,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "66a0ae3e30e374a8093cd4a4277ff43d08d65dfb8bfbab513b0f9755e33a3fa1",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 157,
+            "output_tokens": 74,
+            "known": true,
+            "generation_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-json-release-2",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "quality_failed"
+        }
+      ],
+      "completed_cases": 2,
+      "denominator": 6,
+      "known_local_input_tokens": 1826,
+      "known_local_output_tokens": 471,
+      "generation_calls": 13,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "55e3aaf037b074f88b1bb487b7515d650adaad6816c33b8db13b1bc60c61ebff",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 70,
+            "output_tokens": 21,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "1dc89eabd8a1899197cdad5ffc60293b6d7fb306f8fdbc31cd8b4044726e1be9",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 192,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "743f3b809af6b4883ab83199cb6c17818c582c00f17f34847eecee935d1d2101",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 191,
+            "output_tokens": 90,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d5006e3e5fd5044a8cb196d00ad53c928e51954662b294df7bf0158be4b6e30d",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 66,
+            "output_tokens": 12,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d6f7e4e22c703ee90d3f4cdf04a0d8d0aeadb4dc1e2440eec60f5ec95d1191c1",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 178,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "84aab8c923e277b8f2ba2a625f38bfaa0a502c6a41a7f4e30c3c48d60e618478",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 177,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "06ffad4542576087905961d3ba5e0abd8bf9ff91c83002e42591e2df78e5c85d",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 61,
+            "output_tokens": 6,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "f7cca67397d86e4d6ce009644c0c5cbb17334fa5eb767456bce3f1371744e1da",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 167,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "e611126008f135ba238349e2f1ff176cf78f60d6e253ee735b69739ff863b87e",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 166,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "7e1fdb25bd7a632524cb99eee8d043bd0567167214718eb1bc10bd877196cf99",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 91,
+            "output_tokens": 23,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "8ebee35e46997c26d360e32cca72cc7ffc692f369182819e9d2f778ef20ee958",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 120,
+            "output_tokens": 14,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "7d82dd7d9015fbc29f54ebd43e416281c1ecb82a68b3bfacbc8e4845c89c1c05",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 115,
+            "output_tokens": 17,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "25cf57684402b73446f2d8a8e9981ae6d93e952387e44ea5b998d6225c7a0c18",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 232,
+            "output_tokens": 208,
+            "known": true,
+            "generation_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-json-reasoning-3",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "pending"
+        },
+        {
+          "case_id": "resources",
+          "status": "pending"
+        },
+        {
+          "case_id": "rework",
+          "status": "pending"
+        }
+      ],
+      "completed_cases": 3,
+      "denominator": 6,
+      "known_local_input_tokens": 1313,
+      "known_local_output_tokens": 12795,
+      "generation_calls": 13,
+      "calls_with_unknown_local_usage": 3,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "83481c65e805de8072ae98f2a70772d3a3915e1896a02765353eaf066cdd929e",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 68,
+            "output_tokens": 379,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "6e625676360d399745ad608bf4740077b7e82cd68285f3c694a1b365bffb4003",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 183,
+            "output_tokens": 3780,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "81b2826187b7031c683d9e8c16fc02d0ccebfa0fd75fbd3251a9a4523f21e45c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 182,
+            "output_tokens": 2689,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "5130b6e6b9f96e94cf21106acfb9ef8d5fdf0c479ed06c9713efa73d2e193f18",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 64,
+            "output_tokens": 324,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "159dbf437606f1c0dc75815d24ef747ed2931a9dc1675555df58ec7b545ffe39",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 164,
+            "output_tokens": 271,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "651ccc294ca86da0906b61e0083524ac1b21e6defa1a6b55c2e0c4f3ba5ad887",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 163,
+            "output_tokens": 296,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "c51ab71cfcd4505bddfec15eab2279212e8766f58c17c1eaff4b0a3b22028d30",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 59,
+            "output_tokens": 395,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "18a60f0ec674e862e459011c23320a06448c42aee7c45ac80bd4a17d18f92907",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 159,
+            "output_tokens": 1817,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "b14e3445f5fba62db39961e6b14cfdc33885cb52fc92216037f0fe1bb5566545",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 158,
+            "output_tokens": 337,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "9139bb3df629ee2c9960d0242a9affe68e8907b6818772034c8400526d900094",
+          "status": "pending",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": false,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "95b28e9237a3b300e258469f43a1fe85740214e192647251cf568723a8625865",
+          "status": "pending",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": false,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "50aadf11629bfb5f0815e599bb46435e1367fc9ee29ac08dee6d0532ba1d3337",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 113,
+            "output_tokens": 2507,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "31d582161a99feb1bbc160c04157a77bb85c33d9c1f2c3f1c85a63f42d660236",
+          "status": "pending",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": false,
+            "generation_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-hybrid-4",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "stopped"
+        },
+        {
+          "case_id": "resources",
+          "status": "stopped"
+        },
+        {
+          "case_id": "rework",
+          "status": "quality_failed"
+        }
+      ],
+      "completed_cases": 3,
+      "denominator": 6,
+      "known_local_input_tokens": 337,
+      "known_local_output_tokens": 2661,
+      "generation_calls": 4,
+      "calls_with_unknown_local_usage": 2,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "81b6ff175448a7aa920bda2a4b178b9659b4841986f88af1bce63f9de2937113",
+          "status": "stopped",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": false,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "d0b0bd54107721f2c03bd986265d862fde64e6b891df6d0175311faeec9619e8",
+          "status": "stopped",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": false,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "111115787f2e644ac9914efc0eb9769e841241e337a29b45f9a0582dcf4c52bf",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 113,
+            "output_tokens": 2507,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "fad39dacba80395775c9b94e5cb192d715eaa4325a4bddaac6c4013c4d222d9c",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 224,
+            "output_tokens": 154,
+            "known": true,
+            "generation_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-deadline-5",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "stopped"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "not_attempted_or_no_final_status"
+        }
+      ],
+      "completed_cases": 3,
+      "denominator": 6,
+      "known_local_input_tokens": 207,
+      "known_local_output_tokens": 13141,
+      "generation_calls": 2,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "782c990e6ff484a0763b1be1022a39528fc3d97a47a2134d7b4721eccbca0b4b",
+          "status": "stopped",
+          "usage": {
+            "input_tokens": 89,
+            "output_tokens": 8192,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "61314317ca5f2f64f7bc1fa6f673ee794f9f27052b859c3c177dd448c6a5af87",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 118,
+            "output_tokens": 4949,
+            "known": true,
+            "generation_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-7b-6",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "route",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "quality_failed"
+        }
+      ],
+      "completed_cases": 1,
+      "denominator": 6,
+      "known_local_input_tokens": 842,
+      "known_local_output_tokens": 133,
+      "generation_calls": 8,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "bc5ee965a75cdd4d14b9406963a6bccbf7b4e4931f44af3dafaa1b453acef1b2",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 63,
+            "output_tokens": 38,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "a850e6705b324204b639712bb7a69d51a0a542f25aab3b391fe8ef303b628092",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 59,
+            "output_tokens": 6,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "1d22382b8e32f576bda35fb465b27f67d08f4757d1793bf13517786387c01487",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 54,
+            "output_tokens": 8,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "027873f23c39e37f19837682bd3f8c4473b63e15bcef5e495bbef63f3ca0538d",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 181,
+            "output_tokens": 14,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "23e0b540fba0810f7735b745fbc0ea3c4e73251b5a965e7a483b2388401725e5",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 180,
+            "output_tokens": 14,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "d0b7932f5472ac6c107e7a92b2811b3eaba39d938e63ca6e8520a762c850161f",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 84,
+            "output_tokens": 18,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "c005cfbc1a85c301299e7fae28e98a1d5d0394cd65f4e4484e8178bb1f4f4268",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 113,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "6d9e587b6148a47383e6dbd60cd30acae40592926450c688400262a7decebb5a",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 108,
+            "output_tokens": 19,
+            "known": true,
+            "generation_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-canonical-7-before-probe",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "waiting"
+        },
+        {
+          "case_id": "route",
+          "status": "blocked"
+        },
+        {
+          "case_id": "queue",
+          "status": "not_attempted_or_no_final_status"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "not_attempted_or_no_final_status"
+        },
+        {
+          "case_id": "resources",
+          "status": "not_attempted_or_no_final_status"
+        },
+        {
+          "case_id": "rework",
+          "status": "not_attempted_or_no_final_status"
+        }
+      ],
+      "completed_cases": 0,
+      "denominator": 6,
+      "known_local_input_tokens": 0,
+      "known_local_output_tokens": 0,
+      "generation_calls": 0,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "6250cd3f7d4c443610de12a45c6538667cf876110da02b39d3965fdd35bd6e56",
+          "status": "blocked",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "ed6e502e0798ad3bec3fb9d586d74aadcbbace36d73a0ff629fdf21505be33e6",
+          "status": "blocked",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-canonical-7-after-probe",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "route",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "quality_failed"
+        }
+      ],
+      "completed_cases": 1,
+      "denominator": 6,
+      "known_local_input_tokens": 1452,
+      "known_local_output_tokens": 121,
+      "generation_calls": 8,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "a5daa347c3caa4bb7786bc58751b592f19a0bb533256fb751c5fbab55e0d847b",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 139,
+            "output_tokens": 30,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "3fd873d30f72f01c824d4e49b8357cb44f3fd43537937b83fd12f1857de668b6",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 135,
+            "output_tokens": 8,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "564a2742e1438f656daa19605ee5a244fa5d6f82235409b64f5eab90243401f4",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 130,
+            "output_tokens": 7,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "bbd37039a4ecdd7c8293c0376f8f33c535f32926e60302392ae655ccb33fa45a",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 258,
+            "output_tokens": 14,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "5aaf93213a18e4598dace11b82082a4d5321ee53a5e055fe268ce67fa79dbf39",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 257,
+            "output_tokens": 14,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "63dac23e332a45e5d61d0eaa71a1d25d1a909c040a373d721aa1abb938daa3a7",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 160,
+            "output_tokens": 19,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "5dfe8b22f69702922820cb68149973fb0ccbca0cc9787432a06448ce1ceb6350",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 189,
+            "output_tokens": 13,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "740d6363a712cf292148e68ae523dac98fc9c821af77c62da25c6a503161c043",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 184,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-canonical-9b-8",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "route",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "quality_failed"
+        }
+      ],
+      "completed_cases": 1,
+      "denominator": 6,
+      "known_local_input_tokens": 2162,
+      "known_local_output_tokens": 586,
+      "generation_calls": 11,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "24ff910445a0f95b748fb8ab99693712464a9f91b007a6ea5dee446c65f495c6",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 123,
+            "output_tokens": 31,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "219911241c85b538f6db27db6f263aa03b00ae6a77b65c0eac9d42114d7a4351",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 267,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "7a4028c4334476d456344198d932d1a42346030b122ed62468695ee4fe438524",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 266,
+            "output_tokens": 201,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "964c00117f5888a8781d76e06b06cfd63d48e10d3f548f7d177b4ba26256acbf",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 119,
+            "output_tokens": 8,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "eb72c0e762d0d9fb3e33e5afcdb616ce19dc366f1b80b9dc445b27807c228d51",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 114,
+            "output_tokens": 6,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "91bb5e5644f57cca8f8f94f3d9839aa578e8a132887eb35ecc01be9ebcf34435",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 242,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "11a7468564aa38d937014b506a4f53dba4921c72ea6bb36045372b28c514b4be",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 241,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "f0c25fec3147002f7d50f259adca55fcb3da6eb212166b90959dff0d5f32cffc",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 144,
+            "output_tokens": 23,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "001e4109df64e3ab6ea08cf48da5f084ea3a276ddc2dbe33ba8903a35ff21421",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 173,
+            "output_tokens": 21,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "bc05eb622098d2920b7b436ee9165f90deb37d6d10a8b15d1e85173ecff18937",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 168,
+            "output_tokens": 17,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "a4f69e86adb825b39665285ccf274c4d280f5472533e5119a54931b9b00978ee",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 305,
+            "output_tokens": 231,
+            "known": true,
+            "generation_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-9b-reasoning-9",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "completed"
+        }
+      ],
+      "completed_cases": 5,
+      "denominator": 6,
+      "known_local_input_tokens": 1639,
+      "known_local_output_tokens": 15790,
+      "generation_calls": 7,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "31cd5d0b743754558039b695558987722d6fa238db86711d54557a8dd388e807",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 142,
+            "output_tokens": 3518,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "1800f5248eaeec90245967a0ad611798d1b7cf6ec5cade4f5d647d427d92d08c",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 278,
+            "output_tokens": 1541,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "976a00cc00d310f60087f9cee53ae8cc4f31457bf46edce179a7f49f97d4fac0",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 277,
+            "output_tokens": 3168,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "72066f19ccc79d712846c02cd77c7b58822d6a483b69eeba701d68b055013cab",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 171,
+            "output_tokens": 2921,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "3b7cfc8af544672a7fb39bff01cdd534ff44807a86fda09098e79b14b6e9c1b9",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 166,
+            "output_tokens": 1476,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "2935ff48248cd4579a4f2844359e87a3c65d2d906b7466901be8ecd47a51f83d",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 303,
+            "output_tokens": 1125,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-risk",
+          "receipt_sha256": "72714ad719280e95b63c3b579f88ddd7d34bc8cfc2abc93745c27dd59d39174c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 302,
+            "output_tokens": 2041,
+            "known": true,
+            "generation_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-qwen3-14b-10",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "not_attempted_or_no_final_status"
+        }
+      ],
+      "completed_cases": 4,
+      "denominator": 6,
+      "known_local_input_tokens": 170,
+      "known_local_output_tokens": 1610,
+      "generation_calls": 1,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "9a84f7b660f30b06832f860f2c82ac6254746402f405fc3b8cd0a9586b490825",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 170,
+            "output_tokens": 1610,
+            "known": true,
+            "generation_calls": 1
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-qwen3-sampled-12",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "completed"
+        }
+      ],
+      "completed_cases": 5,
+      "denominator": 6,
+      "known_local_input_tokens": 170,
+      "known_local_output_tokens": 350,
+      "generation_calls": 1,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "632302ca12be0cecd00471f6f82cef95504451289802940f7d416ea53171dfc7",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 170,
+            "output_tokens": 350,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-risk",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-gemma12b-13",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "completed"
+        }
+      ],
+      "completed_cases": 5,
+      "denominator": 6,
+      "known_local_input_tokens": 173,
+      "known_local_output_tokens": 16,
+      "generation_calls": 1,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "7b070c0ceda6cc51c831601d5f85130c8e0e663d7ad88468e8ad46197be36178",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 173,
+            "output_tokens": 16,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-risk",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-native9b-14",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "completed"
+        }
+      ],
+      "completed_cases": 5,
+      "denominator": 6,
+      "known_local_input_tokens": 1605,
+      "known_local_output_tokens": 414,
+      "generation_calls": 1,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "76a8b051ac004666f2b0d82d1cd59fb85faf7de9d2e1cf8d7ce63ee44a57ccaf",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 1605,
+            "output_tokens": 414,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-risk",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-typed-contract-15",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "completed"
+        }
+      ],
+      "completed_cases": 5,
+      "denominator": 6,
+      "known_local_input_tokens": 194,
+      "known_local_output_tokens": 1169,
+      "generation_calls": 1,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "bcfb378bf0d7eceddd22fc214a9d25c331363272bd25d03924460080cfc5e34a",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 194,
+            "output_tokens": 1169,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-risk",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-grounded-contract-16",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "completed"
+        }
+      ],
+      "completed_cases": 5,
+      "denominator": 6,
+      "known_local_input_tokens": 264,
+      "known_local_output_tokens": 2290,
+      "generation_calls": 1,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "a55e46541a738a89068dbe098fbdbe0dfa6f37ea1d9aef9169736333f5723533",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 264,
+            "output_tokens": 2290,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-risk",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-unconstrained-17",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "completed"
+        }
+      ],
+      "completed_cases": 5,
+      "denominator": 6,
+      "known_local_input_tokens": 170,
+      "known_local_output_tokens": 1934,
+      "generation_calls": 1,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "5274661f7c3f96e130e1a85f7e8ea54d81d08a5cb3e6fd3394645e4fbbbb905c",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 170,
+            "output_tokens": 1934,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-risk",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-fast-master-18",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "completed"
+        }
+      ],
+      "completed_cases": 5,
+      "denominator": 6,
+      "known_local_input_tokens": 176,
+      "known_local_output_tokens": 20,
+      "generation_calls": 1,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "459e694995ec30982d965deb54139c6d62e0f5385b5c5a0ba94ff587b9c3a60a",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 176,
+            "output_tokens": 20,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-risk",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-semantic-contract-19",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "completed"
+        }
+      ],
+      "completed_cases": 5,
+      "denominator": 6,
+      "known_local_input_tokens": 330,
+      "known_local_output_tokens": 13,
+      "generation_calls": 1,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "4e6b2818f8988390bfb79e78638fdaa2fd7aa4436df61092e4a1a01d511b4a36",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 330,
+            "output_tokens": 13,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-risk",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-semantic-reasoning-20",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "quality_failed"
+        },
+        {
+          "case_id": "rework",
+          "status": "completed"
+        }
+      ],
+      "completed_cases": 5,
+      "denominator": 6,
+      "known_local_input_tokens": 324,
+      "known_local_output_tokens": 419,
+      "generation_calls": 1,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "2a762b9331c3382794562ed571fd253f1e1dc8c493be62d3627458ec6cf3c1ed",
+          "status": "quality_failed",
+          "usage": {
+            "input_tokens": 324,
+            "output_tokens": 419,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-risk",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        }
+      ]
+    },
+    {
+      "profile": "local-semantic-9b-21",
+      "cases": [
+        {
+          "case_id": "ticket",
+          "status": "completed"
+        },
+        {
+          "case_id": "route",
+          "status": "completed"
+        },
+        {
+          "case_id": "queue",
+          "status": "completed"
+        },
+        {
+          "case_id": "uncertain",
+          "status": "completed"
+        },
+        {
+          "case_id": "resources",
+          "status": "completed"
+        },
+        {
+          "case_id": "rework",
+          "status": "completed"
+        }
+      ],
+      "completed_cases": 6,
+      "denominator": 6,
+      "known_local_input_tokens": 1005,
+      "known_local_output_tokens": 6039,
+      "generation_calls": 3,
+      "calls_with_unknown_local_usage": 0,
+      "phase_receipts": [
+        {
+          "case_id": "ticket",
+          "role": "master",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-correctness",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "ticket",
+          "role": "review-risk",
+          "receipt_sha256": "0936a3d3e594259485b2085db0e245371b78c7bc507585192838eafe4f9ec286",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "master",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-correctness",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "route",
+          "role": "review-risk",
+          "receipt_sha256": "d928264a65a25a68f859935bc546a018e85d6c6127e677edcd248cd7601e69b3",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "master",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-correctness",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "queue",
+          "role": "review-risk",
+          "receipt_sha256": "72446a97ea6c04130c860487c7bd67390b616aee80319001e1c3ebdacc3df66c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "master",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-correctness",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "uncertain",
+          "role": "review-risk",
+          "receipt_sha256": "240f0a42e4308052ef3b6f2331b18c5323611d69def7416bc4edac5ff1a75a4d",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "master",
+          "receipt_sha256": "5ed538634f4c51e873a17208caf65157325e2b95c7037eaed5b1e6da142d8f11",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 330,
+            "output_tokens": 391,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "review-correctness",
+          "receipt_sha256": "98444818001749d2fe9970ff90755e05fc1b5023fbfaa3694430f313d2d07688",
+          "status": "waiting",
+          "usage": {
+            "input_tokens": 338,
+            "output_tokens": 2779,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "resources",
+          "role": "review-risk",
+          "receipt_sha256": "b9ac55bfb83001ed00e1fbbfc8ea582182a80275a6021c82a83ab453fe8c8221",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 337,
+            "output_tokens": 2869,
+            "known": true,
+            "generation_calls": 1
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "master",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-correctness",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        },
+        {
+          "case_id": "rework",
+          "role": "review-risk",
+          "receipt_sha256": "bcaf113d279f59cb8239c19506dcd21023afa0b53ce6d2ecfbf85547252f1d1c",
+          "status": "completed",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "known": true,
+            "generation_calls": 0
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Mixed models, runtime policies and framing; five completed cases reused historical exact results and three fresh resource roles generated. Not one uniform fresh 18-generation run.",
+    "The resource workflow receives a manual types-only decoder contract, semantic field-role annotations and additional generic source-grounding system instructions. The same original task, canonical user prompt and answer checks are retained, but information is not identical to the baseline.",
+    "Policies were iteratively tuned on these same six fixtures. This is not held-out quality evidence or a claim that models reliably pass arbitrary tasks.",
+    "All canonical task/prompt bindings match. Actual canonical wire framing applies to fresh complex cases; historical simple cases used legacy Ollama split framing.",
+    "All original declared answer checks retained; expected answers are not sent to model roles.",
+    "Baseline input includes cache reads and output includes reasoning; these categories are not added twice.",
+    "Separate reviewer prompts share model weights and can have correlated errors. Checks and votes are not human acceptance.",
+    "Local nonstreaming elapsed time includes admission and cold starts; no TTFT or speedup established.",
+    "Operator-supplied observations, not remote attestation or representative coding quality.",
+    "No real second physical machine tested; no global chat backend changed.",
+    "Hosted build coordination/release review consumes normal allowance; whole-build tokens, account credits and USD invoice savings are excluded and unmeasured.",
+    "All current-turn failed/pending records and unknown local counters retained. The earlier v0.9.0 report remains separate and unchanged; these totals do not incorporate its unknown local usage. Hardware, electricity and time are not priced.",
+    "Outer CLI timing was not retained for the three historical simple-case origins; those fields stay null. No time values were reconstructed."
+  ],
+  "originating_runtime_binaries": {
+    "questlock-reasoning": {
+      "sha256": "87637b078850d5b18dfcf8a5fb6e18979ac2aaa27b704408320d5d45c8947c78",
+      "vcs": "git",
+      "vcs.revision": "a699ed7743f9e7cfd66bed74742fc2ff3f570255",
+      "vcs.time": "2026-10-20T03:06:16Z",
+      "vcs.modified": "true"
+    },
+    "questlock-canonical-memory": {
+      "sha256": "e2f9f2b8ed45d15a210eb4e90e5c602330b4d3823fbace3b00f8a3585ef67095",
+      "vcs": "git",
+      "vcs.revision": "f85d6f589f2a7d84c3869bb1581226391909f845",
+      "vcs.time": "2026-10-20T03:53:00Z",
+      "vcs.modified": "false"
+    },
+    "questlock-semantic": {
+      "sha256": "36068b0b3a6f7c392d35c3122dc458422e23cc55313e422b0ce51dc8a24632c6",
+      "vcs": "git",
+      "vcs.revision": "7989e80323388ff934418d7026b50d7b6b70e327",
+      "vcs.time": "2026-10-20T05:08:48Z",
+      "vcs.modified": "false"
+    }
+  },
+  "metadata_only_profile11": {
+    "profile": "local-qwen3-compact-11",
+    "generation_calls": 0,
+    "result": "input estimate 2972 exceeded approved 2048 cap before any claim/generation"
+  },
+  "model_license_note": "Qwen weights were downloaded from official Ollama library entries. Gemma 3 diagnostic weights use Gemma Terms; no model weights or upstream model licenses are redistributed by Questlock archives.",
+  "independent_validation": {
+    "policy": "Frozen before first inference; designed by independent release reviewer; each ran once with unchanged source/model policy, no baseline and failures retained.",
+    "frozen_contracts_sha256": "5a02af02502a98c11b9700dcb2ff4a6e53675e4b3128991d8103f269adb8d598",
+    "cases": [
+      {
+        "case_id": "dispatch-numeric-id",
+        "status": "completed",
+        "request_file_sha256": "9cc3f566b19efdeebecd1c1eceb21998b18a06cb60b68b5f5c32158ea6d384e5",
+        "policy_revision": "local-semantic-contract-19",
+        "phases": [
+          {
+            "role": "master",
+            "status": "waiting",
+            "usage": {
+              "input_tokens": 329,
+              "output_tokens": 19,
+              "known": true,
+              "generation_calls": 1
+            },
+            "receipt_sha256": "4cea11d9fd102779e6948ed8e6a4eab0531ddb084783e6ee5d1d7235136b7996"
+          },
+          {
+            "role": "review-correctness",
+            "status": "waiting",
+            "usage": {
+              "input_tokens": 343,
+              "output_tokens": 2064,
+              "known": true,
+              "generation_calls": 1
+            },
+            "receipt_sha256": "1e91a70b221efdc80cd5d6f61df86c381c486a2a07e57c5c3f51822f050bfb13"
+          },
+          {
+            "role": "review-risk",
+            "status": "completed",
+            "usage": {
+              "input_tokens": 342,
+              "output_tokens": 3186,
+              "known": true,
+              "generation_calls": 1
+            },
+            "receipt_sha256": "236f47a58cf9ddf4eafd5d1e6bcbede73749fe41326a67db65197a74deb1bd9f"
+          }
+        ],
+        "codex_baseline": "none; excluded from six-case comparison"
+      },
+      {
+        "case_id": "invoice-numeric-policy",
+        "status": "stopped",
+        "request_file_sha256": "3fab48e44fc9125d97edf6e33c3c8909a1843b3a41867f7a944a7887a132963c",
+        "policy_revision": "local-semantic-contract-19",
+        "phases": [
+          {
+            "role": "master",
+            "status": "waiting",
+            "usage": {
+              "input_tokens": 350,
+              "output_tokens": 23,
+              "known": true,
+              "generation_calls": 1
+            },
+            "receipt_sha256": "a001dd3194d474bed603d2d699b329c5599cf33967041fe785d700e626b14c85"
+          },
+          {
+            "role": "review-correctness",
+            "status": "waiting",
+            "usage": {
+              "input_tokens": 369,
+              "output_tokens": 2712,
+              "known": true,
+              "generation_calls": 1
+            },
+            "receipt_sha256": "939e64d2269d7bb21b4f943e89fcabe1e2092c9fed2749c99a6dc765bc32b56f"
+          },
+          {
+            "role": "review-risk",
+            "status": "stopped",
+            "usage": {
+              "input_tokens": 368,
+              "output_tokens": 4096,
+              "known": true,
+              "generation_calls": 1
+            },
+            "receipt_sha256": "4e1c3576f3c2489e69f6128cec682c66c3b8daa933514d60f8212eb5db49575b"
+          }
+        ],
+        "codex_baseline": "none; excluded from six-case comparison"
+      }
+    ],
+    "local_usage": {
+      "known_input_tokens": 2101,
+      "known_output_tokens": 12100,
+      "generation_calls": 6,
+      "calls_with_unknown_usage": 0
+    }
+  },
+  "development_deterministic_edits": {
+    "documents": 3,
+    "fresh_revisions": 6,
+    "exact_replays": 6,
+    "counted_literal_replacements": 34,
+    "generation_calls": 0,
+    "this_run_input_tokens": 0,
+    "this_run_output_tokens": 0,
+    "provider_cost_usd": 0,
+    "records": [
+      {
+        "request_name": "guide-policy5",
+        "counted_literal_replacements": 3,
+        "fresh_receipt_sha256": "45d6cff9703144ec7a8adcc4dbfeaf375fda91f79879d577c205231b9f5d8389",
+        "exact_repeat_receipt_sha256": "5d40fc98f76910a4ba49c907413e78d60d93964eea711f0faabb8a09074eca39"
+      },
+      {
+        "request_name": "examples-policy5",
+        "counted_literal_replacements": 2,
+        "fresh_receipt_sha256": "455e888e3b11e5bcb48f2203571f91ae5436cdc4f671e9a71114e3409f401ee3",
+        "exact_repeat_receipt_sha256": "f455e08807e494f09fc1672506b9ca68d17bc0f7458fc14bcafc536a0c75fa08"
+      },
+      {
+        "request_name": "guide-final",
+        "counted_literal_replacements": 7,
+        "fresh_receipt_sha256": "3fe6f062018abaf0d04d58dddbd701bda73cb788854cc8a1c64790e7d93da573",
+        "exact_repeat_receipt_sha256": "da7ee25b31838b2d34efe23ee84e12945624466f8121d7907e72b1c9c007bfe5"
+      },
+      {
+        "request_name": "examples-final",
+        "counted_literal_replacements": 1,
+        "fresh_receipt_sha256": "255a181067b32be1546a2ffce194b775464beef68d72d3a662baf69f89205d70",
+        "exact_repeat_receipt_sha256": "b751e66eebd15a4acab974f7169992e847dc3e7032c42b5c2e140f42c6318e47"
+      },
+      {
+        "request_name": "guide-safety",
+        "counted_literal_replacements": 18,
+        "fresh_receipt_sha256": "f2507d66e42f0621ebb1db42bfcf5cb4aeba3dbfdde9a36b5dc391aab19f1f8a",
+        "exact_repeat_receipt_sha256": "dfd55e94e7f2ceb2953050062476d4c84eb92e48afc85d2414491076bb3e1951"
+      },
+      {
+        "request_name": "readme-final",
+        "counted_literal_replacements": 3,
+        "fresh_receipt_sha256": "3cf03f74a400323041843b3791eca7c07320b05ac5cdde06a7d0fd81d7b2af72",
+        "exact_repeat_receipt_sha256": "c15e0e7bf40e8bde2dd4fdfb52ee51d19907aa0622a1c6ab71b2d55707b59c90"
+      }
+    ],
+    "counterfactual_tokens_or_usd": "not measured"
+  },
+  "branding_sha256": "e8121dd023da8f1d76aa33e633ae03c44fffcc5f7794377e3b2ccb89b145ab29"
+}
