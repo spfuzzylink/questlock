@@ -1,6 +1,13 @@
 # Questlock 0.9.0 — local roles, shared gates
 
-**Experimental release candidate.** Publication is pending required CI gates.
+**Published experimental release.**
+[Release and downloads](https://github.com/spfuzzylink/questlock/releases/tag/v0.9.0) ·
+[Verified publication](validation.md#v090-observations--2026-10-19)
+
+Four native archives, two macOS MCPB extensions and both Linux container
+architectures are published and verified. Immutable archives retain their
+source-era candidate wording; the web guides record publication. Older releases
+and the permanent brand image stay unchanged.
 
 A bounded local master and one to three independent local reviewers now share
 claims and checked results through the existing broker. `team init` creates an
