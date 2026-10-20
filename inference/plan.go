@@ -99,6 +99,9 @@ func validateSpec(s Spec) error {
 		if err := validateOllamaOptions(s.Ollama); err != nil {
 			return err
 		}
+		if s.Stream && ollamaThinkingEnabled(s.Ollama) {
+			return errors.New("Ollama thinking requires nonstream generation")
+		}
 	}
 	for _, v := range []string{s.Task, s.Revision, s.Model} {
 		if !validID(v, 128) {
@@ -215,6 +218,10 @@ func validateOllamaOptions(options *OllamaOptions) error {
 		return errors.New("ollama keep_alive_seconds must be between 0 and 300")
 	}
 	return nil
+}
+
+func ollamaThinkingEnabled(options *OllamaOptions) bool {
+	return options != nil && options.Think != nil && *options.Think
 }
 
 func validID(s string, limit int) bool {

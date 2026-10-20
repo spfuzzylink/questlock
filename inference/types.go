@@ -64,10 +64,13 @@ type Request struct {
 // defaults for requests that omit them. Format accepts only "json" or empty;
 // a non-nil Temperature must be finite and between 0 and 2, inclusive.
 // KeepAliveSeconds accepts 0..300; 0 requests unloading after generation.
+// Think defaults to false. Explicit true requires nonstream generation and
+// installed model metadata advertising boolean true; reasoning is discarded.
 type OllamaOptions struct {
 	Format           string   `json:"format,omitempty"`
 	Temperature      *float64 `json:"temperature,omitempty"`
 	KeepAliveSeconds *int64   `json:"keep_alive_seconds,omitempty"`
+	Think            *bool    `json:"think,omitempty"`
 }
 
 type Plan struct {

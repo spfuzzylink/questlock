@@ -13,6 +13,7 @@ import (
 
 func ollamaTemperature(value float64) *float64  { return &value }
 func ollamaKeepAliveSeconds(value int64) *int64 { return &value }
+func ollamaThink(value bool) *bool              { return &value }
 
 func ollamaOptionsSpec() Spec {
 	s := testSpec()
@@ -61,6 +62,9 @@ func TestOllamaOptionsPinPlanIdentityWithoutChangingPrompt(t *testing.T) {
 		{KeepAliveSeconds: ollamaKeepAliveSeconds(0)},
 		{KeepAliveSeconds: ollamaKeepAliveSeconds(300)},
 		{Format: "json", Temperature: ollamaTemperature(0), KeepAliveSeconds: ollamaKeepAliveSeconds(0)},
+		{Think: ollamaThink(false)},
+		{Think: ollamaThink(true)},
+		{Format: "json", Temperature: ollamaTemperature(0), KeepAliveSeconds: ollamaKeepAliveSeconds(0), Think: ollamaThink(true)},
 	} {
 		s.Ollama = options
 		p, err := BuildPlan(s)
@@ -167,6 +171,7 @@ func TestOllamaExplicitOptionsSerializeForBothGenerationModes(t *testing.T) {
 			{"unload after request", &OllamaOptions{KeepAliveSeconds: ollamaKeepAliveSeconds(0)}},
 			{"retain maximum", &OllamaOptions{KeepAliveSeconds: ollamaKeepAliveSeconds(300)}},
 			{"json zero and unload", &OllamaOptions{Format: "json", Temperature: ollamaTemperature(0), KeepAliveSeconds: ollamaKeepAliveSeconds(0)}},
+			{"explicit no thinking", &OllamaOptions{Think: ollamaThink(false)}},
 		} {
 			name := "nonstream/" + tt.name
 			if stream {

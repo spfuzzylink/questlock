@@ -36,6 +36,7 @@ type ollamaMetadata struct {
 	template      string
 	system        string
 	contextLength int64
+	canThink      bool
 }
 
 const (
@@ -207,8 +208,12 @@ func (p *OllamaProvider) inspect(ctx context.Context) (ollamaMetadata, error) {
 		canDisable := false
 		if ok {
 			for _, value := range values {
-				if disabled, ok := value.(bool); ok && !disabled {
-					canDisable = true
+				if enabled, ok := value.(bool); ok {
+					if enabled {
+						metadata.canThink = true
+					} else {
+						canDisable = true
+					}
 				}
 			}
 		}
@@ -281,11 +286,14 @@ func (p *OllamaProvider) validate(req Request) error {
 	if err := validateOllamaOptions(req.Ollama); err != nil {
 		return err
 	}
+	if req.Stream && ollamaThinkingEnabled(req.Ollama) {
+		return errors.New("Ollama thinking requires nonstream generation")
+	}
 	if !validOllamaModel(req.Model) || canonicalOllamaModel(req.Model) != p.model {
 		return errors.New("request model does not match the installed Ollama snapshot")
 	}
 	if req.ReasoningEffort != "" {
-		return errors.New("Ollama local mode uses think:false and does not accept reasoning_effort")
+		return errors.New("Ollama local mode does not accept reasoning_effort")
 	}
 	if req.CacheMode != "" && req.CacheMode != "default" {
 		return errors.New("Ollama uses automatic local caching; cache mode must be default")
@@ -322,6 +330,9 @@ func (p *OllamaProvider) CountInputTokens(ctx context.Context, req Request) (int
 }
 
 func ollamaInputEstimate(req Request, metadata ollamaMetadata) (int64, error) {
+	if ollamaThinkingEnabled(req.Ollama) && !metadata.canThink {
+		return 0, errors.New("Ollama model does not advertise support for think:true")
+	}
 	estimate := int64(len(req.Prefix)+len(req.Input)+len(metadata.template)+len(metadata.system)) + 512
 	if req.ContextWindow > metadata.contextLength {
 		return 0, errors.New("requested Ollama context window exceeds the model's reported capacity")
@@ -357,7 +368,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 			NumCtx      int64    `json:"num_ctx"`
 			Temperature *float64 `json:"temperature,omitempty"`
 		} `json:"options"`
-	}{Model: p.model, System: req.Prefix, Prompt: req.Input, Stream: req.Stream}
+	}{Model: p.model, System: req.Prefix, Prompt: req.Input, Stream: req.Stream, Think: ollamaThinkingEnabled(req.Ollama)}
 	body.Options.NumPredict, body.Options.NumCtx = req.MaxOutputTokens, req.ContextWindow
 	if req.Ollama != nil {
 		body.Format, body.Options.Temperature = req.Ollama.Format, req.Ollama.Temperature
@@ -385,6 +396,9 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 	if raw.PromptEvalCount == nil || raw.EvalCount == nil {
 		return failure(errors.New("Ollama response is missing token usage"))
 	}
+	// Ollama reports generated token counts before splitting thinking from the
+	// final answer. Keep that total as output usage; it provides no separate
+	// reasoning-token count. Thinking text never enters the returned response.
 	u := Usage{InputTokens: *raw.PromptEvalCount, OutputTokens: *raw.EvalCount}
 	if raw.PromptEvalCachedCount != nil {
 		u.CacheReadTokens = *raw.PromptEvalCachedCount
@@ -393,7 +407,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 		return failure(errors.New("Ollama response contains invalid token usage"))
 	}
 	u.UncachedInputTokens = u.InputTokens - u.CacheReadTokens
-	result := Response{Model: raw.Model, Text: raw.Response, Usage: u, Timing: timing, Complete: raw.Done != nil && *raw.Done && raw.DoneReason == "stop" && raw.Response != "" && canonicalOllamaModel(raw.Model) == p.model && !nonNullJSON(raw.Error) && !nonNullJSON(raw.ToolCalls) && raw.Thinking == ""}
+	result := Response{Model: raw.Model, Text: raw.Response, Usage: u, Timing: timing, Complete: raw.Done != nil && *raw.Done && raw.DoneReason == "stop" && raw.Response != "" && canonicalOllamaModel(raw.Model) == p.model && !nonNullJSON(raw.Error) && !nonNullJSON(raw.ToolCalls) && (body.Think || raw.Thinking == "")}
 	switch raw.DoneReason {
 	case "stop", "length", "load":
 		result.StopReason = raw.DoneReason
@@ -404,7 +418,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 		result.Complete = false
 		result.StopReason = "incomplete"
 	}
-	if raw.Thinking != "" {
+	if raw.Thinking != "" && !body.Think {
 		result.StopReason = "unexpected_thinking"
 	}
 	if nonNullJSON(raw.ToolCalls) {
