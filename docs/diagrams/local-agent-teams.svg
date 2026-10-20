@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" role="img" aria-labelledby="title desc">
 <title id="title">Local master and independent reviewers</title>
-<desc id="desc">An approved snapshot reaches one authoritative broker. Three scoped worker identities run a local master and independent reviewers; only checked results are released. Each fresh role waits for capacity before its claim. Optional direct Ollama JSON mode gives reviewers a parsed candidate value; bounded reasoning shares the total output cap and raw thinking is discarded. Model release after each response is optional. Pending or uncertain claims stop without regeneration. Qualification can use isolated nodes on one physical host.</desc>
+<desc id="desc">An approved snapshot reaches one authoritative broker. Three scoped worker identities run a local master and independent reviewers; only checked results are released. Each fresh role waits for capacity before its claim. A direct Ollama master can opt into manually declared primitive field types and generic source-grounding system guidance; no expected answer values are supplied. Reviewers see declared types as reference data and retain their fixed approval contract. Optional JSON mode gives reviewers a parsed candidate value; bounded reasoning shares the total output cap and raw thinking is discarded. Model release after each response is optional. Pending or uncertain claims stop without regeneration. Qualification can use isolated nodes on one physical host.</desc>
 <defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9" fill="#64ddc0" /></marker></defs>
 <rect width="1200" height="780" fill="#101b31" />
 <text x="40" y="55" fill="#eff5ff" font-family="Arial,sans-serif" font-size="28" font-weight="700">Local reasoning. Durable shared results.</text>
@@ -28,6 +28,7 @@
 <text x="190" y="384" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Node A · master</text>
 <text x="190" y="410" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="13" font-weight="400">Local Ollama or native Codex OSS</text>
 <text x="190" y="431" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="13" font-weight="400">Admission before durable claim</text>
+<text x="190" y="454" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="13">Ollama: types + source guidance</text>
 <rect x="450" y="350" width="300" height="140" rx="11" fill="#172740" stroke="#ab95ef" stroke-width="1.5" />
 <text x="600" y="384" text-anchor="middle" fill="#eff5ff" font-family="Arial,sans-serif" font-size="18" font-weight="700">Node B · correctness</text>
 <text x="600" y="410" text-anchor="middle" fill="#bdcbe0" font-family="Arial,sans-serif" font-size="13" font-weight="400">Same task + master candidate</text>

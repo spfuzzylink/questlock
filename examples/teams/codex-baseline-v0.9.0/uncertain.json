@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "task_sha256": "4ff6dc404448b48bd4fd98035a12516dd32271cd0d839153e0e0bcc8d1152b2d",
+  "prompt_sha256": "7ceeb28fe3d780768111d644ac1371d856df34520356bc44d40947ddd6689823",
+  "model": "gpt-6.1-sol",
+  "source": "operator_recorded_codex_subscription_jsonl",
+  "complete": true,
+  "usage_known": true,
+  "usage": {
+    "input_tokens": 10905,
+    "uncached_input_tokens": 2585,
+    "cache_read_tokens": 8320,
+    "cache_write_tokens": 0,
+    "output_tokens": 101,
+    "reasoning_tokens": 83
+  },
+  "text": "{\"action\":\"inspect\",\"operation_id\":\"op-17\"}"
+}

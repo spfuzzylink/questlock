@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "task": "team-benchmark/uncertain",
+  "revision": "native-adapter-2",
+  "instructions": "Return JSON with action and operation_id. An uncertain publish must retain exact identity for inspection; it must never generate again or change operation ID.",
+  "input": "Publish operation op-17 may have committed. Its acknowledgement was lost. The master has no confirmed receipt.",
+  "master": {
+    "ollama": {
+      "format": "json",
+      "temperature": 0,
+      "keep_alive_seconds": 0,
+      "prompt_mode": "bounded_text",
+      "think": true,
+      "generation_timeout_seconds": 300
+    },
+    "id": "master",
+    "driver": "ollama",
+    "model": "qwen3.5:9b",
+    "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+    "instructions": "Solve the approved task. Return only the requested answer, without Markdown fences.",
+    "max_input_tokens": 8192,
+    "max_output_tokens": 4096
+  },
+  "reviewers": [
+    {
+      "ollama": {
+        "format": "json",
+        "temperature": 0,
+        "keep_alive_seconds": 0,
+        "prompt_mode": "bounded_text",
+        "think": true,
+        "generation_timeout_seconds": 300
+      },
+      "id": "review-correctness",
+      "driver": "ollama",
+      "model": "qwen3.5:9b",
+      "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+      "instructions": "Check that every requirement and source fact is satisfied. Reject unsupported or incorrect statements. The candidate field contains the parsed JSON value returned by the master. Evaluate its contents against the source task; JSON transport representation is not an output defect. Apply the task's explicit rules to the input before judging the candidate. Do not invent requirements or replace explicit rules with assumptions.",
+      "max_input_tokens": 8192,
+      "max_output_tokens": 4096
+    },
+    {
+      "ollama": {
+        "format": "json",
+        "temperature": 0,
+        "keep_alive_seconds": 0,
+        "prompt_mode": "bounded_text",
+        "think": true,
+        "generation_timeout_seconds": 300
+      },
+      "id": "review-risk",
+      "driver": "ollama",
+      "model": "qwen3.5:9b",
+      "model_digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+      "instructions": "Check boundary conditions, missing requirements and misleading claims. Reject any concrete defect. The candidate field contains the parsed JSON value returned by the master. Evaluate its contents against the source task; JSON transport representation is not an output defect. Apply the task's explicit rules to the input before judging the candidate. Do not invent requirements or replace explicit rules with assumptions.",
+      "max_input_tokens": 8192,
+      "max_output_tokens": 4096
+    }
+  ],
+  "checks": [
+    {
+      "id": "expected",
+      "kind": "json_equals",
+      "expected": {
+        "action": "inspect",
+        "operation_id": "op-17"
+      }
+    }
+  ],
+  "reuse_for_seconds": 86400,
+  "policy_revision": "local-9b-reasoning-9"
+}

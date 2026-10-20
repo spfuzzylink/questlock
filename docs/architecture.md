@@ -19,6 +19,14 @@ model after its response, trading resident memory for later cold starts. This
 changes model retention, not global memory reservation or retry behavior. Requests
 that omit these controls keep their existing defaults and representation.
 
+A direct Ollama master can declare primitive `output_types` explicitly. Questlock
+adds a bounded types-only decoder schema and generic source-grounding system
+instructions, while keeping the canonical user prompt unchanged. It supplies no
+answer values, never derives types from expected checks, and never rewrites a
+response to make it pass. Reviewers see the declared types as reference data;
+their fixed approval contract stays separate. The comparison reports this extra
+runtime assistance rather than claiming identical-information model parity.
+
 ![Local text roles share one authoritative publication boundary](diagrams/local-agent-teams.svg)
 
 The [team guide](local-agent-teams.md) covers role handoff, HTTPS/private CA

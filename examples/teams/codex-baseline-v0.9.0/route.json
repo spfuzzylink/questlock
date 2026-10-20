@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "task_sha256": "b8d7e1e4716ad20eb0276b84d8d8548e019822a30e9b006c5b490ab2db5fbd53",
+  "prompt_sha256": "1597d84e6f36383c667fd3e2e8f719ea6b739d87c0dce176e8441af327a1ff97",
+  "model": "gpt-6.1-sol",
+  "source": "operator_recorded_codex_subscription_jsonl",
+  "complete": true,
+  "usage_known": true,
+  "usage": {
+    "input_tokens": 10880,
+    "uncached_input_tokens": 10880,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0,
+    "output_tokens": 48,
+    "reasoning_tokens": 36
+  },
+  "text": "{\"provider\":\"ollama\"}"
+}

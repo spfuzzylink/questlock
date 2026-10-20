@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "task_sha256": "ea9ca842eb3e66ea05f44069e1d1a41447ccf5d96f0c54b924696819154a9908",
+  "prompt_sha256": "1ce4e600037545faa8acdfa5f3657a6a250ca1ae2321fb92d1021ae2518414b4",
+  "model": "gpt-6.1-sol",
+  "source": "operator_recorded_codex_subscription_jsonl",
+  "complete": true,
+  "usage_known": true,
+  "usage": {
+    "input_tokens": 10877,
+    "uncached_input_tokens": 2557,
+    "cache_read_tokens": 8320,
+    "cache_write_tokens": 0,
+    "output_tokens": 52,
+    "reasoning_tokens": 40
+  },
+  "text": "{\"waiting_count\":6}"
+}
