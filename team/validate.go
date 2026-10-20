@@ -36,9 +36,12 @@ func Validate(r Request) error {
 		return errors.New("invalid bounded team task, roles, checks or reuse window")
 	}
 	ids := map[string]bool{}
-	for _, role := range append([]Role{r.Master}, r.Reviewers...) {
+	for index, role := range append([]Role{r.Master}, r.Reviewers...) {
 		if role.Ollama != nil && role.Driver != "ollama" {
 			return errors.New("direct Ollama generation options require the ollama driver")
+		}
+		if index > 0 && role.Ollama != nil && role.Ollama.OutputTypes != nil {
+			return errors.New("output_types is a master-only runtime contract; reviewer approval checks cannot be replaced")
 		}
 		outputLimit := int64(4096)
 		if role.Driver == "ollama" && role.Ollama != nil && role.Ollama.Think != nil && *role.Ollama.Think {
@@ -111,7 +114,8 @@ func workerRequest(r Request, role Role, candidate string) (delegation.Request, 
 			Input        string                  `json:"input"`
 			Context      []inference.ContextItem `json:"context"`
 			Candidate    any                     `json:"candidate"`
-		}{r.Instructions, r.Input, r.Context, reference})
+			OutputTypes  map[string]string       `json:"output_types,omitempty"`
+		}{r.Instructions, r.Input, r.Context, reference, runtimeOutputTypes(r)})
 		if err != nil {
 			return delegation.Request{}, errors.New("cannot encode reviewer reference")
 		}
@@ -121,4 +125,17 @@ func workerRequest(r Request, role Role, candidate string) (delegation.Request, 
 	}
 	fingerprintBytes, _ := json.Marshal(r)
 	return delegation.Request{TrackOutcome: true, Spec: inference.Spec{Task: "team/" + hash(string(fingerprintBytes)) + "/" + role.ID, Revision: "v1", Instructions: instructions, Input: input, Context: r.Context}, Policy: delegation.Policy{Local: delegation.Tier{ID: role.ID, Spec: inference.Spec{Provider: "ollama", Model: role.Model, Ollama: role.Ollama, MaxContextBytes: 65536, MaxInputTokens: role.MaxInputTokens, MaxOutputTokens: role.MaxOutputTokens, ReuseForSeconds: r.ReuseForSeconds}}}, Checks: checks}, nil
+}
+
+// runtimeOutputTypes copies only the operator's declared master contract. It
+// never infers a schema or value from checks, instructions or candidate output.
+func runtimeOutputTypes(r Request) map[string]string {
+	if r.Master.Ollama == nil || r.Master.Ollama.OutputTypes == nil {
+		return nil
+	}
+	copy := make(map[string]string, len(r.Master.Ollama.OutputTypes))
+	for name, kind := range r.Master.Ollama.OutputTypes {
+		copy[name] = kind
+	}
+	return copy
 }

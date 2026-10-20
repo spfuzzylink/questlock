@@ -3,7 +3,9 @@ package team
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"math"
+	"reflect"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -11,6 +13,7 @@ import (
 	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/evaluation"
 	"github.com/spfuzzylink/questlock/inference"
+	"github.com/spfuzzylink/questlock/protocol"
 )
 
 func TestReviewedLocalPolicyChangesIdentityWithoutChangingBaseline(t *testing.T) {
@@ -189,5 +192,125 @@ func TestMalformedJSONMasterFailsBeforeAnyReviewerClaim(t *testing.T) {
 	out, err = e.Run(context.Background(), r, "all")
 	if err == nil || out.Status != "quality_failed" || calls.Load() != 1 {
 		t.Fatal("malformed master was regenerated", out, err)
+	}
+}
+
+func TestDeclaredMasterTypesChangeExecutionButNotTaskOrCanonicalPrompt(t *testing.T) {
+	r := fixture()
+	r.Master.Ollama = &inference.OllamaOptions{Format: "json", PromptMode: "bounded_text"}
+	before, err := Fingerprint(r)
+	if err != nil {
+		t.Fatal(err)
+	}
+	prompt, err := MasterPrompt(r)
+	if err != nil {
+		t.Fatal(err)
+	}
+	task := TaskDigest(r)
+	r.Master.Ollama.OutputTypes = map[string]string{"answer": "integer"}
+	after, err := Fingerprint(r)
+	if err != nil {
+		t.Fatal(err)
+	}
+	afterPrompt, err := MasterPrompt(r)
+	if err != nil || before == after || TaskDigest(r) != task || afterPrompt != prompt {
+		t.Fatal("runtime contract changed baseline information or reused old execution identity", err)
+	}
+	w, err := workerRequest(r, r.Master, "")
+	if err != nil || !reflect.DeepEqual(w.Policy.Local.Spec.Ollama.OutputTypes, r.Master.Ollama.OutputTypes) {
+		t.Fatal("declared types were not forwarded to the local runtime", err)
+	}
+}
+
+func TestReviewerReferenceIncludesDeclaredTypesWithoutExpectedValues(t *testing.T) {
+	r := fixture()
+	r.Instructions = "Return JSON with waiting_count. Subtract running from total."
+	r.Input = "There are 9 jobs total and 3 running."
+	r.Checks = []evaluation.Check{{ID: "secret-oracle", Kind: "json_equals", Expected: json.RawMessage(`{"waiting_count":6}`)}}
+	r.Master.Ollama = &inference.OllamaOptions{Format: "json", OutputTypes: map[string]string{"waiting_count": "integer"}}
+	for _, reviewer := range r.Reviewers {
+		w, err := workerRequest(r, reviewer, `{"waiting_count":5}`)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var data map[string]json.RawMessage
+		if json.Unmarshal([]byte(w.Spec.Input), &data) != nil || len(data) != 5 {
+			t.Fatal("unexpected reviewer reference", w.Spec.Input)
+		}
+		for _, name := range []string{"instructions", "input", "context", "candidate", "output_types"} {
+			if _, ok := data[name]; !ok {
+				t.Fatal("missing approved reviewer reference", name)
+			}
+		}
+		if string(data["output_types"]) != `{"waiting_count":"integer"}` || string(data["candidate"]) != `{"waiting_count":5}` || strings.Contains(w.Spec.Input, "secret-oracle") || strings.Contains(w.Spec.Input, `"waiting_count":6`) {
+			t.Fatal("expected value leaked or declared contract changed", w.Spec.Input)
+		}
+		if w.Policy.Local.Spec.Ollama != nil || len(w.Checks) != 2 || w.Checks[0].Kind != "json_valid" || w.Checks[1].Kind != "json_equals" || string(w.Checks[1].Expected) != `{"approved":true,"issues":[]}` {
+			t.Fatal("master contract replaced reviewer approval checks")
+		}
+	}
+}
+
+func TestOmittedTypesPreserveExactLegacyReviewerReference(t *testing.T) {
+	r := fixture()
+	w, err := workerRequest(r, r.Reviewers[0], `{"answer":17}`)
+	want := `{"instructions":"Return JSON with answer 17.","input":"Answer 17.","context":null,"candidate":"{\"answer\":17}"}`
+	if err != nil || w.Spec.Input != want {
+		t.Fatal("legacy reviewer reference bytes changed", w.Spec.Input, err)
+	}
+	r.Master.Ollama = &inference.OllamaOptions{Format: "json"}
+	w, err = workerRequest(r, r.Reviewers[0], `{"answer":17}`)
+	want = `{"instructions":"Return JSON with answer 17.","input":"Answer 17.","context":null,"candidate":{"answer":17}}`
+	if err != nil || w.Spec.Input != want {
+		t.Fatal("legacy JSON reviewer reference bytes changed", w.Spec.Input, err)
+	}
+}
+
+type noPolicyCallsBroker struct{ calls atomic.Int64 }
+
+func (b *noPolicyCallsBroker) Get(context.Context, string) (protocol.Artifact, error) {
+	b.calls.Add(1)
+	return protocol.Artifact{}, errors.New("unexpected broker read")
+}
+func (b *noPolicyCallsBroker) Publish(context.Context, protocol.PublishRequest) (protocol.PublishResult, error) {
+	b.calls.Add(1)
+	return protocol.PublishResult{}, errors.New("unexpected broker claim")
+}
+
+func TestReviewerOutputTypesAreRejectedBeforeBrokerAdmissionOrClaims(t *testing.T) {
+	for _, index := range []int{0, 1} {
+		for _, types := range []map[string]string{{}, {"approved": "boolean"}, {"waiting_count": "integer"}} {
+			r := fixture()
+			r.Reviewers[index].Ollama = &inference.OllamaOptions{Format: "json", OutputTypes: types}
+			broker := new(noPolicyCallsBroker)
+			e := Engine{Broker: broker, WorkerID: "fixture", Factory: func(context.Context, Role) (delegation.Runner, error) {
+				t.Fatal("reviewer contract constructed a provider")
+				return nil, nil
+			}, Admit: func(context.Context, func(context.Context) error) error {
+				t.Fatal("reviewer contract requested capacity")
+				return nil
+			}}
+			if _, err := e.Run(context.Background(), r, "all"); err == nil || !strings.Contains(err.Error(), "master-only") || broker.calls.Load() != 0 {
+				t.Fatal("reviewer contract reached the broker or was accepted", index, types, broker.calls.Load(), err)
+			}
+		}
+	}
+}
+
+func TestCorrectOutputTypesDoNotWeakenWrongNumericalAnswerCheck(t *testing.T) {
+	r := fixture()
+	r.Master.Ollama = &inference.OllamaOptions{Format: "json", OutputTypes: map[string]string{"answer": "integer"}}
+	c, _ := setup(t)
+	calls := new(atomic.Int64)
+	e := engine(c, calls, true, false) // integer 18 still violates the original integer 17 check.
+	result, err := e.Run(context.Background(), r, "all")
+	if err == nil || result.Status != "quality_failed" || result.Text != "" || calls.Load() != 1 {
+		t.Fatal("declared types accepted an incorrect integer", result, calls.Load(), err)
+	}
+	fp, _ := Fingerprint(r)
+	for _, reviewer := range r.Reviewers {
+		if _, err := c.Get(context.Background(), key(fp, reviewer.ID)); !notFound(err) {
+			t.Fatal("wrong numerical answer claimed a reviewer", err)
+		}
 	}
 }

@@ -192,12 +192,19 @@ func teamCommandIOWithModelDigest(args []string, out, diag io.Writer, modelDiges
 		if e != nil {
 			return e
 		}
-		return writeModelJSON(out, map[string]any{"task_sha256": team.TaskDigest(r), "prompt": p})
+		result := map[string]any{"task_sha256": team.TaskDigest(r), "prompt": p}
+		if r.Master.Ollama != nil && r.Master.Ollama.OutputTypes != nil {
+			result["runtime_output_types"] = r.Master.Ollama.OutputTypes
+		}
+		return writeModelJSON(out, result)
 	}
 	if args[0] == "plan" {
 		d, err := team.Describe(r)
 		if err != nil {
 			return err
+		}
+		if r.Master.Ollama != nil && r.Master.Ollama.OutputTypes != nil {
+			d["runtime_output_types"] = r.Master.Ollama.OutputTypes
 		}
 		return writeModelJSON(out, d)
 	}

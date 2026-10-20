@@ -37,17 +37,19 @@ type Pair struct {
 	Baseline Baseline
 }
 type ComparisonRow struct {
-	CaseID               string `json:"case_id"`
-	Complexity           string `json:"complexity"`
-	Matched              bool   `json:"matched"`
-	LocalPassed          bool   `json:"local_passed"`
-	BaselinePassed       bool   `json:"baseline_passed"`
-	UsageKnown           bool   `json:"usage_known"`
-	BaselineHostedTokens int64  `json:"baseline_hosted_tokens"`
-	LocalHostedTokens    int64  `json:"local_hosted_tokens"`
-	Eligible             bool   `json:"eligible"`
+	AdditionalLocalOutputTypes map[string]string `json:"additional_local_output_types,omitempty"`
+	CaseID                     string            `json:"case_id"`
+	Complexity                 string            `json:"complexity"`
+	Matched                    bool              `json:"matched"`
+	LocalPassed                bool              `json:"local_passed"`
+	BaselinePassed             bool              `json:"baseline_passed"`
+	UsageKnown                 bool              `json:"usage_known"`
+	BaselineHostedTokens       int64             `json:"baseline_hosted_tokens"`
+	LocalHostedTokens          int64             `json:"local_hosted_tokens"`
+	Eligible                   bool              `json:"eligible"`
 }
 type Comparison struct {
+	WorkflowComparison           string          `json:"workflow_comparison,omitempty"`
 	Schema                       int             `json:"schema"`
 	Metric                       string          `json:"metric"`
 	Scope                        string          `json:"scope"`
@@ -125,6 +127,10 @@ func Compare(pairs []Pair) (Comparison, error) {
 		_, localPass := evaluation.CheckOutput(p.Local.Text, p.Case.Request.Checks)
 		_, baselinePass := evaluation.CheckOutput(p.Baseline.Text, p.Case.Request.Checks)
 		row := ComparisonRow{CaseID: p.Case.ID, Complexity: p.Case.Complexity, Matched: p.Local.Schema == 1 && p.Local.RequestSHA256 == fp && p.Baseline.Schema == 1 && p.Baseline.TaskSHA256 == TaskDigest(p.Case.Request) && p.Baseline.PromptSHA256 == hash(prompt) && p.Baseline.Source == "operator_recorded_codex_subscription_jsonl" && text(p.Baseline.Model, 128)}
+		row.AdditionalLocalOutputTypes = runtimeOutputTypes(p.Case.Request)
+		if row.AdditionalLocalOutputTypes != nil {
+			r.WorkflowComparison = "decoder-assisted local workflow with additional declared output types; not identical-information model parity"
+		}
 		row.LocalPassed = p.Local.Status == "completed" && localPass && p.Local.OutputSHA256 == hash(p.Local.Text) && !p.Local.PaidFallbackEnabled && len(p.Local.Steps) == len(p.Case.Request.Reviewers)+1
 		roles := append([]Role{p.Case.Request.Master}, p.Case.Request.Reviewers...)
 		for i, s := range p.Local.Steps {

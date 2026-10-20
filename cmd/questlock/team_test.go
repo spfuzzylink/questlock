@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/spfuzzylink/questlock/evaluation"
+	"github.com/spfuzzylink/questlock/inference"
 	"github.com/spfuzzylink/questlock/team"
 )
 
@@ -124,6 +126,53 @@ func TestTeamOutputTokenHelpKeepsDefaultAndDriverBounds(t *testing.T) {
 		}
 		if !strings.Contains(diag.String(), "16..4096 normally, 16..8192 only with --driver ollama --think (default 512)") {
 			t.Fatalf("output allowance default or driver bounds missing: %s", diag.String())
+		}
+	}
+}
+
+func TestTeamPlanAndPromptDiscloseOnlyExplicitRuntimeOutputTypes(t *testing.T) {
+	role := team.Role{ID: "master", Driver: "ollama", Model: "fixture:local", ModelDigest: strings.Repeat("a", 64), Instructions: "Return the requested answer.", MaxInputTokens: 4096, MaxOutputTokens: 256}
+	reviewer := role
+	reviewer.ID = "review-correctness"
+	r := team.Request{Schema: 1, Task: "fixture/typed", Revision: "one", Instructions: "Return JSON with waiting_count. Subtract running from total.", Input: "There are 9 jobs total and 3 running.", Master: role, Reviewers: []team.Role{reviewer}, Checks: []evaluation.Check{{ID: "expected", Kind: "json_equals", Expected: json.RawMessage(`{"waiting_count":6}`)}}, ReuseForSeconds: 3600}
+	r.Master.Ollama = &inference.OllamaOptions{Format: "json", PromptMode: "bounded_text"}
+	canonicalPrompt, err := team.MasterPrompt(r)
+	if err != nil {
+		t.Fatal(err)
+	}
+	canonicalTask := team.TaskDigest(r)
+	for _, typed := range []bool{false, true} {
+		if typed {
+			r.Master.Ollama.OutputTypes = map[string]string{"waiting_count": "integer"}
+		}
+		dir := t.TempDir()
+		b, err := json.Marshal(r)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, "task.json"), b, 0600); err != nil {
+			t.Fatal(err)
+		}
+		for _, command := range []string{"plan", "prompt"} {
+			var out, diag bytes.Buffer
+			if err := teamCommandIO([]string{command, "--workspace", dir, "--request", "task.json"}, &out, &diag); err != nil {
+				t.Fatal(command, typed, err)
+			}
+			var fields map[string]json.RawMessage
+			if json.Unmarshal(out.Bytes(), &fields) != nil {
+				t.Fatal("invalid offline team metadata", out.String())
+			}
+			contract, present := fields["runtime_output_types"]
+			var declared map[string]string
+			if present != typed || typed && (json.Unmarshal(contract, &declared) != nil || len(declared) != 1 || declared["waiting_count"] != "integer") {
+				t.Fatal("declared type map hidden or invented", command, typed, out.String())
+			}
+			if command == "prompt" {
+				var prompt, task string
+				if json.Unmarshal(fields["prompt"], &prompt) != nil || json.Unmarshal(fields["task_sha256"], &task) != nil || prompt != canonicalPrompt || task != canonicalTask {
+					t.Fatal("runtime disclosure changed canonical baseline prompt or task", out.String())
+				}
+			}
 		}
 	}
 }
