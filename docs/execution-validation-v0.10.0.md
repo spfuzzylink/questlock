@@ -67,6 +67,15 @@ all samples, zero-error counters and pending deferrals are in the
 this is an observation, not a statistical significance claim. Earlier pilots do
 not supply these timings.
 
+## Local-model preflight
+
+We also prepared the complete example for the installed local 4B model. The
+native resource probe reported high memory pressure and about 215 MiB available;
+admission allowed zero workers. Validation stopped before a task, broker or
+model call. No fallback, download, daemon change or forced retry followed.
+Fresh generation and exact reuse through this example remain unvalidated against
+the live runtime. Scripted integration checks passed; they do not fill that gap.
+
 ## Reproduce it
 
 The before source is

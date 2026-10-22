@@ -11,7 +11,9 @@ repeated focused race cases and checked decoder parity on 16,004 seeded inputs.
 coordinators, repeated/unique tasks and quotas on/off. Providers and resource
 samples are scripted; this is not GPU, model-quality or physical cluster evidence.
 Pending deferrals, allocation overhead and quota bounds are reported alongside
-reuse. Publication and native asset checks follow after the release gates.
+reuse. A separate live-example preflight stopped under high memory pressure
+before inference; it does not establish a successful live generation/reuse run.
+Publication and native asset checks follow after the release gates.
 
 ## v0.9.1 released observations — 2026-10-19
 
