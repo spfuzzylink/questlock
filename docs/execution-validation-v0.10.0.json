@@ -2031,5 +2031,145 @@
         }
       ]
     }
-  ]
+  ],
+  "live_local_validation": {
+    "date": "2026-10-22",
+    "source_tag": "v0.10.0",
+    "source_commit": "31795d17817011019c935cfc13f82b0153995cd7",
+    "example_source_sha256": "43138df19ba71234e08d0867da08ab81f81be881d11e0f80aa5a3e31c158aebe",
+    "approved_spec": {
+      "task": "support-handoff",
+      "revision": "v010-live-live-20261022T112910Z",
+      "provider": "ollama",
+      "model": "qwen3.5:4b",
+      "ollama": {
+        "think": false,
+        "keep_alive_seconds": 0
+      },
+      "instructions": "Write a one-sentence support handoff using only the supplied facts.",
+      "input": "Ticket 42: the customer cannot export invoices. The fix is deployed. Ask the customer to try again.",
+      "max_context_bytes": 0,
+      "max_input_tokens": 2048,
+      "max_output_tokens": 128,
+      "reuse_for_seconds": 3600,
+      "daily_token_budget": {
+        "input_tokens": 32000,
+        "output_tokens": 4000,
+        "total_tokens": 36000
+      }
+    },
+    "spec_sha256": "16f2b248549c6229c45e66d0041fdb2d98ba710cb49001cc22ec74b4aed6abfd",
+    "runtime": {
+      "name": "Ollama",
+      "version": "0.40.3",
+      "model": "qwen3.5:4b",
+      "model_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+      "installed_model_size_bytes": 3973305013,
+      "model_backend": "mlx",
+      "weight_format": "safetensors",
+      "model_downloads": 0
+    },
+    "scope": {
+      "physical_hosts": 1,
+      "cpu": "Apple M5",
+      "physical_memory_bytes": 25769803776,
+      "example_unchanged": true,
+      "spec_changes_from_published_example": [
+        "model",
+        "revision"
+      ],
+      "endpoint": "literal loopback count-only relay to existing literal loopback Ollama",
+      "relay_generate_limit": 1,
+      "admission": "unchanged published default configuration; one inference worker",
+      "allowed_runtime_routes": [
+        "GET /api/tags",
+        "POST /api/show",
+        "POST /api/generate"
+      ],
+      "provider_credentials_imported": false,
+      "live_langfuse_export": false,
+      "not_a_gpu_or_ttft_benchmark": true
+    },
+    "result": {
+      "status": "pass",
+      "invocations": [
+        {
+          "invocation": "first",
+          "reused": false,
+          "durable": true,
+          "new_input": 57,
+          "new_output": 20,
+          "telemetry": "disabled"
+        },
+        {
+          "invocation": "same snapshot",
+          "reused": true,
+          "durable": true,
+          "new_input": 0,
+          "new_output": 0,
+          "telemetry": "disabled"
+        }
+      ],
+      "generate_http_requests": 1,
+      "new_usage": {
+        "input_tokens": 57,
+        "output_tokens": 20,
+        "total_tokens": 77
+      },
+      "same_output": true,
+      "output": "Please test your ability to export invoices again, as this issue has been resolved with our recent deployment.",
+      "output_sha256": "2f974d640a9a3ca656d7f39f8dbe3e34e5080b8f9f014de983e20a9ea0fc8271",
+      "complete": true,
+      "durable": true,
+      "quota_entries": 1,
+      "reserved": {
+        "input_tokens": 2048,
+        "output_tokens": 128,
+        "total_tokens": 2176
+      },
+      "settled": {
+        "input_tokens": 57,
+        "output_tokens": 20,
+        "total_tokens": 77
+      },
+      "quota_frozen": false,
+      "provider_api_cost_usd": 0,
+      "paid_fallback_enabled": false
+    },
+    "resources": {
+      "earlier_preflight": "high pressure, about215MiB available; correctly stopped with no inference",
+      "recovery": "observed system pressure cleared before this attempt; no code/threshold/OS/daemon/client changes or app termination",
+      "preflight_samples": 3,
+      "preflight_available_memory_bytes": [
+        7996014592,
+        7986708480,
+        8002060288
+      ],
+      "loading_headroom_guard": "installed model size plus2GiB, in addition to native normal pressure",
+      "during_samples": 5,
+      "minimum_sampled_available_memory_bytes": 3986587648,
+      "all_sampled_pressure": "normal",
+      "after_available_memory_bytes": 8427667456,
+      "model_resident_before": [],
+      "model_resident_after": [],
+      "keep_alive_seconds": 0
+    },
+    "review": {
+      "assistant_fact_review": "one sentence covers supplied invoice export/deployed fix/retry facts",
+      "wording_limit": "customer-facing rather than an internal handoff",
+      "independent_review": "passed source/runtime counters/quota/cleanup reconciliation",
+      "human_acceptance": "not recorded",
+      "general_model_quality": "not established"
+    },
+    "cleanup": {
+      "owned_broker_stopped": true,
+      "owned_relay_stopped": true,
+      "active_client_or_daemon_configuration_changes": 0
+    },
+    "accounting_limits": [
+      "77tokens are observed original local usage; no counterfactual second generation was run",
+      "no invoice savings, subscription reduction, GPU acceleration, multi-host throughput or general answer-quality claim",
+      "hardware,electricity,time and surrounding hosted assistant usage excluded"
+    ]
+  }
 }

@@ -18,6 +18,12 @@ and inference APIs remain; `execution` wires the pieces together for Go apps.
   storage stay with the inference engine. Router-backed serving still needs a
   qualified provider contract.
 
+Live local validation now covers fresh generation and exact reuse through the
+published Go example: 57 input + 20 output tokens once, then 0 new tokens and
+no second generation. The quota settled correctly with paid fallback disabled
+and $0 provider API spend. Pressure had returned to normal; admission defaults
+were unchanged. [Evidence and limits](execution-validation-v0.10.0.md#live-local-model-check--2026-10-22).
+
 Read the [Go guide](go-integration.md), [complete example](../examples/execution/README.md)
 and [measured overhead and reuse](execution-validation-v0.10.0.md).
 Resource admission is per process; quota accounting coordinates trusted workers

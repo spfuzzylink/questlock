@@ -11,8 +11,15 @@ repeated focused race cases and checked decoder parity on 16,004 seeded inputs.
 coordinators, repeated/unique tasks and quotas on/off. Providers and resource
 samples are scripted; this is not GPU, model-quality or physical cluster evidence.
 Pending deferrals, allocation overhead and quota bounds are reported alongside
-reuse. A separate live-example preflight stopped under high memory pressure
-before inference; it does not establish a successful live generation/reuse run.
+reuse. The initial live-example preflight correctly stopped under high memory
+pressure. After native pressure returned to normal, the published Go example
+completed one real local generation (57 input + 20 output tokens) and exact reuse
+(0 new tokens, no second generation). One quota entry settled to 77 tokens; paid
+fallback stayed disabled and provider API spend was $0. The default admission
+policy stayed unchanged. [Live evidence and limits](execution-validation-v0.10.0.md#live-local-model-check--2026-10-22)
+include sampled memory, runtime request counting and cleanup. This was one local
+support task, not a general model-quality or GPU benchmark.
+
 The [v0.10.0 release](https://github.com/spfuzzylink/questlock/releases/tag/v0.10.0)
 was published from signed merge `31795d17817011019c935cfc13f82b0153995cd7`,
 with the identical independently reviewed tree
