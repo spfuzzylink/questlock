@@ -4,10 +4,11 @@ Same work, more workers, one broker. Does reuse still hold? Does the shared toke
 quota add overhead? We ran both, including the less flattering case where every
 task is new.
 
-This is a **CPU control-plane measurement on one Mac**: real authenticated HTTPS,
-SQLite, claims, result lookup and token-ledger CAS. Providers return scripted
+The **CPU control-plane benchmark** uses one Mac: real authenticated HTTPS,
+SQLite, claims, result lookup and token-ledger CAS. Its providers return scripted
 answers and usage; resource samples are synthetic. No model, GPU, Langfuse export
-or second physical host is involved. Do not use these numbers as model throughput,
+or second physical host is involved in those benchmarks. The separate live local
+model check appears below. Do not use the benchmark numbers as model throughput,
 quality, time-to-first-token, invoice savings or whole-chat credit evidence.
 
 ## What ran
@@ -67,14 +68,41 @@ all samples, zero-error counters and pending deferrals are in the
 this is an observation, not a statistical significance claim. Earlier pilots do
 not supply these timings.
 
-## Local-model preflight
+## Live local model check — 2026-10-22
 
-We also prepared the complete example for the installed local 4B model. The
-native resource probe reported high memory pressure and about 215 MiB available;
-admission allowed zero workers. Validation stopped before a task, broker or
-model call. No fallback, download, daemon change or forced retry followed.
-Fresh generation and exact reuse through this example remain unvalidated against
-the live runtime. Scripted integration checks passed; they do not fill that gap.
+The earlier preflight correctly stopped under high memory pressure with about
+215 MiB available. Later, pressure returned to normal. No code fix, weaker
+threshold, app termination or daemon change was needed.
+
+We ran the published v0.10.0 Go example against installed `qwen3.5:4b` weights
+through Ollama 0.40.3. Only the sample's model and validation revision changed.
+A private broker started empty. A loopback counting relay forwarded real runtime
+requests and permitted at most one generation; it supplied no answers itself.
+The default admission policy and single inference worker stayed unchanged.
+
+| Invocation | New input tokens | New output tokens | Durable | Result |
+| --- | --- | --- | --- | --- |
+| Fresh support task | 57 | 20 | Yes | One real generation |
+| Exact same snapshot | 0 | 0 | Yes | Identical stored answer |
+
+There was exactly one `/api/generate` request. Metadata reads still checked
+runtime identity. One token reservation went from 2,048 input + 128 output to
+the known 57 + 20 usage; the quota stayed unfrozen. Paid fallback was disabled
+and provider API spend was $0. Hardware, electricity and time still count.
+
+Native pressure was normal in three preflight readings, five during-run
+readings and the final reading. The minimum sampled available memory during
+execution was about 3.71 GiB. This is sampled headroom, not peak model-memory
+usage or proof against every OOM. `keep_alive_seconds: 0` requested model release;
+no model was resident afterward. The owned broker and relay were stopped.
+
+The answer covered the invoice fix and request to try again, using customer-facing
+wording rather than an internal handoff. That is one factual review, not a general
+quality score or human acceptance. This check establishes live local generation,
+exact result reuse and quota settlement; it does not measure GPU acceleration,
+CPU-only inference, physical multi-host throughput or whole-chat credit savings.
+The [raw report](execution-validation-v0.10.0.json) retains the original benchmark
+samples and adds this live record, including the approved spec and model digest.
 
 ## Reproduce it
 

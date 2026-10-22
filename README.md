@@ -173,6 +173,10 @@ explicit configuration. CPU-only runtimes use the same coordination API.
 [Runnable example](examples/execution/README.md) ·
 [Measured overhead and reuse](docs/execution-validation-v0.10.0.md)
 
+Live local check: one generation used **57 input + 20 output tokens**; the exact
+repeat returned the same answer with **0 new tokens and no second generation**.
+The shared quota settled to actual usage; paid fallback stayed disabled.
+
 ## Local quality evidence (0.9.1)
 
 Local teams get explicit JSON types and field roles, bounded reasoning, model
