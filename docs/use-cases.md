@@ -1,5 +1,23 @@
 # Use cases
 
+## Several workers need the same answer
+
+Your support agents need a handoff for the same ticket revision. Give them the
+same approved task snapshot, provider identity and broker scope. One worker can
+claim generation; a concurrent duplicate defers, and a later exact request can
+reuse the completed result while its reuse window is valid.
+
+The [Go coordinator](go-integration.md) puts that flow inside your application.
+Set per-task input/output limits, a shared scope/day token quota, and optional
+token-price dollar caps. Each process throttles its own queue using CPU/memory
+signals. Your runtime can use CPU-only hardware or an explicitly configured GPU
+server. Your code still checks whether the answer is useful.
+
+This is useful for repeated support handoffs, document summaries and agent
+handoffs with fixed source revisions. Changed facts need a new revision. Agent
+IDs belong in credentials/logs, outside the prompt; adding them to the request
+makes it a different task. [Config and failure cases](../examples/execution/README.md).
+
 ## First-time setup without a provider account
 
 Run `questlock setup`, choose your coding client, and finish a checked JSON edit

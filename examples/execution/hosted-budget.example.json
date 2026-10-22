@@ -1,0 +1,30 @@
+{
+  "task": "hosted-budget-example",
+  "revision": "illustrative-only-1",
+  "provider": "openrouter",
+  "model": "author/model",
+  "openrouter": {
+    "upstream_provider": "provider",
+    "input_token_upper_bound": 2048,
+    "cache_write_usage": "not_applicable"
+  },
+  "instructions": "Summarize the supplied facts in one sentence.",
+  "input": "This is a configuration example. Replace the model, route and illustrative prices before any approved live run.",
+  "max_context_bytes": 0,
+  "max_input_tokens": 2048,
+  "max_output_tokens": 128,
+  "reuse_for_seconds": 3600,
+  "prices": {
+    "input_per_million": 1,
+    "cache_read_per_million": 0.1,
+    "cache_write_per_million": 1,
+    "output_per_million": 2
+  },
+  "max_cost_usd": 0.01,
+  "daily_budget_usd": 1,
+  "daily_token_budget": {
+    "input_tokens": 32000,
+    "output_tokens": 4000,
+    "total_tokens": 36000
+  }
+}

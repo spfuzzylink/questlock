@@ -98,6 +98,9 @@ func renderChunk(c ContextItem) string {
 }
 
 func validateSpec(s Spec) error {
+	if s.DailyTokenBudget != nil && !validTokenBudget(*s.DailyTokenBudget) {
+		return errors.New("daily token budget requires positive input, output and total caps at most 1000000000000")
+	}
 	if s.Stream && s.Provider != "ollama" {
 		return errors.New("stream measurements are supported only by the local Ollama adapter")
 	}

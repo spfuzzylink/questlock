@@ -1,0 +1,55 @@
+{
+  "min_workers": 1,
+  "max_workers": 5,
+  "max_queue_rows": 64,
+  "max_queue_bytes": 8388608,
+  "protected_queue_rows": 4,
+  "protected_queue_bytes": 65536,
+  "protected_cpu_milli": 200,
+  "protected_memory_bytes": 67108864,
+  "memory_headroom_bytes": 268435456,
+  "queue_memory_percent": 5,
+  "queue_rows_per_worker": 4,
+  "recovery_samples": 3,
+  "ramp_interval": 2000000000,
+  "sample_interval": 1000000000,
+  "max_sample_age": 5000000000,
+  "probe_timeout": 2000000000,
+  "task_timeout": 45000000000,
+  "cpu_load_high_milli": 1200,
+  "cpu_load_low_milli": 800,
+  "cpu_stall_high_milli_percent": 20000,
+  "cpu_stall_low_milli_percent": 10000,
+  "memory_stall_high_milli_percent": 1000,
+  "memory_stall_low_milli_percent": 500,
+  "lanes": [
+    {
+      "name": "broker",
+      "cpu_milli": 100,
+      "memory_bytes": 8388608,
+      "max_workers": 1,
+      "protected": true
+    },
+    {
+      "name": "replication",
+      "cpu_milli": 250,
+      "memory_bytes": 33554432,
+      "max_workers": 1,
+      "protected": false
+    },
+    {
+      "name": "inference",
+      "cpu_milli": 1000,
+      "memory_bytes": 268435456,
+      "max_workers": 1,
+      "protected": false
+    },
+    {
+      "name": "revision",
+      "cpu_milli": 250,
+      "memory_bytes": 16777216,
+      "max_workers": 4,
+      "protected": false
+    }
+  ]
+}

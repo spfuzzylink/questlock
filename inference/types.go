@@ -12,26 +12,27 @@ import (
 // Spec is an explicit snapshot of a task. Reuse is opt-in and should only be
 // enabled for tasks whose answer remains valid for the supplied revision.
 type Spec struct {
-	OpenRouter      *OpenRouterConfig `json:"openrouter,omitempty"`
-	SGLang          *SGLangConfig     `json:"sglang,omitempty"`
-	Ollama          *OllamaOptions    `json:"ollama,omitempty"`
-	Stream          bool              `json:"stream,omitempty"` // Optional local Ollama content streaming.
-	Task            string            `json:"task"`
-	Revision        string            `json:"revision"`
-	Provider        string            `json:"provider"`
-	Model           string            `json:"model"`
-	ReasoningEffort string            `json:"reasoning_effort,omitempty"`
-	Instructions    string            `json:"instructions"`
-	Input           string            `json:"input"`
-	Context         []ContextItem     `json:"context,omitempty"`
-	MaxContextBytes int               `json:"max_context_bytes"`
-	MaxInputTokens  int64             `json:"max_input_tokens"`
-	MaxOutputTokens int64             `json:"max_output_tokens"`
-	CacheMode       string            `json:"cache_mode,omitempty"` // default or prefix
-	ReuseForSeconds int64             `json:"reuse_for_seconds,omitempty"`
-	Prices          *Prices           `json:"prices,omitempty"`
-	MaxCostUSD      float64           `json:"max_cost_usd,omitempty"`
-	DailyBudgetUSD  float64           `json:"daily_budget_usd,omitempty"`
+	DailyTokenBudget *TokenBudget      `json:"daily_token_budget,omitempty"`
+	OpenRouter       *OpenRouterConfig `json:"openrouter,omitempty"`
+	SGLang           *SGLangConfig     `json:"sglang,omitempty"`
+	Ollama           *OllamaOptions    `json:"ollama,omitempty"`
+	Stream           bool              `json:"stream,omitempty"` // Optional local Ollama content streaming.
+	Task             string            `json:"task"`
+	Revision         string            `json:"revision"`
+	Provider         string            `json:"provider"`
+	Model            string            `json:"model"`
+	ReasoningEffort  string            `json:"reasoning_effort,omitempty"`
+	Instructions     string            `json:"instructions"`
+	Input            string            `json:"input"`
+	Context          []ContextItem     `json:"context,omitempty"`
+	MaxContextBytes  int               `json:"max_context_bytes"`
+	MaxInputTokens   int64             `json:"max_input_tokens"`
+	MaxOutputTokens  int64             `json:"max_output_tokens"`
+	CacheMode        string            `json:"cache_mode,omitempty"` // default or prefix
+	ReuseForSeconds  int64             `json:"reuse_for_seconds,omitempty"`
+	Prices           *Prices           `json:"prices,omitempty"`
+	MaxCostUSD       float64           `json:"max_cost_usd,omitempty"`
+	DailyBudgetUSD   float64           `json:"daily_budget_usd,omitempty"`
 }
 
 type ContextItem struct {
