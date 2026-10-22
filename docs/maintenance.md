@@ -1,5 +1,16 @@
 # Owner maintenance checklist
 
+## Go execution release gates (v0.10.0)
+
+Keep admission warm-up, bounded snapshots, cancellation, close and telemetry
+failure under regression coverage. Test shared input/output/total token quotas
+with concurrent HTTPS clients, policy omission/conflicts, UTC rollover, unknown
+usage, rollback and settlement failures. Preserve nil-policy task identities.
+Report quota overhead, contention and the 1,000-entry/day and 32-CAS bounds;
+scripted providers and isolated nodes do not establish GPU or physical-cluster
+throughput. Qualify custom runtime interfaces explicitly. Test the published Go
+module in a separate app without a local replacement before recommending it.
+
 ## Revision release gates (v0.6.0)
 
 Keep exact source/hash drift, counted sequential edits, source/output check
@@ -47,7 +58,7 @@ run and their source commit; a successful build is not evidence of publication.
   and embedded fixture evaluation; retain the tested archives rather than
   rebuilding them in the publication job.
 - Require the source-container CI job too. It builds through `.dockerignore` and
-  runs all five quests and fixture evaluation without a network and with a
+  runs all eight quests and fixture evaluation without a network and with a
   read-only root filesystem. Keep Go source and embedded skill assets in the
   build context as the project evolves.
 - Require the reusable self-hosted Langfuse CI job for the release source. Its
@@ -62,7 +73,7 @@ run and their source commit; a successful build is not evidence of publication.
 - Resolve container inputs to that published tag and exact source commit through
   `scripts/container_release.py`; reject checksum or provenance mismatches.
   Require native Linux AMD64 and ARM64 image checks: version, UID/GID 65532,
-  writable data ownership, all five quests, fixture evaluation, and OCI
+  writable data ownership, all eight quests, fixture evaluation, and OCI
   source/revision/license labels. Require a manifest containing exactly those
   two tested architectures.
 - Record immutable image digests. Verify anonymous pulling after publication

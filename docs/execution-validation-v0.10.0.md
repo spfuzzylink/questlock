@@ -82,6 +82,13 @@ The before source is
 [`93ac39e`](https://github.com/spfuzzylink/questlock/commit/93ac39ec0f9fd6edc21282392375d586b025b189).
 The final decoder source is
 [`d1b86a2`](https://github.com/spfuzzylink/questlock/commit/d1b86a289fe32ba3d79dfa528e9be24c7ef2e3a1).
+Those implementation commits are retained by [PR #23](https://github.com/spfuzzylink/questlock/pull/23).
+In a clone, fetch `refs/pull/23/head` before checking out either source hash:
+
+```sh
+git fetch origin refs/pull/23/head
+```
+
 Use separate checkouts and run each without other test/build jobs:
 
 ```sh

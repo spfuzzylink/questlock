@@ -1,7 +1,10 @@
 # Questlock 0.10.0 — plug it into your Go app
 
-**Experimental release candidate.** Existing broker and inference APIs remain;
-the new `execution` package wires the pieces together for application developers.
+**Experimental release, published and verified.** Four native archives, two macOS
+MCPB bundles, checksums and both Linux container architectures passed their gates.
+[Validation](validation.md) records the exact source and anonymous asset checks.
+Immutable archives retain their source-era candidate wording. Existing broker
+and inference APIs remain; `execution` wires the pieces together for Go apps.
 
 - One process-local coordinator combines bounded admission, shared task/result
   reuse and optional content-free Langfuse export. Telemetry failure leaves the
