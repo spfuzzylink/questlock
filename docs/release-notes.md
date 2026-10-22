@@ -15,7 +15,8 @@ the new `execution` package wires the pieces together for application developers
   storage stay with the inference engine. Router-backed serving still needs a
   qualified provider contract.
 
-Read the [Go guide](go-integration.md) and [complete example](../examples/execution/README.md).
+Read the [Go guide](go-integration.md), [complete example](../examples/execution/README.md)
+and [measured overhead and reuse](execution-validation-v0.10.0.md).
 Resource admission is per process; quota accounting coordinates trusted workers
 using one broker scope and matching policy. It does not meter outside calls or
 turn the broker into a GPU scheduler. Provider-token cost and hardware cost are

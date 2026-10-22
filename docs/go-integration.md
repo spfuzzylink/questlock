@@ -206,6 +206,10 @@ the task result. Export is attempted once. An unconfirmed export keeps the
 durable result and never triggers another generation. Endpoint acknowledgement
 does not establish dashboard visibility or answer quality.
 
+Export runs inside the admitted operation and holds its worker slot until it
+returns. `ExportTimeout` defaults to two seconds and accepts 1 ms through five
+seconds. Lower it or leave export disabled when that wait does not fit your service.
+
 ## Keep the provider choice yours
 
 The interfaces stay small: `inference.Provider` counts and generates;
@@ -249,3 +253,5 @@ go test ./execution -run 'TestHTTPS|TestAdmissionAndValidation|TestLangfuseFailu
 Those tests use real HTTPS and private SQLite with isolated worker clients,
 scripted generation and synthetic resource readings on one machine. They check
 coordination and failure handling, not multi-host scale or model throughput.
+The [measured overhead and reuse report](execution-validation-v0.10.0.md) includes
+all repeated and unique workload samples, with the shared quota on and off.

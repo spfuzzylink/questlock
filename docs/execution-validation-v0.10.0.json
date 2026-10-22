@@ -1,0 +1,2035 @@
+{
+  "schema": 1,
+  "date": "2026-10-22",
+  "release": "0.10.0",
+  "scope": "CPU control plane only; real authenticated HTTPS and SQLite, scripted provider and synthetic resource source on one physical Mac",
+  "environment": {
+    "go": "go1.27.1",
+    "goos": "darwin",
+    "goarch": "arm64",
+    "cpu": "Apple M5",
+    "benchmark_parallelism": 10,
+    "physical_hosts": 1
+  },
+  "command": "go test ./execution -run '^$' -bench BenchmarkCoordinatorCPUControlPlane -benchtime=1000x -count=3 -benchmem -timeout=15m",
+  "measurement": {
+    "samples_per_run": 36,
+    "attempts_per_sample": 1000,
+    "coordinator_counts": [
+      1,
+      2,
+      4
+    ],
+    "quota_modes": [
+      "quota_off",
+      "quota_on"
+    ],
+    "workloads": [
+      "duplicate_heavy",
+      "unique"
+    ],
+    "model_calls": 0,
+    "paid_provider_api_usd": 0,
+    "hosted_assistant_usage": "unmeasured and excluded",
+    "latency_kind": "elapsed batch time divided by attempts, not request latency or TTFT",
+    "memory_kind": "cumulative allocated B/op, not resident memory",
+    "warmup": "coordinator readiness is outside timed section",
+    "exporter": "disabled",
+    "sample_order": "fixed nested case order; entire before run then entire after run; no statistical significance claim",
+    "prior_pilots": "A 100x pilot and an early run overlapping checks were retained privately; neither supplies the timing results below."
+  },
+  "runs": [
+    {
+      "label": "before_decoder_optimization",
+      "source_commit": "93ac39ec0f9fd6edc21282392375d586b025b189",
+      "source_tree": "3f4cbf4ff724743b19c2336d8621bbb9ab0b7e0d",
+      "raw_sha256": "88dbb2b26b7c188c1a0b40b45b8bd7aa2f732a522a25d2fd7f719571648fda56",
+      "status": "PASS",
+      "raw_output": "goos: darwin\ngoarch: arm64\npkg: github.com/spfuzzylink/questlock/execution\ncpu: Apple M5\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    161276 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   36540 B/op\t     403 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    139041 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   36509 B/op\t     402 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    140794 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   36448 B/op\t     402 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    262446 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  135340 B/op\t     961 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    259574 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  134819 B/op\t     960 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    259885 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  133958 B/op\t     959 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    515297 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   98920 B/op\t    1266 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    520894 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   99342 B/op\t    1267 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    519693 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   99010 B/op\t    1265 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   5960814 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 7804050 B/op\t   41154 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   6044940 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 7736498 B/op\t   41147 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   6167359 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 7732320 B/op\t   41147 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     88875 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   37780 B/op\t     405 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     87785 ns/op\t         0.9990 checks_passed/op\t         0.9990 completed/op\t       101.0 count_calls\t         0.001000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         1.000 pending_calls\t         0.8980 reused/op\t         0 unexpected_errors\t   37614 B/op\t     406 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     87016 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   37942 B/op\t     406 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    191994 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  149929 B/op\t    1034 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    190090 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  147948 B/op\t    1029 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    188079 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  145793 B/op\t    1015 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    386386 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103070 B/op\t    1281 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    386681 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  102799 B/op\t    1280 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    385855 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103170 B/op\t    1281 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   6159291 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t14248470 B/op\t   80426 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   6129746 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t14270296 B/op\t   80425 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   6048442 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t14222296 B/op\t   80343 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     89606 ns/op\t         0.9980 checks_passed/op\t         0.9980 completed/op\t       101.0 count_calls\t         0.002000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         2.000 pending_calls\t         0.8970 reused/op\t         0 unexpected_errors\t   38808 B/op\t     417 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     90569 ns/op\t         0.9960 checks_passed/op\t         0.9960 completed/op\t       101.0 count_calls\t         0.004000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         4.000 pending_calls\t         0.8950 reused/op\t         0 unexpected_errors\t   38505 B/op\t     417 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     89242 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   38616 B/op\t     417 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    211168 ns/op\t         0.9970 checks_passed/op\t         0.9970 completed/op\t       101.0 count_calls\t         0.003000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         3.000 pending_calls\t         0.8960 reused/op\t         0 unexpected_errors\t  198242 B/op\t    1373 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    206285 ns/op\t         0.9970 checks_passed/op\t         0.9970 completed/op\t       101.0 count_calls\t         0.003000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         3.000 pending_calls\t         0.8960 reused/op\t         0 unexpected_errors\t  190807 B/op\t    1334 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    211833 ns/op\t         0.9960 checks_passed/op\t         0.9960 completed/op\t       101.0 count_calls\t         0.004000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         4.000 pending_calls\t         0.8950 reused/op\t         0 unexpected_errors\t  202812 B/op\t    1399 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    398095 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103996 B/op\t    1302 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    394590 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103963 B/op\t    1301 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    401688 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103078 B/op\t    1302 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   7765402 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t26830433 B/op\t  157967 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   7835580 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t26817208 B/op\t  157814 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   7941542 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t26850953 B/op\t  158008 allocs/op\nPASS\nok  \tgithub.com/spfuzzylink/questlock/execution\t67.801s\n",
+      "samples": [
+        {
+          "case": "nodes_1/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 161276.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 36540.0,
+            "allocs/op": 403.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    161276 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   36540 B/op\t     403 allocs/op"
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 139041.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 36509.0,
+            "allocs/op": 402.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    139041 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   36509 B/op\t     402 allocs/op"
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 140794.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 36448.0,
+            "allocs/op": 402.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    140794 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   36448 B/op\t     402 allocs/op"
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 262446.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 135340.0,
+            "allocs/op": 961.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    262446 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  135340 B/op\t     961 allocs/op"
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 259574.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 134819.0,
+            "allocs/op": 960.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    259574 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  134819 B/op\t     960 allocs/op"
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 259885.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 133958.0,
+            "allocs/op": 959.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    259885 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  133958 B/op\t     959 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 515297.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 98920.0,
+            "allocs/op": 1266.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    515297 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   98920 B/op\t    1266 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 520894.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 99342.0,
+            "allocs/op": 1267.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    520894 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   99342 B/op\t    1267 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 519693.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 99010.0,
+            "allocs/op": 1265.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    519693 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   99010 B/op\t    1265 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 5960814.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 7804050.0,
+            "allocs/op": 41154.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   5960814 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 7804050 B/op\t   41154 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 6044940.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 7736498.0,
+            "allocs/op": 41147.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   6044940 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 7736498 B/op\t   41147 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 6167359.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 7732320.0,
+            "allocs/op": 41147.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   6167359 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 7732320 B/op\t   41147 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 88875.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 37780.0,
+            "allocs/op": 405.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     88875 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   37780 B/op\t     405 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 87785.0,
+            "checks_passed/op": 0.999,
+            "completed/op": 0.999,
+            "count_calls": 101.0,
+            "errors/op": 0.001,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 1.0,
+            "reused/op": 0.898,
+            "unexpected_errors": 0.0,
+            "B/op": 37614.0,
+            "allocs/op": 406.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     87785 ns/op\t         0.9990 checks_passed/op\t         0.9990 completed/op\t       101.0 count_calls\t         0.001000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         1.000 pending_calls\t         0.8980 reused/op\t         0 unexpected_errors\t   37614 B/op\t     406 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 87016.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 37942.0,
+            "allocs/op": 406.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     87016 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   37942 B/op\t     406 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 191994.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 149929.0,
+            "allocs/op": 1034.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    191994 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  149929 B/op\t    1034 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 190090.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 147948.0,
+            "allocs/op": 1029.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    190090 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  147948 B/op\t    1029 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 188079.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 145793.0,
+            "allocs/op": 1015.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    188079 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  145793 B/op\t    1015 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 386386.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 103070.0,
+            "allocs/op": 1281.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    386386 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103070 B/op\t    1281 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 386681.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 102799.0,
+            "allocs/op": 1280.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    386681 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  102799 B/op\t    1280 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 385855.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 103170.0,
+            "allocs/op": 1281.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    385855 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103170 B/op\t    1281 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 6159291.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 14248470.0,
+            "allocs/op": 80426.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   6159291 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t14248470 B/op\t   80426 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 6129746.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 14270296.0,
+            "allocs/op": 80425.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   6129746 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t14270296 B/op\t   80425 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 6048442.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 14222296.0,
+            "allocs/op": 80343.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   6048442 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t14222296 B/op\t   80343 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 89606.0,
+            "checks_passed/op": 0.998,
+            "completed/op": 0.998,
+            "count_calls": 101.0,
+            "errors/op": 0.002,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 2.0,
+            "reused/op": 0.897,
+            "unexpected_errors": 0.0,
+            "B/op": 38808.0,
+            "allocs/op": 417.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     89606 ns/op\t         0.9980 checks_passed/op\t         0.9980 completed/op\t       101.0 count_calls\t         0.002000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         2.000 pending_calls\t         0.8970 reused/op\t         0 unexpected_errors\t   38808 B/op\t     417 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 90569.0,
+            "checks_passed/op": 0.996,
+            "completed/op": 0.996,
+            "count_calls": 101.0,
+            "errors/op": 0.004,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 4.0,
+            "reused/op": 0.895,
+            "unexpected_errors": 0.0,
+            "B/op": 38505.0,
+            "allocs/op": 417.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     90569 ns/op\t         0.9960 checks_passed/op\t         0.9960 completed/op\t       101.0 count_calls\t         0.004000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         4.000 pending_calls\t         0.8950 reused/op\t         0 unexpected_errors\t   38505 B/op\t     417 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 89242.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 38616.0,
+            "allocs/op": 417.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     89242 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   38616 B/op\t     417 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 211168.0,
+            "checks_passed/op": 0.997,
+            "completed/op": 0.997,
+            "count_calls": 101.0,
+            "errors/op": 0.003,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 3.0,
+            "reused/op": 0.896,
+            "unexpected_errors": 0.0,
+            "B/op": 198242.0,
+            "allocs/op": 1373.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    211168 ns/op\t         0.9970 checks_passed/op\t         0.9970 completed/op\t       101.0 count_calls\t         0.003000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         3.000 pending_calls\t         0.8960 reused/op\t         0 unexpected_errors\t  198242 B/op\t    1373 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 206285.0,
+            "checks_passed/op": 0.997,
+            "completed/op": 0.997,
+            "count_calls": 101.0,
+            "errors/op": 0.003,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 3.0,
+            "reused/op": 0.896,
+            "unexpected_errors": 0.0,
+            "B/op": 190807.0,
+            "allocs/op": 1334.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    206285 ns/op\t         0.9970 checks_passed/op\t         0.9970 completed/op\t       101.0 count_calls\t         0.003000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         3.000 pending_calls\t         0.8960 reused/op\t         0 unexpected_errors\t  190807 B/op\t    1334 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 211833.0,
+            "checks_passed/op": 0.996,
+            "completed/op": 0.996,
+            "count_calls": 101.0,
+            "errors/op": 0.004,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 4.0,
+            "reused/op": 0.895,
+            "unexpected_errors": 0.0,
+            "B/op": 202812.0,
+            "allocs/op": 1399.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    211833 ns/op\t         0.9960 checks_passed/op\t         0.9960 completed/op\t       101.0 count_calls\t         0.004000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         4.000 pending_calls\t         0.8950 reused/op\t         0 unexpected_errors\t  202812 B/op\t    1399 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 398095.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 103996.0,
+            "allocs/op": 1302.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    398095 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103996 B/op\t    1302 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 394590.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 103963.0,
+            "allocs/op": 1301.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    394590 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103963 B/op\t    1301 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 401688.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 103078.0,
+            "allocs/op": 1302.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    401688 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103078 B/op\t    1302 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 7765402.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 26830433.0,
+            "allocs/op": 157967.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   7765402 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t26830433 B/op\t  157967 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 7835580.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 26817208.0,
+            "allocs/op": 157814.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   7835580 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t26817208 B/op\t  157814 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 7941542.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 26850953.0,
+            "allocs/op": 158008.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   7941542 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t26850953 B/op\t  158008 allocs/op"
+        }
+      ],
+      "summary": [
+        {
+          "case": "nodes_1/duplicate_heavy/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 140794.0,
+          "range_mean_ns_per_attempt": [
+            139041.0,
+            161276.0
+          ],
+          "median_allocated_bytes_per_attempt": 36509.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            899,
+            899,
+            899
+          ]
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 259885.0,
+          "range_mean_ns_per_attempt": [
+            259574.0,
+            262446.0
+          ],
+          "median_allocated_bytes_per_attempt": 134819.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            899,
+            899,
+            899
+          ]
+        },
+        {
+          "case": "nodes_1/unique/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 519693.0,
+          "range_mean_ns_per_attempt": [
+            515297.0,
+            520894.0
+          ],
+          "median_allocated_bytes_per_attempt": 99010.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "nodes_1/unique/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 6044940.0,
+          "range_mean_ns_per_attempt": [
+            5960814.0,
+            6167359.0
+          ],
+          "median_allocated_bytes_per_attempt": 7736498.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 87785.0,
+          "range_mean_ns_per_attempt": [
+            87016.0,
+            88875.0
+          ],
+          "median_allocated_bytes_per_attempt": 37780.0,
+          "completed_per_sample": [
+            1000,
+            999,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            1,
+            0
+          ],
+          "reused_per_sample": [
+            899,
+            898,
+            899
+          ]
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 190090.0,
+          "range_mean_ns_per_attempt": [
+            188079.0,
+            191994.0
+          ],
+          "median_allocated_bytes_per_attempt": 147948.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            899,
+            899,
+            899
+          ]
+        },
+        {
+          "case": "nodes_2/unique/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 386386.0,
+          "range_mean_ns_per_attempt": [
+            385855.0,
+            386681.0
+          ],
+          "median_allocated_bytes_per_attempt": 103070.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "nodes_2/unique/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 6129746.0,
+          "range_mean_ns_per_attempt": [
+            6048442.0,
+            6159291.0
+          ],
+          "median_allocated_bytes_per_attempt": 14248470.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 89606.0,
+          "range_mean_ns_per_attempt": [
+            89242.0,
+            90569.0
+          ],
+          "median_allocated_bytes_per_attempt": 38616.0,
+          "completed_per_sample": [
+            998,
+            996,
+            1000
+          ],
+          "pending_per_sample": [
+            2,
+            4,
+            0
+          ],
+          "reused_per_sample": [
+            897,
+            895,
+            899
+          ]
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 211168.0,
+          "range_mean_ns_per_attempt": [
+            206285.0,
+            211833.0
+          ],
+          "median_allocated_bytes_per_attempt": 198242.0,
+          "completed_per_sample": [
+            997,
+            997,
+            996
+          ],
+          "pending_per_sample": [
+            3,
+            3,
+            4
+          ],
+          "reused_per_sample": [
+            896,
+            896,
+            895
+          ]
+        },
+        {
+          "case": "nodes_4/unique/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 398095.0,
+          "range_mean_ns_per_attempt": [
+            394590.0,
+            401688.0
+          ],
+          "median_allocated_bytes_per_attempt": 103963.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "nodes_4/unique/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 7835580.0,
+          "range_mean_ns_per_attempt": [
+            7765402.0,
+            7941542.0
+          ],
+          "median_allocated_bytes_per_attempt": 26830433.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "label": "release_decoder",
+      "source_commit": "d1b86a289fe32ba3d79dfa528e9be24c7ef2e3a1",
+      "source_tree": "261d1a9e5e3db612fc5df251de92ce8d539621bc",
+      "raw_sha256": "d8c44a961b162008d740b8baddd73cfc3c3e9b3fe3fced39eb4dc657c6bd5eb4",
+      "status": "PASS",
+      "raw_output": "goos: darwin\ngoarch: arm64\npkg: github.com/spfuzzylink/questlock/execution\ncpu: Apple M5\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    169733 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   36765 B/op\t     403 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    138018 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   35815 B/op\t     402 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    142742 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   36852 B/op\t     403 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    247525 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  118349 B/op\t     884 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    248128 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  118633 B/op\t     884 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    250671 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  120336 B/op\t     885 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    519865 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   98236 B/op\t    1265 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    520465 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   99329 B/op\t    1266 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    525198 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   98142 B/op\t    1265 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   4976989 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 6353272 B/op\t   34085 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   4939290 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 6293003 B/op\t   34079 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   4973449 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 6314753 B/op\t   34077 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     89262 ns/op\t         0.9980 checks_passed/op\t         0.9980 completed/op\t       101.0 count_calls\t         0.002000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         2.000 pending_calls\t         0.8970 reused/op\t         0 unexpected_errors\t   37953 B/op\t     405 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     85170 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   37392 B/op\t     406 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     84702 ns/op\t         0.9990 checks_passed/op\t         0.9990 completed/op\t       101.0 count_calls\t         0.001000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         1.000 pending_calls\t         0.8980 reused/op\t         0 unexpected_errors\t   37595 B/op\t     407 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    179194 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  127969 B/op\t     916 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    178660 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  124482 B/op\t     902 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    179251 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  124097 B/op\t     899 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    391799 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103963 B/op\t    1281 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    387864 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  101840 B/op\t    1280 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    385297 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103141 B/op\t    1281 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   4855155 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t11330808 B/op\t   66265 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   5022651 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t11325213 B/op\t   66174 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   4845946 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t11321821 B/op\t   66130 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     86755 ns/op\t         0.9980 checks_passed/op\t         0.9980 completed/op\t       101.0 count_calls\t         0.002000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         2.000 pending_calls\t         0.8970 reused/op\t         0 unexpected_errors\t   38499 B/op\t     416 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     89705 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   38749 B/op\t     417 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     90179 ns/op\t         0.9960 checks_passed/op\t         0.9960 completed/op\t       101.0 count_calls\t         0.004000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         4.000 pending_calls\t         0.8950 reused/op\t         0 unexpected_errors\t   38461 B/op\t     417 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    195865 ns/op\t         0.9970 checks_passed/op\t         0.9970 completed/op\t       101.0 count_calls\t         0.003000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         3.000 pending_calls\t         0.8960 reused/op\t         0 unexpected_errors\t  159341 B/op\t    1150 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    191317 ns/op\t         0.9970 checks_passed/op\t         0.9970 completed/op\t       101.0 count_calls\t         0.003000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         3.000 pending_calls\t         0.8960 reused/op\t         0 unexpected_errors\t  153060 B/op\t    1105 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    193030 ns/op\t         0.9950 checks_passed/op\t         0.9950 completed/op\t       101.0 count_calls\t         0.005000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         5.000 pending_calls\t         0.8940 reused/op\t         0 unexpected_errors\t  151388 B/op\t    1103 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    409830 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  104811 B/op\t    1304 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    399256 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103320 B/op\t    1302 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    399013 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  102537 B/op\t    1302 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   6328717 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t20904412 B/op\t  129162 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   6210353 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t20956672 B/op\t  129488 allocs/op\nBenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   6140071 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t20891227 B/op\t  129307 allocs/op\nPASS\nok  \tgithub.com/spfuzzylink/questlock/execution\t56.056s\n",
+      "samples": [
+        {
+          "case": "nodes_1/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 169733.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 36765.0,
+            "allocs/op": 403.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    169733 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   36765 B/op\t     403 allocs/op"
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 138018.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 35815.0,
+            "allocs/op": 402.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    138018 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   35815 B/op\t     402 allocs/op"
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 142742.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 36852.0,
+            "allocs/op": 403.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_off-10         \t    1000\t    142742 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   36852 B/op\t     403 allocs/op"
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 247525.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 118349.0,
+            "allocs/op": 884.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    247525 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  118349 B/op\t     884 allocs/op"
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 248128.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 118633.0,
+            "allocs/op": 884.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    248128 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  118633 B/op\t     884 allocs/op"
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 250671.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 120336.0,
+            "allocs/op": 885.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/duplicate_heavy/quota_on-10          \t    1000\t    250671 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  120336 B/op\t     885 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 519865.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 98236.0,
+            "allocs/op": 1265.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    519865 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   98236 B/op\t    1265 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 520465.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 99329.0,
+            "allocs/op": 1266.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    520465 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   99329 B/op\t    1266 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 525198.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 98142.0,
+            "allocs/op": 1265.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_off-10                  \t    1000\t    525198 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t   98142 B/op\t    1265 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 4976989.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 6353272.0,
+            "allocs/op": 34085.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   4976989 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 6353272 B/op\t   34085 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 4939290.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 6293003.0,
+            "allocs/op": 34079.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   4939290 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 6293003 B/op\t   34079 allocs/op"
+        },
+        {
+          "case": "nodes_1/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 4973449.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 6314753.0,
+            "allocs/op": 34077.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_1/unique/quota_on-10                   \t    1000\t   4973449 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t 6314753 B/op\t   34077 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 89262.0,
+            "checks_passed/op": 0.998,
+            "completed/op": 0.998,
+            "count_calls": 101.0,
+            "errors/op": 0.002,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 2.0,
+            "reused/op": 0.897,
+            "unexpected_errors": 0.0,
+            "B/op": 37953.0,
+            "allocs/op": 405.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     89262 ns/op\t         0.9980 checks_passed/op\t         0.9980 completed/op\t       101.0 count_calls\t         0.002000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         2.000 pending_calls\t         0.8970 reused/op\t         0 unexpected_errors\t   37953 B/op\t     405 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 85170.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 37392.0,
+            "allocs/op": 406.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     85170 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   37392 B/op\t     406 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 84702.0,
+            "checks_passed/op": 0.999,
+            "completed/op": 0.999,
+            "count_calls": 101.0,
+            "errors/op": 0.001,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 1.0,
+            "reused/op": 0.898,
+            "unexpected_errors": 0.0,
+            "B/op": 37595.0,
+            "allocs/op": 407.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_off-10         \t    1000\t     84702 ns/op\t         0.9990 checks_passed/op\t         0.9990 completed/op\t       101.0 count_calls\t         0.001000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         1.000 pending_calls\t         0.8980 reused/op\t         0 unexpected_errors\t   37595 B/op\t     407 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 179194.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 127969.0,
+            "allocs/op": 916.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    179194 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  127969 B/op\t     916 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 178660.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 124482.0,
+            "allocs/op": 902.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    178660 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  124482 B/op\t     902 allocs/op"
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 179251.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 124097.0,
+            "allocs/op": 899.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/duplicate_heavy/quota_on-10          \t    1000\t    179251 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t  124097 B/op\t     899 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 391799.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 103963.0,
+            "allocs/op": 1281.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    391799 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103963 B/op\t    1281 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 387864.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 101840.0,
+            "allocs/op": 1280.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    387864 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  101840 B/op\t    1280 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 385297.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 103141.0,
+            "allocs/op": 1281.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_off-10                  \t    1000\t    385297 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103141 B/op\t    1281 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 4855155.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 11330808.0,
+            "allocs/op": 66265.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   4855155 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t11330808 B/op\t   66265 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 5022651.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 11325213.0,
+            "allocs/op": 66174.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   5022651 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t11325213 B/op\t   66174 allocs/op"
+        },
+        {
+          "case": "nodes_2/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 4845946.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 11321821.0,
+            "allocs/op": 66130.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_2/unique/quota_on-10                   \t    1000\t   4845946 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t11321821 B/op\t   66130 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 86755.0,
+            "checks_passed/op": 0.998,
+            "completed/op": 0.998,
+            "count_calls": 101.0,
+            "errors/op": 0.002,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 2.0,
+            "reused/op": 0.897,
+            "unexpected_errors": 0.0,
+            "B/op": 38499.0,
+            "allocs/op": 416.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     86755 ns/op\t         0.9980 checks_passed/op\t         0.9980 completed/op\t       101.0 count_calls\t         0.002000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         2.000 pending_calls\t         0.8970 reused/op\t         0 unexpected_errors\t   38499 B/op\t     416 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 89705.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 101.0,
+            "errors/op": 0.0,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.899,
+            "unexpected_errors": 0.0,
+            "B/op": 38749.0,
+            "allocs/op": 417.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     89705 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t       101.0 count_calls\t         0 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         0 pending_calls\t         0.8990 reused/op\t         0 unexpected_errors\t   38749 B/op\t     417 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 90179.0,
+            "checks_passed/op": 0.996,
+            "completed/op": 0.996,
+            "count_calls": 101.0,
+            "errors/op": 0.004,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 4.0,
+            "reused/op": 0.895,
+            "unexpected_errors": 0.0,
+            "B/op": 38461.0,
+            "allocs/op": 417.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_off-10         \t    1000\t     90179 ns/op\t         0.9960 checks_passed/op\t         0.9960 completed/op\t       101.0 count_calls\t         0.004000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         4.000 pending_calls\t         0.8950 reused/op\t         0 unexpected_errors\t   38461 B/op\t     417 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 195865.0,
+            "checks_passed/op": 0.997,
+            "completed/op": 0.997,
+            "count_calls": 101.0,
+            "errors/op": 0.003,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 3.0,
+            "reused/op": 0.896,
+            "unexpected_errors": 0.0,
+            "B/op": 159341.0,
+            "allocs/op": 1150.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    195865 ns/op\t         0.9970 checks_passed/op\t         0.9970 completed/op\t       101.0 count_calls\t         0.003000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         3.000 pending_calls\t         0.8960 reused/op\t         0 unexpected_errors\t  159341 B/op\t    1150 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 191317.0,
+            "checks_passed/op": 0.997,
+            "completed/op": 0.997,
+            "count_calls": 101.0,
+            "errors/op": 0.003,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 3.0,
+            "reused/op": 0.896,
+            "unexpected_errors": 0.0,
+            "B/op": 153060.0,
+            "allocs/op": 1105.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    191317 ns/op\t         0.9970 checks_passed/op\t         0.9970 completed/op\t       101.0 count_calls\t         0.003000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         3.000 pending_calls\t         0.8960 reused/op\t         0 unexpected_errors\t  153060 B/op\t    1105 allocs/op"
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 193030.0,
+            "checks_passed/op": 0.995,
+            "completed/op": 0.995,
+            "count_calls": 101.0,
+            "errors/op": 0.005,
+            "generation_calls": 101.0,
+            "known_tokens": 2727.0,
+            "pending_calls": 5.0,
+            "reused/op": 0.894,
+            "unexpected_errors": 0.0,
+            "B/op": 151388.0,
+            "allocs/op": 1103.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/duplicate_heavy/quota_on-10          \t    1000\t    193030 ns/op\t         0.9950 checks_passed/op\t         0.9950 completed/op\t       101.0 count_calls\t         0.005000 errors/op\t       101.0 generation_calls\t      2727 known_tokens\t         5.000 pending_calls\t         0.8940 reused/op\t         0 unexpected_errors\t  151388 B/op\t    1103 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 409830.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 104811.0,
+            "allocs/op": 1304.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    409830 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  104811 B/op\t    1304 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 399256.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 103320.0,
+            "allocs/op": 1302.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    399256 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  103320 B/op\t    1302 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_off",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 399013.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 102537.0,
+            "allocs/op": 1302.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_off-10                  \t    1000\t    399013 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t  102537 B/op\t    1302 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 6328717.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 20904412.0,
+            "allocs/op": 129162.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   6328717 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t20904412 B/op\t  129162 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 6210353.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 20956672.0,
+            "allocs/op": 129488.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   6210353 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t20956672 B/op\t  129488 allocs/op"
+        },
+        {
+          "case": "nodes_4/unique/quota_on",
+          "attempts": 1000,
+          "metrics": {
+            "ns/op": 6140071.0,
+            "checks_passed/op": 1.0,
+            "completed/op": 1.0,
+            "count_calls": 1000.0,
+            "errors/op": 0.0,
+            "generation_calls": 1000.0,
+            "known_tokens": 27000.0,
+            "pending_calls": 0.0,
+            "reused/op": 0.0,
+            "unexpected_errors": 0.0,
+            "B/op": 20891227.0,
+            "allocs/op": 129307.0
+          },
+          "raw_line": "BenchmarkCoordinatorCPUControlPlane/nodes_4/unique/quota_on-10                   \t    1000\t   6140071 ns/op\t         1.000 checks_passed/op\t         1.000 completed/op\t      1000 count_calls\t         0 errors/op\t      1000 generation_calls\t     27000 known_tokens\t         0 pending_calls\t         0 reused/op\t         0 unexpected_errors\t20891227 B/op\t  129307 allocs/op"
+        }
+      ],
+      "summary": [
+        {
+          "case": "nodes_1/duplicate_heavy/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 142742.0,
+          "range_mean_ns_per_attempt": [
+            138018.0,
+            169733.0
+          ],
+          "median_allocated_bytes_per_attempt": 36765.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            899,
+            899,
+            899
+          ]
+        },
+        {
+          "case": "nodes_1/duplicate_heavy/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 248128.0,
+          "range_mean_ns_per_attempt": [
+            247525.0,
+            250671.0
+          ],
+          "median_allocated_bytes_per_attempt": 118633.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            899,
+            899,
+            899
+          ]
+        },
+        {
+          "case": "nodes_1/unique/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 520465.0,
+          "range_mean_ns_per_attempt": [
+            519865.0,
+            525198.0
+          ],
+          "median_allocated_bytes_per_attempt": 98236.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "nodes_1/unique/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 4973449.0,
+          "range_mean_ns_per_attempt": [
+            4939290.0,
+            4976989.0
+          ],
+          "median_allocated_bytes_per_attempt": 6314753.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 85170.0,
+          "range_mean_ns_per_attempt": [
+            84702.0,
+            89262.0
+          ],
+          "median_allocated_bytes_per_attempt": 37595.0,
+          "completed_per_sample": [
+            998,
+            1000,
+            999
+          ],
+          "pending_per_sample": [
+            2,
+            0,
+            1
+          ],
+          "reused_per_sample": [
+            897,
+            899,
+            898
+          ]
+        },
+        {
+          "case": "nodes_2/duplicate_heavy/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 179194.0,
+          "range_mean_ns_per_attempt": [
+            178660.0,
+            179251.0
+          ],
+          "median_allocated_bytes_per_attempt": 124482.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            899,
+            899,
+            899
+          ]
+        },
+        {
+          "case": "nodes_2/unique/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 387864.0,
+          "range_mean_ns_per_attempt": [
+            385297.0,
+            391799.0
+          ],
+          "median_allocated_bytes_per_attempt": 103141.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "nodes_2/unique/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 4855155.0,
+          "range_mean_ns_per_attempt": [
+            4845946.0,
+            5022651.0
+          ],
+          "median_allocated_bytes_per_attempt": 11325213.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 89705.0,
+          "range_mean_ns_per_attempt": [
+            86755.0,
+            90179.0
+          ],
+          "median_allocated_bytes_per_attempt": 38499.0,
+          "completed_per_sample": [
+            998,
+            1000,
+            996
+          ],
+          "pending_per_sample": [
+            2,
+            0,
+            4
+          ],
+          "reused_per_sample": [
+            897,
+            899,
+            895
+          ]
+        },
+        {
+          "case": "nodes_4/duplicate_heavy/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 193030.0,
+          "range_mean_ns_per_attempt": [
+            191317.0,
+            195865.0
+          ],
+          "median_allocated_bytes_per_attempt": 153060.0,
+          "completed_per_sample": [
+            997,
+            997,
+            995
+          ],
+          "pending_per_sample": [
+            3,
+            3,
+            5
+          ],
+          "reused_per_sample": [
+            896,
+            896,
+            894
+          ]
+        },
+        {
+          "case": "nodes_4/unique/quota_off",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 399256.0,
+          "range_mean_ns_per_attempt": [
+            399013.0,
+            409830.0
+          ],
+          "median_allocated_bytes_per_attempt": 103320.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "nodes_4/unique/quota_on",
+          "samples": 3,
+          "median_mean_ns_per_attempt": 6210353.0,
+          "range_mean_ns_per_attempt": [
+            6140071.0,
+            6328717.0
+          ],
+          "median_allocated_bytes_per_attempt": 20904412.0,
+          "completed_per_sample": [
+            1000,
+            1000,
+            1000
+          ],
+          "pending_per_sample": [
+            0,
+            0,
+            0
+          ],
+          "reused_per_sample": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ]
+}

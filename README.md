@@ -170,7 +170,8 @@ Per-task token limits, call/day dollar caps and local resource settings come fro
 explicit configuration. CPU-only runtimes use the same coordination API.
 
 [Complete Go example and configuration](docs/go-integration.md) ·
-[Runnable example](examples/execution/README.md)
+[Runnable example](examples/execution/README.md) ·
+[Measured overhead and reuse](docs/execution-validation-v0.10.0.md)
 
 ## Local quality evidence (0.9.1)
 

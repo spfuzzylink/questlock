@@ -18,6 +18,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS = ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64")
 PUBLIC_FILES = (
+    "docs/execution-validation-v0.10.0.md", "docs/execution-validation-v0.10.0.json",
     "docs/go-integration.md", "examples/execution/README.md",
     "examples/execution/main.go", "examples/execution/local-task.json",
     "examples/execution/sglang-task.json", "examples/execution/hosted-budget.example.json",

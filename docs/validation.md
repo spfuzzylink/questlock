@@ -1,5 +1,18 @@
 # Validation record
 
+## v0.10.0 Go coordinator candidate — 2026-10-22
+
+The new Go API, shared input/output/total token quotas and strict task loader
+passed vet, all-package race checks and 74 Python checks. Independent review
+repeated focused race cases and checked decoder parity on 16,004 seeded inputs.
+
+[Full CPU control-plane observations](execution-validation-v0.10.0.md) include
+72 samples across the initial and optimized decoder, one physical Mac, 1/2/4
+coordinators, repeated/unique tasks and quotas on/off. Providers and resource
+samples are scripted; this is not GPU, model-quality or physical cluster evidence.
+Pending deferrals, allocation overhead and quota bounds are reported alongside
+reuse. Publication and native asset checks follow after the release gates.
+
 ## v0.9.1 released observations — 2026-10-19
 
 The six original task/check contracts completed with local masters and both
