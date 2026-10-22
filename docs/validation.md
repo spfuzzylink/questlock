@@ -1,6 +1,6 @@
 # Validation record
 
-## v0.10.0 Go coordinator candidate — 2026-10-22
+## v0.10.0 released observations — 2026-10-22
 
 The new Go API, shared input/output/total token quotas and strict task loader
 passed vet, all-package race checks and 74 Python checks. Independent review
@@ -13,7 +13,42 @@ samples are scripted; this is not GPU, model-quality or physical cluster evidenc
 Pending deferrals, allocation overhead and quota bounds are reported alongside
 reuse. A separate live-example preflight stopped under high memory pressure
 before inference; it does not establish a successful live generation/reuse run.
-Publication and native asset checks follow after the release gates.
+The [v0.10.0 release](https://github.com/spfuzzylink/questlock/releases/tag/v0.10.0)
+was published from signed merge `31795d17817011019c935cfc13f82b0153995cd7`,
+with the identical independently reviewed tree
+`f645b6b9a3d17f6927b55b8e9fcbeaf75974304d`. Both candidate CI runs passed all
+seven gates; [main CI](https://github.com/spfuzzylink/questlock/actions/runs/39765643180)
+and the [tag pipeline](https://github.com/spfuzzylink/questlock/actions/runs/39765649345)
+passed, including the four native targets and release publication.
+
+Anonymous HTTPS downloads verified all seven assets: four native archives, two
+macOS MCPB bundles and checksums. Each archive contains the exact 129 public
+files, target binary and clean build metadata from that source. Bundle binaries
+and legal files match the archives. The published arm64 binary is byte-identical
+to the private binary that passed ten offline commands. Native CI also exercised
+the zero-model first task and exact reuse in fresh state. Bundle inspection does
+not establish a new native Claude Desktop import or connection.
+
+The [container pipeline](https://github.com/spfuzzylink/questlock/actions/runs/39766287555)
+passed native AMD64/ARM64 smoke tests. Anonymous GHCR reads verified both image
+configurations and all 16 layers, including the exact archive binaries and legal
+files. `v0.10.0` and `experimental` share index
+`sha256:932471722db15082d5047b80a779e9272be33be139455084e830fbbdd470c98c`.
+Recorded versioned digests from v0.2.0 through v0.9.1 remain unchanged.
+
+A separate Go app fetched v0.10.0 from the public module proxy/checksum database,
+with no local replacement, compiled the new API and validated a quota-bearing
+spec offline. The guide includes that pinned install command. Active client
+configurations and the installed v0.9.1 CLI were left unchanged; this release
+adds an opt-in library API. Each participating quota client needs v0.10.0+.
+Immutable archives retain their source-era candidate wording; this page records
+publication.
+
+A pre-publication maintenance snapshot recorded 37 deterministic revision
+invocations: 31 fresh applications and six exact replays, with zero model calls,
+provider tokens or API charges for those operations. Review and the surrounding
+hosted development chat are excluded. There is no matched counterfactual token
+baseline, so this does not establish subscription or invoice savings.
 
 ## v0.9.1 released observations — 2026-10-19
 

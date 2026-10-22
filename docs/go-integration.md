@@ -10,6 +10,13 @@ provider and approved task. There is no new gateway to deploy.
 
 ## Wire it once in your service
 
+From your application module, with Go 1.26 or newer:
+
+```sh
+go get github.com/spfuzzylink/questlock@v0.10.0
+```
+
+
 ```go
 broker, err := client.New(brokerURL, scopedToken)
 if err != nil {
