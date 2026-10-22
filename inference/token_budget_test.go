@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"reflect"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -417,5 +418,99 @@ func TestTokenQuotaFreshOmissionProbeAndReuseReadOverhead(t *testing.T) {
 	}
 	if _, err := r.Run(context.Background(), s); !errors.Is(err, ErrInFlight) {
 		t.Fatalf("unconfirmed quota state retried: %v", err)
+	}
+}
+
+func TestTokenLedgerTypedDecoderWireRoundTrips(t *testing.T) {
+	zero, actual := TokenBudget{}, TokenBudget{80, 15, 95}
+	for _, entries := range []int{0, 1, 10, 1000} {
+		for _, settled := range []bool{false, true} {
+			ledger := tokenLedger{Schema: 1, Caps: TokenBudget{1e12, 1e12, 1e12}, Entries: map[string]tokenEntry{}}
+			for i := range entries {
+				entry := tokenEntry{Reserved: TokenBudget{100, 100, 200}}
+				if settled {
+					entry.Actual = &actual
+				}
+				if settled && i%2 == 0 {
+					entry.Actual = &zero
+				}
+				ledger.Entries[fmt.Sprintf("synthetic-%04d", i)] = entry
+			}
+			encoded, _ := json.Marshal(ledger)
+			var decoded tokenLedger
+			if err := decodeTokenLedger(string(encoded), &decoded); err != nil || !reflect.DeepEqual(ledger, decoded) {
+				t.Fatalf("wire changed at entries=%d settled=%v: %v", entries, settled, err)
+			}
+			roundTrip, _ := json.Marshal(decoded)
+			if string(roundTrip) != string(encoded) {
+				t.Fatal("typed decoding changed published bytes")
+			}
+		}
+	}
+	// Explicit false, key order, escaped names and a frozen overrun preserve
+	// the existing JSON contract independently of Go's preferred field order.
+	for _, content := range []string{
+		` {"entries":{},"frozen":false,"caps":{"total_tokens":100,"output_tokens":100,"input_tokens":100},"schema":1} `,
+		`{"\u0073chema":1,"caps":{"input_tokens":100,"output_tokens":100,"total_tokens":100},"entries":{}}`,
+		`{"schema":1,"caps":{"input_tokens":100,"output_tokens":100,"total_tokens":200},"frozen":true,"entries":{"synthetic":{"actual":{"input_tokens":101,"output_tokens":25,"total_tokens":126},"reserved":{"input_tokens":100,"output_tokens":100,"total_tokens":200}}}}`,
+	} {
+		var expected, decoded tokenLedger
+		if json.Unmarshal([]byte(content), &expected) != nil {
+			t.Fatal("bad valid corpus")
+		}
+		if err := decodeTokenLedger(content, &decoded); err != nil || !reflect.DeepEqual(expected, decoded) {
+			t.Fatalf("valid historical wire rejected: %v", err)
+		}
+	}
+}
+
+func TestTokenLedgerTypedDecoderRejectsMalformedCorpus(t *testing.T) {
+	base := `{"schema":1,"caps":{"input_tokens":1000,"output_tokens":1000,"total_tokens":2000},"entries":{"synthetic":{"reserved":{"input_tokens":100,"output_tokens":100,"total_tokens":200},"actual":{"input_tokens":0,"output_tokens":0,"total_tokens":0}}}}`
+	malformed := []string{
+		`[]`, `null`, `"ledger"`, `1`, base + ` {}`, base + ` // comment`,
+		strings.Replace(base, `"schema":1,`, ``, 1),
+		strings.Replace(base, `"schema":1`, `"schema":1,"schema":1`, 1),
+		strings.Replace(base, `"schema":1`, `"Schema":1`, 1),
+		strings.Replace(base, `"schema":1`, `"schema":1,"frozen":false,"frozen":false`, 1),
+		strings.Replace(base, `"schema":1`, `"schema":1,"frozen":null`, 1),
+		strings.Replace(base, `"schema":1`, `"schema":1,"frozen":"false"`, 1),
+		strings.Replace(base, `"schema":1`, `"schema":1,"other":0`, 1),
+		strings.Replace(base, `"caps":`, `"Caps":`, 1),
+		strings.Replace(base, `"entries":`, `"Entries":`, 1),
+		strings.Replace(base, `"entries":{`, `"entries":null,"unused":{`, 1),
+		strings.Replace(base, `"reserved":`, `"Reserved":`, 1),
+		strings.Replace(base, `"actual":`, `"Actual":`, 1),
+		strings.Replace(base, `"actual":{`, `"actual":null,"unused":{`, 1),
+		strings.Replace(base, `"actual":{`, `"actual":{},"actual":{`, 1),
+		strings.Replace(base, `"input_tokens":0,`, ``, 1),
+		strings.Replace(base, `"input_tokens":0`, `"input_tokens":0,"input_tokens":0`, 1),
+		strings.Replace(base, `"input_tokens":0`, `"Input_Tokens":0`, 1),
+		strings.Replace(base, `"input_tokens":1000`, `"input_tokens":0`, 1),
+		strings.Replace(base, `"input_tokens":0`, `"input_tokens":-1`, 1),
+		strings.Replace(base, `"output_tokens":100,`, `"output_tokens":15,`, 1),
+		strings.Replace(base, `"total_tokens":0`, `"total_tokens":1`, 1),
+		strings.Replace(base, `"input_tokens":0`, `"input_tokens":101`, 1),
+		strings.Replace(base, `"total_tokens":0`, `"total_tokens":9223372036854775808`, 1),
+		strings.Replace(base, `"synthetic":`, `"":`, 1),
+		strings.Replace(base, `"synthetic":`, `"bad id":`, 1),
+		string([]byte{0xff}),
+	}
+	for _, invalidNumber := range []string{`null`, `true`, `"0"`, `0.0`, `0e0`, `[]`, `{}`, `9223372036854775808`} {
+		malformed = append(malformed, strings.Replace(base, `"input_tokens":0`, `"input_tokens":`+invalidNumber, 1))
+	}
+	entry := `{"reserved":{"input_tokens":100,"output_tokens":100,"total_tokens":200},"actual":{"input_tokens":0,"output_tokens":0,"total_tokens":0}}`
+	malformed = append(malformed, `{"schema":1,"caps":{"input_tokens":1000,"output_tokens":1000,"total_tokens":2000},"entries":{"duplicate":`+entry+`,"duplicate":`+entry+`}}`)
+	full := tokenLedger{Schema: 1, Caps: TokenBudget{1e12, 1e12, 1e12}, Entries: map[string]tokenEntry{}}
+	zero := TokenBudget{}
+	for i := range 1001 {
+		full.Entries[fmt.Sprintf("synthetic-%d", i)] = tokenEntry{Reserved: TokenBudget{100, 100, 200}, Actual: &zero}
+	}
+	encoded, _ := json.Marshal(full)
+	malformed = append(malformed, string(encoded))
+	for i, content := range malformed {
+		var ledger tokenLedger
+		if err := decodeTokenLedger(content, &ledger); err == nil {
+			t.Fatalf("malformed corpus case %d accepted", i)
+		}
 	}
 }

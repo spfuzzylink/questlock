@@ -37,6 +37,8 @@ type tokenLedger struct {
 	Entries map[string]tokenEntry `json:"entries"`
 }
 
+var errInvalidTokenLedger = errors.New("invalid daily token ledger")
+
 func validTokenBudget(b TokenBudget) bool {
 	return b.InputTokens > 0 && b.InputTokens <= 1e12 && b.OutputTokens > 0 && b.OutputTokens <= 1e12 && b.TotalTokens > 0 && b.TotalTokens <= 1e12
 }
@@ -202,45 +204,78 @@ func (r Runner) settleTokens(ctx context.Context, key, id string, actual TokenBu
 }
 
 func decodeTokenLedger(content string, ledger *tokenLedger) error {
-	invalid := errors.New("invalid daily token ledger")
+	invalid := errInvalidTokenLedger
 	if len(content) > protocol.MaxContentBytes || !utf8.ValidString(content) {
 		return invalid
 	}
 	d := json.NewDecoder(strings.NewReader(content))
 	d.UseNumber()
-	value, err := tokenJSONValue(d, 0)
-	if err != nil {
+	// Decode directly to the existing typed record. The schema fixes the
+	// nesting depth; no intermediate per-entry generic maps or second parse.
+	if !tokenDelimiter(d, '{') {
+		return invalid
+	}
+	decoded := tokenLedger{}
+	seen := uint8(0)
+	for d.More() {
+		name, ok := tokenName(d)
+		if !ok {
+			return invalid
+		}
+		var bit uint8
+		var err error
+		switch name {
+		case "schema":
+			bit = 1
+			if seen&bit != 0 {
+				return invalid
+			}
+			version, ok := tokenInteger(d)
+			if !ok || version != 1 {
+				return invalid
+			}
+			decoded.Schema = 1
+		case "caps":
+			bit = 2
+			if seen&bit != 0 {
+				return invalid
+			}
+			decoded.Caps, err = decodeTokenAmount(d)
+		case "entries":
+			bit = 4
+			if seen&bit != 0 {
+				return invalid
+			}
+			decoded.Entries, err = decodeTokenEntries(d)
+		case "frozen":
+			bit = 8
+			if seen&bit != 0 {
+				return invalid
+			}
+			value, readErr := d.Token()
+			frozen, ok := value.(bool)
+			if readErr != nil || !ok {
+				return invalid
+			}
+			decoded.Frozen = frozen
+		default:
+			return invalid
+		}
+		if err != nil {
+			return invalid
+		}
+		seen |= bit
+	}
+	if seen&7 != 7 || !tokenDelimiter(d, '}') {
 		return invalid
 	}
 	if _, err := d.Token(); err != io.EOF {
 		return invalid
 	}
-	if !tokenObjectKeys(value, "schema", "caps", "frozen", "entries") {
+	if !validTokenBudget(decoded.Caps) {
 		return invalid
 	}
-	root := value.(map[string]any)
-	if !tokenAmountObject(root["caps"]) {
-		return invalid
-	}
-	entries, ok := root["entries"].(map[string]any)
-	if !ok || len(entries) > 1000 {
-		return invalid
-	}
-	for id, value := range entries {
-		if !validID(id, 128) || !tokenObjectKeys(value, "reserved", "actual") {
-			return invalid
-		}
-		entry := value.(map[string]any)
-		if !tokenAmountObject(entry["reserved"]) {
-			return invalid
-		}
-		if actual, exists := entry["actual"]; exists && !tokenAmountObject(actual) {
-			return invalid
-		}
-	}
-	if json.Unmarshal([]byte(content), ledger) != nil || ledger.Schema != 1 || !validTokenBudget(ledger.Caps) || ledger.Entries == nil {
-		return invalid
-	}
+	*ledger = decoded
 	for _, entry := range ledger.Entries {
 		b := entry.Reserved
 		if b.InputTokens < 1 || b.InputTokens > 1e6 || b.OutputTokens < 16 || b.OutputTokens > 1e6 || b.TotalTokens != b.InputTokens+b.OutputTokens {
@@ -259,66 +294,137 @@ func decodeTokenLedger(content string, ledger *tokenLedger) error {
 	return nil
 }
 
-func tokenObjectKeys(value any, allowed ...string) bool {
-	object, ok := value.(map[string]any)
-	if !ok {
-		return false
-	}
-	for key := range object {
-		found := false
-		for _, want := range allowed {
-			if key == want {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return false
-		}
-	}
-	return true
+func tokenDelimiter(d *json.Decoder, want json.Delim) bool {
+	value, err := d.Token()
+	return err == nil && value == want
 }
 
-func tokenAmountObject(value any) bool {
-	object, ok := value.(map[string]any)
-	return ok && len(object) == 3 && tokenObjectKeys(value, "input_tokens", "output_tokens", "total_tokens")
+func tokenName(d *json.Decoder) (string, bool) {
+	value, err := d.Token()
+	name, ok := value.(string)
+	return name, err == nil && ok
 }
 
-// Reject duplicates, nulls and deep objects before typed JSON decoding, whose
-// permissive case/duplicate matching must not alter a shared quota policy.
-func tokenJSONValue(d *json.Decoder, depth int) (any, error) {
-	if depth > 8 {
-		return nil, errors.New("invalid token JSON")
+func tokenInteger(d *json.Decoder) (int64, bool) {
+	value, err := d.Token()
+	number, ok := value.(json.Number)
+	if err != nil || !ok {
+		return 0, false
 	}
-	t, err := d.Token()
-	if err != nil || t == nil {
-		return nil, errors.New("invalid token JSON")
+	n, err := number.Int64()
+	return n, err == nil
+}
+
+// The required-field masks reject missing/duplicate keys even when their
+// zero value would otherwise describe a valid released reservation. Token
+// typing rejects nulls, arrays, aliases and fractional or overflowing numbers.
+func decodeTokenAmount(d *json.Decoder) (TokenBudget, error) {
+	invalid := errInvalidTokenLedger
+	if !tokenDelimiter(d, '{') {
+		return TokenBudget{}, invalid
 	}
-	delim, ok := t.(json.Delim)
-	if !ok {
-		return t, nil
-	}
-	if delim != '{' {
-		return nil, errors.New("invalid token JSON")
-	}
-	object := map[string]any{}
+	var result TokenBudget
+	seen := uint8(0)
 	for d.More() {
-		t, err := d.Token()
-		key, ok := t.(string)
-		if err != nil || !ok {
-			return nil, errors.New("invalid token JSON")
+		name, ok := tokenName(d)
+		if !ok {
+			return TokenBudget{}, invalid
 		}
-		if _, exists := object[key]; exists {
-			return nil, errors.New("duplicate token JSON")
+		var bit uint8
+		var dest *int64
+		switch name {
+		case "input_tokens":
+			bit, dest = 1, &result.InputTokens
+		case "output_tokens":
+			bit, dest = 2, &result.OutputTokens
+		case "total_tokens":
+			bit, dest = 4, &result.TotalTokens
+		default:
+			return TokenBudget{}, invalid
 		}
-		value, err := tokenJSONValue(d, depth+1)
+		if seen&bit != 0 {
+			return TokenBudget{}, invalid
+		}
+		value, ok := tokenInteger(d)
+		if !ok {
+			return TokenBudget{}, invalid
+		}
+		*dest = value
+		seen |= bit
+	}
+	if seen != 7 || !tokenDelimiter(d, '}') {
+		return TokenBudget{}, invalid
+	}
+	return result, nil
+}
+
+func decodeTokenEntry(d *json.Decoder) (tokenEntry, error) {
+	invalid := errInvalidTokenLedger
+	if !tokenDelimiter(d, '{') {
+		return tokenEntry{}, invalid
+	}
+	var result tokenEntry
+	seen := uint8(0)
+	for d.More() {
+		name, ok := tokenName(d)
+		if !ok {
+			return tokenEntry{}, invalid
+		}
+		var bit uint8
+		switch name {
+		case "reserved":
+			bit = 1
+		case "actual":
+			bit = 2
+		default:
+			return tokenEntry{}, invalid
+		}
+		if seen&bit != 0 {
+			return tokenEntry{}, invalid
+		}
+		value, err := decodeTokenAmount(d)
 		if err != nil {
-			return nil, err
+			return tokenEntry{}, invalid
 		}
-		object[key] = value
+		if bit == 1 {
+			result.Reserved = value
+		} else {
+			actual := value
+			result.Actual = &actual
+		}
+		seen |= bit
 	}
-	if t, err := d.Token(); err != nil || t != json.Delim('}') {
-		return nil, errors.New("invalid token JSON")
+	if seen&1 == 0 || !tokenDelimiter(d, '}') {
+		return tokenEntry{}, invalid
 	}
-	return object, nil
+	return result, nil
+}
+
+func decodeTokenEntries(d *json.Decoder) (map[string]tokenEntry, error) {
+	invalid := errInvalidTokenLedger
+	if !tokenDelimiter(d, '{') {
+		return nil, invalid
+	}
+	entries := make(map[string]tokenEntry)
+	for d.More() {
+		if len(entries) >= 1000 {
+			return nil, invalid
+		}
+		id, ok := tokenName(d)
+		if !ok || !validID(id, 128) {
+			return nil, invalid
+		}
+		if _, duplicate := entries[id]; duplicate {
+			return nil, invalid
+		}
+		entry, err := decodeTokenEntry(d)
+		if err != nil {
+			return nil, invalid
+		}
+		entries[id] = entry
+	}
+	if !tokenDelimiter(d, '}') {
+		return nil, invalid
+	}
+	return entries, nil
 }
