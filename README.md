@@ -19,7 +19,7 @@ CLI, with a shared SQLite broker underneath.
 
 ## Get going
 
-Download and extract the matching [v0.9.1 archive](https://github.com/spfuzzylink/questlock/releases/tag/v0.9.1), then:
+Download and extract the matching [v0.10.0 archive](https://github.com/spfuzzylink/questlock/releases/tag/v0.10.0), then:
 
 ```sh
 ./questlock setup
@@ -85,6 +85,7 @@ each one has a different job.
 
 | You use… | What Questlock adds | Sample / setup |
 | --- | --- | --- |
+| Your Go app | One coordinator for reuse, local admission, shared token quotas and optional telemetry. | [Go integration](docs/go-integration.md) · [Configuration examples](examples/execution/README.md) |
 | OpenRouter | Shared task/result reuse around one explicit model/provider route, with adapter fallbacks disabled. | [Spec](examples/inference/openrouter-summary.json) · [Route limits](docs/runtime-cache.md#openrouter-boundary) |
 | OpenAI or Claude API | Bounded text tasks, token-count preflight and optional shared token-price budgets. | [OpenAI](examples/model-workflows/openai-handoff.json) · [Claude](examples/model-workflows/claude-handoff.json) |
 | Ollama | Bounded local generation using installed weights, plus exact result reuse. | [Spec](examples/model-workflows/local-handoff.json) · [Local setup](docs/local-models.md) |
@@ -148,7 +149,30 @@ These demos use temporary state and no model account. Local inference needs
 installed Ollama weights. Paid generation requires explicit credentials and
 policy; guided setup enables no paid escalation.
 
-## New in 0.9.1
+## New in 0.10.0
+
+Already have a Go app calling a model? Put the work through one
+`execution.Coordinator` for shared result reuse, bounded local admission and
+optional Langfuse traces. Keep the provider and model explicit.
+
+```go
+coordinator, err := execution.New(ctx, execution.Config{
+    Runner: inference.Runner{Broker: broker, Provider: provider},
+    Exporter: langfuse, // optional
+})
+// Handle err and initial admission readiness; see the complete example below.
+result, err := coordinator.Run(ctx, approvedSpec)
+```
+
+A shared scope/day token quota reserves input, output and total tokens before
+fresh generation. Known usage settles the reservation; uncertain calls keep it.
+Per-task token limits, call/day dollar caps and local resource settings come from
+explicit configuration. CPU-only runtimes use the same coordination API.
+
+[Complete Go example and configuration](docs/go-integration.md) ·
+[Runnable example](examples/execution/README.md)
+
+## Local quality evidence (0.9.1)
 
 Local teams get explicit JSON types and field roles, bounded reasoning, model
 release and better macOS memory admission. Wrong answers still stop at the
@@ -167,7 +191,7 @@ coding quality remain unmeasured.
 
 ## Go deeper
 
-- [What changed in 0.9.1](docs/release-notes.md) · [Measured build report](docs/success-report-v0.7.0.md)
+- [What changed in 0.10.0](docs/release-notes.md) · [Measured build report](docs/success-report-v0.7.0.md)
 - [Checked revisions](docs/checked-revisions.md) · [Bounded delegation](docs/delegation.md)
 - [Model workflows](docs/model-workflows.md) · [Acceptance and human rework](docs/outcomes.md)
 - [Langfuse and timings](docs/inference-observability.md) · [SGLang/KV cache integration](docs/runtime-cache.md)

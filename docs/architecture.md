@@ -1,5 +1,28 @@
 # Architecture
 
+## Go applications and a shared master broker
+
+One `execution.Coordinator` combines the existing runner, bounded local admission
+and optional telemetry. Share that instance inside a process. Across machines,
+workers use scoped HTTPS clients to reach one authoritative broker. The broker
+stores claims, results and opt-in token/dollar ledgers; each process still owns
+its own CPU/memory admission. SGLang or Ollama owns the model's device memory.
+
+```mermaid
+flowchart LR
+    A[Go agent processes on one or several machines] --> C[Each process: bounded execution coordinator]
+    C <--> B[One master broker: claims, results, scope/day quotas]
+    C --> P[Explicit provider: Ollama or pinned standalone SGLang]
+    P --> H[Runtime-owned CPU or GPU execution and KV memory]
+    C -. Content-free metadata .-> L[Optional Langfuse]
+```
+
+See the [Go integration and declarative examples](go-integration.md). Exact reuse
+can skip generation; a new task must reserve its configured quota first. Unknown
+outcomes retain reservations. Quotas coordinate trusted, configured workers;
+they cannot meter calls made outside this path. This adds neither automatic
+multi-writer replication nor a distributed CPU/GPU resource scheduler.
+
 ## Local master and reviewers
 
 An approved text snapshot can now run through a local master and independent

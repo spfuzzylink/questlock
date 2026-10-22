@@ -83,6 +83,25 @@ above resolves server configuration; it is not a Questlock observer hook.
 HiSparse and PD remain inspection-only. Generic provider APIs still get task
 coordination and result reuse without exposing their GPU state.
 
+## Several machines, one task
+
+Use the [Go coordinator and declarative task specs](go-integration.md) to send
+actual requests through shared claims and result reuse, with each process owning
+its admission budget. `resources quest` and `team quest` are demos, not a live
+gate for an HTTP call your application makes afterwards.
+
+For repeated work, keep the approved snapshot and provider identity the same.
+Use a positive reuse window before the first generation. A concurrent duplicate
+returns `ErrInFlight`; the caller does not automatically receive the winner's
+answer. Reused SGLang tasks can still perform runtime-identity readbacks.
+
+SGLang's [model gateway](https://docs.sglang.io/docs/advanced_features/sgl_model_gateway)
+can combine cache locality with load balancing. A router-backed provider is an
+advanced integration to qualify: stable deployment identity, native counting,
+bounded generation, known usage and explicit retry/failover behavior all matter.
+A Chat Completions URL alone does not satisfy the native adapter's contract.
+Exact answer reuse and runtime KV reuse solve different repeated work.
+
 ## OpenRouter boundary
 
 Use `provider: "openrouter"` with an explicit `openrouter` object:

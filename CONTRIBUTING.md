@@ -2,7 +2,7 @@
 
 Questlock is an experimental Go library and CLI for bounded model workflows and
 shared text-artifact publication on one host. Start with the
-[recovery quest](README.md#start-the-quest), then inspect the
+[recovery quest](README.md#try-before-connecting-anything), then inspect the
 [broker architecture](docs/architecture.md),
 [model architecture](docs/model-architecture.md), and
 [security boundaries](SECURITY.md).

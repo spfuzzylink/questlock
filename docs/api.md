@@ -1,4 +1,16 @@
-# HTTP API
+# HTTP and Go APIs
+
+## Call from a Go application
+
+Use the public `execution` package to put an existing `inference.Runner` behind
+one process-local admission controller. It keeps shared claims, results and
+opt-in scope/day quotas in the broker. Providers and telemetry stay explicit.
+`execution.LoadSpec` reads a bounded task configuration; `admission.LoadConfig`
+reads resource settings. [Complete example](go-integration.md).
+
+This adds a Go integration surface; the broker HTTP routes below stay the same.
+
+## Broker HTTP API
 
 The native broker defaults to `http://127.0.0.1:8080`. Every `/v1/` endpoint requires
 `Authorization: Bearer <token>`. JSON responses have `Cache-Control: no-store` and

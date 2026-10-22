@@ -1,0 +1,24 @@
+{
+  "task": "support-handoff",
+  "revision": "ticket-42-r3",
+  "provider": "sglang",
+  "model": "YOUR_SERVED_MODEL",
+  "sglang": {
+    "deployment_id": "support-model-r1",
+    "cache_namespace": "support",
+    "profile": "dense",
+    "self_hosted": true,
+    "max_input_tokens": 2048
+  },
+  "instructions": "Write a one-sentence support handoff using only the supplied facts.",
+  "input": "Ticket 42: the customer cannot export invoices. The fix is deployed. Ask the customer to try again.",
+  "max_context_bytes": 0,
+  "max_input_tokens": 2048,
+  "max_output_tokens": 128,
+  "reuse_for_seconds": 3600,
+  "daily_token_budget": {
+    "input_tokens": 32000,
+    "output_tokens": 4000,
+    "total_tokens": 36000
+  }
+}

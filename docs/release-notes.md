@@ -1,3 +1,26 @@
+# Questlock 0.10.0 — plug it into your Go app
+
+**Experimental release candidate.** Existing broker and inference APIs remain;
+the new `execution` package wires the pieces together for application developers.
+
+- One process-local coordinator combines bounded admission, shared task/result
+  reuse and optional content-free Langfuse export. Telemetry failure leaves the
+  task result alone.
+- Optional shared scope/UTC-day input, output and total token quotas reserve
+  declared task caps before generation, settle known usage and retain unknown
+  reservations. Existing per-call/day dollar controls stay separate.
+- Strict task JSON loading and declarative examples cover local Ollama, pinned
+  standalone SGLang, resource settings and explicit cost/token budgets.
+- CPU-only runtimes use the same API. Device execution, GPU batching and KV
+  storage stay with the inference engine. Router-backed serving still needs a
+  qualified provider contract.
+
+Read the [Go guide](go-integration.md) and [complete example](../examples/execution/README.md).
+Resource admission is per process; quota accounting coordinates trusted workers
+using one broker scope and matching policy. It does not meter outside calls or
+turn the broker into a GPU scheduler. Provider-token cost and hardware cost are
+separate; synthetic control-plane tests are not GPU or model-quality benchmarks.
+
 # Questlock 0.9.1 — local quality gates
 
 **Experimental release, published and verified.** Four native archives, two macOS

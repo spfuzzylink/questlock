@@ -33,6 +33,25 @@ The operator must prevent direct worker access to the database/volume, broker
 credentials, container engine, host secrets, and alternative mutation paths.
 Giving a worker the broker's host identity defeats this separation.
 
+## Go execution and shared quotas
+
+The `execution` coordinator calls trusted provider, resource-source and exporter
+implementations inside your process. They must honor deadlines and the configured
+concurrency. Its queue and reservations are bounded estimates, not OS allocation
+or a sandbox. A runtime on another host needs its own capacity controls.
+
+The default coordinator requires both a self-hosted task and the provider's
+explicit self-hosted assertion. That declaration is trusted configuration, not
+a billing audit. Hosted use requires explicit opt-in; it adds no automatic fallback.
+
+Token and dollar ledgers coordinate cooperating workers in one broker scope.
+Configure matching caps on v0.10.0+ participants before traffic, in a dedicated
+scope. A new quota cannot cover earlier unbudgeted calls; an old or arbitrary
+broker writer can bypass the client policy. These ledgers do not replace API-key
+spend controls or meter calls made directly to a provider. Unknown outcomes keep
+reservations, and reported overruns freeze further budgeted work for review.
+Do not change revisions just to escape pending state.
+
 ## Controls and limits
 
 - The server defaults to literal loopback; non-loopback HTTP binds require an

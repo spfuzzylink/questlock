@@ -15,6 +15,10 @@ spec.loader.exec_module(package)
 class PackageTests(unittest.TestCase):
     def test_inference_release_material_is_packaged_without_private_inputs(self):
         required = {
+            "docs/go-integration.md", "examples/execution/README.md",
+            "examples/execution/main.go", "examples/execution/local-task.json",
+            "examples/execution/sglang-task.json", "examples/execution/hosted-budget.example.json",
+            "examples/execution/admission.json",
             "docs/local-agent-teams.md", "docs/diagrams/local-agent-teams.drawio",
             "docs/diagrams/local-agent-teams.svg", "examples/teams/README.md",
             "docs/local-team-validation-v0.9.0.md", "docs/local-team-validation-v0.9.0.json",

@@ -39,6 +39,7 @@ type jobRecord struct {
 	BudgetKey      string    `json:"budget_key,omitempty"`
 	Reservation    string    `json:"reservation,omitempty"`
 	ReservedMicros int64     `json:"reserved_micros,omitempty"`
+	TokenBudgetKey string    `json:"token_budget_key,omitempty"`
 }
 
 func (r Runner) now() time.Time {
@@ -149,6 +150,11 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 		return Result{}, err
 	}
 	record := jobRecord{Schema: 1, Fingerprint: fingerprint, State: "pending", CreatedAt: r.now()}
+	if s.DailyTokenBudget != nil {
+		// Keep a direct recovery link even if the later reserved-record publish
+		// fails after a ledger committed. Older no-quota records stay unchanged.
+		record.Reservation = claimID
+	}
 	phase = time.Now()
 	a, err = r.publish(ctx, key, version, claimID, record)
 	measurement.PhaseMS["admission"] = milliseconds(time.Since(phase))
@@ -185,13 +191,41 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 	budgetKey, err := r.reserve(ctx, s, claimID, upper)
 	measurement.PhaseMS["reservation"] = milliseconds(time.Since(phase))
 	if err != nil {
-		saveState(key, version, record, "blocked")
+		if s.DailyTokenBudget == nil || errors.Is(err, ErrBudgetExceeded) {
+			saveState(key, version, record, "blocked")
+		}
 		return Result{}, err
 	}
 	record.BudgetKey, record.Reservation, record.ReservedMicros = budgetKey, claimID, upper
+	tokenBudgetKey := ""
+	{
+		phase = time.Now()
+		tokenBudgetKey, err = r.reserveTokens(ctx, s, claimID)
+		record.TokenBudgetKey = tokenBudgetKey
+		measurement.PhaseMS["reservation"] += milliseconds(time.Since(phase))
+		if err != nil {
+			// Generate was never called. A failed CAS acknowledgement can still
+			// have committed: reconcile the exact IDs before releasing this job.
+			rollbackCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
+			var rollbackError error
+			if budgetKey != "" {
+				rollbackError = r.settle(rollbackCtx, budgetKey, claimID, 0)
+			}
+			if tokenBudgetKey != "" {
+				rollbackError = errors.Join(rollbackError, r.settleTokens(rollbackCtx, tokenBudgetKey, claimID, TokenBudget{}, true))
+			}
+			cancel()
+			if rollbackError != nil {
+				saveState(key, version, record, "pending")
+				return Result{}, errors.Join(err, fmt.Errorf("reservation rollback unconfirmed; inspect this pending job before retrying: %w", rollbackError))
+			}
+			saveState(key, version, record, "blocked")
+			return Result{}, err
+		}
+	}
 	// Persist the reservation's identity before a paid call. If this write
 	// fails, keep the reservation and pending claim, and do not generate.
-	if budgetKey != "" {
+	if budgetKey != "" || tokenBudgetKey != "" {
 		phase = time.Now()
 		a, err = r.publish(ctx, key, version, claimID+"-reserved", record)
 		measurement.PhaseMS["reservation"] += milliseconds(time.Since(phase))
@@ -249,7 +283,7 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 	record.CreatedAt = r.now()
 	record.ExpiresAt = record.CreatedAt.Add(time.Duration(s.ReuseForSeconds) * time.Second)
 	result = savedResult(record, s, false)
-	var publicationError, settlementError error
+	var publicationError, settlementError, tokenSettlementError error
 	phase = time.Now()
 	_, err = r.publish(ctx, key, version, claimID+"-result", record)
 	measurement.PhaseMS["publication"] = milliseconds(time.Since(phase))
@@ -274,7 +308,19 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 			settlementError = fmt.Errorf("budget settlement not confirmed; stop this scope and inspect its retained reservation: %w", err)
 		}
 	}
-	if err = errors.Join(postflight, publicationError, settlementError); err != nil {
+	if tokenBudgetKey != "" {
+		// Charge all known attempts, including incomplete/rejected output. Cache
+		// input is inclusive, and reasoning already belongs to output tokens.
+		settleCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
+		phase = time.Now()
+		err = r.settleTokens(settleCtx, tokenBudgetKey, claimID, tokenAmount(response.Usage.InputTokens, response.Usage.OutputTokens), false)
+		measurement.PhaseMS["settlement"] += milliseconds(time.Since(phase))
+		cancel()
+		if err != nil {
+			tokenSettlementError = fmt.Errorf("token settlement unconfirmed; stop this scope and inspect its retained reservation: %w", err)
+		}
+	}
+	if err = errors.Join(postflight, publicationError, settlementError, tokenSettlementError); err != nil {
 		return result, err
 	}
 	if !response.Complete {
