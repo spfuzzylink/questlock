@@ -59,6 +59,30 @@ invoice handled by Questlock; GPU rental, hardware, electricity, storage, and
 operations still cost resources. A metered third-party SGLang service needs a
 separate billing contract and should not use this declaration.
 
+## Where hardware awareness fits
+
+Busy workers are useful only when they finish useful work. Questlock can reuse
+a whole finished task before another generation. For fresh SGLang work, it checks
+the deployment identity, sets a cache namespace and records the KV counters the
+runtime returns. SGLang owns prefix reuse, GPU batching, cache storage and eviction.
+
+The opt-in [Go admission controller](adaptive-admission.md) adds CPU/memory-aware
+backpressure when your application puts its calls behind the same controller.
+It bounds queued work, lowers concurrency under pressure and ramps back up after
+recovery. That can keep expensive work from crowding out small broker operations.
+It is one process's admission budget; running the SGLang adapter alone does not
+turn it on, and separate processes or hosts do not share that budget.
+
+So, **resource-aware execution coordination with runtime-cache awareness** is a
+fair description today. The aim is more useful completed work per machine by
+reusing results and controlling pressure. Maximum throughput needs a matched
+[GPU benchmark](../deploy/sglang/README.md#reproduce-a-runtime-comparison).
+There is no live radix-tree observer, VRAM pinning, cache-residency guarantee or
+cache-local GPU routing in this adapter. The upstream `hicache_hook.py` linked
+above resolves server configuration; it is not a Questlock observer hook.
+HiSparse and PD remain inspection-only. Generic provider APIs still get task
+coordination and result reuse without exposing their GPU state.
+
 ## OpenRouter boundary
 
 Use `provider: "openrouter"` with an explicit `openrouter` object:

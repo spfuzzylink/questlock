@@ -11,8 +11,9 @@
 You already paid for the answer. Why generate it again to change a sentence?
 
 **Questlock** helps agents reuse completed work, make checked literal edits without
-a model, and delegate small tasks to a local model. A Go library and CLI, with a
-shared SQLite broker underneath.
+a model, and run bounded tasks through local or hosted models. Add CPU/memory-aware
+admission and cache-aware SGLang integration when you need them. A Go library and
+CLI, with a shared SQLite broker underneath.
 
 **The mission: lower cost per accepted task, including the work a person has to redo.**
 
@@ -76,6 +77,59 @@ Hosted OpenAI, Claude and OpenRouter calls use their own billing. Only tasks
 routed through Questlock get these controls. This does **not** make the surrounding
 Codex/Claude chat free or remove subscription limits. Measure savings against a
 matched task baseline, with failed attempts and human rework included.
+
+## Use it with what you already run
+
+Keep your model. Stop repeating work around it. These integrations are opt-in;
+each one has a different job.
+
+| You use… | What Questlock adds | Sample / setup |
+| --- | --- | --- |
+| OpenRouter | Shared task/result reuse around one explicit model/provider route, with adapter fallbacks disabled. | [Spec](examples/inference/openrouter-summary.json) · [Route limits](docs/runtime-cache.md#openrouter-boundary) |
+| OpenAI or Claude API | Bounded text tasks, token-count preflight and optional shared token-price budgets. | [OpenAI](examples/model-workflows/openai-handoff.json) · [Claude](examples/model-workflows/claude-handoff.json) |
+| Ollama | Bounded local generation using installed weights, plus exact result reuse. | [Spec](examples/model-workflows/local-handoff.json) · [Local setup](docs/local-models.md) |
+| SGLang | Deployment identity, cache namespaces and reported KV counters for standalone dense/HiCache tasks. | [Spec](deploy/sglang/task.json) · [GPU setup and limits](docs/runtime-cache.md#where-hardware-awareness-fits) |
+| Langfuse | Opt-in usage/timing traces without prompts or answers. You can see new generation versus reuse. | [Export example](docs/inference-observability.md#opt-in-to-langfuse) |
+| TypeSafe System One adapter + Ollama | A local label recommendation or abstention; your code keeps control. Uses ordinary Ollama weights, not Jev weights. | [Request](optional/system-one/reuse.json) · [Setup](docs/system-one.md#prepare-explicitly-then-choose) |
+| Codex, Claude Code or Claude Desktop | Explicit checked-edit and bounded-task MCP tools inside your client. | [Guided setup](docs/onboarding.md) |
+| Workers on your own machines | Scoped HTTPS claims and results through one broker, with durable edge sync. | [Go example](examples/edge/main.go) · [Deployment](docs/local-agent-teams.md) |
+
+<details>
+<summary>Show integration code samples</summary>
+
+From a checkout, with `questlock` on your `PATH`. Start with offline plans:
+
+```sh
+questlock model plan --spec examples/inference/openrouter-summary.json
+questlock model plan --spec examples/model-workflows/openai-handoff.json
+questlock model plan --spec examples/model-workflows/claude-handoff.json
+questlock model plan --spec examples/model-workflows/local-handoff.json
+questlock model plan --spec deploy/sglang/task.json
+
+# Preview setup for an installed client; choose the client you use.
+questlock setup --client codex --plan
+questlock setup --client claude-code --plan
+questlock setup --client claude-desktop --plan
+```
+
+After the linked setup steps, these commands contact your configured services.
+SGLang inspection generates no answer; the other two commands may run local inference:
+
+```sh
+questlock model runtime-inspect --spec deploy/sglang/task.json \
+  --api-base-url http://127.0.0.1:30000
+questlock system-one choose --request optional/system-one/reuse.json \
+  --python /absolute/private/system-one-venv/bin/python
+questlock model run --spec examples/model-workflows/local-handoff.json \
+  --broker http://127.0.0.1:8080 --langfuse --langfuse-timeout 2s
+```
+
+Keep keys in your environment or secret manager. The Langfuse example also needs
+a broker token and installed Ollama weights. Review the sample facts before a real
+task; paid runs need current explicit prices and caps. Sample model IDs are examples,
+not recommendations.
+
+</details>
 
 ## Try before connecting anything
 

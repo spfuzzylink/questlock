@@ -125,7 +125,11 @@ its web process to `0.0.0.0` inside the container and publishes only
 `127.0.0.1:3000` on the host. CI removes its disposable services and volumes; this
 does not populate or clean up your own Langfuse project.
 
-Questlock's developer-facing direction is faster, affordable, measurable repeat tasks through a small Go runtime. Langfuse observability and an actual bounded worker are the new pieces here. A capability-aware OpenRouter companion adapter remains future work. Questlock does not intercept a full assistant session, train a model, bypass paid limits, or choose models automatically.
+Questlock now has a dedicated [OpenRouter text adapter](runtime-cache.md#openrouter-boundary):
+one explicit model/provider route, with adapter fallbacks disabled. Langfuse
+records execution evidence; it does not tune routes or infer human acceptance.
+Questlock does not intercept a full assistant session, train a model, bypass paid
+limits, or choose models automatically.
 
 ## Checks and human acceptance are separate measurements
 
