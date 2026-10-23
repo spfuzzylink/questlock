@@ -35,7 +35,11 @@ func (r Runner) reserve(ctx context.Context, s Spec, id string, amount int64) (s
 				return "", err
 			}
 			if ledger.Frozen {
-				return "", fmt.Errorf("%w: daily ledger is frozen after a measured overrun; operator review required", ErrBudgetExceeded)
+				total := int64(0)
+				for _, n := range ledger.Entries {
+					total += n
+				}
+				return "", &BudgetError{Diagnostic: BudgetDiagnostic{LimitKind: "daily_cost", ConfiguredLimit: ledger.CapMicros, Unit: "usd_micros", Reason: "frozen_after_overrun", CountBasis: "configured_reservation", Required: total + amount, CurrentUsage: total, RequestedReservation: amount}}
 			}
 			if s.Prices == nil || ledger.CapMicros != capMicros(s.DailyBudgetUSD) {
 				return "", errors.New("scope already has a daily budget; all workers must use its same cap and explicit prices")
@@ -56,7 +60,7 @@ func (r Runner) reserve(ctx context.Context, s Spec, id string, amount int64) (s
 			total += n
 		}
 		if total > ledger.CapMicros || amount > ledger.CapMicros-total {
-			return "", ErrBudgetExceeded
+			return "", &BudgetError{Diagnostic: BudgetDiagnostic{LimitKind: "daily_cost", ConfiguredLimit: ledger.CapMicros, Unit: "usd_micros", Reason: "exceeds_limit", CountBasis: "configured_reservation", Required: total + amount, CurrentUsage: total, RequestedReservation: amount}}
 		}
 		ledger.Entries[id] = amount
 		_, err = r.publish(ctx, key, version, fmt.Sprintf("%s-budget-%d", id, attempt), ledger)

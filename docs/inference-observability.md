@@ -27,6 +27,23 @@ hosted assistant's prompt, tool, and context tokens.
 
 `measurement` describes only this invocation and is neither persisted in the job record nor included in its fingerprint. Original streaming timing and runtime KV observations are persisted separately. A reused result retains original timing in `generation_timing`, clears `response.timing`, and has no fresh generation timing in `measurement`; its original KV observations remain in `generation_runtime_cache` rather than current `response.runtime_cache`.
 
+Budget failures can include a `budget_diagnostic` on model results and
+delegation results/attempts. It contains allowlisted labels and numeric evidence:
+`limit_kind`, `configured_limit`, `unit`, `reason`, `count_basis`, plus applicable
+estimated, counted or reported tokens and reservation totals. Cost units are
+integer `usd_micros`. It excludes model names, endpoints, raw provider errors,
+prompt/answer text, credentials and configuration.
+
+Keep the basis with the number. A `conservative_byte_estimate`,
+`operator_upper_bound` or `configured_reservation` is not runtime usage;
+`runtime_reported_usage` identifies a reported count. A preflight stop makes no
+generation call. A diagnostic recovered from a saved limit breach describes
+that original breach, while `measurement.generation_called` describes the
+current invocation. If no complete answer was checked, declared checks carry
+`status: not_evaluated`; no observed word, character or paragraph count is
+reported. A budget diagnostic is evidence to review before an intentional policy
+change, without automatic cap increases, retries or paid fallback.
+
 For local Ollama only, set `"stream": true` in the approved spec to collect content-arrival observations. `first_content_ms` (TTFT) starts at entry to `Generate` and ends at the first nonempty content chunk observed by the client, including metadata and network overhead. `output_content_ms` is the interval from the first to the last nonempty content chunk; one content chunk can yield zero. Empty frames do not extend it. These are not pure compute TTFT, per-token throughput, or reasoning-token timing. Streaming consumes and validates the bounded response before exposing approved output.
 
 ## Runtime KV evidence in v0.5.0

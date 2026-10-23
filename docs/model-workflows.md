@@ -146,7 +146,17 @@ questlock worker run --request "$HOME/questlock-workspace/approved-task.json" \
 
 Evaluation defaults to six simulated public cases. Live mode needs an intentionally fresh broker scope and explicit installed/configured models. Report files are private and existing paths are refused. JSON/literal checks establish only the supplied expectations; no eligible selection is a nonzero result. The [recorded local run](measurements-v0.3.0.md) qualified neither configuration.
 
-The [delegation request](delegation.md) declares local and optional escalation tiers, budgets, context, TTL, and checks. Only an error-free complete, durable, valid-known-usage answer failing those checks can reach the one explicit next tier. Hosted escalation also requires process `--allow-paid` and explicit prices/caps. `worker serve --workspace ROOT` exposes `questlock_delegate` and `questlock_revise`, each with `request_path`; it does not discover or edit files, execute commands, or proxy an assistant session.
+The [delegation request](delegation.md) declares local and optional escalation tiers, budgets, context, TTL, and checks. Only an error-free complete, durable, valid-known-usage answer failing those checks can reach the one explicit next tier. Hosted escalation also requires process `--allow-paid` and explicit prices/caps.
+
+`worker serve --workspace ROOT` exposes `questlock_status`, `questlock_delegate`
+and `questlock_revise`. Call the zero-input status tool first to discover the
+declared absolute root, runtime, profile, policy and supported schemas/checks.
+Its worker readiness is bounded to process state; broker/providers are
+`not_checked`. Discovery makes no network/model calls and reads no client
+configuration, task content or credentials. The two task tools retain their
+`request_path` argument. Save a reviewed request under the discovered root and
+pass its absolute path. The worker offers no file listing/editing, commands or
+whole-session proxy. [Compatibility and discovery](delegation.md#discover-the-connected-worker).
 
 ## Use from Codex or Claude Code
 

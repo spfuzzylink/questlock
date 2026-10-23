@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/fs"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -15,9 +17,13 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/spfuzzylink/questlock/revision"
+	"github.com/spfuzzylink/questlock/worker"
 	"golang.org/x/sys/unix"
 )
 
@@ -145,7 +151,7 @@ func TestOnboardingCLIIntegration(t *testing.T) {
 		f := newOnboardingCLIFixture(t, binary)
 		var first firstTaskReport
 		onboardingCLIMust(t, json.Unmarshal(f.command(t, "try", "--state-dir", f.state, "--workspace", f.workspace), &first))
-		if first.Status != "completed" || !first.MCPProtocolSelfTest || first.NativeClientVerified || len(first.MCPTools) != 2 || !containsName(first.MCPTools, "questlock_revise") || !containsName(first.MCPTools, "questlock_delegate") {
+		if first.Status != "completed" || !first.MCPProtocolSelfTest || first.NativeClientVerified || len(first.MCPTools) != 3 || !containsName(first.MCPTools, "questlock_status") || !containsName(first.MCPTools, "questlock_revise") || !containsName(first.MCPTools, "questlock_delegate") {
 			t.Fatalf("first task capabilities/report: %+v", first)
 		}
 		r := first.Result
@@ -226,6 +232,116 @@ func TestOnboardingCLIIntegration(t *testing.T) {
 		f.command(t, "local", "start", "--state-dir", f.state)
 		if !bytes.Equal(token, readOnboardingCLIFile(t, filepath.Join(f.state, "worker.token"))) {
 			t.Fatal("local restart rotated credential")
+		}
+	})
+
+	t.Run("fresh custom profile discovers root and runs checked task without managed defaults", func(t *testing.T) {
+		f := newOnboardingCLIFixture(t, binary)
+		broker, err := newModelQuestFixture(t.Context())
+		onboardingCLIMust(t, err)
+		defer broker.close()
+		var brokerCalls atomic.Int32
+		endpoint := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			brokerCalls.Add(1)
+			broker.server.Config.Handler.ServeHTTP(w, r)
+		}))
+		defer endpoint.Close()
+		onboardingCLIMust(t, os.Mkdir(f.workspace, 0700))
+		// The fixture native binary must not run: doctor statically inspects
+		// Claude Code in isolation and never asks MCP get to start this entry.
+		native := filepath.Join(f.bin, "fixture-claude")
+		onboardingCLIMust(t, os.WriteFile(native, []byte("#!/bin/sh\nexit 97\n"), 0700))
+		type serverEntry struct {
+			Command string            `json:"command"`
+			Args    []string          `json:"args"`
+			Env     map[string]string `json:"env"`
+			Type    string            `json:"type"`
+		}
+		entry := serverEntry{Command: binary, Args: []string{"worker", "serve", "--workspace", f.workspace, "--broker", endpoint.URL, "--profile-id", "approved-custom-writing"}, Env: map[string]string{"QUESTLOCK_TOKEN": broker.tokens[0]}, Type: "stdio"}
+		config := struct {
+			Servers map[string]serverEntry `json:"mcpServers"`
+			Private string                 `json:"private_sentinel"`
+		}{Servers: map[string]serverEntry{"questlock": entry}, Private: "PRIVATE_UNRELATED_CONFIG"}
+		original, err := json.Marshal(config)
+		onboardingCLIMust(t, err)
+		configPath := filepath.Join(f.home, ".claude.json")
+		onboardingCLIMust(t, os.WriteFile(configPath, original, 0600))
+		beforeSHA := sha(original)
+		stdout, stderr, err := f.run(8*time.Second, "doctor", "--client", "claude-code", "--home", f.home, "--client-bin", native)
+		if err == nil {
+			t.Fatal("doctor claimed to verify the configured custom profile")
+		}
+		var doctor struct {
+			Status  string `json:"status"`
+			Scope   string `json:"diagnostic_scope"`
+			Managed struct {
+				Status string `json:"status"`
+			} `json:"managed_profile"`
+			Client struct {
+				Status string `json:"status"`
+			} `json:"client"`
+			Next []string `json:"next_steps"`
+		}
+		onboardingCLIMust(t, json.Unmarshal(stdout, &doctor))
+		if doctor.Status != "configured_custom_profile_unverified" || doctor.Client.Status != doctor.Status || doctor.Managed.Status != "managed_profile_not_initialized" || doctor.Scope != "selected_managed_profile" {
+			t.Fatalf("custom and managed states were conflated: %+v", doctor)
+		}
+		for _, step := range doctor.Next {
+			if strings.Contains(step, "questlock setup") || strings.Contains(step, "questlock try") {
+				t.Fatal("doctor prescribed replacing a custom profile")
+			}
+		}
+		if bytes.Contains(stdout, []byte(config.Private)) || bytes.Contains(stderr, []byte(config.Private)) || bytes.Contains(stdout, []byte(broker.tokens[0])) {
+			t.Fatal("doctor disclosed configuration content or a credential")
+		}
+		// A fresh caller uses only the chosen server's exact command/args and
+		// status response; no default broker/root or client-config dump is used.
+		var installed struct {
+			Servers map[string]serverEntry `json:"mcpServers"`
+		}
+		onboardingCLIMust(t, json.Unmarshal(readOnboardingCLIFile(t, configPath), &installed))
+		selected := installed.Servers["questlock"]
+		command := exec.Command(selected.Command, selected.Args...)
+		command.Dir = f.root
+		command.Env = []string{"HOME=" + f.home, "PATH=" + f.bin, "TMPDIR=" + f.tmp, "GORACE=atexit_sleep_ms=0"}
+		for key, value := range selected.Env {
+			command.Env = append(command.Env, key+"="+value)
+		}
+		ctx, cancel := context.WithTimeout(t.Context(), 8*time.Second)
+		defer cancel()
+		c := mcp.NewClient(&mcp.Implementation{Name: "fresh-chat-fixture", Version: "1"}, nil)
+		session, err := c.Connect(ctx, &mcp.CommandTransport{Command: command}, nil)
+		onboardingCLIMust(t, err)
+		defer session.Close()
+		result, err := session.CallTool(ctx, &mcp.CallToolParams{Name: worker.StatusToolName, Arguments: map[string]any{}})
+		onboardingCLIMust(t, err)
+		var status worker.Status
+		data, err := json.Marshal(result.StructuredContent)
+		onboardingCLIMust(t, err)
+		onboardingCLIMust(t, json.Unmarshal(data, &status))
+		if result.IsError || status.RequestRoot != f.workspace || status.RuntimeVersion != version || status.Profile.ID != "approved-custom-writing" || status.Profile.Kind != "custom" || status.Policy.AllowPaid || status.Readiness.Broker != "not_checked" || status.ModelCalls != 0 || brokerCalls.Load() != 0 {
+			t.Fatalf("discovery did not identify the actual custom contract without HTTP calls: %+v calls=%d", status, brokerCalls.Load())
+		}
+		request, err := json.Marshal(firstRequest())
+		onboardingCLIMust(t, err)
+		approvedPath := filepath.Join(status.RequestRoot, "fresh-chat-approved.json")
+		onboardingCLIMust(t, os.WriteFile(approvedPath, request, 0600))
+		result, err = session.CallTool(ctx, &mcp.CallToolParams{Name: worker.ReviseToolName, Arguments: map[string]any{"request_path": approvedPath}})
+		onboardingCLIMust(t, err)
+		data, err = json.Marshal(result.StructuredContent)
+		onboardingCLIMust(t, err)
+		var revised revision.Result
+		onboardingCLIMust(t, json.Unmarshal(data, &revised))
+		if result.IsError || revised.Status != "completed" || !revised.Durable || revised.GenerationCalled || revised.ProviderCostUSD != 0 || revised.ThisRunUsage.InputTokens != 0 || revised.ThisRunUsage.OutputTokens != 0 || brokerCalls.Load() == 0 {
+			t.Fatalf("bounded custom task did not use the configured broker without generation: %+v", revised)
+		}
+		if beforeSHA != sha(readOnboardingCLIFile(t, configPath)) {
+			t.Fatal("custom configuration changed during discovery, doctor or task execution")
+		}
+		for _, absent := range []string{f.state, filepath.Join(f.home, ".local"), filepath.Join(f.home, ".codex")} {
+			if _, err := os.Lstat(absent); !os.IsNotExist(err) {
+				t.Fatal("custom workflow created managed-default state or another client configuration")
+			}
 		}
 	})
 

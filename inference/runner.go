@@ -30,16 +30,20 @@ type Runner struct {
 }
 
 type jobRecord struct {
-	Schema         int       `json:"schema"`
-	Fingerprint    string    `json:"fingerprint"`
-	State          string    `json:"state"`
-	CreatedAt      time.Time `json:"created_at"`
-	ExpiresAt      time.Time `json:"expires_at"`
-	Response       *Response `json:"response,omitempty"`
-	BudgetKey      string    `json:"budget_key,omitempty"`
-	Reservation    string    `json:"reservation,omitempty"`
-	ReservedMicros int64     `json:"reserved_micros,omitempty"`
-	TokenBudgetKey string    `json:"token_budget_key,omitempty"`
+	BudgetDiagnostic *BudgetDiagnostic `json:"budget_diagnostic,omitempty"`
+	// RequestFingerprint binds the approved plan without persisting a serving
+	// runtime identity. Legacy records omit it and remain usable for inference.
+	RequestFingerprint string    `json:"request_fingerprint,omitempty"`
+	Schema             int       `json:"schema"`
+	Fingerprint        string    `json:"fingerprint"`
+	State              string    `json:"state"`
+	CreatedAt          time.Time `json:"created_at"`
+	ExpiresAt          time.Time `json:"expires_at"`
+	Response           *Response `json:"response,omitempty"`
+	BudgetKey          string    `json:"budget_key,omitempty"`
+	Reservation        string    `json:"reservation,omitempty"`
+	ReservedMicros     int64     `json:"reserved_micros,omitempty"`
+	TokenBudgetKey     string    `json:"token_budget_key,omitempty"`
 }
 
 func (r Runner) now() time.Time {
@@ -53,6 +57,17 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 	started := time.Now()
 	measurement := &Measurement{StartedAt: started.UTC(), PhaseMS: make(map[string]float64)}
 	defer func() {
+		if diagnostic := BudgetDiagnosticFromError(runErr); diagnostic != nil {
+			// A replayed limit breach retains the original generation evidence;
+			// Measurement describes whether this invocation called Generate.
+			if measurement.GenerationCalled && !diagnostic.GenerationCalled {
+				diagnostic.GenerationCalled = true
+				// Preserve other typed causes without mutating provider-owned
+				// evidence or losing this invocation's Generate-call boundary.
+				runErr = errors.Join(&BudgetError{Diagnostic: *diagnostic}, runErr)
+			}
+			result.BudgetDiagnostic = diagnostic
+		}
 		measurement.EndedAt = time.Now().UTC()
 		measurement.TotalMS = milliseconds(time.Since(started))
 		if measurement.Outcome == "" {
@@ -129,6 +144,9 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 		case "incomplete":
 			return Result{Fingerprint: fingerprint}, ErrIncomplete
 		case "limit_exceeded":
+			if saved.BudgetDiagnostic != nil && validBudgetDiagnostic(*saved.BudgetDiagnostic) {
+				return Result{Fingerprint: fingerprint}, &BudgetError{Diagnostic: *saved.BudgetDiagnostic}
+			}
 			return Result{Fingerprint: fingerprint}, ErrBudgetExceeded
 		case "complete":
 			if saved.Response == nil || !saved.Response.Complete {
@@ -149,7 +167,7 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 	if err != nil {
 		return Result{}, err
 	}
-	record := jobRecord{Schema: 1, Fingerprint: fingerprint, State: "pending", CreatedAt: r.now()}
+	record := jobRecord{Schema: 1, Fingerprint: fingerprint, RequestFingerprint: plan.Fingerprint, State: "pending", CreatedAt: r.now()}
 	if s.DailyTokenBudget != nil {
 		// Keep a direct recovery link even if the later reserved-record publish
 		// fails after a ledger committed. Older no-quota records stay unchanged.
@@ -176,7 +194,11 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 	}
 	if inputTokens < 1 || inputTokens > s.MaxInputTokens {
 		saveState(key, version, record, "blocked")
-		return Result{}, ErrBudgetExceeded
+		diagnostic := inputDiagnostic("input_tokens", s.MaxInputTokens, inputTokens, inputCountBasis(r.Provider), s.MaxOutputTokens)
+		if inputTokens < 1 {
+			diagnostic.Reason, diagnostic.Required, diagnostic.CountedInputTokens, diagnostic.EstimatedInputTokens = "invalid_count", 0, 0, 0
+		}
+		return Result{}, &BudgetError{Diagnostic: diagnostic}
 	}
 	upper, err := upperCost(inputTokens, s)
 	if err != nil {
@@ -185,7 +207,9 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 	}
 	if s.MaxCostUSD > 0 && upper > capMicros(s.MaxCostUSD) {
 		saveState(key, version, record, "blocked")
-		return Result{}, ErrBudgetExceeded
+		diagnostic := inputDiagnostic("per_call_cost", capMicros(s.MaxCostUSD), inputTokens, inputCountBasis(r.Provider), s.MaxOutputTokens)
+		diagnostic.Unit, diagnostic.Required, diagnostic.RequestedReservation, diagnostic.CountBasis = "usd_micros", upper, upper, "configured_reservation"
+		return Result{}, &BudgetError{Diagnostic: diagnostic}
 	}
 	phase = time.Now()
 	budgetKey, err := r.reserve(ctx, s, claimID, upper)
@@ -263,11 +287,17 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 			return Result{}, err
 		}
 		if (s.MaxCostUSD > 0 && actual > capMicros(s.MaxCostUSD)) || (budgetKey != "" && actual > upper) {
-			postflight = fmt.Errorf("%w: reported cost exceeded the preflight limit; inspect prices and provider counting", ErrBudgetExceeded)
+			reason := "reservation_exceeded"
+			if s.MaxCostUSD > 0 && actual > capMicros(s.MaxCostUSD) {
+				reason = "exceeds_limit"
+			}
+			postflight = &BudgetError{Diagnostic: BudgetDiagnostic{LimitKind: "per_call_cost", ConfiguredLimit: capMicros(s.MaxCostUSD), Unit: "usd_micros", Reason: reason, CountBasis: "runtime_reported_usage", GenerationCalled: true, Required: actual, RequestedReservation: upper, ReportedInputTokens: response.Usage.InputTokens, ReportedOutputTokens: response.Usage.OutputTokens}}
 		}
 	}
-	if response.Usage.InputTokens > s.MaxInputTokens || response.Usage.OutputTokens > s.MaxOutputTokens {
-		postflight = fmt.Errorf("%w: provider reported usage above the configured token cap", ErrBudgetExceeded)
+	if response.Usage.InputTokens > s.MaxInputTokens {
+		postflight = &BudgetError{Diagnostic: BudgetDiagnostic{LimitKind: "input_tokens", ConfiguredLimit: s.MaxInputTokens, Unit: "tokens", Reason: "exceeds_limit", CountBasis: "runtime_reported_usage", GenerationCalled: true, Required: response.Usage.InputTokens, ReportedInputTokens: response.Usage.InputTokens, ReportedOutputTokens: response.Usage.OutputTokens}}
+	} else if response.Usage.OutputTokens > s.MaxOutputTokens {
+		postflight = &BudgetError{Diagnostic: BudgetDiagnostic{LimitKind: "output_tokens", ConfiguredLimit: s.MaxOutputTokens, Unit: "tokens", Reason: "exceeds_limit", CountBasis: "runtime_reported_usage", GenerationCalled: true, Required: response.Usage.OutputTokens, ReportedInputTokens: response.Usage.InputTokens, ReportedOutputTokens: response.Usage.OutputTokens}}
 	}
 	if postflight != nil {
 		response.Complete = false
@@ -275,6 +305,7 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 	record.Response = &response
 	if postflight != nil {
 		record.State = "limit_exceeded"
+		record.BudgetDiagnostic = BudgetDiagnosticFromError(postflight)
 	} else if response.Complete {
 		record.State = "complete"
 	} else {

@@ -34,7 +34,7 @@ func evaluate(ctx context.Context, suite Suite, factory RunnerFactory, mode stri
 	}
 	report := Report{Schema: Schema, SuiteID: suite.ID, Revision: suite.Revision, SuiteSHA256: suiteDigest(suite), Mode: mode, Objective: objective}
 	report.Limitations = []string{
-		"Checks validate only the declared JSON values and literal text; they do not establish general semantic accuracy, code correctness, or a universal model ranking.",
+		"Checks validate only the declared JSON values, literal text and text counts; they do not establish factual support, tone, suitability, general semantic accuracy, code correctness, or a universal model ranking.",
 		"One generation and one snapshot reuse per case/configuration are observations, not statistically reliable latency estimates or percentile measurements.",
 		"Elapsed time covers the whole Runner call, including planning, coordination and provider work; it is not time to first token or pure model inference time.",
 		"Reported USD uses supplied token prices and provider-reported usage, not invoices. Missing USD is unknown; local hardware and electricity costs are not measured.",
@@ -59,6 +59,7 @@ func evaluate(ctx context.Context, suite Suite, factory RunnerFactory, mode stri
 			if err != nil || runner == nil {
 				row.First.ErrorCategory = "runner_initialization_failed"
 				row.First.TimingSource = timingSource(mode)
+				row.First.Checks = NotEvaluated(c.Checks)
 				candidate.Eligible = false
 				report.Results = append(report.Results, row)
 				continue
@@ -125,7 +126,10 @@ func evaluate(ctx context.Context, suite Suite, factory RunnerFactory, mode stri
 }
 
 func measurement(result inference.Result, err error, elapsed float64, mode string, checks []Check) Measurement {
-	checked, passed := CheckOutput(result.Response.Text, checks)
+	checked, passed := NotEvaluated(checks), false
+	if err == nil && result.Response.Complete {
+		checked, passed = CheckOutput(result.Response.Text, checks)
+	}
 	fresh := !result.Reused && validGenerationUsage(result.GenerationUsage) && result.ThisRunUsage == result.GenerationUsage && result.Response.Usage == result.GenerationUsage
 	if result.Measurement != nil {
 		fresh = !result.Reused && result.Measurement.GenerationCalled

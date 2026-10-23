@@ -85,6 +85,7 @@ Read-only by default, with no imported provider credentials or paid fallback.
 | A small new task | Runs a bounded request through local Ollama or a configured provider, with declared checks. |
 | Multiple agents on one task | Coordinates claims and rejects stale writes; exact publish retries recover their original receipt. |
 | Evidence of a win | Records usage and timing, plus explicit acceptance or later human rework. |
+| Repeated writing with changing facts | Combines an approved reference with today's evidence, checks length and keeps a reviewed answer index. |
 
 [Put a local agent team to work on your own machines](docs/use-cases.md#a-local-agent-team-using-the-machines-you-already-have).
 
@@ -232,6 +233,7 @@ coding quality remain unmeasured.
 - [Release notes](https://github.com/spfuzzylink/questlock/releases) · [Measured build report](docs/success-report-v0.7.0.md)
 - [Checked revisions](docs/checked-revisions.md) · [Bounded delegation](docs/delegation.md)
 - [Model workflows](docs/model-workflows.md) · [Acceptance and human rework](docs/outcomes.md)
+- [Carry a writing workflow into another chat](docs/writing-workflows.md) · [Synthetic example](examples/writing/README.md)
 - [Langfuse and timings](docs/inference-observability.md) · [SGLang/KV cache integration](docs/runtime-cache.md)
 - [Containers](docs/containers.md) · [API](docs/api.md) · [Validation](docs/validation.md)
 - [SecondGate: durable edge push and pull](docs/second-gate.md)

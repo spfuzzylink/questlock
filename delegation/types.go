@@ -44,21 +44,23 @@ type Router struct {
 }
 
 type Attempt struct {
-	TierID        string                   `json:"tier_id"`
-	Result        inference.Result         `json:"result"` // Response.Text is always stripped.
-	Checks        []evaluation.CheckResult `json:"checks"`
-	QualityPassed bool                     `json:"quality_passed"`
-	OutputSHA256  string                   `json:"output_sha256,omitempty"`
-	ErrorCategory string                   `json:"error_category,omitempty"`
+	BudgetDiagnostic *inference.BudgetDiagnostic `json:"budget_diagnostic,omitempty"`
+	TierID           string                      `json:"tier_id"`
+	Result           inference.Result            `json:"result"` // Response.Text is always stripped.
+	Checks           []evaluation.CheckResult    `json:"checks"`
+	QualityPassed    bool                        `json:"quality_passed"`
+	OutputSHA256     string                      `json:"output_sha256,omitempty"`
+	ErrorCategory    string                      `json:"error_category,omitempty"`
 }
 
 type Result struct {
-	OutcomeTracking *OutcomeTracking    `json:"outcome_tracking,omitempty"`
-	RequestSHA256   string              `json:"request_sha256"`
-	Attempts        []Attempt           `json:"attempts"`
-	SelectedTier    string              `json:"selected_tier,omitempty"`
-	Response        *inference.Response `json:"response,omitempty"` // Only a passing answer is exposed.
-	Status          string              `json:"status"`             // completed, quality_failed, stopped
+	BudgetDiagnostic *inference.BudgetDiagnostic `json:"budget_diagnostic,omitempty"`
+	OutcomeTracking  *OutcomeTracking            `json:"outcome_tracking,omitempty"`
+	RequestSHA256    string                      `json:"request_sha256"`
+	Attempts         []Attempt                   `json:"attempts"`
+	SelectedTier     string                      `json:"selected_tier,omitempty"`
+	Response         *inference.Response         `json:"response,omitempty"` // Only a passing answer is exposed.
+	Status           string                      `json:"status"`             // completed, quality_failed, stopped
 }
 
 // OutcomeTracking is separate from answer quality. Registration failure never

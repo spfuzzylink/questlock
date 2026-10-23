@@ -1,6 +1,6 @@
 # Install and try Questlock
 
-This guide covers the experimental **v0.12.0** release. The installer selects
+This guide covers the experimental **v0.13.0** release. The installer selects
 the version in `VERSION`; older published versions remain available, including
 v0.5.0 with `./scripts/install.sh --version v0.5.0`.
 
@@ -8,7 +8,7 @@ v0.5.0 with `./scripts/install.sh --version v0.5.0`.
 
 For an installed Codex/ChatGPT desktop or Claude Code client, start with the
 [plugin installation](plugins.md). The Git catalog fetches a checksum-verified
-runtime on first use; each platform's `questlock-plugin_0.12.0_OS_ARCH.zip`
+runtime on first use; each platform's `questlock-plugin_0.13.0_OS_ARCH.zip`
 contains both plugins and native runtimes for an offline start. Existing binary
 and Claude Desktop MCPB setup remain available below.
 
@@ -40,7 +40,8 @@ From a checkout installation, use `./bin/questlock` instead. Both commands need
 no model account. Inline planning is offline; durable runs need the existing
 authenticated broker. `model install` updates the binary/skills, not native
 client settings or an already-running MCP process. Review and restart the
-worker deliberately to expose `questlock_revise`. Every client reading a new
+worker deliberately to expose its current capabilities, including
+`questlock_status` and `questlock_revise`. Every client reading a new
 revision outcome cohort must be v0.6.0+; keep it separate from older generation
 cohorts. [Contract and setup](checked-revisions.md).
 
@@ -88,14 +89,14 @@ separate runtime validation.
 For example, on Linux x86-64, from the download directory:
 
 ```sh
-sha256sum questlock_0.12.0_linux_amd64.tar.gz
+sha256sum questlock_0.13.0_linux_amd64.tar.gz
 ```
 
 On macOS use `shasum -a 256` instead. Compare the result with the **matching
 filename's entry** in `checksums.txt` before extracting. Then:
 
 ```sh
-tar -xzf questlock_0.12.0_linux_amd64.tar.gz
+tar -xzf questlock_0.13.0_linux_amd64.tar.gz
 ./questlock version
 ./questlock quest
 ./questlock model quest
@@ -156,7 +157,7 @@ when you installed a prebuilt broker. See [use cases](use-cases.md) for integrat
 ideas, and [rootless Podman + Quadlet](deployment.md) for a persistent Linux user
 service with resource limits and automatic restart.
 
-The v0.12.0 retention commands operate on that existing broker database. To keep
+The v0.13.0 retention commands operate on that existing broker database. To keep
 eligible older payloads in private local cold files, follow the
 [storage policy walkthrough](storage-retention.md). Retention is opt-in and
 needs no provider, model download or client configuration change. A managed
@@ -197,6 +198,10 @@ for task selection, fresh broker setup, cost limits, and live-run requirements.
 Inline `revise-plan` reads no credential; a shared-parent plan reads the token
 only when the CLI needs authenticated broker access. `revise-quest` is offline.
 The installed workflow includes explicit local worker and checked-revision templates.
+For an already connected worker, call `questlock_status` first and use its
+declared absolute request root, runtime/profile, policy and advertised schemas.
+This avoids assuming the manual examples' broker or workspace. Discovery is
+read-only and does not test broker/provider health or change client settings.
 See [bounded delegation](delegation.md) before registering `worker serve` as a
 stdio MCP server. `model evaluate` and optional `--langfuse` are documented in
 [runtime observability](inference-observability.md). Local generation needs
@@ -236,7 +241,8 @@ preferences:
 
 Open a fresh local session and verify skill/tool discovery in both a project
 and standalone workspace. Restart an older MCP worker deliberately to expose
-`questlock_revise`; existing chats are not proven hot-reloaded. This preference
+the current tools; call `questlock_status` to check the connected process's
+contract. Existing chats are not proven hot-reloaded. This preference
 applies to the configured local Codex home, not remote/cloud hosts. It does not
 proxy the assistant protocol or change its model or hosted allowance.
 

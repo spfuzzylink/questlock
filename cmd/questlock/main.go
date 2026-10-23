@@ -20,7 +20,7 @@ import (
 	"github.com/spfuzzylink/questlock/internal/store"
 )
 
-var version = "0.12.0" // Release builds set this from VERSION using -ldflags.
+var version = "0.13.0" // Release builds set this from VERSION using -ldflags.
 const defaultDB = ".questlock/state.db"
 
 func main() {
@@ -45,6 +45,7 @@ Usage:
   questlock revise quest
   questlock worker run --request PATH [--broker URL] [--allow-paid]
   questlock worker serve --workspace ROOT [--broker URL] [--allow-paid]
+  questlock writing init|plan|record|show [flags]
   questlock outcome record|feedback|show|report [flags]
   questlock outcome quest
   questlock model quest
@@ -117,6 +118,8 @@ func run(args []string) error {
 		return reviseCommand(args[1:])
 	case "worker":
 		return workerCommand(args[1:])
+	case "writing":
+		return writingCommand(args[1:])
 	case "edge":
 		return edgeCommand(args[1:])
 	case "outcome":

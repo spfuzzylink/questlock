@@ -20,6 +20,9 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS = ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64")
 PUBLIC_FILES = (
+    "docs/writing-workflows.md", "examples/writing/README.md",
+    "examples/writing/reference.json", "examples/writing/evidence.json", "examples/writing/changed-evidence.json",
+    "docs/diagrams/writing-workflows.drawio", "docs/diagrams/writing-workflows.svg",
     "docs/storage-retention.md", "examples/storage/retention.json",
     "docs/storage-validation-v0.12.0.md",
     "docs/diagrams/storage-retention.drawio", "docs/diagrams/storage-retention.svg",

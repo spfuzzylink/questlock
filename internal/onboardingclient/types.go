@@ -4,8 +4,14 @@ package onboardingclient
 
 import (
 	"context"
+	"errors"
 	"os"
 )
+
+// ErrManagedProfileMismatch identifies an existing command that differs from
+// selected managed defaults. It does not establish whether that custom worker
+// is available or correctly configured.
+var ErrManagedProfileMismatch = errors.New("configured Questlock command differs from selected managed profile")
 
 type Client string
 

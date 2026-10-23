@@ -5,6 +5,36 @@ description: Apply checked literal revisions without a model, reuse exact task r
 
 # Questlock
 
+When MCP is connected, call `questlock_status` with `{}` first. Use its
+`request_root` as the absolute directory for approved requests; check
+`runtime_version`, metadata `schema`, `request_schemas`, `checks.kinds`,
+`profile`, and `policy.allow_paid` before choosing a request. Delegation requests
+are currently unversioned; revision requests require `schema: 1`. The profile is
+an operator label, not an account or credential. `readiness.request_root: opened`
+and `readiness.worker: ready|busy` describe this process only; broker/providers
+remain `not_checked`. Discovery reads no task, client configuration, environment
+or credentials and makes no network/model call. It stays available while busy.
+If the tool or a required capability is absent, report the compatibility gap;
+do not infer the connected runtime from this skill or replace client settings.
+Keep an older worker's existing tools usable until a deliberate restart/update.
+
+Save the complete reviewed request with the caller's file tools inside that
+root, then pass its absolute path, such as
+`/absolute/discovered/request-root/approved-task.json`, to the chosen task tool.
+Do not guess a broker port or request directory from setup examples.
+
+For recurring writing, `workflow_configs.writing` names the relative operator
+marker below `request_root`; it does not assert that a marker exists. When the
+user asks to initialize one, run `questlock writing init --workspace ROOT
+--reference /absolute/approved-reference.json --model INSTALLED_MODEL`. Later,
+`questlock writing plan --workspace ROOT --evidence /absolute/current-evidence.json
+--request writing-request.json` creates the bounded request and provenance
+manifest without inference. Read and review the complete request before
+`questlock_delegate`; keep its structured result for `writing record` and use
+`writing show` for indexed history. Use each subcommand's `--help` for its flags.
+Read only the selected reference/current evidence; never import unrelated chat
+history. Discovery does not authorize initializing or changing a reference.
+
 Prefer a checked deterministic revision when the user asks for an exact
 presentation or mechanical edit to text already available: emphasize a named
 sentence, replace an approved literal, or update a precisely selected JSON
@@ -45,6 +75,13 @@ For v0.4.0+ bounded development tasks, use `track_outcome: true` in the approved
 For a reviewed summary without machine-checkable acceptance criteria, use `sh scripts/run.sh run --spec PATH`. Require successful exit, `response.complete: true`, and `durable: true`, then check the facts before accepting `response.text`. Helpers read the private broker token only for live commands; Ollama needs no provider key. Local jobs neither consume nor clear an API dollar ledger. Separate scopes can isolate permissions and task content. Report measured this-run usage and result reuse when useful; do not invent invoice savings.
 
 If the `questlock_delegate` MCP tool is available, call it with only the path to the approved worker JSON inside its configured workspace. It invokes the same bounded policy as `worker-run`. No discovery, shell execution, or file editing is delegated. One active task is admitted; `worker_busy` is a stopping condition for that call, not permission to retry generation. Hosted escalation requires an explicit priced policy and a process started with `--allow-paid`; do not enable this merely to make a failing local task pass.
+
+Use `word_count`, `character_count`, or `paragraph_count` only when their literal
+counting rules match the task, with inclusive `min` and/or `max` bounds. The
+workflow reference defines those rules. A stopped request may return checks as
+`status: not_evaluated`; absent output has no observed count. On a budget stop,
+report the safe numeric `budget_diagnostic` and its `count_basis` rather than
+calling an estimate runtime usage. Do not raise caps or regenerate automatically.
 
 Result reuse is opt-in for an exact task snapshot whose answer remains valid. Update `revision` when external facts or approved memory change. Use generation for text, not to replay external actions. A pending, incomplete, or unknown result is a stopping condition: inspect broker/upstream state before deliberately changing revision, since another attempt could duplicate computation or billing. Never automatically retry paid generation or fall back to a different provider/model after an uncertain outcome.
 

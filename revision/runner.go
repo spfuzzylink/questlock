@@ -214,7 +214,7 @@ func passingEvidence(checks []evaluation.CheckResult) bool {
 	}
 	seen := make(map[string]bool)
 	for _, check := range checks {
-		if !check.Passed || seen[check.ID] {
+		if !check.Passed || check.Status != "" || seen[check.ID] {
 			return false
 		}
 		seen[check.ID] = true
@@ -225,6 +225,13 @@ func passingEvidence(checks []evaluation.CheckResult) bool {
 		}
 		switch check.Kind {
 		case "contains", "not_contains", "json_valid", "json_equals":
+			if check.Observed != nil {
+				return false
+			}
+		case "word_count", "character_count", "paragraph_count":
+			if check.Observed == nil || *check.Observed < 0 || *check.Observed > evaluation.MaxCountTextBytes {
+				return false
+			}
 		default:
 			return false
 		}

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="380" viewBox="0 0 750 380" role="img" aria-labelledby="title desc">
+<title id="title">Writing snapshots and reviewed history</title>
+<desc id="desc">Discover the declared worker, build explicit reference and evidence snapshots, review the request, run a bounded local task, check and review the answer, then keep metadata history without extending cache TTL.</desc>
+<rect width="750" height="380" fill="#0b1220"/>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#6ee7b7"/></marker></defs>
+<text x="30" y="40" font-family="system-ui,sans-serif" font-size="20" fill="#f8fafc">Keep the reference. Change the brief.</text>
+<rect x="30" y="90" width="180" height="70" rx="10" fill="#172337" stroke="#6ee7b7"/>
+<text x="120.0" y="117" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#f8fafc">Discover worker</text>
+<text x="120.0" y="139" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#cbd5e1">root / schema / policy</text>
+<rect x="260" y="90" width="190" height="70" rx="10" fill="#172337" stroke="#6ee7b7"/>
+<text x="355.0" y="117" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#f8fafc">Approved snapshots</text>
+<text x="355.0" y="139" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#cbd5e1">reference + current evidence</text>
+<rect x="500" y="90" width="190" height="70" rx="10" fill="#172337" stroke="#6ee7b7"/>
+<text x="595.0" y="117" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#f8fafc">Offline plan</text>
+<text x="595.0" y="139" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#cbd5e1">review request + pinned hashes</text>
+<rect x="500" y="230" width="190" height="70" rx="10" fill="#172337" stroke="#6ee7b7"/>
+<text x="595.0" y="257" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#f8fafc">Bounded local task</text>
+<text x="595.0" y="279" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#cbd5e1">reuse or one generation</text>
+<rect x="260" y="230" width="190" height="70" rx="10" fill="#172337" stroke="#6ee7b7"/>
+<text x="355.0" y="257" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#f8fafc">Check, then review</text>
+<text x="355.0" y="279" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#cbd5e1">length / paragraphs / facts</text>
+<rect x="30" y="230" width="180" height="70" rx="10" fill="#172337" stroke="#6ee7b7"/>
+<text x="120.0" y="257" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#f8fafc">Historical index</text>
+<text x="120.0" y="279" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#cbd5e1">metadata + answer version</text>
+<path d="M210 125.0 L260 125.0" fill="none" stroke="#6ee7b7" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M450 125.0 L500 125.0" fill="none" stroke="#6ee7b7" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M595.0 160 L595.0 230" fill="none" stroke="#6ee7b7" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M500 265.0 L450 265.0" fill="none" stroke="#6ee7b7" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M260 265.0 L210 265.0" fill="none" stroke="#6ee7b7" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="30" y="350" font-family="system-ui,sans-serif" font-size="12" fill="#cbd5e1">A reviewed reference is history. Exact reuse still requires the same task, runtime and valid TTL.</text></svg>

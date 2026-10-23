@@ -26,7 +26,7 @@ func (r collectedRunner) Run(ctx context.Context, spec inference.Spec) (inferenc
 	result, err := r.inner.Run(ctx, spec)
 	if r.records != nil && result.Measurement != nil {
 		record := telemetryRecord{execution: observation(spec, result)}
-		if result.Reused || result.Measurement.KnownGenerationUsage {
+		if err == nil && result.Response.Complete && result.Durable && result.Response.Text != "" {
 			_, pass := evaluation.CheckOutput(result.Response.Text, r.checks)
 			record.quality = &pass
 		}

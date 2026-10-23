@@ -99,7 +99,7 @@ func TestOutcomeCLIRejectsAmbiguousMetadataWithoutLeakingIt(t *testing.T) {
 	}
 }
 
-func TestWorkerOutcomeTrackingReusesIdentityAndRecordsStoppedPassingChecks(t *testing.T) {
+func TestWorkerOutcomeTrackingReusesIdentityAndSkipsStoppedChecks(t *testing.T) {
 	for _, exceedCap := range []bool{false, true} {
 		t.Run(map[bool]string{false: "fresh-and-reuse", true: "known-cap-error"}[exceedCap], func(t *testing.T) {
 			fixture, err := newModelQuestFixture(context.Background())
@@ -142,12 +142,12 @@ func TestWorkerOutcomeTrackingReusesIdentityAndRecordsStoppedPassingChecks(t *te
 					t.Fatal(err)
 				}
 				attempt := snapshot.Runs[0].Attempts[0]
-				if snapshot.State.Status != "unreviewed" || !attempt.CheckPassed || attempt.EstimatedCostUSD == nil || *attempt.EstimatedCostUSD != 0 {
+				if snapshot.State.Status != "unreviewed" || attempt.CheckPassed == exceedCap || attempt.EstimatedCostUSD == nil || *attempt.EstimatedCostUSD != 0 {
 					t.Fatal("checks were conflated with acceptance, or local cost was wrong")
 				}
 				if exceedCap {
-					if result.Status != "stopped" || result.Response != nil || attempt.Complete || !attempt.GenerationCalled || !attempt.UsageKnown || attempt.Usage.InputTokens != 8193 {
-						t.Fatalf("cap failure lost observed checks/current usage or exposed answer: %+v", attempt)
+					if result.Status != "stopped" || result.Response != nil || attempt.Complete || !attempt.GenerationCalled || !attempt.UsageKnown || attempt.Usage.InputTokens != 8193 || result.Attempts[0].Checks[0].Status != "not_evaluated" {
+						t.Fatalf("cap failure fabricated quality or lost current usage: %+v", attempt)
 					}
 				} else if !attempt.Reused || attempt.GenerationCalled || attempt.Usage != (inference.Usage{}) || attempt.CostBasis != "reuse_zero" {
 					t.Fatalf("accounting opt-in generated again or charged original usage: %+v", attempt)

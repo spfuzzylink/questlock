@@ -84,8 +84,14 @@ Sources and output contain 1–262,144 bytes of UTF-8 each; each `old` and `new`
 limited to 16 KiB. Match counts refer to the current text at that step, so an
 earlier edit can change what a later edit matches. There is no fuzzy matching,
 case folding, automatic escaping, global semantic cache, or reasoning repair.
-The check kinds are the same bounded `json_valid`, `json_equals`, `contains`, and
-`not_contains` criteria used by the model worker.
+The check kinds are the same bounded `json_valid`, `json_equals`, `contains`,
+`not_contains`, `word_count`, `character_count` and `paragraph_count` criteria
+used by the model worker. Count checks take inclusive `min` and/or `max` bounds;
+for example, `{"id":"paragraphs","kind":"paragraph_count","min":2,"max":3}`.
+Words are separated by Unicode whitespace, characters are Unicode code points
+including whitespace, and whitespace-only lines separate paragraphs. Counts
+return an `observed` integer when evaluated. See the [full counting rules](delegation.md#understand-the-escalation-gate)
+and check `questlock_status` for the connected worker's advertised capabilities.
 
 To keep a LinkedIn hashtag searchable, replace complete prose occurrences such
 as `Questlock coordinates` and `Questlock reuses` rather than every substring
@@ -157,6 +163,14 @@ The installed v0.6 skill prefers `revise` for exact mechanical edits, exact mode
 result reuse for the same valid snapshot, and a bounded local model only when
 the task requires new text generation. The caller still investigates, chooses
 the source, approves the precise edits, and reviews the result.
+
+Call `questlock_status` with `{}` first. Check the connected runtime, profile,
+policy, `request_schemas.revision` and `checks.kinds`, then save the reviewed
+request under its declared absolute `request_root`. Use that saved absolute
+path for `request_path`; no default broker or directory needs to be guessed.
+Status takes no inputs and performs no network/model call or configuration
+read/write. Its ready/busy state describes this worker; broker/providers remain
+`not_checked`.
 
 `questlock_revise` reads only the named approved revision request inside the MCP
 worker workspace. It shares the existing single-active-task admission,

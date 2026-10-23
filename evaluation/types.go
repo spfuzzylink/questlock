@@ -40,9 +40,10 @@ type Configuration struct {
 	MaxReuseMS    int64          `json:"max_reuse_ms,omitempty"`
 }
 
-// Check supports json_valid, json_equals (at an RFC 6901 pointer), contains and
-// not_contains. Substring checks are literal; they do not understand negation,
-// paraphrase, factual support, or the correctness of arbitrary generated code.
+// Check supports JSON predicates, literal substrings, and bounded text counts.
+// Substring and count checks do not establish factual support, tone, suitability,
+// or the correctness of arbitrary generated code. Count bounds are inclusive;
+// pointers distinguish an explicit zero from an omitted bound.
 type Check struct {
 	ID         string          `json:"id"`
 	Kind       string          `json:"kind"`
@@ -50,6 +51,8 @@ type Check struct {
 	Expected   json.RawMessage `json:"expected,omitempty"`
 	Text       string          `json:"text,omitempty"`
 	IgnoreCase bool            `json:"ignore_case,omitempty"`
+	Min        *int            `json:"min,omitempty"`
+	Max        *int            `json:"max,omitempty"`
 }
 
 // Fixture is supplied public test data. Its usage and durations are simulated,
@@ -67,9 +70,11 @@ type Runner interface {
 type RunnerFactory func(Case, Configuration) (Runner, error)
 
 type CheckResult struct {
-	ID     string `json:"id"`
-	Kind   string `json:"kind"`
-	Passed bool   `json:"passed"`
+	ID       string `json:"id"`
+	Kind     string `json:"kind"`
+	Passed   bool   `json:"passed"`
+	Observed *int   `json:"observed,omitempty"`
+	Status   string `json:"status,omitempty"`
 }
 
 type Measurement struct {

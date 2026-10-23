@@ -132,6 +132,8 @@ func isLoopbackHost(host string) bool {
 // each other and from the provider's public endpoint in result fingerprints.
 func (p *HTTPProvider) Identity() string { return p.provider + ":" + p.baseURL }
 
+func (p *HTTPProvider) InputTokenCountBasis() string { return "provider_token_count" }
+
 func (p *HTTPProvider) validate(req Request, generating bool) error {
 	if req.Ollama != nil {
 		return errors.New("ollama settings require the ollama provider")

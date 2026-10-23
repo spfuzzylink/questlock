@@ -152,6 +152,7 @@ type Prices struct {
 }
 
 type Result struct {
+	BudgetDiagnostic       *BudgetDiagnostic        `json:"budget_diagnostic,omitempty"`
 	GenerationRuntimeCache *RuntimeCacheObservation `json:"generation_runtime_cache,omitempty"`
 	GenerationTiming       *GenerationTiming        `json:"generation_timing,omitempty"`
 	Measurement            *Measurement             `json:"measurement,omitempty"`

@@ -15,7 +15,7 @@ withholds failed or uncertain results; a failure does not authorize generation
 fallback. For further reasoning, the caller constructs and reviews a separate
 bounded request under the user's existing authorization.
 
-The two MCP tools share path confinement, one-active-task admission and
+The two task tools share path confinement, one-active-task admission and
 cancellation. `questlock_revise` reads only the explicit request inside the
 worker workspace, returns checked text/provenance, and edits no files. Existing
 v0.5.0 clients remain usable; upgrade/restart a worker deliberately to discover
@@ -36,6 +36,30 @@ HiSparse/PD engines are inspection-only, not generation tiers. Questlock measure
 delegated generation; it excludes the surrounding hosted assistant's prompt,
 tool, and context tokens. Preparing the request and reviewing its result can
 still consume that assistant's normal allowance.
+
+## Discover the connected worker
+
+In a fresh client chat, call `questlock_status` with `{}` before preparing a
+request. It is a read-only tool with no inputs. The existing
+`questlock_delegate` and `questlock_revise` names and path arguments are unchanged.
+
+| Status field | How to use it |
+| --- | --- |
+| `schema`, `runtime_version` | Check the metadata contract and the connected runtime, independently of the installed skill or a binary elsewhere on `PATH`. Metadata currently uses schema `1`. |
+| `request_root` | Save the approved request beneath this declared absolute root with the caller's file tools. Pass the saved absolute path to the task tool. |
+| `request_schemas`, `checks.kinds`, `tools` | Use only advertised capabilities. Delegation JSON is currently unversioned; revision JSON requires `schema: 1`. |
+| `profile` | Identify the operator's `custom` or `managed` profile label. The default custom label is not unique; it does not identify an account or credential. |
+| `policy.allow_paid` | Process permission only. Hosted escalation still needs the request's explicit prices and positive per-call/day budgets. |
+| `readiness` | The root was opened at startup and this worker is `ready` or `busy`. Broker and provider state remain `not_checked`. |
+| `workflow_configs.writing` | Relative name of the operator's writing marker below `request_root`. The status call does not check for or read that file. See [recurring writing](writing-workflows.md). |
+
+Discovery stays available while either task tool is busy. It makes no network
+or model calls, reads no request content, client settings, environment or
+credentials, lists no files, and never starts services or changes configuration.
+It establishes the connected process's contract, without testing broker,
+provider or native-client health. If the tool or a needed capability is absent,
+report that compatibility limit and arrange a deliberate worker update/restart
+when appropriate. Existing task tools remain usable on older workers.
 
 ## Declare the complete request
 
@@ -129,10 +153,11 @@ questlock worker serve --workspace "$HOME/questlock-workspace" \
   --broker http://127.0.0.1:8080
 ```
 
-The only tool is `questlock_delegate`, and its only argument is:
+The CLI worker exposes three tools: `questlock_status`, `questlock_delegate`,
+and `questlock_revise`. Call status first, then submit an approved delegation:
 
 ```json
-{"request_path":"approved-task.json"}
+{"request_path":"/absolute/discovered/request-root/approved-task.json"}
 ```
 
 Paths may be relative to the declared workspace or absolute within it. Traversal, symlink path components, nonregular files, and oversized files are rejected. The worker reads only the named request file. MCP admits one active task per process; concurrent calls fail immediately with `worker_busy`, without executing or retrying. Calls honor cancellation and return controlled error categories. A normal CLI `run` reads the exact path explicitly supplied by the operator; the workspace boundary applies to `serve`.
@@ -146,6 +171,12 @@ loopback; remote HTTPS needs an explicit key. Add
 CLI JSON reaches stdout before export receipts on stderr. MCP exports silently
 through a background queue of 16 batches with a five-second shutdown grace;
 full queues drop telemetry. Export is best effort and never retries generation.
+
+Custom operators can add `--profile-id writing-local` to `worker serve` for a
+nonsecret discovery label. Labels accept letters, digits, dot, dash and
+underscore, up to 64 characters; keep URLs and credentials out of labels.
+`--profile-kind` defaults to `custom`. The managed launcher supplies `managed`
+and its client label. These labels do not change request authority.
 
 ## Register with native Codex or Claude Code
 
@@ -208,8 +239,9 @@ env -u CLAUDE_CONFIG_DIR HOME="$questlock_claude_candidate" claude mcp add \
 env -u CLAUDE_CONFIG_DIR HOME="$questlock_claude_candidate" claude mcp get questlock
 ```
 
-Require a connected status, then use an isolated client session to discover
-`questlock_delegate` and submit the approved `request_path`. A connection alone
+Require a connected status, then use an isolated client session to call
+`questlock_status`, check the returned root and capabilities, and submit the
+approved `request_path` to `questlock_delegate`. A connection alone
 does not establish task quality. Require `status: "completed"` and the declared
 checks before accepting an answer. The [observed MCP task](measurements-v0.3.0.md#a-passing-bounded-mcp-task)
 records one passing extraction and one exact reuse; it does not qualify broader
@@ -232,7 +264,30 @@ opt-in; its endpoint and keys are not part of the approved task file.
 | The same confirmed result fails a declared check | Run the one explicit next tier, if configured. Otherwise return `quality_failed`. |
 | Pending/unknown usage, incomplete output, cap violation, cancellation, provider error, publication error, or settlement error | Stop the policy; no escalation or automatic generation retry. |
 
-Quality checks support JSON validity/equality and literal contains/not-contains tests. Passing them proves only those expectations. A truncated local answer does not authorize a larger tier, even if that tier has more output allowance.
+Quality checks support JSON validity/equality, literal contains/not-contains,
+and bounded word/character/paragraph counts. Passing them proves only those
+expectations. A truncated local answer does not authorize a larger tier, even
+if that tier has more output allowance.
+
+Count checks use inclusive `min` and/or `max`, for example
+`{"id":"length","kind":"word_count","min":40,"max":80}`. Bounds must be
+integers in 0–4,194,304 with `min <= max`; comparison text, JSON pointers and
+`ignore_case` are not accepted on count checks. Words are maximal spans
+separated by Unicode whitespace. Characters are Unicode code points including
+whitespace. Paragraphs are groups of nonblank LF/CRLF lines separated by one or
+more whitespace-only lines; leading/trailing blanks add none. Counting requires
+valid UTF-8 text of at most 4 MiB. These rules do not measure linguistic words
+or displayed grapheme clusters. Evaluated count checks return `observed`.
+
+Budget stops may include a bounded `budget_diagnostic` on the result and
+attempt, identifying the limit, configured value, unit, count basis and relevant
+counts or reservations. USD limits use integer millionths of a dollar. An
+estimated input count or configured reservation is not reported model usage.
+If no complete answer was available, checks carry `status: not_evaluated` and
+no observed count. A saved breach's diagnostic describes its original call;
+current-invocation `measurement.generation_called` remains separate. Inspect the
+evidence before deliberately revising a bound; diagnostics never authorize an
+automatic retry, larger cap or paid fallback.
 
 ## Opt in to downstream outcome tracking
 

@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "id": "support-pilot",
+  "revision": "brief-one",
+  "question": "Explain this support pilot to a teammate. What happens, and what should we measure before expanding it?",
+  "facts": [
+    "Two volunteers draft answers to repeated internal support questions.",
+    "They keep the approved handbook separate from the facts in each new ticket.",
+    "An exact repeat can reuse a completed answer within the configured reuse window.",
+    "A person reviews the facts and suitability before sending any answer.",
+    "No customer outcomes, savings figures or review-time measurements have been recorded yet."
+  ],
+  "sources": ["synthetic-pilot-brief"]
+}

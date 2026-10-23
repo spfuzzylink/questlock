@@ -110,6 +110,9 @@ team/**
 !retention/
 retention/**
 !retention/*.go
+!writing/
+writing/**
+!writing/*.go
 # Runtime builds do not need tests or their fixtures.
 **/*_test.go
 # Finder metadata is never a Go build input, even when its suffix is .go.

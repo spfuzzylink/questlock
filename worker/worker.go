@@ -39,7 +39,11 @@ var (
 type Options struct {
 	Workspace string
 	Version   string
-	Execute   func(context.Context, delegation.Request) (delegation.Result, error)
+	// ProfileID is an operator-chosen nonsecret label, never a broker URL or
+	// credential. ProfileKind is custom (default) or managed.
+	ProfileID   string
+	ProfileKind string
+	Execute     func(context.Context, delegation.Request) (delegation.Result, error)
 	// Revise optionally enables checked literal edits, without model inference.
 	Revise    func(context.Context, revision.Request) (revision.Result, error)
 	AllowPaid bool
@@ -51,6 +55,9 @@ type Options struct {
 // Errors returned here and to the client contain controlled labels only.
 func Serve(ctx context.Context, input io.ReadCloser, output io.Writer, options Options) error {
 	if ctx == nil || input == nil || output == nil || options.Execute == nil || options.Workspace == "" {
+		return ErrConfiguration
+	}
+	if !validProfile(options.ProfileID, options.ProfileKind) {
 		return ErrConfiguration
 	}
 	workspace, err := filepath.Abs(options.Workspace)
@@ -107,12 +114,13 @@ func (w *worker) server() *mcp.Server {
 		Name: ToolName, Title: "Questlock bounded delegation",
 		Description:  "Run an explicit approved local-first delegation request JSON file (at most 1MiB). request_path is relative to the declared workspace, or an absolute path within it; traversal and every symlink component are rejected. The policy declares all models, context, budgets, checks and reuse TTL. May generate model output and add broker records. Paid escalation requires process permission plus explicit request dollar budgets. Only the selected answer passing declared checks is returned; failed answers are omitted. Approved track_outcome requests also return a separate outcome_tracking receipt or recovery record; check its status independently and never regenerate to repair accounting. Checks do not establish human acceptance. One execution is admitted at a time; concurrent calls return worker_busy without executing or retrying. No command execution, workspace editing or file discovery.",
 		InputSchema:  json.RawMessage(`{"type":"object","additionalProperties":false,"required":["request_path"],"properties":{"request_path":{"type":"string","minLength":1,"maxLength":4096,"description":"Approved request JSON file inside the declared workspace."}}}`),
-		OutputSchema: json.RawMessage(`{"type":"object","required":["status","request_sha256","attempts"],"properties":{"status":{"type":"string","enum":["completed","quality_failed","stopped"]},"request_sha256":{"type":"string"},"attempts":{"type":"array"},"selected_tier":{"type":"string"},"response":{"type":"object"},"error_category":{"type":"string"},"outcome_tracking":{"type":"object","required":["status","run_id","task"],"properties":{"status":{"type":"string","enum":["recorded","failed"]},"run_id":{"type":"string"},"task":{"type":"object"},"receipt":{"type":"object"},"record":{"type":"object"}}}}}`),
+		OutputSchema: json.RawMessage(`{"type":"object","required":["status","request_sha256","attempts"],"properties":{"status":{"type":"string","enum":["completed","quality_failed","stopped"]},"request_sha256":{"type":"string"},"attempts":{"type":"array"},"selected_tier":{"type":"string"},"response":{"type":"object"},"error_category":{"type":"string"},"budget_diagnostic":{"type":"object","required":["limit_kind","configured_limit","unit","reason","count_basis","generation_called"],"properties":{"limit_kind":{"type":"string"},"configured_limit":{"type":"integer","minimum":0},"unit":{"type":"string","enum":["tokens","usd_micros"]},"reason":{"type":"string"},"count_basis":{"type":"string"},"generation_called":{"type":"boolean"},"estimated_input_tokens":{"type":"integer","minimum":0},"counted_input_tokens":{"type":"integer","minimum":0},"reported_input_tokens":{"type":"integer","minimum":0},"reported_output_tokens":{"type":"integer","minimum":0},"max_output_tokens":{"type":"integer","minimum":0},"context_window":{"type":"integer","minimum":0},"required":{"type":"integer","minimum":0},"current_usage":{"type":"integer","minimum":0},"requested_reservation":{"type":"integer","minimum":0}}},"outcome_tracking":{"type":"object","required":["status","run_id","task"],"properties":{"status":{"type":"string","enum":["recorded","failed"]},"run_id":{"type":"string"},"task":{"type":"object"},"receipt":{"type":"object"},"record":{"type":"object"}}}}}`),
 		Annotations:  &mcp.ToolAnnotations{ReadOnlyHint: false, DestructiveHint: &additive, IdempotentHint: false, OpenWorldHint: &openWorld},
 	}, w.call)
 	if w.options.Revise != nil {
 		w.addRevisionTool(server)
 	}
+	w.addStatusTool(server)
 	return server
 }
 
@@ -262,11 +270,18 @@ func (w *worker) loadBytes(path string) ([]byte, error) {
 
 func safeOutput(result delegation.Result, err error) toolOutput {
 	// Copy before stripping: callers may reuse their durable result in memory.
+	diagnostic := inference.BudgetDiagnosticFromError(err)
+	if diagnostic == nil {
+		diagnostic = safeBudgetDiagnostic(result.BudgetDiagnostic)
+	}
+	result.BudgetDiagnostic = diagnostic
 	result.Attempts = append([]delegation.Attempt{}, result.Attempts...)
 	for i := range result.Attempts {
 		// Upstream response identifiers/model/stop labels are not needed to
 		// account for attempts, and could carry arbitrary provider text.
 		result.Attempts[i].Result.Response = inference.Response{}
+		result.Attempts[i].BudgetDiagnostic = safeBudgetDiagnostic(result.Attempts[i].BudgetDiagnostic)
+		result.Attempts[i].Result.BudgetDiagnostic = safeBudgetDiagnostic(result.Attempts[i].Result.BudgetDiagnostic)
 	}
 	output := toolOutput{Result: result}
 	if err != nil || result.Status != "completed" || result.Response == nil || !result.Response.Complete || result.Response.Text == "" || result.SelectedTier == "" {
@@ -277,6 +292,8 @@ func safeOutput(result delegation.Result, err error) toolOutput {
 			output.Status, output.ErrorCategory = "stopped", "canceled"
 		case errors.Is(err, context.DeadlineExceeded):
 			output.Status, output.ErrorCategory = "stopped", "deadline_exceeded"
+		case errors.Is(err, inference.ErrBudgetExceeded):
+			output.Status, output.ErrorCategory = "stopped", "budget_exceeded"
 		case errors.Is(err, delegation.ErrQualityFailed) || result.Status == "quality_failed":
 			output.Status, output.ErrorCategory = "quality_failed", "quality_failed"
 		default:
@@ -295,6 +312,13 @@ func safeOutput(result delegation.Result, err error) toolOutput {
 		output.Status, output.ErrorCategory = "stopped", "stopped"
 	}
 	return output
+}
+
+func safeBudgetDiagnostic(diagnostic *inference.BudgetDiagnostic) *inference.BudgetDiagnostic {
+	if diagnostic == nil {
+		return nil
+	}
+	return inference.BudgetDiagnosticFromError(&inference.BudgetError{Diagnostic: *diagnostic})
 }
 
 func contextCategory(err error) string {

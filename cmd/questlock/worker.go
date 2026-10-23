@@ -41,6 +41,8 @@ func workerCommandBroker(args []string, input io.ReadCloser, output, diagnostics
 	f.SetOutput(io.Discard)
 	requestPath := f.String("request", "", "explicit approved request JSON for worker run")
 	workspace := f.String("workspace", ".", "MCP request file boundary; server reads only explicitly named files")
+	profileID := f.String("profile-id", "custom", "nonsecret operator profile label for MCP status (letters, digits, dot, dash, underscore; at most 64 characters)")
+	profileKind := f.String("profile-kind", "custom", "MCP status profile kind: custom or managed")
 	brokerURL := f.String("broker", "http://127.0.0.1:8080", "broker endpoint for this worker's trusted scope")
 	ollamaURL := f.String("ollama-url", "", "local literal-loopback Ollama endpoint; default 127.0.0.1:11434")
 	sglangURL := f.String("sglang-url", "", "process-authorized self-hosted SGLang endpoint; default 127.0.0.1:30000")
@@ -165,7 +167,7 @@ func workerCommandBroker(args []string, input io.ReadCloser, output, diagnostics
 		defer cancel()
 		return (revision.Runner{Broker: broker}).Run(ctx, request)
 	}
-	return worker.Serve(process, input, output, worker.Options{Workspace: *workspace, Version: version, AllowPaid: *allowPaid, Execute: execute, Revise: revise})
+	return worker.Serve(process, input, output, worker.Options{Workspace: *workspace, Version: version, ProfileID: *profileID, ProfileKind: *profileKind, AllowPaid: *allowPaid, Execute: execute, Revise: revise})
 }
 
 // One background exporter handles only bounded content-free records. Saturated

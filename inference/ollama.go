@@ -343,6 +343,8 @@ func (p *OllamaProvider) CountInputTokens(ctx context.Context, req Request) (int
 	return ollamaInputEstimate(req, metadata)
 }
 
+func (p *OllamaProvider) InputTokenCountBasis() string { return "conservative_byte_estimate" }
+
 func ollamaInputEstimate(req Request, metadata ollamaMetadata) (int64, error) {
 	if ollamaThinkingEnabled(req.Ollama) && !metadata.canThink {
 		return 0, errors.New("Ollama model does not advertise support for think:true")
@@ -361,10 +363,14 @@ func ollamaInputEstimate(req Request, metadata ollamaMetadata) (int64, error) {
 		estimate += int64(len(metadata.system))
 	}
 	if req.ContextWindow > metadata.contextLength {
-		return 0, errors.New("requested Ollama context window exceeds the model's reported capacity")
+		diagnostic := inputDiagnostic("model_context_tokens", metadata.contextLength, estimate, "conservative_byte_estimate", req.MaxOutputTokens)
+		diagnostic.ContextWindow, diagnostic.Required = req.ContextWindow, req.ContextWindow
+		return 0, &BudgetError{Diagnostic: diagnostic}
 	}
 	if req.MaxOutputTokens > req.ContextWindow || estimate > req.ContextWindow-req.MaxOutputTokens {
-		return 0, errors.New("estimated Ollama prompt and output allowance exceed the context window")
+		diagnostic := inputDiagnostic("model_context_tokens", req.ContextWindow, estimate, "conservative_byte_estimate", req.MaxOutputTokens)
+		diagnostic.ContextWindow, diagnostic.Required = req.ContextWindow, estimate+req.MaxOutputTokens
+		return 0, &BudgetError{Diagnostic: diagnostic}
 	}
 	return estimate, nil
 }
