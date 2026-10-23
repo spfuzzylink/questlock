@@ -13,11 +13,15 @@ import tarfile
 import tempfile
 import os
 import sys
+import stat
+import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS = ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64")
 PUBLIC_FILES = (
+    "docs/plugins.md", "docs/plugin-validation-v0.11.0.md",
+    "docs/plugin-validation-v0.11.0.json", "docs/diagrams/plugins.drawio", "docs/diagrams/plugins.svg",
     "docs/execution-validation-v0.10.0.md", "docs/execution-validation-v0.10.0.json",
     "docs/go-integration.md", "examples/execution/README.md",
     "examples/execution/main.go", "examples/execution/local-task.json",
@@ -94,6 +98,19 @@ PUBLIC_FILES = (
     "examples/outcomes/cohort.json",
 )
 
+PLUGIN_FILES = (
+    ".agents/plugins/marketplace.json", ".claude-plugin/marketplace.json",
+    "plugins/openai/plugin.json", "plugins/openai/mcp.json",
+    "plugins/claude/.claude-plugin/plugin.json", "plugins/claude/.mcp.json",
+) + tuple(
+    f"plugins/{client}/{name}"
+    for client in ("openai", "claude")
+    for name in ("README.md", "VERSION", "skills/questlock/SKILL.md",
+                 "scripts/run.sh", "scripts/install.sh", "assets/questlock-icon.svg",
+                 "examples/checked-json.json", "examples/local-extraction.json",
+                 "LICENSE", "ATTRIBUTION.md", "THIRD_PARTY_NOTICES.md")
+)
+
 
 def public_file(root, name):
     path = root
@@ -122,6 +139,24 @@ def archive(output, binary, documents, metadata):
                     bundle.addfile(info, io.BytesIO(data))
 
 
+def plugin_archive(output, binary, files, metadata):
+    """One offline catalog for both clients, with no host installation state."""
+    members = dict(files)
+    for client in ("openai", "claude"):
+        members[f"plugins/{client}/bin/questlock"] = binary
+        for name in ("LICENSE", "ATTRIBUTION.md", "THIRD_PARTY_NOTICES.md"):
+            members[f"plugins/{client}/{name}"] = files[name]
+    members["BUILDINFO.json"] = (json.dumps(metadata, sort_keys=True, indent=2) + "\n").encode()
+    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
+        for name, data in sorted(members.items()):
+            entry = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+            mode = 0o755 if name.endswith(("/bin/questlock", ".sh")) else 0o644
+            entry.create_system = 3
+            entry.external_attr = (stat.S_IFREG | mode) << 16
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            bundle.writestr(entry, data)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--target", action="append", choices=TARGETS,
@@ -134,6 +169,7 @@ def main():
     # A dependency/toolchain change must not silently ship stale legal notices.
     subprocess.run([sys.executable, str(ROOT / "scripts/generate-notices.py"), "--check"], cwd=ROOT, check=True)
     documents = {name: public_file(ROOT, name) for name in PUBLIC_FILES}
+    plugin_files = {**documents, **{name: public_file(ROOT, name) for name in PLUGIN_FILES}}
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     dirty = subprocess.run(["git", "diff", "--quiet", "HEAD"], cwd=ROOT).returncode != 0
     go_version = subprocess.check_output(["go", "env", "GOVERSION"], cwd=ROOT, text=True).strip()
@@ -151,14 +187,20 @@ def main():
                 "-o", str(binary), "./cmd/questlock",
             ], cwd=ROOT, env=env, check=True)
             output = args.output / f"questlock_{version}_{goos}_{goarch}.tar.gz"
-            archive(output, binary.read_bytes(), documents, {
+            metadata = {
                 "version": version, "commit": commit, "source_dirty": dirty,
                 "go_version": go_version, "os": goos, "arch": goarch,
                 "cgo_enabled": False,
-            })
+            }
+            archive(output, binary.read_bytes(), documents, metadata)
             digest = hashlib.sha256(output.read_bytes()).hexdigest()
             checksums.append(f"{digest}  {output.name}\n")
             print(output.name, flush=True)
+            plugin_output = args.output / f"questlock-plugin_{version}_{goos}_{goarch}.zip"
+            plugin_archive(plugin_output, binary.read_bytes(), plugin_files, metadata)
+            digest = hashlib.sha256(plugin_output.read_bytes()).hexdigest()
+            checksums.append(f"{digest}  {plugin_output.name}\n")
+            print(plugin_output.name, flush=True)
     (args.output / "checksums.txt").write_text("".join(checksums))
 
 

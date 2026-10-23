@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "task": "release-metadata",
+  "revision": "approved-1",
+  "source": {
+    "text": "{\"version\":\"0.6.0\",\"stage\":\"draft\",\"gpu_benchmarked\":false}",
+    "sha256": "a0d2691872e76bc6192882d50b9cb9d7321dd7eddfbf5ef17726bf40ae6ff77b"
+  },
+  "edits": [
+    {
+      "old": "\"stage\":\"draft\"",
+      "new": "\"stage\":\"review\"",
+      "expected_matches": 1
+    }
+  ],
+  "source_checks": [
+    {
+      "id": "source-json",
+      "kind": "json_valid"
+    },
+    {
+      "id": "source-stage",
+      "kind": "json_equals",
+      "pointer": "/stage",
+      "expected": "draft"
+    }
+  ],
+  "checks": [
+    {
+      "id": "output-json",
+      "kind": "json_valid"
+    },
+    {
+      "id": "new-stage",
+      "kind": "json_equals",
+      "pointer": "/stage",
+      "expected": "review"
+    },
+    {
+      "id": "no-benchmark-claim",
+      "kind": "json_equals",
+      "pointer": "/gpu_benchmarked",
+      "expected": false
+    }
+  ],
+  "track_outcome": true
+}

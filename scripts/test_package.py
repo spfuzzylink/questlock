@@ -5,6 +5,9 @@ from pathlib import Path
 import tarfile
 import tempfile
 import unittest
+import json
+import stat
+import zipfile
 
 
 spec = importlib.util.spec_from_file_location("package", Path(__file__).with_name("package.py"))
@@ -13,6 +16,46 @@ spec.loader.exec_module(package)
 
 
 class PackageTests(unittest.TestCase):
+    def test_plugin_archive_is_reproducible_and_has_only_public_inputs(self):
+        documents = {name: package.public_file(package.ROOT, name)
+                     for name in (*package.PLUGIN_FILES, "LICENSE", "ATTRIBUTION.md", "THIRD_PARTY_NOTICES.md")}
+        metadata = {"version": "0.11.0", "os": "linux", "arch": "arm64"}
+        with tempfile.TemporaryDirectory() as temp:
+            first, second = Path(temp) / "one.zip", Path(temp) / "two.zip"
+            for output in (first, second):
+                package.plugin_archive(output, b"public executable fixture", documents, metadata)
+            self.assertEqual(first.read_bytes(), second.read_bytes())
+            with zipfile.ZipFile(first) as bundle:
+                expected = {*documents, "BUILDINFO.json"}
+                for client in ("openai", "claude"):
+                    expected.add(f"plugins/{client}/bin/questlock")
+                    for name in ("LICENSE", "ATTRIBUTION.md", "THIRD_PARTY_NOTICES.md"):
+                        expected.add(f"plugins/{client}/{name}")
+                        self.assertEqual(bundle.read(f"plugins/{client}/{name}"), documents[name])
+                    binary = bundle.getinfo(f"plugins/{client}/bin/questlock")
+                    self.assertEqual(stat.S_IMODE(binary.external_attr >> 16), 0o755)
+                    self.assertEqual(bundle.read(binary), b"public executable fixture")
+                self.assertEqual(set(bundle.namelist()), expected)
+                self.assertEqual(json.loads(bundle.read("BUILDINFO.json")), metadata)
+                for entry in bundle.infolist():
+                    self.assertEqual(entry.date_time, (1980, 1, 1, 0, 0, 0))
+                    self.assertEqual(entry.extra, b"")
+                    self.assertEqual(entry.comment, b"")
+                    self.assertTrue(stat.S_ISREG(entry.external_attr >> 16))
+                self.assertFalse(any("token" in n or "settings" in n for n in bundle.namelist()))
+
+    def test_plugin_launcher_installer_and_brand_copies_match(self):
+        for client in ("openai", "claude"):
+            root = package.ROOT / "plugins" / client
+            for source, target in (("scripts/plugin-run.sh", "scripts/run.sh"),
+                                   ("scripts/install.sh", "scripts/install.sh"),
+                                   ("assets/questlock-icon.svg", "assets/questlock-icon.svg"),
+                                   ("examples/revisions/json-status.json", "examples/checked-json.json"),
+                                   ("internal/agentsetup/assets/references/local-worker.json", "examples/local-extraction.json")):
+                self.assertEqual((root / target).read_bytes(), (package.ROOT / source).read_bytes())
+            for name in ("LICENSE", "ATTRIBUTION.md", "THIRD_PARTY_NOTICES.md"):
+                self.assertEqual((root / name).read_bytes(), (package.ROOT / name).read_bytes())
+
     def test_inference_release_material_is_packaged_without_private_inputs(self):
         required = {
             "docs/execution-validation-v0.10.0.md", "docs/execution-validation-v0.10.0.json",

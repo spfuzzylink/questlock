@@ -1,0 +1,70 @@
+{
+  "active_client_settings_changed": false,
+  "clients": {
+    "claude-code": {
+      "native": {
+        "enabled": true,
+        "evidence": "native_strict_validation_marketplace_install_component_inventory_mcp_health",
+        "installed": true,
+        "mcp_connection_verified": true,
+        "model_calls": 0,
+        "native_chat_tool_execution_verified": false,
+        "skill_loaded": true,
+        "status": "completed",
+        "version": "2.1.308 (Claude Code)"
+      },
+      "protocol": {
+        "checked_revision": true,
+        "evidence": "direct_packaged_launcher_mcp",
+        "exact_reuse": true,
+        "model_calls": 0,
+        "native_chat_tool_execution_verified": false,
+        "provider_cost_usd": 0,
+        "status": "completed",
+        "tools": [
+          "questlock_delegate",
+          "questlock_revise"
+        ]
+      }
+    },
+    "codex": {
+      "native": {
+        "enabled": true,
+        "evidence": "native_marketplace_install_app_server_skill_and_mcp_inventory",
+        "installed": true,
+        "mcp_tools_discovered": [
+          "questlock_delegate",
+          "questlock_revise"
+        ],
+        "model_calls": 0,
+        "native_chat_tool_execution_verified": false,
+        "skill_loaded": true,
+        "status": "completed",
+        "version": "codex-cli 0.163.0-alpha.10.2"
+      },
+      "protocol": {
+        "checked_revision": true,
+        "evidence": "direct_packaged_launcher_mcp",
+        "exact_reuse": true,
+        "model_calls": 0,
+        "native_chat_tool_execution_verified": false,
+        "provider_cost_usd": 0,
+        "status": "completed",
+        "tools": [
+          "questlock_delegate",
+          "questlock_revise"
+        ]
+      }
+    }
+  },
+  "model_calls": 0,
+  "native_chat_tool_execution_verified": false,
+  "paid_fallback_enabled": false,
+  "provider_cost_usd": 0,
+  "status": "completed",
+  "release": "0.11.0",
+  "qualification_date": "2026-10-22",
+  "physical_platform": "darwin/arm64",
+  "public_directory_listing_verified": false,
+  "public_git_bootstrap_download_verified": false
+}

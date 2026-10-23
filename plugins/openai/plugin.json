@@ -1,0 +1,37 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "questlock",
+  "version": "0.11.0",
+  "description": "Apply checked text revisions, reuse exact results, and run bounded local model tasks through a durable local broker.",
+  "author": {
+    "name": "Questlock contributors",
+    "url": "https://github.com/spfuzzylink/questlock"
+  },
+  "homepage": "https://github.com/spfuzzylink/questlock",
+  "repository": "https://github.com/spfuzzylink/questlock",
+  "license": "MIT",
+  "keywords": ["checked-revisions", "local-models", "result-reuse", "bounded-tasks"],
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "onboardingSkill": "./skills/questlock/SKILL.md",
+      "interface": {
+        "displayName": "Questlock",
+        "shortDescription": "Checked local workflows",
+        "longDescription": "Apply exact text replacements with source hashes and checks, reuse valid task results, or run bounded text tasks through a configured local model. Questlock stores results in a private local broker and reports measured usage. This desktop plugin runs a local MCP server. Paid fallback is disabled; model tasks require an explicitly configured local model. It does not discover files, edit workspace files, or execute commands through its MCP tools.",
+        "developerName": "Questlock contributors",
+        "category": "Developer Tools",
+        "capabilities": ["Checked text revisions", "Exact result reuse", "Bounded local model tasks"],
+        "websiteURL": "https://github.com/spfuzzylink/questlock",
+        "supportURL": "https://github.com/spfuzzylink/questlock/issues",
+        "defaultPrompt": [
+          "Run Questlock's first checked revision and repeat it to verify exact reuse without calling a model.",
+          "Use Questlock to apply the exact replacements I specify, with source and output checks.",
+          "Use my configured local model for a bounded summary of the snapshot I provide."
+        ],
+        "composerIcon": "./assets/questlock-icon.svg",
+        "logo": "./assets/questlock-icon.svg"
+      }
+    }
+  }
+}

@@ -61,3 +61,10 @@ endorsement. Accurate descriptions of what you use or support are welcome.
 
 For background on how names and designs identify the source of goods or
 services, see the [USPTO's trademark overview](https://www.uspto.gov/trademarks/basics/what-trademark).
+
+## Square plugin icon
+
+`assets/questlock-icon.svg` reuses the exact hexagon-lock geometry and colors
+from the permanent banner, in a square viewport for native plugin listings.
+It adds no release number or provider identity. Both plugin copies must match
+this file. Keep the original banner unchanged.

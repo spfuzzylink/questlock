@@ -1,0 +1,16 @@
+{
+  "name": "questlock",
+  "description": "Questlock checked revisions, exact result reuse, and bounded local model tasks.",
+  "owner": {
+    "name": "Questlock contributors",
+    "url": "https://github.com/spfuzzylink/questlock"
+  },
+  "plugins": [
+    {
+      "name": "questlock",
+      "source": "./plugins/claude",
+      "description": "Checked text revisions, exact result reuse, and bounded local model tasks.",
+      "category": "development"
+    }
+  ]
+}

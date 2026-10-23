@@ -156,8 +156,7 @@ func writeFirstRequest(workspace string) (string, error) {
 	}
 	data, _ := json.MarshalIndent(firstRequest(), "", "  ")
 	data = append(data, '\n')
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
-	if os.IsExist(err) {
+	readExisting := func() (string, error) {
 		info, statErr := os.Lstat(path)
 		if statErr != nil || !info.Mode().IsRegular() || info.Mode().Perm()&0077 != 0 {
 			return "", errors.New("existing first-task file is not private regular data")
@@ -168,15 +167,39 @@ func writeFirstRequest(workspace string) (string, error) {
 		}
 		return path, nil
 	}
+	if _, err := os.Lstat(path); err == nil {
+		return readExisting()
+	} else if !os.IsNotExist(err) {
+		return "", errors.New("cannot inspect first-task request")
+	}
+	// Multiple native clients can cold-start together. Publish only a fully
+	// synced fixture; a reader must never mistake a half-written file for the
+	// operator's different request. A hard link is atomic and never replaces it.
+	f, err := os.CreateTemp(workspace, ".first-task-*")
 	if err != nil {
 		return "", errors.New("cannot save first-task request")
 	}
+	defer os.Remove(f.Name())
 	if _, err = f.Write(data); err == nil {
 		err = f.Sync()
 	}
 	closeErr := f.Close()
 	if err != nil || closeErr != nil {
 		return "", errors.New("could not durably save first-task request")
+	}
+	if err := os.Link(f.Name(), path); os.IsExist(err) {
+		return readExisting()
+	} else if err != nil {
+		return "", errors.New("cannot publish first-task request without replacing existing data")
+	}
+	dir, err := os.Open(workspace)
+	if err != nil {
+		return "", errors.New("cannot sync request workspace")
+	}
+	err = dir.Sync()
+	closeErr = dir.Close()
+	if err != nil || closeErr != nil {
+		return "", errors.New("could not durably publish first-task request")
 	}
 	return path, nil
 }

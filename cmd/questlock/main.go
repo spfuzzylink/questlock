@@ -19,7 +19,7 @@ import (
 	"github.com/spfuzzylink/questlock/internal/store"
 )
 
-var version = "0.10.0" // Release builds set this from VERSION using -ldflags.
+var version = "0.11.0" // Release builds set this from VERSION using -ldflags.
 const defaultDB = ".questlock/state.db"
 
 func main() {
@@ -50,6 +50,7 @@ Usage:
   questlock edge quest
   questlock model install [--agents codex,claude] [--replace]
   questlock setup [--client codex|claude-code|claude-desktop] [--plan]
+  questlock plugin serve|try|doctor|stop [--client codex|claude-code]
   questlock doctor [--client codex|claude-code|claude-desktop]
   questlock try [--state-dir PATH] [--workspace PATH]
   questlock local start|status|stop [--state-dir PATH]
@@ -83,6 +84,8 @@ func run(args []string) error {
 		return nil
 	case "setup":
 		return setupCommand(args[1:])
+	case "plugin":
+		return pluginCommand(args[1:])
 	case "doctor":
 		return doctorCommand(args[1:])
 	case "try":

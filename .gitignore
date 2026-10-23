@@ -1,4 +1,5 @@
 /bin/
+/plugins/*/bin/
 /dist/
 /.questlock/
 /.questlock-demo/

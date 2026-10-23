@@ -1,10 +1,16 @@
 # Install and try Questlock
 
-This guide covers the experimental **v0.10.0** release. The installer selects
+This guide covers the experimental **v0.11.0** release. The installer selects
 the version in `VERSION`; older published versions remain available, including
 v0.5.0 with `./scripts/install.sh --version v0.5.0`.
 
 ## Connect your client in one command
+
+For an installed Codex/ChatGPT desktop or Claude Code client, start with the
+[plugin installation](plugins.md). The Git catalog fetches a checksum-verified
+runtime on first use; each platform's `questlock-plugin_0.11.0_OS_ARCH.zip`
+contains both plugins and native runtimes for an offline start. Existing binary
+and Claude Desktop MCPB setup remain available below.
 
 After extracting the binary, run `./questlock setup`. Choose Codex, Claude Code,
 or Claude Desktop. Setup runs a zero-model-call first task automatically.
@@ -82,14 +88,14 @@ separate runtime validation.
 For example, on Linux x86-64, from the download directory:
 
 ```sh
-sha256sum questlock_0.10.0_linux_amd64.tar.gz
+sha256sum questlock_0.11.0_linux_amd64.tar.gz
 ```
 
 On macOS use `shasum -a 256` instead. Compare the result with the **matching
 filename's entry** in `checksums.txt` before extracting. Then:
 
 ```sh
-tar -xzf questlock_0.10.0_linux_amd64.tar.gz
+tar -xzf questlock_0.11.0_linux_amd64.tar.gz
 ./questlock version
 ./questlock quest
 ./questlock model quest

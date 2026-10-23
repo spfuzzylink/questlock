@@ -1,5 +1,17 @@
 # Architecture
 
+## Client plugins
+
+The plugins are thin packages around the same Go runtime. A native client owns
+installation and enablement; its launcher uses a bundled executable or fetches
+the pinned release into a private cache. It starts the existing loopback worker
+and broker in a separate plugin profile. Both clients can share checked results
+without touching the configuration used by guided setup. Paid fallback stays
+disabled. See [installation and lifecycle](plugins.md) and the
+[editable plugin flow](diagrams/plugins.drawio).
+
+![Native plugins share the same local checked-work runtime](diagrams/plugins.svg)
+
 ## Go applications and a shared master broker
 
 One `execution.Coordinator` combines the existing runner, bounded local admission
