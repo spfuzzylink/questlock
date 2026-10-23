@@ -358,4 +358,4 @@ jobs:
         run: >-
           gh release create "$RELEASE_TAG" dist/*.tar.gz dist/*.mcpb dist/*.zip dist/checksums.txt
           --verify-tag --prerelease --title "Questlock ${RELEASE_TAG}"
-          --notes-file docs/release-notes.md
+          --generate-notes
