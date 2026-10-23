@@ -356,8 +356,8 @@ func TestRunnerStalledOllamaStreamDeadlineRetainsAgedClaimWithoutBlockingOtherTa
 			case <-time.After(time.Second):
 				t.Fatal("deadline did not cancel the stalled HTTP request")
 			}
-			key := "inference/v1/jobs/" + m.Fingerprint
-			claim, err := r.Broker.Get(t.Context(), key)
+			claimPath := "inference/v1/jobs/" + m.Fingerprint
+			claim, err := r.Broker.Get(t.Context(), claimPath)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -378,7 +378,7 @@ func TestRunnerStalledOllamaStreamDeadlineRetainsAgedClaimWithoutBlockingOtherTa
 			if err != nil || !completed.Durable || !completed.Response.Complete || completed.Reused || completed.Response.Text != "Useful local answer." || completed.Fingerprint == m.Fingerprint || calls.generate.Load() != 2 {
 				t.Fatalf("uncertain claim blocked an independent local task: %+v %v", completed, err)
 			}
-			retained, err := r.Broker.Get(t.Context(), key)
+			retained, err := r.Broker.Get(t.Context(), claimPath)
 			if err != nil || retained.Version != claim.Version || retained.Content != claim.Content {
 				t.Fatalf("independent task altered the uncertain claim: %+v %v", retained, err)
 			}
