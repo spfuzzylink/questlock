@@ -139,10 +139,31 @@ token can read and publish any key in that scope.
 6. Insert the new immutable version, update the head, save the successful receipt,
    and journal the acceptance in one transaction. Acknowledge only after commit.
 
-All content is inside SQLite. There is no second filesystem/object-store write
-that could get ahead of the metadata transaction. WAL with FULL synchronization
-provides the tested process-restart behavior; durability under physical power loss
-also depends on filesystem/device guarantees.
+Publication commits content inside SQLite. With optional local retention, an
+eligible payload can later move into an immutable compressed file. The file is
+durable before a transaction replaces the inline payload with its reference;
+an interrupted archive can leave an unreferenced file, never an acknowledged
+reference to an unfinished write. WAL with FULL synchronization provides the
+tested process-restart behavior; durability under physical power loss also
+depends on filesystem/device guarantees.
+
+## Local cold storage
+
+**Questlock** keeps artifact identities, current pointers, successful-operation
+receipts and audit entries in SQLite. Opt-in retention moves only eligible
+content: older noncurrent versions beyond the recent-version allowance, plus
+recognized complete inference results and immutable revision results when the
+policy permits it. Opaque current values, pending or uncertain claims, budget
+ledgers, team state and outcome records stay hot. Reads, exact retries and reuse
+verify and resolve the same bytes from either location.
+
+![Questlock retains coordination records in SQLite and moves eligible payloads to verified local cold files](diagrams/storage-retention.svg)
+
+The [operator guide](storage-retention.md) covers policy, bounded scheduled
+maintenance, dry runs, restore and explicit compaction. The diagram has an
+[editable draw.io source](diagrams/storage-retention.drawio). There is no archive
+deletion or independent backup service. SQLite metadata and cold files must be
+backed up together; the database page limit excludes WAL and compaction headroom.
 
 ## Retry semantics
 
@@ -279,14 +300,16 @@ two-host integration remains unvalidated.
 
 ## What grows next
 
-SQLite serializes writers. Each scope's artifact and journal history grow without
-retention or quotas. The current-key list remains capped; SecondGate provides
-scoped snapshot/change pagination rather than an arbitrary history-query API.
-This retains one authoritative host without a scheduler or failover.
+SQLite serializes writers. Artifact identities, receipts and journal history
+remain retained. Optional [local cold storage](storage-retention.md) reduces hot
+payload bytes and can cap main-database pages and logical cold bytes; it does
+not cap total host disk use. Metadata growth eventually stops writes at the
+configured page limit. The current-key list remains capped; SecondGate provides
+scoped snapshot/change pagination, and local `storage history` reads one exact
+historical version. This retains one authoritative host without failover.
 
-Future experiments include task-generation fencing, explicit storage budgets,
-retention with preserved retry semantics, and measuring coordination across two
-machines. Those are questions, not implemented guarantees.
+Future experiments include task-generation fencing and measuring coordination
+across two physical machines. Those are questions, not implemented guarantees.
 
 See [SECURITY.md](../SECURITY.md) for the trusted operator/worker boundary and the
 difference between publication controls and an execution sandbox.

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1020" viewBox="0 0 1600 1020" role="img" aria-labelledby="title desc">
+<title id="title">Questlock local cold storage</title>
+<desc id="desc">One trusted broker retains versions, pointers, retry receipts, audit, pending and uncertain claims and budgets in SQLite. Reviewed retention uses bounded batches to move eligible payloads into private immutable local SHA-256 gzip files. The file is durable before the database reference commits. Reads verify original bytes. There is no final archive deletion. Main database page and logical cold byte caps exclude WAL and compaction headroom; consistent backups require both stores.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#506381"/></marker></defs>
+<rect width="1600" height="1020" fill="#f8fafc"/>
+<path d="M 400 295 L 510 295" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<path d="M 910 295 L 1020 295" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<path d="M 400 665 L 510 665" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M 910 665 L 1020 665" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M 1490 445 L 1490 550" fill="none" stroke="#506381" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<rect x="60" y="835" width="1480" height="145" rx="12" fill="#ffffff" stroke="#c2cbd8" stroke-width="2"/>
+<rect x="60" y="185" width="340" height="220" rx="12" fill="#eef0ff" stroke="#7970c2" stroke-width="2"/>
+<text x="80" y="226" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#18243b">Cooperating workers</text>
+<text x="80" y="268" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Scoped HTTP API</text>
+<text x="80" y="299" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Same approved task identity</text>
+<text x="80" y="330" font-family="Arial, sans-serif" font-size="19" fill="#18243b">No database or cold-file mount</text>
+<rect x="510" y="185" width="400" height="220" rx="12" fill="#18243b" stroke="#18243b" stroke-width="2"/>
+<text x="530" y="226" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#ffffff">One trusted broker</text>
+<text x="530" y="268" font-family="Arial, sans-serif" font-size="19" fill="#ffffff">Reads resolve original bytes</text>
+<text x="530" y="299" font-family="Arial, sans-serif" font-size="19" fill="#ffffff">Verify cold content on demand</text>
+<text x="530" y="330" font-family="Arial, sans-serif" font-size="19" fill="#ffffff">Unavailable content stops reuse</text>
+<text x="530" y="361" font-family="Arial, sans-serif" font-size="19" fill="#ffffff">No automatic regeneration</text>
+<rect x="1020" y="185" width="520" height="260" rx="12" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="1040" y="226" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#18243b">SQLite keeps coordination state</text>
+<text x="1040" y="268" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Versions, current pointers and receipts</text>
+<text x="1040" y="299" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Publish audit history and cold references</text>
+<text x="1040" y="330" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Pending / uncertain claims and budgets</text>
+<text x="1040" y="361" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Opaque current values stay hot</text>
+<rect x="60" y="550" width="340" height="250" rx="12" fill="#ffffff" stroke="#c2cbd8" stroke-width="2"/>
+<text x="80" y="591" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#18243b">Reviewed local policy</text>
+<text x="80" y="633" font-family="Arial, sans-serif" font-size="19" fill="#18243b">90-day hot history by default</text>
+<text x="80" y="664" font-family="Arial, sans-serif" font-size="19" fill="#18243b">30 / 90 / 180 days are choices</text>
+<text x="80" y="695" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Keep 2 recent versions</text>
+<text x="80" y="726" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Recognize completed results</text>
+<rect x="510" y="550" width="400" height="250" rx="12" fill="#eef0ff" stroke="#7970c2" stroke-width="2"/>
+<text x="530" y="591" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#18243b">Bounded maintenance</text>
+<text x="530" y="633" font-family="Arial, sans-serif" font-size="19" fill="#18243b">archive defaults to dry run</text>
+<text x="530" y="664" font-family="Arial, sans-serif" font-size="19" fill="#18243b">--apply moves eligible payloads</text>
+<text x="530" y="695" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Persisted policy: batch every 5m</text>
+<text x="530" y="726" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Adaptive item / byte bounds</text>
+<text x="530" y="757" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Compaction stays explicit</text>
+<rect x="1020" y="550" width="520" height="250" rx="12" fill="#e8f7ee" stroke="#278461" stroke-width="2"/>
+<text x="1040" y="591" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#18243b">Private local cold files</text>
+<text x="1040" y="633" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Immutable SHA-256.gzip payloads</text>
+<text x="1040" y="664" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Owned directory 0700; files 0600</text>
+<text x="1040" y="695" font-family="Arial, sans-serif" font-size="19" fill="#18243b">Logical cap includes orphan / temp bytes</text>
+<text x="1040" y="726" font-family="Arial, sans-serif" font-size="19" fill="#18243b">No final archive deletion</text>
+<text x="60" y="82" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#18243b">Questlock local cold storage</text>
+<text x="60" y="126" font-family="Arial, sans-serif" font-size="21" font-weight="400" fill="#34445e">Move eligible payload bytes; preserve publication and reuse identity</text>
+<text x="1065" y="499" font-family="Arial, sans-serif" font-size="19" font-weight="400" fill="#34445e">Durable file before committed reference</text>
+<text x="1065" y="530" font-family="Arial, sans-serif" font-size="19" font-weight="400" fill="#34445e">Read back through verified cold reference</text>
+<text x="80" y="888" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#18243b">Retained state needs capacity and a consistent backup</text>
+<text x="80" y="925" font-family="Arial, sans-serif" font-size="19" font-weight="400" fill="#34445e">Main-database pages and logical cold bytes have separate caps; WAL and compaction need extra headroom.</text>
+<text x="80" y="959" font-family="Arial, sans-serif" font-size="19" font-weight="400" fill="#34445e">Back up SQLite + the entire cold directory together. Restore all payloads before moving cold storage or downgrading.</text>
+</svg>

@@ -33,6 +33,21 @@ OPERATIONS = {
     "down": ("down", "--volumes", "--remove-orphans", "--timeout", "20"),
 }
 SERVICES = frozenset({"langfuse-web", "langfuse-worker", "postgres", "redis", "clickhouse", "minio"})
+# Fixed diagnostic codes only. Their accompanying messages can contain database
+# URLs, credentials, schema names and paths, so none of that text is emitted.
+# Prisma definitions: prisma/prisma-engines/libs/user-facing-errors/src/
+# {common,schema_engine}.rs. PostgreSQL: docs/16/errcodes-appendix.html.
+PRISMA_CODES = (
+    "P1000", "P1001", "P1002", "P1003", "P1008", "P1010", "P1011",
+    "P1012", "P1013", "P1014", "P1015", "P1017", "P3000", "P3005",
+    "P3006", "P3009", "P3015", "P3018",
+)
+POSTGRES_SQLSTATES = (
+    "08001", "08004", "08006", "23502", "23503", "23505", "28P01",
+    "3D000", "40001", "40P01", "42501", "42601", "42701", "42703",
+    "42P01", "42P07", "53100", "53200", "53300", "55P03", "57P01",
+    "57P03",
+)
 STATE_FORMAT = (
     '{"service":{{json (index .Config.Labels "com.docker.compose.service")}},'
     '"status":{{json .State.Status}},'
@@ -57,9 +72,18 @@ def classify_logs(text):
         "worker_start_failed": r"Failed to start worker",
         "worker_listener_started": r"Listening: http://",
         "web_ready": r"Ready in|Ready on",
-        "prisma_migration_error": r"P1001|P1000|P3009|P3018",
+        "prisma_migration_error": r"\b(?:" + "|".join(PRISMA_CODES) + r")\b",
         "clickhouse_schema_error": r"UNKNOWN_TABLE|UNKNOWN_DATABASE|SYNTAX_ERROR",
     }
+    for code in PRISMA_CODES:
+        patterns["prisma_" + code] = r"\b" + code + r"\b"
+    # Match only a structured code label, not an arbitrary five-character
+    # substring in a password, object name or URL. Labels and values are fixed.
+    for code in POSTGRES_SQLSTATES:
+        patterns["postgres_sqlstate_" + code] = (
+            r"(?i:\b(?:Database error code|SQLSTATE)\s*[:=]\s*['\"]?)"
+            + code + r"\b"
+        )
     return [label for label, pattern in patterns.items() if re.search(pattern, text)]
 
 
@@ -107,9 +131,11 @@ def diagnose(executable, socket, compose_args, env):
                 [*base, "logs", "--tail", "50", cid], env=env, cwd=ROOT,
                 timeout=5, capture_output=True, text=True, check=False,
             )
-            # Service logs have an image-side 2 x 5MiB rotation cap. The maximum
-            # query is 50 lines; only the first64KiB is inspected for fixed labels.
-            text = logs.stdout[:65536] + logs.stderr[:65536]
+            # Service logs have an image-side 2 x 5MiB rotation cap. The query
+            # requests 50 lines; only bounded stream tails enter classification.
+            # Preserve both stream tails within the classifier's total bound;
+            # Prisma writes progress to stdout and the actual error to stderr.
+            text = logs.stdout[-32767:] + "\n" + logs.stderr[-32767:]
             print(json.dumps(diagnostic_summary(state, text), sort_keys=True))
         return 0
     except (OSError, ValueError, subprocess.TimeoutExpired) as exc:

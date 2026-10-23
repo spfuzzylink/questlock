@@ -117,6 +117,9 @@ recovery, the [editable flow](diagrams/second-gate.drawio), and six offline case
 | 413 | `too_large` | Encoded request body exceeds its limit |
 | 413 | `sync_item_too_large` | Next complete sync item exceeds `max_bytes`; raise the limit and keep the cursor |
 | 500 | `internal` | Internal failure; filesystem/DB details are withheld |
+| 500 | `archive_corrupt` | Referenced cold content failed verification; preserve the claim and recover verified storage |
+| 503 | `archive_unavailable` | Referenced cold storage is unavailable; do not treat the task as missing |
+| 507 | `storage_limit` | Configured storage capacity reached; no publication was acknowledged |
 
 Errors use `{code, message, current_version?}`. A zero current version may be
 omitted. Re-read and reconcile conflicts; never blindly increment the expected

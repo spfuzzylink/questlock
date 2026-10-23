@@ -107,6 +107,9 @@ internal/edgequest/**
 !team/
 team/**
 !team/*.go
+!retention/
+retention/**
+!retention/*.go
 # Runtime builds do not need tests or their fixtures.
 **/*_test.go
 # Finder metadata is never a Go build input, even when its suffix is .go.

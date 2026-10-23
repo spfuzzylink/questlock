@@ -232,8 +232,10 @@ forward. Existing records and artifacts are retained without automatic deletion.
 
 Every accepted artifact version stores the full outcome ledger at that point.
 The limits above bound the current ledger, not cumulative historical storage;
-append-only version history can consume considerably more space. Back up and
-monitor the broker's database growth. There is no automatic retention service.
+append-only version history can consume considerably more space. Optional
+[local cold retention](storage-retention.md) can move eligible old versions;
+current outcome records remain hot and no versions are deleted. Monitor and
+back up SQLite and its cold directory together.
 
 The records contain run and event identifiers, checked-attempt metadata, usage
 and cost estimates, artifact digests, feedback categories, and effort. They do

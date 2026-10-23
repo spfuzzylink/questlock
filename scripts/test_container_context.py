@@ -2,6 +2,7 @@
 
 import importlib.util
 from pathlib import Path
+import re
 import tempfile
 import unittest
 
@@ -25,6 +26,22 @@ class ContainerContextTests(unittest.TestCase):
         for name in context.REQUIRED_FILES:
             with self.subTest(name=name):
                 self.assertTrue((context.ROOT / name).is_file())
+
+    def test_local_imports_have_context_and_container_copy_rules(self):
+        # Catch a new library dependency before an image build discovers that
+        # the checkout builds but the explicit container source list does not.
+        recipe = (context.ROOT / "Containerfile").read_text()
+        copied = re.findall(r"^COPY ([\w/-]+)/ ./[\w/-]+/\s*$", recipe, re.MULTILINE)
+        imports = set()
+        for directory in context.GO_DIRECTORIES:
+            for source in (context.ROOT / directory).glob("*.go"):
+                if not source.name.endswith("_test.go"):
+                    imports.update(re.findall(r'"github.com/spfuzzylink/questlock/([\w/-]+)"', source.read_text()))
+        self.assertTrue(imports)
+        for directory in imports:
+            with self.subTest(directory=directory):
+                self.assertIn(directory, context.GO_DIRECTORIES)
+                self.assertTrue(any(directory == entry or directory.startswith(entry + "/") for entry in copied))
 
     def test_required_sources_and_only_named_nested_embedded_files_are_allowed(self):
         self.assertTrue(all(context.allowed_file(name) for name in context.REQUIRED_FILES))

@@ -241,6 +241,12 @@ func writeStoreError(w http.ResponseWriter, err error) {
 			status = http.StatusBadRequest
 		case "not_found":
 			status = http.StatusNotFound
+		case "archive_unavailable":
+			status = http.StatusServiceUnavailable
+		case "archive_corrupt":
+			status = http.StatusInternalServerError
+		case "storage_limit":
+			status = http.StatusInsufficientStorage
 		case "sync_item_too_large":
 			status = http.StatusRequestEntityTooLarge
 		case "version_conflict", "operation_conflict", "agent_exists", "identity_conflict":

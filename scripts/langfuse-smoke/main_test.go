@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/spfuzzylink/questlock/observability"
+	"github.com/spfuzzylink/questlock/retention"
 )
 
 // These are read-API-shaped fixtures, not mocked exporter responses. Regressions
@@ -119,6 +120,38 @@ func TestRuntimeCacheReadbackDoesNotBecomeBilling(t *testing.T) {
 			}
 			if err := validateObservations(f, observations); (err == nil) != (kind == "valid") {
 				t.Fatal("runtime evidence contract mismatch", err)
+			}
+		})
+	}
+}
+
+func TestStorageFailureReadbackRetainsAllowlistAndNoGeneration(t *testing.T) {
+	start := time.Unix(1_800_000_000, 0).UTC()
+	event := retention.Event{Operation: "archive", Outcome: "error", ErrorCode: "archive_corrupt", StartedAt: start, EndedAt: start.Add(20 * time.Millisecond), Items: 3, Bytes: 2048}
+	receipt := observability.Receipt{TraceID: "trace-fixture", RootSpanID: "storage"}
+	const reply = `[{"id":"storage","traceId":"trace-fixture","type":"SPAN","name":"questlock.storage","level":"ERROR","input":null,"output":null,"metadata":{"questlock_storage_operation":"archive","questlock_storage_outcome":"error","questlock_storage_error_code":"archive_corrupt","questlock_storage_items":3,"questlock_storage_bytes":2048,"questlock_storage_duration_ms":20}}]`
+	for _, test := range []struct {
+		name   string
+		mutate func([]observation)
+	}{
+		{"valid", func([]observation) {}},
+		{"input", func(o []observation) { o[0].Input = json.RawMessage(`"private archive content"`) }},
+		{"usage", func(o []observation) { o[0].UsageDetails = map[string]int64{"input": 1} }},
+		{"cost", func(o []observation) { o[0].CostDetails = map[string]float64{"total": 1} }},
+		{"extra-identity", func(o []observation) { o[0].Metadata["questlock_path"] = "private archive path" }},
+		{"raw-error", func(o []observation) { o[0].Metadata["questlock_storage_error_code"] = "private exception" }},
+		{"missing-zero", func(o []observation) { delete(o[0].Metadata, "questlock_storage_bytes") }},
+		{"generation", func(o []observation) { o[0].Type = "GENERATION" }},
+		{"wrong-level", func(o []observation) { o[0].Level = "DEFAULT" }},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			var observations []observation
+			if err := json.Unmarshal([]byte(reply), &observations); err != nil {
+				t.Fatal(err)
+			}
+			test.mutate(observations)
+			if err := validateStorageObservations(event, receipt, observations); (err == nil) != (test.name == "valid") {
+				t.Fatal("storage live readback contract mismatch", err)
 			}
 		})
 	}

@@ -40,7 +40,7 @@ a pinned, checksum-verified runtime on first use; the offline plugin ZIP already
 contains it. [Setup, offline bundles and recovery](docs/plugins.md).
 
 Prefer the guided setup, including Claude Desktop? Download the matching
-[v0.11.0 archive](https://github.com/spfuzzylink/questlock/releases/tag/v0.11.0), then:
+[v0.12.0 archive](https://github.com/spfuzzylink/questlock/releases/tag/v0.12.0), then:
 
 ```sh
 ./questlock setup
@@ -169,6 +169,18 @@ not recommendations.
 These demos use temporary state and no model account. Local inference needs
 installed Ollama weights. Paid generation requires explicit credentials and
 policy; guided setup enables no paid escalation.
+
+## Keep older work without keeping every payload hot
+
+**Questlock** can move eligible old content into private, compressed local files
+while keeping versions, retry receipts, audit history and coordination state.
+Reads and exact reuse resolve the original bytes without generating them again.
+Choose a hot-history window such as 30, 90 or 180 days; the default is 90.
+
+Retention is opt-in. Preview with `questlock storage archive`; `--apply` moves
+content. A configured broker also runs bounded maintenance batches. It deletes
+no archive files, and metadata still grows within the configured database page
+limit. [Policy, limits and operator walkthrough](docs/storage-retention.md).
 
 ## New in 0.10.0
 

@@ -121,8 +121,22 @@ better model output, or production readiness.
   minutes through outcome feedback; it does not observe or automate that work.
 - **Storage growth:** record database size and growth in artifact versions,
   successful-operation receipts, and journal events over the pilot. Include
-  rejected attempts and replays; they also create journal entries. There are no
-  built-in quotas or automatic retention.
+  rejected attempts and replays; they also create journal entries. Optional
+  [local cold retention](storage-retention.md) moves eligible payloads and sets
+  storage limits without deleting receipts or journal history. Include cold
+  files, WAL and compaction headroom in host disk measurements.
+
+## A shared local broker has months of completed work
+
+Keep the broker and approved snapshots your workers already use. Configure a
+90-day hot-history policy, preview the eligible batch, then archive it into a
+private local directory. A later exact request can read the verified original
+content without another model call; reuse validity checks still apply.
+
+Current claims, uncertain outcomes and budget ledgers stay hot. Versions, retry
+receipts and audit history remain retained. This can reduce hot payload storage,
+but total savings depend on the content; metadata and cold files still need
+capacity and a consistent backup. [Operator walkthrough](storage-retention.md).
 
 Start with a bounded workload and use these observations to decide whether the
 publishing boundary is worth the integration and operating effort for that team.
@@ -375,9 +389,11 @@ is for offline planning; live paid routing and invoice savings remain unvalidate
 - **Fleet management or high availability:** remote workers can share one
   authoritative HTTPS broker. There is no fleet manager, multi-writer database
   replication, distributed consensus, or automatic broker failover.
-- **Bounded long-running storage:** versions, receipts, and journal entries grow
-  without quotas or automatic retention. Lists are capped and have no pagination;
-  the API does not expose a general historical-content browser.
+- **A fixed total disk footprint:** optional cold retention moves eligible
+  payloads and caps main-database pages and logical cold bytes. Retained metadata,
+  WAL and compaction need capacity; there is no automatic deletion. The HTTP API
+  does not expose a general historical-content browser, while local
+  `storage history` reads one exact version. SecondGate provides scoped pages.
 
 The publishing boundary makes stale writes and uncertain results explicit.
 Bounded inference builds on it to avoid repeating an eligible task and to expose

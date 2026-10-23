@@ -15,7 +15,7 @@ TOP_LEVEL = {"go.mod", "go.sum", "LICENSE", "ATTRIBUTION.md", "THIRD_PARTY_NOTIC
 GO_DIRECTORIES = {
     "cmd/questlock", "internal/store", "internal/httpapi", "internal/agentsetup", "internal/configguard", "internal/onboardingclient",
     "internal/localruntime", "internal/desktopbundle", "internal/nativeagent", "internal/teamquest", "team",
-    "client", "protocol", "inference", "admission", "edge", "internal/edgequest", "systemone", "observability", "evaluation", "delegation", "worker", "outcomes", "revision",
+    "client", "protocol", "inference", "admission", "edge", "internal/edgequest", "systemone", "observability", "evaluation", "delegation", "worker", "outcomes", "revision", "retention",
 }
 EMBEDDED_FILES = {
     "systemone/bridge.py",
@@ -34,6 +34,7 @@ EMBEDDED_FILES = {
     "evaluation/fixtures/quickstart.json",
 }
 REQUIRED_FILES = TOP_LEVEL | EMBEDDED_FILES | {
+    "retention/config.go", "retention/cold.go", "retention/cold_files_unix.go", "retention/cold_files_other.go",
     "internal/teamquest/quest.go", "team/engine.go", "internal/nativeagent/provider.go", "protocol/data_json.go",
     "internal/configguard/guard.go", "internal/onboardingclient/client.go",
     "internal/localruntime/runtime.go", "internal/desktopbundle/bundle.go",
@@ -43,6 +44,7 @@ REQUIRED_FILES = TOP_LEVEL | EMBEDDED_FILES | {
     "observability/langfuse.go", "evaluation/fixtures.go", "delegation/router.go", "worker/worker.go", "outcomes/store.go", "revision/types.go", "admission/scheduler.go",
 }
 PRIVATE_SENTINELS = (
+    "retention/context-private.gzip", "retention/context-private.json", "retention/nested/context-private.go",
     "internal/teamquest/context-private.token", "internal/teamquest/nested/context-private.go",
     "team/context-private-request.json", "team/nested/context-private.go",
     "internal/nativeagent/context-private.token", "internal/nativeagent/nested/context-private.go",
