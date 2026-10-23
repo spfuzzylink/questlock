@@ -37,23 +37,30 @@ func (router Router) Run(ctx context.Context, request Request) (Result, error) {
 		spec := tierSpec(request, tier, result.RequestSHA256)
 		runner, err := router.Factory(tier)
 		if err != nil || runner == nil {
-			result.Attempts = append(result.Attempts, Attempt{TierID: tier.ID, ErrorCategory: "runner_initialization_failed"})
+			result.Attempts = append(result.Attempts, Attempt{TierID: tier.ID, ErrorCategory: "runner_initialization_failed", Checks: evaluation.NotEvaluated(request.Checks)})
 			return result, ErrStopped
 		}
 		answer, runErr := runner.Run(ctx, spec)
-		checks, quality := evaluation.CheckOutput(answer.Response.Text, request.Checks)
-		attempt := Attempt{TierID: tier.ID, Result: answer, Checks: checks, QualityPassed: quality}
+		checks, quality := evaluation.NotEvaluated(request.Checks), false
+		complete := runErr == nil && knownComplete(answer, spec)
+		if complete {
+			checks, quality = evaluation.CheckOutput(answer.Response.Text, request.Checks)
+		}
+		diagnostic := inference.BudgetDiagnosticFromError(runErr)
+		answer.BudgetDiagnostic = diagnostic
+		attempt := Attempt{TierID: tier.ID, Result: answer, Checks: checks, QualityPassed: quality, BudgetDiagnostic: diagnostic}
 		if answer.Response.Text != "" {
 			digest := sha256.Sum256([]byte(answer.Response.Text))
 			attempt.OutputSHA256 = hex.EncodeToString(digest[:])
 		}
 		attempt.Result.Response.Text = ""
 		if runErr != nil {
+			result.BudgetDiagnostic = diagnostic
 			attempt.ErrorCategory = errorCategory(runErr)
 			result.Attempts = append(result.Attempts, attempt)
 			return result, stoppedError(runErr)
 		}
-		if !knownComplete(answer, spec) {
+		if !complete {
 			attempt.ErrorCategory = "unconfirmed_complete_outcome"
 			result.Attempts = append(result.Attempts, attempt)
 			return result, ErrStopped
@@ -120,12 +127,22 @@ func finiteNonnegative(value float64) bool {
 // Preserve safe sentinel causes for callers without returning provider errors
 // that might embed secrets, raw response bodies, or request text.
 func stoppedError(err error) error {
+	causes := []error{ErrStopped}
 	for _, safe := range []error{context.Canceled, context.DeadlineExceeded, inference.ErrInFlight, inference.ErrIncomplete, inference.ErrBudgetExceeded} {
 		if errors.Is(err, safe) {
-			return errors.Join(ErrStopped, safe)
+			if safe == inference.ErrBudgetExceeded {
+				if diagnostic := inference.BudgetDiagnosticFromError(err); diagnostic != nil {
+					causes = append(causes, &inference.BudgetError{Diagnostic: *diagnostic})
+					continue
+				}
+			}
+			causes = append(causes, safe)
 		}
 	}
-	return ErrStopped
+	if len(causes) == 1 {
+		return ErrStopped
+	}
+	return errors.Join(causes...)
 }
 
 func errorCategory(err error) string {

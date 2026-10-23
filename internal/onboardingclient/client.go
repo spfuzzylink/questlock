@@ -195,7 +195,7 @@ func validateStaged(ctx context.Context, c *Candidate, exact bool) (Validation, 
 	if exact {
 		entry, ok := servers["questlock"].(map[string]any)
 		if !ok || !equalEntry(entry, expectedEntry(c.options), c.Client) {
-			return v, errors.New("candidate does not contain the exact Questlock MCP command")
+			return v, ErrManagedProfileMismatch
 		}
 		v.ExactServer = true
 		if c.Client == Codex && !effectiveCodexEntry(c.effective, c.options) {
@@ -282,7 +282,7 @@ func Inspect(ctx context.Context, options Options) (Report, error) {
 			entry, ok := servers["questlock"].(map[string]any)
 			if !ok || !equalEntry(entry, expectedEntry(o), o.Client) {
 				r.Status = "configuration_mismatch"
-				return r, errors.New("installed settings do not contain the exact Questlock MCP command")
+				return r, ErrManagedProfileMismatch
 			}
 			r.Validation = Validation{Status: "configuration_matches_native_unchecked", ExactServer: true, RequiresNativeRead: true}
 			return r, nil

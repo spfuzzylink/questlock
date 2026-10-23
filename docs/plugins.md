@@ -40,7 +40,9 @@ with the plugin enabled and ask:
 > Run Questlock's first checked revision, then repeat the same request to show
 > exact reuse without calling a model.
 
-The packaged skill calls `questlock_revise` with
+The packaged skill first calls `questlock_status` with `{}` to discover the
+connected root, profile, runtime version, request schemas, checks and paid
+policy. It then calls `questlock_revise` with
 `{"request_path":"first-task.json"}` twice. The first task changes synthetic
 JSON from `pending` to `ready`; the repeat returns the same immutable artifact.
 Check successful completion, passing checks, `durable: true`,
@@ -55,7 +57,7 @@ and [Claude plugin commands](https://code.claude.com/docs/en/plugins/cli-referen
 ## What is downloaded
 
 The Git catalog contains manifests, a skill, examples, and a launcher. On its
-first `serve` or `try`, the launcher downloads the pinned **v0.12.0** Questlock
+first `serve` or `try`, the launcher downloads the pinned **v0.13.0** Questlock
 archive and `checksums.txt` over HTTPS from this repository's GitHub release.
 It verifies the archive's SHA-256 before caching the executable privately.
 It does not use a `questlock` executable found on `PATH`. Checksums detect a
@@ -76,8 +78,8 @@ The [validation record](plugin-validation-v0.11.0.md) separates native install
 and connection checks from direct protocol execution and public download tests.
 
 To install without a runtime download, get the matching
-`questlock-plugin_0.12.0_OS_ARCH.zip` and `checksums.txt` from
-[Releases](https://github.com/spfuzzylink/questlock/releases/tag/v0.12.0).
+`questlock-plugin_0.13.0_OS_ARCH.zip` and `checksums.txt` from
+[Releases](https://github.com/spfuzzylink/questlock/releases/tag/v0.13.0).
 Compare the ZIP's SHA-256 with its matching checksum entry before extracting;
 use `shasum -a 256` on macOS or `sha256sum` on Linux. The ZIP includes both
 catalogs, both plugin folders, and the matching binary in each plugin.
@@ -117,6 +119,14 @@ chat to the tools.
 
 ## Use your own text
 
+Call `questlock_status` before preparing your request. Check its metadata
+`schema`, `runtime_version`, `request_schemas`, `checks.kinds` and
+`policy.allow_paid`; use its declared absolute `request_root`. The read-only
+status tool makes no network/model call and reads no task content, client
+settings, environment or credentials. Its opened root and ready/busy state
+describe the worker process. Broker/provider readiness remain `not_checked`,
+including when status is available during a task.
+
 Both clients share a private plugin broker and request workspace by default:
 
 | Purpose | Default location |
@@ -130,8 +140,8 @@ results, and broker data stay on the host unless the calling assistant or an
 explicitly selected model service sends them elsewhere.
 
 For another deterministic example, copy the packaged
-`examples/checked-json.json` into the request workspace and call
-`questlock_revise` with its filename. It is a synthetic fixture, including its
+`examples/checked-json.json` into the discovered request workspace and call
+`questlock_revise` with that saved absolute path. It is a synthetic fixture, including its
 historical version string. For your own edit, replace the complete inline
 source, recompute its SHA-256, declare literal replacements and match counts,
 and review the source and output checks. See the
@@ -143,9 +153,15 @@ It contains a bounded ticket-extraction task and one local Ollama tier; its
 model name is an example, not an installed model or an automatic selection.
 Choose a suitable model you already operate, review every supplied fact, limit,
 reuse TTL, and completion check, save the request privately, then call
-`questlock_delegate` with that filename. The plugin does not download weights.
+`questlock_delegate` with that saved absolute path. The plugin does not download weights.
 [Local models](local-models.md) and the [delegation contract](delegation.md)
 explain the prerequisites. Hosted escalation is disabled in this plugin.
+
+The status `workflow_configs.writing` value is a relative marker name beneath
+the root, without checking for or reading a marker. For an operator-approved
+recurring workflow, [writing init and plan](writing-workflows.md) keep a selected
+reference and current evidence explicit. Discovery grants no permission to
+initialize a reference or change client configuration.
 
 ## Diagnose, update, or remove
 
@@ -216,13 +232,14 @@ anything needed. Neither uninstall command is a request to delete task history.
 
 Native `plugin list` or manifest validation establishes metadata and installation
 state. A successful `try` establishes MCP startup, checked publication, and exact
-reuse through the packaged runtime. Confirming both Questlock tools and running
+reuse through the packaged runtime. Confirming all three Questlock tools and running
 the first task in a fresh native chat establishes that chat's connection. These
 are separate checks; the command-line self-test reports native connection as
 unverified.
 
-The tools accept only reviewed request files within their workspace. They have
-no shell, file-editing, or file-discovery capability. The calling assistant
+`questlock_status` takes no inputs and reports the operating contract.
+`questlock_revise` and `questlock_delegate` accept only reviewed request paths
+within that root. They have no shell, file-editing or file-listing capability. The calling assistant
 selects context, prepares requests, and decides how to apply the checked result.
 Checks do not establish human acceptance. Failed or uncertain work is withheld;
 do not change task identifiers to force a retry.

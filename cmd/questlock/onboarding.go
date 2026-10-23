@@ -404,6 +404,16 @@ func doctorCommand(args []string) error {
 	defer cancel()
 	// Inspect compares the exact command in private copies without starting MCP services.
 	clientReport, clientErr := onboardingclient.Inspect(ctx, onboardingclient.Options{Client: onboardingclient.Client(*clientName), HomeDir: *homeFlag, CodexHome: *codexHome, Executable: *native, QuestlockPath: filepath.Join(*homeFlag, ".local", "bin", "questlock"), StateDir: *state, Workspace: *workspace, SkipNativeMCPRead: true})
+	// A different existing command is a custom profile, not evidence that its
+	// connected worker is broken. Doctor inspects only the selected managed
+	// defaults; questlock_status reports the connected worker's own contract.
+	customProfile := clientReport.ServerPresent && errors.Is(clientErr, onboardingclient.ErrManagedProfileMismatch)
+	if customProfile {
+		clientReport.Status = "configured_custom_profile_unverified"
+		clientReport.Validation.Status = "custom_profile_unverified"
+		clientReport.Validation.RequiresNativeRead = true
+		clientErr = nil
+	}
 	brokerReport, brokerErr := localruntime.Inspect(ctx, *state)
 	workspaceReady := false
 	if localruntime.CheckPath(*workspace) == nil {
@@ -412,29 +422,46 @@ func doctorCommand(args []string) error {
 		}
 	}
 	status := "attention_required"
+	managedStatus := "managed_profile_incomplete"
+	if brokerReport.Status == "not_started" {
+		managedStatus = "managed_profile_not_initialized"
+	} else if brokerErr != nil {
+		managedStatus = "managed_profile_attention_required"
+	} else if brokerReport.Status == "ready" && workspaceReady {
+		managedStatus = "managed_profile_ready"
+	}
 	if clientErr == nil && brokerErr == nil && brokerReport.Status == "ready" && workspaceReady && clientReport.ServerPresent && clientReport.Validation.ExactServer {
 		status = "configuration_present"
 	}
 	next := []string{}
-	if *clientName == "claude-desktop" {
-		status = "native_validation_required"
-		next = append(next, "Check the native Claude Desktop extension connection and both tools; personal Claude Code skills are a separate integration.")
+	if customProfile {
+		status = "configured_custom_profile_unverified"
+		next = append(next, "The configured custom Questlock command differs from the selected managed profile; its broker, request root and connection were not tested by doctor. Call questlock_status in the connected client to discover that worker's contract.")
 	}
-	if brokerReport.Status != "ready" {
-		next = append(next, "Run questlock setup --client "+*clientName+" or questlock try to initialize the managed local workflow.")
+	if *clientName == "claude-desktop" {
+		if !customProfile {
+			status = "native_validation_required"
+		}
+		next = append(next, "Check the native Claude Desktop extension connection and Questlock tools; personal Claude Code skills are a separate integration.")
+	}
+	if brokerReport.Status != "ready" && !customProfile {
+		next = append(next, "The selected managed local profile is not ready. Run questlock try to initialize it, or questlock setup --client "+*clientName+" when you intend to install that managed profile.")
 	}
 	if !clientReport.ServerPresent {
 		next = append(next, "No raw Questlock server entry was found. Native Desktop extension entries may live outside the raw JSON configuration.")
 	}
-	report := map[string]any{"version": version, "status": status, "client": clientReport, "local_broker": brokerReport, "request_workspace_ready": workspaceReady, "model_required_for_first_task": false, "native_client_connection_verified": false, "model_calls": 0, "read_only": true, "next_steps": next}
+	report := map[string]any{"version": version, "status": status, "diagnostic_scope": "selected_managed_profile", "managed_profile": map[string]any{"status": managedStatus, "request_workspace_ready": workspaceReady}, "client": clientReport, "local_broker": brokerReport, "request_workspace_ready": workspaceReady, "model_required_for_first_task": false, "native_client_connection_verified": false, "model_calls": 0, "read_only": true, "next_steps": next}
 	if err := writeModelJSON(os.Stdout, report); err != nil {
 		return err
 	}
 	if clientErr != nil || brokerErr != nil {
 		return errors.New("doctor found an unsafe, invalid, missing, or unavailable component; inspect redacted checks")
 	}
+	if customProfile {
+		return errors.New("configured custom profile was not verified by managed onboarding checks; inspect questlock_status in the connected client")
+	}
 	if status != "configuration_present" {
-		return errors.New("onboarding is not ready; run setup for the chosen client")
+		return errors.New("selected managed onboarding profile is not ready; inspect the scoped checks and next steps")
 	}
 	return nil
 }

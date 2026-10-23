@@ -1,5 +1,13 @@
 # Task snapshot and local setup
 
+For an already connected MCP worker, call `questlock_status` with `{}` before
+using setup examples. Its `request_root` is the approved directory, and its
+profile, policy and supported schemas/checks describe that connected process.
+Save a reviewed request under that absolute root and pass its absolute path to
+the task tool. Status does not disclose the broker URL or credentials and does
+not verify broker/provider health. An absent status tool or unsupported check
+is a compatibility limit, not permission to replace a custom client entry.
+
 The skill runs independently of the source checkout. Its helper uses `QUESTLOCK_BIN`, defaulting to `$HOME/.local/bin/questlock`. Call it with `sh scripts/run.sh plan|run|quest|revise-plan|revise-run|revise-quest|worker-run|worker-serve` from the skill directory. Set `QUESTLOCK_TOKEN` or `QUESTLOCK_TOKEN_FILE`; live commands read the default token file `$HOME/.local/share/questlock/agent-workflows/worker.token`. Ollama uses no provider key. Use `OPENAI_API_KEY` for OpenAI, `ANTHROPIC_API_KEY` for Claude, `OPENROUTER_API_KEY` for OpenRouter and `SGLANG_API_KEY` for authenticated SGLang. Load keys using the user's existing secret mechanism; never print them.
 
 For a fresh local broker, provision once in a foreground shell:
@@ -32,9 +40,17 @@ The strict request has `schema: 1`, `task`, `revision`, `source`, 1–32 ordered
 `edits`, and required `source_checks`/`checks` (1–64 each). Each edit specifies
 nonempty `old`, `new` (empty is allowed), and positive `expected_matches`.
 `source.sha256` always pins the unmodified UTF-8 bytes. Source/output are capped
-at 256 KiB and each literal at 16 KiB. Check kinds are `json_valid`,
-`json_equals`, `contains`, and `not_contains`. There is no fuzzy or semantic
-matching. Source/check/count failure or uncertain publication withholds text
+at 256 KiB and each literal at 16 KiB. Check kinds include `json_valid`,
+`json_equals`, `contains`, `not_contains`, `word_count`, `character_count`, and
+`paragraph_count`; verify the connected worker's `checks.kinds` first. Count
+checks require inclusive `min` and/or `max` in 0–4,194,304 and no JSON/literal
+comparison fields. Words are nonempty Unicode-whitespace-separated spans;
+characters are Unicode code points, including whitespace; paragraphs are groups
+of nonblank LF/CRLF lines separated by whitespace-only lines. Leading/trailing
+blank lines add no paragraphs. Count input must be valid UTF-8 and at most 4 MiB;
+these counts do not segment linguistic words or displayed graphemes.
+Results include `observed` only when a count was evaluated. There is no fuzzy or
+semantic matching. Source/check/count failure or uncertain publication withholds text
 and stops; no model fallback runs.
 
 `plan` returns `status: planned` without durability. Only a successful `run`
@@ -115,3 +131,13 @@ Result JSON reports original `generation_usage`, actual `this_run_usage`, and `a
 Pending/unknown jobs freeze generation. Inspect authenticated broker `GET /v1/artifacts` records under `inference/v1/jobs/` and the upstream request before intentionally changing revision. Uncertain generation retains the budget reservation. Never delete a pending claim just to get a new call through. Daily caps coordinate trusted workers with accurate prices; provider invoices remain billing evidence and unrelated account usage is outside this ledger.
 
 Cost reservation uses the configured `max_input_tokens` at the largest input/cache rate and `max_output_tokens` at the output rate, then settles known usage. It does not use Claude's estimated count as a billing guarantee. Keep token caps realistic. Incorrect prices or provider usage above configured maxima can exceed an intended dollar cap; observed cap violations become nonreusable `limit_exceeded` records.
+
+Budget stops can return an allowlisted numeric `budget_diagnostic` on the model
+result and delegation result/attempt. Read its `limit_kind`, `configured_limit`,
+`unit`, `reason`, `count_basis`, and available count/reservation fields. USD
+limits use integer millionths of a dollar. Estimates and configured reservations
+are not runtime-reported usage. A saved breach describes its original call;
+current `measurement.generation_called` describes this invocation. Without a
+complete answer, declared checks say `status: not_evaluated`, with no observed
+count. Inspect the failed request before deliberately changing bounds; neither
+diagnostics nor a failed preflight authorize an automatic retry or paid fallback.

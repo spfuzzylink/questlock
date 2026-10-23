@@ -95,7 +95,7 @@ func TestRevisionMCPProtocolsUseBrokerWithoutDelegating(t *testing.T) {
 				return delegation.Result{}, errors.New("must not delegate")
 			}, Revise: runner.Run}, protocol)
 			tools, err := session.ListTools(t.Context(), nil)
-			if err != nil || len(tools.Tools) != 2 {
+			if err != nil || len(tools.Tools) != 3 {
 				t.Fatalf("revision tool discovery: %v", err)
 			}
 			for _, tool := range tools.Tools {

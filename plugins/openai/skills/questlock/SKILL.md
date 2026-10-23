@@ -5,11 +5,23 @@ description: Set up Questlock, apply checked literal text revisions without a mo
 
 # Questlock
 
-Use the packaged `questlock_revise` and `questlock_delegate` MCP tools. Their
-only input is `request_path`: a reviewed JSON request inside the plugin's private
-request workspace. Tools read that request and its declared inline context;
-they cannot discover files, edit workspace files, or execute commands. Create
-requests with the calling assistant's file tools only within the user's task.
+Call the packaged `questlock_status` tool with `{}` first. Use its absolute
+`request_root`, operator `profile`, `policy.allow_paid`, `runtime_version`,
+`request_schemas`, and `checks.kinds` to choose a compatible request.
+Metadata `schema: 1` describes this status contract; delegation requests are
+unversioned and revision requests use `schema: 1`. Status makes no network or
+model call and reads no task, client settings, environment or credentials.
+Its ready/busy state and opened root describe the worker process; broker and
+provider readiness remain `not_checked`. It stays available while a task runs.
+If discovery or a required capability is absent, report that limit and leave
+existing tools/settings intact until a deliberate worker update or restart.
+
+`questlock_revise` and `questlock_delegate` take only `request_path`: a
+reviewed JSON request inside the discovered root. Save it with the caller's file
+tools within the user's task, then pass an absolute path such as
+`/absolute/discovered/request-root/approved-task.json`. Task tools read only
+that request; they cannot discover files, edit workspace files, or execute
+commands. Do not guess a directory or broker port from an example.
 
 For setup or a first demonstration, call `questlock_revise` with
 `request_path: "first-task.json"`. The launcher creates this synthetic request.
@@ -40,6 +52,25 @@ task/revision snapshot for exact reuse; never change an identifier to escape a
 pending or uncertain run. A busy worker is not permission to launch a duplicate.
 For outcome tracking, check its separate receipt; never regenerate to repair
 accounting. Checks and assistant review do not establish human acceptance.
+
+For declared length constraints, use the supported `word_count`,
+`character_count`, or `paragraph_count` checks with inclusive `min` and/or
+`max`. Words are separated by Unicode whitespace, characters are Unicode code
+points including whitespace, and blank lines separate paragraphs. These are
+literal counts, not linguistic segmentation or displayed-character counts.
+If output was never evaluated, its checks say `not_evaluated` and have no
+observed count. Report a budget stop's numeric `budget_diagnostic` with its
+`count_basis`; an estimate is not runtime usage. Never increase caps or retry
+generation automatically.
+
+For recurring writing, `workflow_configs.writing` is a relative operator-marker
+name under `request_root`, without an existence check. Use `questlock writing
+plan --workspace ROOT --evidence /absolute/current-evidence.json --request
+writing-request.json` with an already initialized approved reference. Review
+the complete request before delegation; retain the structured result for
+`writing record` and use `writing show` for indexed history. Use subcommand
+`--help` for flags. Initialize a reference only when requested; never import
+unrelated conversation histories or modify client settings for discovery.
 
 The package [README](../../README.md) explains runtime download, private workspace
 location, local model setup, diagnostics, and removal. Report only measured

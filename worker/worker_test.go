@@ -176,7 +176,7 @@ func TestSDKProtocolsDiscoverListCall(t *testing.T) {
 				t.Fatal("legacy protocol did not initialize")
 			}
 			listed, err := session.ListTools(t.Context(), nil)
-			if err != nil || len(listed.Tools) != 1 || listed.Tools[0].Name != ToolName {
+			if err != nil || len(listed.Tools) != 2 || listed.Tools[0].Name != ToolName {
 				t.Fatalf("unexpected tool list: %+v, %v", listed, err)
 			}
 			tool := listed.Tools[0]
@@ -646,7 +646,7 @@ func TestRealStdioProcess(t *testing.T) {
 		t.Fatal(err)
 	}
 	listed, err := session.ListTools(ctx, nil)
-	if err != nil || len(listed.Tools) != 1 {
+	if err != nil || len(listed.Tools) != 2 {
 		t.Fatalf("stdio tools: %+v, %v", listed, err)
 	}
 	result := call(t, session, map[string]any{"request_path": "approved.json"})

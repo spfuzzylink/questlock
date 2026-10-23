@@ -79,7 +79,7 @@ func localWorkerCommand(args []string, input io.ReadCloser, output, diagnostics 
 	}
 	// Model provider construction still occurs only for an explicit bounded tool
 	// request. Paid escalation is never enabled by the onboarding launcher.
-	return workerCommandBroker([]string{"serve", "--workspace", *workspace, "--broker", h.URL, "--timeout", "45s"}, input, output, diagnostics, h.Client)
+	return workerCommandBroker([]string{"serve", "--workspace", *workspace, "--broker", h.URL, "--timeout", "45s", "--profile-kind", "managed", "--profile-id", "managed-" + *clientName}, input, output, diagnostics, h.Client)
 }
 
 func localCommand(args []string) error {
@@ -236,7 +236,7 @@ func runFirstTask(ctx context.Context, self, state, workspace string) (firstTask
 	for _, tool := range tools.Tools {
 		report.MCPTools = append(report.MCPTools, tool.Name)
 	}
-	if len(report.MCPTools) != 2 || !containsName(report.MCPTools, "questlock_delegate") || !containsName(report.MCPTools, "questlock_revise") {
+	if len(report.MCPTools) != 3 || !containsName(report.MCPTools, "questlock_status") || !containsName(report.MCPTools, "questlock_delegate") || !containsName(report.MCPTools, "questlock_revise") {
 		return report, errors.New("local MCP capabilities did not match this release")
 	}
 	result, err := session.CallTool(ctx, &mcp.CallToolParams{Name: "questlock_revise", Arguments: map[string]any{"request_path": "first-task.json"}})

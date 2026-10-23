@@ -111,6 +111,8 @@ func (p *OpenRouterProvider) validate(req Request) error {
 
 // CountInputTokens returns the explicit operator-approved reservation bound.
 // No tokenizer equivalence, exact preflight count, or upstream call is implied.
+func (p *OpenRouterProvider) InputTokenCountBasis() string { return "operator_upper_bound" }
+
 func (p *OpenRouterProvider) CountInputTokens(ctx context.Context, req Request) (int64, error) {
 	if err := p.validate(req); err != nil {
 		return 0, err

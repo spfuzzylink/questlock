@@ -9,19 +9,46 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 )
 
+// MaxCountTextBytes bounds text accepted by the deterministic count checks and
+// the largest count bound in a check. Counting uses constant additional space.
+const MaxCountTextBytes = 4 << 20
+
+// NotEvaluated records the declared checks when no complete answer is available.
+// It does not assert an observed zero or a failed test of an absent answer.
+func NotEvaluated(checks []Check) []CheckResult {
+	results := make([]CheckResult, 0, len(checks))
+	for _, check := range checks {
+		results = append(results, CheckResult{ID: check.ID, Kind: check.Kind, Status: "not_evaluated"})
+	}
+	return results
+}
+
 // CheckOutput checks a response without retaining the response in the report.
 // JSON checks reject duplicate keys, trailing data, and excessive nesting.
+// Count checks reject invalid UTF-8 or text exceeding MaxCountTextBytes. Words
+// are maximal spans separated by Unicode whitespace; characters are Unicode code
+// points, including whitespace. Paragraphs are groups of nonblank LF/CRLF lines
+// separated by one or more whitespace-only lines. Leading/trailing blank lines
+// do not add paragraphs. These counts are not linguistic word segmentation or
+// displayed grapheme counts.
 func CheckOutput(text string, checks []Check) ([]CheckResult, bool) {
+	if ValidateChecks(checks) != nil {
+		return nil, false
+	}
 	results := make([]CheckResult, 0, len(checks))
 	passed := len(checks) > 0
 	var document any
 	var parsed bool
 	var parseErr error
+	var counted, validCounts bool
+	var words, characters, paragraphs int
 	for _, c := range checks {
 		ok := false
+		result := CheckResult{ID: c.ID, Kind: c.Kind}
 		switch c.Kind {
 		case "json_valid", "json_equals":
 			if !parsed {
@@ -45,11 +72,55 @@ func CheckOutput(text string, checks []Check) ([]CheckResult, bool) {
 			if c.Kind == "not_contains" {
 				ok = !strings.Contains(haystack, needle) && needle != ""
 			}
+		case "word_count", "character_count", "paragraph_count":
+			if !counted {
+				validCounts = len(text) <= MaxCountTextBytes && utf8.ValidString(text)
+				if validCounts {
+					words, characters, paragraphs = countText(text)
+				}
+				counted = true
+			}
+			if validCounts {
+				observed := words
+				if c.Kind == "character_count" {
+					observed = characters
+				} else if c.Kind == "paragraph_count" {
+					observed = paragraphs
+				}
+				result.Observed = &observed
+				ok = (c.Min == nil || observed >= *c.Min) && (c.Max == nil || observed <= *c.Max)
+			}
 		}
-		results = append(results, CheckResult{ID: c.ID, Kind: c.Kind, Passed: ok})
+		result.Passed = ok
+		results = append(results, result)
 		passed = passed && ok
 	}
 	return results, passed
+}
+
+func countText(text string) (words, characters, paragraphs int) {
+	inWord, inParagraph, lineHasText := false, false, false
+	for _, r := range text {
+		characters++
+		space := unicode.IsSpace(r)
+		if !space && !inWord {
+			words++
+		}
+		inWord = !space
+		if r == '\n' {
+			if !lineHasText {
+				inParagraph = false
+			}
+			lineHasText = false
+		} else if !space {
+			if !inParagraph {
+				paragraphs++
+				inParagraph = true
+			}
+			lineHasText = true
+		}
+	}
+	return words, characters, paragraphs
 }
 
 func decodeJSON(data []byte) (any, error) {

@@ -25,7 +25,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 CLIENTS = {"codex": "openai", "claude-code": "claude"}
-TOOLS = {"questlock_revise", "questlock_delegate"}
+TOOLS = {"questlock_status", "questlock_revise", "questlock_delegate"}
 
 
 def require(condition, message):
@@ -242,7 +242,7 @@ def checked_result(response):
     return result
 
 
-def protocol_check(plugin, client, home, env):
+def protocol_check(plugin, client, home, env, version):
     with RPC("/bin/sh", [plugin / "scripts/run.sh", "serve", client], home, env) as rpc:
         rpc.call("initialize", {"protocolVersion": "2025-11-25", "capabilities": {},
                                 "clientInfo": {"name": "questlock-plugin-check", "version": "1"}})
@@ -251,18 +251,58 @@ def protocol_check(plugin, client, home, env):
         require({tool["name"] for tool in tools} == TOOLS, "MCP tool inventory differs")
         for tool in tools:
             schema = tool["inputSchema"]
+            if tool["name"] == "questlock_status":
+                require(schema.get("additionalProperties") is False
+                        and not schema.get("required")
+                        and not schema.get("properties"),
+                        "worker status accepts caller authority")
+                annotations = tool.get("annotations", {})
+                require(annotations.get("readOnlyHint") is True
+                        and annotations.get("idempotentHint") is True
+                        and annotations.get("destructiveHint") is False
+                        and annotations.get("openWorldHint") is False,
+                        "worker status annotations permit effects")
+                continue
             require(schema.get("additionalProperties") is False
                     and schema.get("required") == ["request_path"]
                     and set(schema.get("properties", {})) == {"request_path"},
                     "MCP tool request surface broadened")
+        discovery = rpc.call("tools/call", {"name": "questlock_status", "arguments": {}})
+        require(not discovery.get("isError"), "worker status failed")
+        contract = discovery.get("structuredContent")
+        if not isinstance(contract, dict):
+            contract = json.loads(discovery["content"][0]["text"])
+        require(set(contract) == {"schema", "runtime_version", "request_root", "profile",
+                                "policy", "request_schemas", "checks", "tools",
+                                "workflow_configs", "readiness", "read_only", "model_calls"},
+                "worker status surface differs from its safe contract")
+        require(contract.get("schema") == 1 and contract.get("runtime_version") == version
+                and contract.get("request_root") == str(home / ".local/share/questlock/plugins/requests")
+                and contract.get("profile") == {"id": "managed-" + client, "kind": "managed"}
+                and contract.get("policy", {}).get("allow_paid") is False
+                and contract.get("request_schemas") == {"delegation": ["unversioned"], "revision": [1]}
+                and set(contract.get("tools", [])) == TOOLS
+                and contract.get("read_only") is True and contract.get("model_calls") == 0,
+                "worker status did not identify the connected runtime contract")
+        require(contract.get("readiness") == {"worker": "ready", "request_root": "opened",
+                                               "broker": "not_checked", "providers": "not_checked"}
+                and contract.get("workflow_configs") == {"writing": "writing-workflow.json"},
+                "worker status inferred external readiness or read a workflow marker")
+        require(contract.get("checks", {}).get("schema") == 1
+                and set(contract.get("checks", {}).get("kinds", [])) == {
+                    "json_valid", "json_equals", "contains", "not_contains",
+                    "word_count", "character_count", "paragraph_count"},
+                "worker check capabilities differ")
+        first_path = str(Path(contract["request_root"]) / "first-task.json")
         first = checked_result(rpc.call("tools/call", {
-            "name": "questlock_revise", "arguments": {"request_path": "first-task.json"}}))
+            "name": "questlock_revise", "arguments": {"request_path": first_path}}))
         repeat = checked_result(rpc.call("tools/call", {
-            "name": "questlock_revise", "arguments": {"request_path": "first-task.json"}}))
+            "name": "questlock_revise", "arguments": {"request_path": first_path}}))
         require(not first.get("reused") and repeat.get("reused") is True
                 and first["artifact"] == repeat["artifact"], "exact durable reuse was not confirmed")
     return {"status": "completed", "evidence": "direct_packaged_launcher_mcp",
-            "tools": sorted(TOOLS), "checked_revision": True, "exact_reuse": True,
+            "tools": sorted(TOOLS), "worker_contract_discovered": True,
+            "checked_revision": True, "exact_reuse": True,
             "model_calls": 0, "provider_cost_usd": 0,
             "native_chat_tool_execution_verified": False}
 
@@ -292,7 +332,7 @@ def native_codex(executable, catalog, home, env):
         inventories = [item for item in status["data"]
                        if "questlock" in item.get("name", "")]
         names = {name for item in inventories for name in item.get("tools", {})}
-        require(TOOLS.issubset(names), "native Codex did not discover both MCP tools")
+        require(TOOLS.issubset(names), "native Codex did not discover all three MCP tools")
     return {"status": "completed", "version": version,
             "evidence": "native_marketplace_install_app_server_skill_and_mcp_inventory",
             "installed": True, "enabled": True, "skill_loaded": True,
@@ -365,7 +405,7 @@ def main():
             actual = run(runtime, ["version"], home, env).strip()
             require(actual == expected, "bundled runtime version does not match manifest")
             try:
-                row = {"protocol": protocol_check(plugin, client, home, env)}
+                row = {"protocol": protocol_check(plugin, client, home, env, expected)}
                 # Use another empty profile so native discovery proves cold startup.
                 native_home = private / (client + "-native")
                 native_home.mkdir(mode=0o700)

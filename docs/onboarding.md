@@ -75,7 +75,7 @@ text is exactly:
 ```
 
 It saves the public fixture as `first-task.json` in the request workspace,
-discovers both MCP tools, and calls `questlock_revise`. A passing report has
+discovers the three MCP tools, and calls `questlock_revise`. A passing report has
 `status: "completed"`, `mcp_protocol_self_test: true`, a durable result and
 artifact, passing checks, recorded outcome tracking, and zero generation usage.
 `native_client_verified: false` means this was the worker protocol test; it does
@@ -104,14 +104,15 @@ Open a fresh local client session after setup:
 
 | Client | Check |
 | --- | --- |
-| Codex | Use `/mcp` and confirm Questlock offers `questlock_revise` and `questlock_delegate`. |
-| Claude Code | Use `/mcp` and confirm Questlock and both tools are available. |
+| Codex | Use `/mcp` and confirm Questlock offers `questlock_status`, `questlock_revise` and `questlock_delegate`. |
+| Claude Code | Use `/mcp` and confirm Questlock and all three tools are available. |
 | Claude Desktop | Complete native installation, then inspect the extension connection and tools. |
 
 Then ask:
 
-> Use Questlock's `questlock_revise` with `request_path` set to `first-task.json`.
-> Show me the checked result and artifact.
+> Call `questlock_status` with no inputs. Check the connected runtime, request
+> root, profile, policy and revision schema. Then use `questlock_revise` on
+> `first-task.json` in that root and show me the checked result and artifact.
 
 This repeats the approved model-free task through your client. Claude Code and
 Claude Desktop use separate integrations; a successful connection in one does
@@ -119,6 +120,14 @@ not establish a connection in the other. Installing a skill makes its workflow
 discoverable, but does not guarantee automatic use in every conversation.
 Client details: [Codex MCP guide](https://learn.chatgpt.com/docs/extend/mcp?surface=cli)
 and [Claude Code MCP guide](https://code.claude.com/docs/en/mcp).
+
+Status uses metadata schema `1`. Its `request_schemas` and `checks.kinds` show
+which requests the connected process accepts; the installed skill and another
+binary's version do not establish that compatibility. The root was opened at
+startup, and ready/busy describes the worker only. Broker and providers remain
+`not_checked`: status makes no network/model call, reads no client settings or
+task content, and changes nothing. Use the discovered absolute root when saving
+your own approved request. See the [discovery contract](delegation.md#discover-the-connected-worker).
 
 ## Claude Desktop
 
@@ -137,7 +146,7 @@ or install the already generated file. Use `--no-open` to generate it without
 opening Claude.
 
 Confirm the extension is enabled, inspect its connection status and logs in
-Developer settings, and check both tools in the chat's **Connectors** menu.
+Developer settings, and check all three tools in the chat's **Connectors** menu.
 These are the [official Desktop extension installation and connection checks](https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop).
 If your organization blocks custom extensions, ask its administrator to enable
 the approved extension.
@@ -181,22 +190,33 @@ questlock doctor --client claude-code
 questlock doctor --client claude-desktop
 ```
 
-Run the command for your client. Doctor is read-only: it checks client presence,
-configuration, private local state and credentials, broker health, permissions,
-and the request workspace. It does not start services, run a model, or verify a
-live client session. `configuration_present` means the coding client's entry and
-local prerequisites were found; `native_client_connection_verified` remains
-`false`. Attention or pending Desktop validation exits nonzero.
+Run the command for your client. Doctor is read-only and scoped to the selected
+managed state/workspace. It inspects client presence and configuration, private
+managed state, broker health, permissions and that request workspace. It does
+not start services, run a model or verify a live client session.
+`configuration_present` means the coding client's entry matches the selected
+managed profile and its local prerequisites were found;
+`native_client_connection_verified` remains `false`. Attention, custom-profile
+uncertainty or pending Desktop validation exits nonzero.
+
+`managed_profile.status: managed_profile_not_initialized` means the selected
+managed broker has no initialized state. An existing different Questlock command
+is reported separately as `configured_custom_profile_unverified`; doctor does
+not infer that its custom broker/root is broken or recommend replacing it.
+Call `questlock_status` in the connected client to discover that worker's own
+contract. A successful custom task and an uninitialized managed profile can
+coexist. Neither result changes client settings.
 
 | Condition | Next step |
 | --- | --- |
 | Client missing | Install the chosen client, then rerun setup. `questlock try` works independently. |
 | Existing Questlock skill differs | Save custom edits; use `--replace-skills` only when you want to replace them. |
 | Native candidate rejected | Read the redacted error and correct the problem before rerunning setup. |
-| Broker stopped | Rerun setup, `questlock try`, or `questlock local start`. |
+| Selected managed broker stopped | Use `questlock try` or `questlock local start` for that profile. Run setup when you intend to install the managed integration. |
+| Configured custom profile unverified | Preserve it. Use `questlock_status` in its connected client; doctor has not tested that worker's broker or provider. |
 | Workspace inaccessible | Use a private directory you can access; pass the same `--workspace` to setup and doctor. |
 | Existing first task differs | Preserve it and choose a separate request workspace. |
-| Desktop native validation pending | Confirm the extension connection and both tools in Desktop. |
+| Desktop native validation pending | Confirm the extension connection and all three tools in Desktop. |
 | Model missing | Checked revisions still work. Install a local model only when choosing a generation task. |
 
 Doctor redacts configuration values and credentials, but its paths and hashes

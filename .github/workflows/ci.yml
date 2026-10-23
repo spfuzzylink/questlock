@@ -136,7 +136,7 @@ jobs:
           for report in reports:
               assert report["status"] == "completed" and report["mcp_protocol_self_test"]
               assert report["native_client_verified"] is False
-              assert set(report["mcp_tools"]) == {"questlock_revise", "questlock_delegate"}
+              assert set(report["mcp_tools"]) == {"questlock_status", "questlock_revise", "questlock_delegate"}
               result = report["result"]
               assert result["status"] == "completed" and result["durable"]
               assert result["text"] == '{"status":"ready","model_calls":0}'
@@ -302,7 +302,7 @@ jobs:
           report = json.loads(Path("onboarding-container.json").read_text())
           assert report["status"] == "completed" and report["mcp_protocol_self_test"]
           assert report["native_client_verified"] is False
-          assert set(report["mcp_tools"]) == {"questlock_revise", "questlock_delegate"}
+          assert set(report["mcp_tools"]) == {"questlock_status", "questlock_revise", "questlock_delegate"}
           result = report["result"]
           assert result["status"] == "completed" and result["durable"] and result["reused"] is False
           assert result["text"] == '{"status":"ready","model_calls":0}'

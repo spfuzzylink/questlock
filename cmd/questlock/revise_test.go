@@ -156,7 +156,7 @@ func TestWorkerServeRegistersAndExecutesCheckedRevisionWithoutProvider(t *testin
 		t.Fatal(err)
 	}
 	listed, err := session.ListTools(ctx, nil)
-	if err != nil || len(listed.Tools) != 2 {
+	if err != nil || len(listed.Tools) != 3 {
 		t.Fatalf("worker serve tools: %v", err)
 	}
 	result, err := session.CallTool(ctx, &mcp.CallToolParams{Name: worker.ReviseToolName, Arguments: map[string]any{"request_path": filepath.Base(path)}})

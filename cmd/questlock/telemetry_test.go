@@ -59,6 +59,57 @@ func TestCollectedRunnerRecordsSetupOnceAndScoresOnlyKnownAnswers(t *testing.T) 
 	}
 }
 
+type terminalQualityProvider struct {
+	response inference.Response
+	calls    int
+}
+
+func (*terminalQualityProvider) Identity() string { return "offline-terminal-quality-fixture" }
+func (*terminalQualityProvider) CountInputTokens(context.Context, inference.Request) (int64, error) {
+	return 100, nil
+}
+func (p *terminalQualityProvider) Generate(context.Context, inference.Request) (inference.Response, error) {
+	p.calls++
+	return p.response, nil
+}
+
+type publicationFailBroker struct{ inference.Broker }
+
+func (b publicationFailBroker) Publish(ctx context.Context, request protocol.PublishRequest) (protocol.PublishResult, error) {
+	if strings.HasSuffix(request.OperationID, "-result") {
+		return protocol.PublishResult{}, errors.New("synthetic publication failure")
+	}
+	return b.Broker.Publish(ctx, request)
+}
+
+func TestCollectedRunnerDoesNotScoreKnownUsageWithoutCompleteDurableSuccess(t *testing.T) {
+	for _, mode := range []string{"incomplete", "limit_exceeded", "not_durable"} {
+		t.Run(mode, func(t *testing.T) {
+			fixture, err := newModelQuestFixture(context.Background())
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer fixture.close()
+			provider := &terminalQualityProvider{response: inference.Response{Text: "complete synthetic fixture", Complete: true, Usage: inference.Usage{InputTokens: 100, UncachedInputTokens: 100, OutputTokens: 25}}}
+			inner := fixture.runner(0, provider)
+			switch mode {
+			case "incomplete":
+				provider.response.Complete = false
+			case "limit_exceeded":
+				provider.response.Usage.InputTokens, provider.response.Usage.UncachedInputTokens = 101, 101
+			case "not_durable":
+				inner.Broker = publicationFailBroker{inner.Broker}
+			}
+			var records []telemetryRecord
+			runner := collectedRunner{inner: &preparedRunner{runner: inner}, checks: []evaluation.Check{{ID: "would_pass", Kind: "contains", Text: "complete"}}, records: &records}
+			result, err := runner.Run(context.Background(), modelQuestSpec("quality-"+mode))
+			if err == nil || result.Measurement == nil || !result.Measurement.KnownGenerationUsage || len(records) != 1 || records[0].quality != nil || records[0].execution.Generation == nil || !records[0].execution.Generation.KnownUsage || provider.calls != 1 {
+				t.Fatalf("known billing became quality evidence or was retried: %v %+v %+v", err, result, records)
+			}
+		})
+	}
+}
+
 func TestObservationSeparatesFreshReuseAndUnknownStreaming(t *testing.T) {
 	started := time.Date(2030, 1, 2, 12, 0, 0, 0, time.UTC)
 	usage := inference.Usage{InputTokens: 100, UncachedInputTokens: 70, CacheReadTokens: 20, CacheWriteTokens: 10, OutputTokens: 25, ReasoningTokens: 5}

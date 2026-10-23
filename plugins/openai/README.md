@@ -14,18 +14,27 @@ codex plugin add questlock@questlock
 In ChatGPT or Codex desktop, select the Questlock source in Plugins and enable
 Questlock. Start a fresh chat and ask:
 
-> Run Questlock's first checked revision, then repeat it to verify exact reuse
+> Call Questlock's status tool to check this worker's root and capabilities.
+> Then run its first checked revision and repeat it to verify exact reuse
 > without calling a model.
 
-The skill calls `questlock_revise` with
-`{"request_path":"first-task.json"}` twice. Expect checked synthetic JSON,
-durable publication, `generation_called: false`, and `reused: true` on the
-repeat. No model or provider account is needed for this task.
+The skill calls `questlock_status` with `{}` first. Check the connected
+`runtime_version`, metadata `schema`, `request_root`, `profile`,
+`policy.allow_paid`, `request_schemas` and `checks.kinds`. Status makes no
+network/model call, reads no task or client settings, and changes nothing.
+Its opened root and ready/busy state describe the worker; broker/providers
+remain `not_checked`.
 
-The Git package downloads the pinned v0.12.0 runtime archive and checksum over
+The skill then calls `questlock_revise` on `first-task.json` beneath that root
+twice. Expect checked synthetic JSON, durable publication,
+`generation_called: false`, and `reused: true` on the repeat. No model or
+provider account is needed for this task. An older worker without status can
+keep its existing task tools; update/restart it deliberately when needed.
+
+The Git package downloads the pinned v0.13.0 runtime archive and checksum over
 HTTPS from the official Questlock GitHub release on first `serve` or `try`.
 It verifies SHA-256 and does not use a binary from `PATH`. The platform
-`questlock-plugin_0.12.0_OS_ARCH.zip` includes the runtime for an offline install;
+`questlock-plugin_0.13.0_OS_ARCH.zip` includes the runtime for an offline install;
 verify its matching `checksums.txt` entry, extract it, and register that
 marketplace root with `codex plugin marketplace add .` instead. macOS and Linux
 AMD64/ARM64 are packaged; no Windows binary is provided. This is a desktop local
@@ -52,13 +61,17 @@ separate profile. Credentials are generated on the host. Optional
 `QUESTLOCK_PLUGIN_STATE_DIR` and `QUESTLOCK_PLUGIN_WORKSPACE` overrides must be
 absolute and used consistently for all launcher actions.
 
-After the first task, copy `examples/checked-json.json` into the request
-workspace and call `questlock_revise` with that filename. For your own edit,
+For your own text, use the root returned by `questlock_status`, including any
+operator override, rather than guessing from these defaults. After the first
+task, copy `examples/checked-json.json` into that root and call
+`questlock_revise` with its saved absolute path. For your own edit,
 replace the source, SHA-256, literal replacements, counts, and checks together.
 `examples/local-extraction.json` shows a bounded local-model request; choose an
 already installed model, review its complete input and limits, and call
 `questlock_delegate`. The example model name does not install or select weights.
-Keep request files private. Neither tool discovers files or edits your project.
+Keep request files private. The task tools read only the approved request;
+they provide no file listing or project edits. Status is a read-only contract
+lookup, not permission to change a working custom client configuration.
 
 For a Git catalog update, run `codex plugin marketplace upgrade questlock` and
 start a new chat. For a local ZIP catalog, replace its files with a reviewed new
@@ -78,7 +91,7 @@ broker affects both clients. Paid fallback is disabled. Failed checks never
 trigger an automatic model rewrite. Checks are not human acceptance, and the
 surrounding hosted assistant can still consume normal account allowances.
 
-[Full guide, source builds, and public-directory prerequisites](https://github.com/spfuzzylink/questlock/blob/v0.12.0/docs/plugins.md)
-· [Revision contract](https://github.com/spfuzzylink/questlock/blob/v0.12.0/docs/checked-revisions.md)
-· [Local models](https://github.com/spfuzzylink/questlock/blob/v0.12.0/docs/local-models.md)
+[Full guide, source builds, and public-directory prerequisites](https://github.com/spfuzzylink/questlock/blob/v0.13.0/docs/plugins.md)
+· [Revision contract](https://github.com/spfuzzylink/questlock/blob/v0.13.0/docs/checked-revisions.md)
+· [Local models](https://github.com/spfuzzylink/questlock/blob/v0.13.0/docs/local-models.md)
 · [Official Codex commands](https://learn.chatgpt.com/docs/developer-commands?surface=cli#codex-plugin)

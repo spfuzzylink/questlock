@@ -142,6 +142,8 @@ func NewSGLangProviderContext(ctx context.Context, apiKey, baseURL, model string
 
 func (p *SGLangProvider) Identity() string { return p.identity }
 
+func (p *SGLangProvider) InputTokenCountBasis() string { return "provider_token_count" }
+
 func (p *SGLangProvider) Capabilities() SGLangCapabilities { return p.capabilities }
 
 // RefreshIdentity is used before a Runner result lookup as well as around
@@ -352,7 +354,9 @@ func (p *SGLangProvider) tokenize(ctx context.Context, req Request) (sglangToken
 		limit = p.contextLength
 	}
 	if req.MaxOutputTokens > limit || *raw.Count > limit-req.MaxOutputTokens {
-		return raw, errors.New("SGLang prompt and output allowance exceed the reported context window")
+		diagnostic := inputDiagnostic("model_context_tokens", limit, *raw.Count, "provider_token_count", req.MaxOutputTokens)
+		diagnostic.ContextWindow, diagnostic.Required = limit, *raw.Count+req.MaxOutputTokens
+		return raw, &BudgetError{Diagnostic: diagnostic}
 	}
 	return raw, nil
 }

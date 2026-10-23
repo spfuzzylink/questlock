@@ -418,6 +418,35 @@ func TestInspectRedactsConfigAndNativeOutput(t *testing.T) {
 	}
 }
 
+func TestInspectCustomProfileMismatchIsDistinctFromNativeFailure(t *testing.T) {
+	for _, client := range []Client{Codex, ClaudeCode} {
+		t.Run(string(client), func(t *testing.T) {
+			runner := &fakeNative{}
+			o := testOptions(t, client, runner)
+			o.SkipNativeMCPRead = true
+			before := writeFixture(t, o)
+			r, err := Inspect(t.Context(), o)
+			if !errors.Is(err, ErrManagedProfileMismatch) || !r.ServerPresent || r.Validation.ExactServer || r.Status != "configuration_mismatch" {
+				t.Fatalf("custom command lost its specific diagnostic: %+v %v", r, err)
+			}
+			after, err := os.ReadFile(o.ConfigPath)
+			if err != nil || !bytes.Equal(before, after) {
+				t.Fatal("read-only custom profile inspection changed configuration")
+			}
+			if len(runner.commands) != 0 {
+				t.Fatal("custom profile inspection tried to start an MCP server")
+			}
+			if client == Codex {
+				runner.fail = true
+				_, err := Inspect(t.Context(), o)
+				if err == nil || errors.Is(err, ErrManagedProfileMismatch) {
+					t.Fatal("native parser failure was classified as a custom profile")
+				}
+			}
+		})
+	}
+}
+
 func TestRejectSymlinkConfigAndAncestor(t *testing.T) {
 	for _, ancestor := range []bool{false, true} {
 		t.Run(map[bool]string{false: "file", true: "ancestor"}[ancestor], func(t *testing.T) {

@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "synthetic-support-team",
+  "revision": "approved-one",
+  "facts": [
+    "This is a fictional support team running a small workflow pilot.",
+    "The team keeps people in control of customer-facing answers."
+  ],
+  "style": [
+    "Write directly, as one colleague talking to another.",
+    "Use plain words and short paragraphs. Avoid hype and invented numbers."
+  ]
+}

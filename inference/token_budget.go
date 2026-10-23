@@ -72,7 +72,13 @@ func (r Runner) reserveTokens(ctx context.Context, s Spec, id string) (string, e
 		if err := decodeTokenLedger(a.Content, &ledger); err != nil {
 			return key, err
 		}
-		return key, fmt.Errorf("%w: scope already has a daily token budget; all workers must declare its caps", ErrBudgetExceeded)
+		total, err := totalTokenEntries(ledger.Entries)
+		if err != nil {
+			return key, err
+		}
+		diagnostic := tokenBudgetDiagnostic(ledger.Caps, total, tokenAmount(s.MaxInputTokens, s.MaxOutputTokens))
+		diagnostic.Reason = "policy_required"
+		return key, &BudgetError{Diagnostic: diagnostic}
 	}
 	amount := tokenAmount(s.MaxInputTokens, s.MaxOutputTokens)
 	for attempt := 0; attempt < 32; attempt++ {
@@ -87,7 +93,13 @@ func (r Runner) reserveTokens(ctx context.Context, s Spec, id string) (string, e
 				return key, errors.New("scope already has a different daily token budget")
 			}
 			if ledger.Frozen {
-				return key, fmt.Errorf("%w: daily token ledger frozen after a reported overrun", ErrBudgetExceeded)
+				total, err := totalTokenEntries(ledger.Entries)
+				if err != nil {
+					return key, err
+				}
+				diagnostic := tokenBudgetDiagnostic(ledger.Caps, total, amount)
+				diagnostic.Reason = "frozen_after_overrun"
+				return key, &BudgetError{Diagnostic: diagnostic}
 			}
 		} else if brokerCode(err, "not_found") {
 			version = 0
@@ -120,7 +132,7 @@ func (r Runner) reserveTokens(ctx context.Context, s Spec, id string) (string, e
 					return key, err
 				}
 			}
-			return key, fmt.Errorf("%w: daily token allowance exhausted", ErrBudgetExceeded)
+			return key, &BudgetError{Diagnostic: tokenBudgetDiagnostic(ledger.Caps, total, amount)}
 		}
 		ledger.Entries[id] = tokenEntry{Reserved: amount}
 		_, err = r.publish(ctx, key, version, fmt.Sprintf("%s-tokens-%d", id, attempt), ledger)
@@ -135,6 +147,16 @@ func (r Runner) reserveTokens(ctx context.Context, s Spec, id string) (string, e
 		}
 	}
 	return key, errors.New("daily token contention exceeded 32 attempts; no generation started")
+}
+
+func tokenBudgetDiagnostic(caps, current, amount TokenBudget) BudgetDiagnostic {
+	kind, limit, used, reserved := "daily_total_tokens", caps.TotalTokens, current.TotalTokens, amount.TotalTokens
+	if current.InputTokens+amount.InputTokens > caps.InputTokens {
+		kind, limit, used, reserved = "daily_input_tokens", caps.InputTokens, current.InputTokens, amount.InputTokens
+	} else if current.OutputTokens+amount.OutputTokens > caps.OutputTokens {
+		kind, limit, used, reserved = "daily_output_tokens", caps.OutputTokens, current.OutputTokens, amount.OutputTokens
+	}
+	return BudgetDiagnostic{LimitKind: kind, ConfiguredLimit: limit, Unit: "tokens", Reason: "exceeds_limit", CountBasis: "configured_reservation", Required: used + reserved, CurrentUsage: used, RequestedReservation: reserved}
 }
 
 func totalTokenEntries(entries map[string]tokenEntry) (TokenBudget, error) {
