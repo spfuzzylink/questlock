@@ -1,5 +1,16 @@
 # Validation record
 
+## Stalled local stream — 2026-10-22
+
+The synthetic Ollama stream test now covers a first content frame followed by
+silence, under both an HTTP deadline and caller deadline. It verifies that no
+partial answer or unknown usage is approved, the uncertain claim survives a
+two-hour clock advance beyond reuse TTL, and the same snapshot never generates
+again. A different self-hosted task still completes without changing that claim.
+The [regression](../inference/ollama_stream_test.go) uses an in-process HTTP
+fixture, with no model inference or provider charge. This adds coverage for the
+existing policy; it introduces no lease takeover or semantic reuse.
+
 ## v0.11.0 plugin checks — 2026-10-22
 
 Both native client installations were exercised in empty private profiles,
