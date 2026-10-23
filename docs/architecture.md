@@ -201,6 +201,11 @@ See the [system-boundary and task-lifecycle diagrams](model-architecture.md#edit
 for SVG views and a two-page editable draw.io source. The same guide retains a
 Mermaid request-flow view and explains reuse, uncertain outcomes, and settlement.
 
+The [live writing observation](writing-reuse-success-report.md) shows this
+coordination path avoiding a second generation. It measures one sequential
+whole-answer reuse, with fresh-call loading included; it does not qualify
+faster fresh inference, concurrent traffic or multi-machine throughput.
+
 ## Provider routing and runtime caches
 
 The **v0.5.0 experimental release** added two explicit integration

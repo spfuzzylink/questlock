@@ -1,5 +1,15 @@
 # Validation record
 
+## Real writing and exact reuse — 2026-10-23
+
+A real local Gemma 3 12B task produced 141 words in two paragraphs. It used
+730 input and 195 output tokens; its exact repeat used zero new tokens and
+made no second generation request. Caller latency was 30,920.61 ms then
+72.22 ms, with 15.764 seconds of model loading in the first call.
+[Public inputs, allowlisted receipts, offline verification and limits](writing-reuse-success-report.md).
+This is one serial observation, not a fresh-inference speed, accepted-task cost
+or multi-machine throughput benchmark. Paid fallback stayed disabled.
+
 ## v0.12.0 storage retention — 2026-10-23
 
 The [storage validation record](storage-validation-v0.12.0.md) covers exact

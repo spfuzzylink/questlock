@@ -1,0 +1,2 @@
+# Preserve the recorded model output exactly; its SHA-256 is verified in CI.
+docs/benchmarks/writing-reuse/answer.txt -text whitespace=-blank-at-eol
