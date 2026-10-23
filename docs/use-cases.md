@@ -288,6 +288,12 @@ the delegated provider/local generation. Version v0.5.0 added an explicit
 OpenRouter companion adapter and self-hosted SGLang dense/HiCache tiers;
 automatic model choice and full-session interception remain future work.
 
+For repeated writing briefs, keep approved facts/style separate from current
+evidence, check the requested length, and reuse only an unchanged valid snapshot.
+A [real internal update](writing-reuse-success-report.md) used one local
+generation, then zero new tokens on its exact repeat. New facts need a new
+snapshot; a passing length check still needs factual review.
+
 ## 7. A passing answer is rewritten by a person
 
 A support-case extraction passes strict JSON and value checks, then a reviewer

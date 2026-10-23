@@ -1,0 +1,367 @@
+{
+  "schema": 1,
+  "kind": "single_live_observation",
+  "observed_on": "2026-10-23",
+  "validated_runtime_version": "0.13.0",
+  "validated_source_commit": "3b8361ab95f579a716e6f8663c61dd42237f511d",
+  "environment": {
+    "os": "macOS 26.6",
+    "cpu": "Apple M5",
+    "memory_bytes": 25769803776,
+    "ollama_version": "0.40.3",
+    "model": "gemma3:12b",
+    "model_digest": "b92b218582c521ba287f38f1d6057dcd3c6cbff036f13cac97b5d861f5e58ec3",
+    "model_digest_basis": "pre-run installed-model inventory",
+    "initially_loaded_models": 0,
+    "hardware_details_recorded": "during report preparation; model inventory was captured before generation",
+    "metadata_sources": {
+      "runtime_version": "Saved questlock_status reply.",
+      "model": "Actual generation response in the counting-proxy audit.",
+      "model_digest": "Interactive pre-run /api/tags inventory; original inventory response was not persisted in the receipt files.",
+      "ollama_version": "Interactive pre-run /api/version check; original response was not persisted in the receipt files.",
+      "initially_loaded_models": "Interactive pre-run /api/ps check; original response was not persisted in the receipt files.",
+      "cpu_os_memory": "Read-only local commands during report preparation, outside the timed experiment.",
+      "accelerator_details": "Not recorded."
+    }
+  },
+  "workload": {
+    "description": "Real internal release update using public project facts and a compact approved style reference.",
+    "input_file": "request.json",
+    "answer_file": "answer.txt",
+    "new_generation_samples": 1,
+    "exact_reuse_samples": 1,
+    "workers": 1,
+    "physical_hosts": 1,
+    "stream": false,
+    "reference_context_chunks": 2,
+    "required_context_chunks": 2,
+    "model_input_cap": 8192,
+    "model_output_cap": 512,
+    "reuse_for_seconds": 3600,
+    "word_range": [
+      130,
+      165
+    ],
+    "paragraph_count": 2
+  },
+  "timing_scope": "Caller monotonic time around MCP tools/call through structured result receipt; includes metadata, broker, outcome tracking and loading where applicable. Excludes plan creation, caller review and writing index operations.",
+  "invocations": [
+    {
+      "name": "first",
+      "end_to_end_ms": 30920.61,
+      "generation_http_requests": 1,
+      "receipt": {
+        "status": "completed",
+        "request_sha256": "89a65bc364da9c35a5aecfa6e5050c6589c0db711e88ca09f1451ed6c73b1c7a",
+        "selected_tier": "local-writing",
+        "answer_sha256": "26654e825a0abdb2facb2c7570918d0e320e9f2b9dbf6082cc98e91e7a1a9ef3",
+        "checks": [
+          {
+            "id": "words",
+            "kind": "word_count",
+            "passed": true,
+            "observed": 141
+          },
+          {
+            "id": "paragraphs",
+            "kind": "paragraph_count",
+            "passed": true,
+            "observed": 2
+          },
+          {
+            "id": "forbidden-a",
+            "kind": "not_contains",
+            "passed": true
+          },
+          {
+            "id": "forbidden-b",
+            "kind": "not_contains",
+            "passed": true
+          }
+        ],
+        "quality_passed": true,
+        "fingerprint": "c73a3a2e26cc0ce58eb06ee4be492bf537c1a33c4ef0e07fa834d533bf43f642",
+        "durable": true,
+        "reused": false,
+        "created_at": "2026-10-23T22:32:49.257776Z",
+        "expires_at": "2026-10-23T23:32:49.257776Z",
+        "generation_usage": {
+          "input_tokens": 730,
+          "uncached_input_tokens": 730,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 195
+        },
+        "this_run_usage": {
+          "input_tokens": 730,
+          "uncached_input_tokens": 730,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 195
+        },
+        "avoided_usage": {
+          "input_tokens": 0,
+          "uncached_input_tokens": 0,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 0
+        },
+        "measurement": {
+          "started_at": "2026-10-23T22:32:18.425027Z",
+          "ended_at": "2026-10-23T22:32:49.306716Z",
+          "total_ms": 30881.51225,
+          "phase_ms": {
+            "admission": 2.226167,
+            "generation": 30763.109042,
+            "lookup": 1.039458,
+            "plan": 0.037959,
+            "preflight": 65.518,
+            "publication": 48.936125,
+            "reservation": 0.617958
+          },
+          "outcome": "complete",
+          "generation_called": true,
+          "known_generation_usage": true,
+          "provider_setup_ms": 33.840875,
+          "context_bytes": 2291,
+          "total_context_bytes": 2291,
+          "selected_context": 2,
+          "omitted_context": 0
+        }
+      }
+    },
+    {
+      "name": "exact_repeat",
+      "end_to_end_ms": 72.22,
+      "generation_http_requests": 0,
+      "receipt": {
+        "status": "completed",
+        "request_sha256": "89a65bc364da9c35a5aecfa6e5050c6589c0db711e88ca09f1451ed6c73b1c7a",
+        "selected_tier": "local-writing",
+        "answer_sha256": "26654e825a0abdb2facb2c7570918d0e320e9f2b9dbf6082cc98e91e7a1a9ef3",
+        "checks": [
+          {
+            "id": "words",
+            "kind": "word_count",
+            "passed": true,
+            "observed": 141
+          },
+          {
+            "id": "paragraphs",
+            "kind": "paragraph_count",
+            "passed": true,
+            "observed": 2
+          },
+          {
+            "id": "forbidden-a",
+            "kind": "not_contains",
+            "passed": true
+          },
+          {
+            "id": "forbidden-b",
+            "kind": "not_contains",
+            "passed": true
+          }
+        ],
+        "quality_passed": true,
+        "fingerprint": "c73a3a2e26cc0ce58eb06ee4be492bf537c1a33c4ef0e07fa834d533bf43f642",
+        "durable": true,
+        "reused": true,
+        "created_at": "2026-10-23T22:32:49.257776Z",
+        "expires_at": "2026-10-23T23:32:49.257776Z",
+        "generation_usage": {
+          "input_tokens": 730,
+          "uncached_input_tokens": 730,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 195
+        },
+        "this_run_usage": {
+          "input_tokens": 0,
+          "uncached_input_tokens": 0,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 0
+        },
+        "avoided_usage": {
+          "input_tokens": 730,
+          "uncached_input_tokens": 730,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 195
+        },
+        "measurement": {
+          "started_at": "2026-10-23T22:32:49.379415Z",
+          "ended_at": "2026-10-23T22:32:49.380279Z",
+          "total_ms": 0.863333,
+          "phase_ms": {
+            "lookup": 0.756,
+            "plan": 0.06275
+          },
+          "outcome": "reused",
+          "generation_called": false,
+          "known_generation_usage": false,
+          "provider_setup_ms": 63.66725,
+          "context_bytes": 2291,
+          "total_context_bytes": 2291,
+          "selected_context": 2,
+          "omitted_context": 0
+        }
+      }
+    }
+  ],
+  "ollama_audit": {
+    "generation_requests": 1,
+    "metadata_requests": 18,
+    "metadata_request_scope": "Whole validation exercise, including preflight controls, provider inspection and writing pair.",
+    "generations": [
+      {
+        "model": "gemma3:12b",
+        "done": true,
+        "done_reason": "stop",
+        "prompt_eval_count": 730,
+        "eval_count": 195,
+        "total_duration": 30582237375,
+        "load_duration": 15763651709,
+        "prompt_eval_duration": 2195367000,
+        "eval_duration": 12585181000
+      }
+    ],
+    "transport": "Allowlisted literal-loopback HTTP counting proxy forwarding to the real local Ollama server. Same proxy origin for both invocations; no provider simulation."
+  },
+  "negative_controls": {
+    "budget_stop": {
+      "status": "stopped",
+      "error_category": "budget_exceeded",
+      "diagnostic": {
+        "limit_kind": "input_tokens",
+        "configured_limit": 3706,
+        "unit": "tokens",
+        "reason": "exceeds_limit",
+        "count_basis": "conservative_byte_estimate",
+        "generation_called": false,
+        "estimated_input_tokens": 3834,
+        "max_output_tokens": 512,
+        "required": 3834
+      },
+      "checks": [
+        {
+          "id": "words",
+          "kind": "word_count",
+          "passed": false,
+          "status": "not_evaluated"
+        },
+        {
+          "id": "paragraphs",
+          "kind": "paragraph_count",
+          "passed": false,
+          "status": "not_evaluated"
+        },
+        {
+          "id": "forbidden-a",
+          "kind": "not_contains",
+          "passed": false,
+          "status": "not_evaluated"
+        },
+        {
+          "id": "forbidden-b",
+          "kind": "not_contains",
+          "passed": false,
+          "status": "not_evaluated"
+        }
+      ],
+      "generation_http_requests": 0
+    },
+    "length_rejection": {
+      "status": "quality_failed",
+      "generation_called": false,
+      "checks": [
+        {
+          "id": "old-keyword",
+          "kind": "contains",
+          "passed": true
+        },
+        {
+          "id": "words",
+          "kind": "word_count",
+          "passed": false,
+          "observed": 193
+        },
+        {
+          "id": "paragraphs",
+          "kind": "paragraph_count",
+          "passed": true,
+          "observed": 2
+        }
+      ],
+      "description": "Synthetic 193-word, two-paragraph control with a passing keyword check and max165 word contract."
+    },
+    "changed_evidence_changes_identity": true,
+    "reference_drift_stops_plan": true
+  },
+  "review": {
+    "observed_counts": [
+      {
+        "id": "words",
+        "kind": "word_count",
+        "passed": true,
+        "observed": 141
+      },
+      {
+        "id": "characters",
+        "kind": "character_count",
+        "passed": true,
+        "observed": 932
+      },
+      {
+        "id": "paragraphs",
+        "kind": "paragraph_count",
+        "passed": true,
+        "observed": 2
+      }
+    ],
+    "statuses": [
+      {
+        "review_status": "unreviewed",
+        "human_acceptance": "not_asserted",
+        "answer_version": 2,
+        "answer_sha256": "26654e825a0abdb2facb2c7570918d0e320e9f2b9dbf6082cc98e91e7a1a9ef3"
+      },
+      {
+        "review_status": "assistant_reviewed",
+        "human_acceptance": "not_asserted",
+        "answer_version": 2,
+        "answer_sha256": "26654e825a0abdb2facb2c7570918d0e320e9f2b9dbf6082cc98e91e7a1a9ef3"
+      }
+    ],
+    "human_effort_minutes": null,
+    "human_acceptance": "not_asserted"
+  },
+  "paid_fallback_enabled": false,
+  "provider_api_spend_usd": 0,
+  "whole_chat_credit_savings": "unmeasured",
+  "not_measured": [
+    "Warm fresh-generation baseline",
+    "Repeated trials, averages or percentiles",
+    "TTFT or streaming performance",
+    "Concurrent-agent duplicate suppression",
+    "Multi-machine throughput",
+    "GPU kernel, KV-cache or prefix-cache speedup",
+    "Human acceptance or review effort",
+    "Hosted provider comparison or invoice savings"
+  ],
+  "publication": {
+    "format": "Allowlisted fields from preserved local receipts and counters, plus the exact public-facts request and answer.",
+    "omitted": [
+      "Home paths and private request filenames",
+      "Credentials and full client configuration",
+      "Outcome run and invocation identifiers",
+      "Broker endpoint and transient counting-proxy port",
+      "Private review index keys and local file locations"
+    ],
+    "redacted_raw_outputs_published": false,
+    "receipt_subset_excludes_response_metadata": "Answer text is in answer.txt; reused response usage intentionally differs from first-run usage.",
+    "request_file_sha256": "de08ee1434967d51834827653564f6414107c78dede91622d37cbdfc93379c54",
+    "identity_verification_limit": "Receipt equality and file checksums can be checked offline. The private runtime fingerprint is not independently recomputed because its transient endpoint is omitted."
+  }
+}

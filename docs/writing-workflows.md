@@ -12,6 +12,10 @@ a model call. No private profile is included in the public package.
 
 [Edit the diagram](diagrams/writing-workflows.drawio).
 
+One [real writing run](writing-reuse-success-report.md) passed its declared
+checks, then returned the same answer on an exact repeat with no new generation.
+The report includes the inputs, answer, counters and limits.
+
 ## Finding it in another chat
 
 Call `questlock_status` with `{}` first. Its declared `request_root` and

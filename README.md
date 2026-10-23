@@ -228,6 +228,11 @@ coding quality remain unmeasured.
 [Run a local team](docs/local-agent-teams.md) ·
 [Inspect the saved comparison without a model](examples/teams/README.md)
 
+A real writing check produced **141 words in two paragraphs**. Its exact repeat
+used **0 new model tokens** and returned the same answer in **72 ms**. The first
+call took **30.9 seconds**, including model loading.
+[Inputs, receipts and what this one observation proves](docs/writing-reuse-success-report.md).
+
 ## Go deeper
 
 - [Release notes](https://github.com/spfuzzylink/questlock/releases) · [Measured build report](docs/success-report-v0.7.0.md)
