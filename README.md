@@ -28,7 +28,7 @@ codex plugin marketplace add spfuzzylink/questlock
 codex plugin add questlock@questlock
 ```
 
-Claude Code 2.1.292 or later:
+Claude Code:
 
 ```sh
 claude plugin install questlock --marketplace spfuzzylink/questlock
@@ -40,7 +40,7 @@ a pinned, checksum-verified runtime on first use; the offline plugin ZIP already
 contains it. [Setup, offline bundles and recovery](docs/plugins.md).
 
 Prefer the guided setup, including Claude Desktop? Download the matching
-[v0.12.0 archive](https://github.com/spfuzzylink/questlock/releases/tag/v0.12.0), then:
+[native archive](https://github.com/spfuzzylink/questlock/releases), then:
 
 ```sh
 ./questlock setup
@@ -182,7 +182,7 @@ content. A configured broker also runs bounded maintenance batches. It deletes
 no archive files, and metadata still grows within the configured database page
 limit. [Policy, limits and operator walkthrough](docs/storage-retention.md).
 
-## New in 0.10.0
+## Use it from your Go app
 
 Already have a Go app calling a model? Put the work through one
 `execution.Coordinator` for shared result reuse, bounded local admission and
@@ -210,14 +210,14 @@ Live local check: one generation used **57 input + 20 output tokens**; the exact
 repeat returned the same answer with **0 new tokens and no second generation**.
 The shared quota settled to actual usage; paid fallback stayed disabled.
 
-## Local quality evidence (0.9.1)
+## Local quality evidence
 
-Local teams get explicit JSON types and field roles, bounded reasoning, model
+Local teams use explicit JSON types and field roles, bounded reasoning, model
 release and better macOS memory admission. Wrong answers still stop at the
 original checks; paid fallback stays disabled.
 
-The six original task contracts now complete with checked local masters and
-both reviewers. The same saved Codex baseline reports **65,800 hosted tokens**;
+In the published six-task check, local masters and both reviewers completed
+the original task contracts. The same saved Codex baseline reports **65,800 hosted tokens**;
 the selected local workflows use **0 hosted tokens and $0 provider API spend**.
 That observation includes five exact case reuses and one fresh three-role run,
 with extra operator guidance on that case. Whole-chat credit savings and general
@@ -229,7 +229,7 @@ coding quality remain unmeasured.
 
 ## Go deeper
 
-- [What changed in 0.10.0](docs/release-notes.md) · [Measured build report](docs/success-report-v0.7.0.md)
+- [Release notes](https://github.com/spfuzzylink/questlock/releases) · [Measured build report](docs/success-report-v0.7.0.md)
 - [Checked revisions](docs/checked-revisions.md) · [Bounded delegation](docs/delegation.md)
 - [Model workflows](docs/model-workflows.md) · [Acceptance and human rework](docs/outcomes.md)
 - [Langfuse and timings](docs/inference-observability.md) · [SGLang/KV cache integration](docs/runtime-cache.md)

@@ -175,3 +175,12 @@ operator reservation bounds, unknown-usage stops and caller price provenance.
 A paid live qualification is separate from fixture compatibility. Update the
 [runtime guide](runtime-cache.md), paired diagram, source examples, public archive
 allowlist and real Langfuse metadata readback whenever their contract changes.
+
+## Keep the landing pages current
+
+Describe capabilities on the repository and profile READMEs, without release
+numbers or “new in” sections. Keep the existing narrative and permanent brand
+art. Put what changed on the GitHub release page; generated notes are a starting
+point for the release controller to edit with verified behavior and limits.
+Versioned validation reports and compatibility requirements retain their exact
+versions so the evidence stays auditable.
