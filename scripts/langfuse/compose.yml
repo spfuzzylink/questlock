@@ -109,7 +109,9 @@ services:
       POSTGRES_DB: questlock
     volumes: ["postgres:/var/lib/postgresql/data"]
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "questlock", "-d", "questlock"]
+      # The image's temporary initdb server accepts Unix sockets only. Wait
+      # for the final TCP listener used by Langfuse before starting migration.
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "questlock", "-d", "questlock"]
       interval: 3s
       timeout: 3s
       retries: 30
