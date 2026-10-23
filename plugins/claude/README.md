@@ -20,10 +20,10 @@ The skill calls `questlock_revise` with
 durable publication, `generation_called: false`, and `reused: true` on the
 repeat. No model or provider account is needed for this task.
 
-The Git package downloads the pinned v0.11.0 runtime archive and checksum over
+The Git package downloads the pinned v0.12.0 runtime archive and checksum over
 HTTPS from the official Questlock GitHub release on first `serve` or `try`.
 It verifies SHA-256 and does not use a binary from `PATH`. The platform
-`questlock-plugin_0.11.0_OS_ARCH.zip` includes the runtime for an offline install;
+`questlock-plugin_0.12.0_OS_ARCH.zip` includes the runtime for an offline install;
 verify its matching `checksums.txt` entry and extract it. From that marketplace
 root, register the local catalog and install the plugin:
 
@@ -83,7 +83,7 @@ broker affects both clients. Paid fallback is disabled. Failed checks never
 trigger an automatic model rewrite. Checks are not human acceptance, and the
 surrounding hosted assistant can still consume normal account allowances.
 
-[Full guide, source builds, and public-directory prerequisites](https://github.com/spfuzzylink/questlock/blob/v0.11.0/docs/plugins.md)
-· [Revision contract](https://github.com/spfuzzylink/questlock/blob/v0.11.0/docs/checked-revisions.md)
-· [Local models](https://github.com/spfuzzylink/questlock/blob/v0.11.0/docs/local-models.md)
+[Full guide, source builds, and public-directory prerequisites](https://github.com/spfuzzylink/questlock/blob/v0.12.0/docs/plugins.md)
+· [Revision contract](https://github.com/spfuzzylink/questlock/blob/v0.12.0/docs/checked-revisions.md)
+· [Local models](https://github.com/spfuzzylink/questlock/blob/v0.12.0/docs/local-models.md)
 · [Official Claude plugin commands](https://code.claude.com/docs/en/plugins/cli-reference)

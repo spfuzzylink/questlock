@@ -1,6 +1,6 @@
 # Install and try Questlock
 
-This guide covers the experimental **v0.11.0** release. The installer selects
+This guide covers the experimental **v0.12.0** release. The installer selects
 the version in `VERSION`; older published versions remain available, including
 v0.5.0 with `./scripts/install.sh --version v0.5.0`.
 
@@ -8,7 +8,7 @@ v0.5.0 with `./scripts/install.sh --version v0.5.0`.
 
 For an installed Codex/ChatGPT desktop or Claude Code client, start with the
 [plugin installation](plugins.md). The Git catalog fetches a checksum-verified
-runtime on first use; each platform's `questlock-plugin_0.11.0_OS_ARCH.zip`
+runtime on first use; each platform's `questlock-plugin_0.12.0_OS_ARCH.zip`
 contains both plugins and native runtimes for an offline start. Existing binary
 and Claude Desktop MCPB setup remain available below.
 
@@ -88,14 +88,14 @@ separate runtime validation.
 For example, on Linux x86-64, from the download directory:
 
 ```sh
-sha256sum questlock_0.11.0_linux_amd64.tar.gz
+sha256sum questlock_0.12.0_linux_amd64.tar.gz
 ```
 
 On macOS use `shasum -a 256` instead. Compare the result with the **matching
 filename's entry** in `checksums.txt` before extracting. Then:
 
 ```sh
-tar -xzf questlock_0.11.0_linux_amd64.tar.gz
+tar -xzf questlock_0.12.0_linux_amd64.tar.gz
 ./questlock version
 ./questlock quest
 ./questlock model quest
@@ -155,6 +155,13 @@ the database. Use the [HTTP API](api.md) from any language or the
 when you installed a prebuilt broker. See [use cases](use-cases.md) for integration
 ideas, and [rootless Podman + Quadlet](deployment.md) for a persistent Linux user
 service with resource limits and automatic restart.
+
+The v0.12.0 retention commands operate on that existing broker database. To keep
+eligible older payloads in private local cold files, follow the
+[storage policy walkthrough](storage-retention.md). Retention is opt-in and
+needs no provider, model download or client configuration change. A managed
+local broker uses its own state path; select that exact database rather than
+starting a second broker or assuming the checkout default.
 
 ## Install the model workflow into Codex and Claude Code
 
@@ -249,6 +256,11 @@ directory. Nothing is added to `PATH` automatically.
 The installer preserves your database and tokens. Back up private state before
 upgrading. This experimental release promises neither downgrade compatibility nor
 long-term database migration support.
+
+If local cold retention is configured, back up SQLite and the entire cold
+directory consistently. Restore every archived payload into SQLite before
+downgrading or changing the cold directory; old binaries cannot read archived
+payload references. [Restore and migration steps](storage-retention.md#restore-move-or-downgrade).
 
 To remove the executable, delete `bin/questlock` after stopping it. State under
 `.questlock/` is separate and remains available until you deliberately remove it.

@@ -12,6 +12,7 @@ import (
 	"errors"
 	"github.com/spfuzzylink/questlock/protocol"
 	"strings"
+	"time"
 )
 
 type syncCursor struct {
@@ -79,7 +80,9 @@ func openCursor(raw, authority, scope string, key []byte, maximum int64) (syncCu
 
 // Sync reconstructs bounded historical snapshots and accepted-write deltas.
 // It authenticates inside one read transaction and accepts no incoming writes.
-func (s *Store) Sync(ctx context.Context, p Principal, request protocol.SyncRequest) (protocol.SyncPage, error) {
+func (s *Store) Sync(ctx context.Context, p Principal, request protocol.SyncRequest) (result protocol.SyncPage, resultErr error) {
+	started := time.Now()
+	defer func() { s.observeStorageFailure(ctx, "read", started, resultErr) }()
 	var page protocol.SyncPage
 	r, err := request.Bounds()
 	if err != nil {
@@ -142,8 +145,13 @@ func (s *Store) Sync(ctx context.Context, p Principal, request protocol.SyncRequ
 			break
 		}
 		var item protocol.SyncEntry
-		if err = rows.Scan(&item.Sequence, &item.Artifact.Scope, &item.Artifact.Key, &item.Artifact.Version, &item.Artifact.Content, &item.Artifact.UpdatedAt); err != nil {
+		var content sql.NullString
+		if err = rows.Scan(&item.Sequence, &item.Artifact.Scope, &item.Artifact.Key, &item.Artifact.Version, &content, &item.Artifact.UpdatedAt); err != nil {
 			return page, err
+		}
+		item.Artifact, err = s.resolveContent(ctx, tx, item.Artifact, content)
+		if err != nil {
+			return protocol.SyncPage{}, err
 		}
 		encoded, err := json.Marshal(item)
 		if err != nil {

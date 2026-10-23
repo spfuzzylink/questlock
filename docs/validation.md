@@ -1,5 +1,12 @@
 # Validation record
 
+## v0.12.0 storage retention — 2026-10-23
+
+The [storage validation record](storage-validation-v0.12.0.md) covers exact
+replay/reuse, pending claims, frozen sync, crash recovery, capacity, corruption,
+restore and packaged MCP smoke. These are offline storage checks; live Langfuse
+readback and each native platform remain explicit CI release gates.
+
 ## Stalled local stream — 2026-10-22
 
 The synthetic Ollama stream test now covers a first content frame followed by

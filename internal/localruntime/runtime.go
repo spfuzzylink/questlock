@@ -20,6 +20,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/spfuzzylink/questlock/admission"
 	"github.com/spfuzzylink/questlock/client"
 	"github.com/spfuzzylink/questlock/internal/httpapi"
 	"github.com/spfuzzylink/questlock/internal/store"
@@ -397,6 +398,11 @@ func Serve(ctx context.Context, o Options) error {
 		return errors.New("could not open private local database")
 	}
 	defer s.Close()
+	stopMaintenance, err := s.StartStorageMaintenance(ctx, store.DefaultStorageInterval, admission.SystemSource())
+	if err != nil {
+		return err
+	}
+	defer stopMaintenance()
 	if err := os.Chmod(dbPath, 0600); err != nil {
 		return err
 	}

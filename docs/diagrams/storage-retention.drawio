@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mxfile host="app.diagrams.net" type="device" compressed="false">
+  <diagram id="questlock-storage-retention" name="Local cold storage">
+    <mxGraphModel dx="1600" dy="1020" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1600" pageHeight="1020" background="#f8fafc">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="workers" value="" style="rounded=1;arcSize=10;html=0;fillColor=#eef0ff;strokeColor=#7970c2;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="185" width="340" height="220" />
+        </mxCell>
+        <mxCell id="workers-title" value="Cooperating workers" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=23;fontColor=#18243b;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="203" width="300" height="36" />
+        </mxCell>
+        <mxCell id="workers-line0" value="Scoped HTTP API" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="249" width="300" height="27" />
+        </mxCell>
+        <mxCell id="workers-line1" value="Same approved task identity" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="280" width="300" height="27" />
+        </mxCell>
+        <mxCell id="workers-line2" value="No database or cold-file mount" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="311" width="300" height="27" />
+        </mxCell>
+        <mxCell id="broker" value="" style="rounded=1;arcSize=10;html=0;fillColor=#18243b;strokeColor=#18243b;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="510" y="185" width="400" height="220" />
+        </mxCell>
+        <mxCell id="broker-title" value="One trusted broker" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=23;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="530" y="203" width="360" height="36" />
+        </mxCell>
+        <mxCell id="broker-line0" value="Reads resolve original bytes" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#ffffff;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="530" y="249" width="360" height="27" />
+        </mxCell>
+        <mxCell id="broker-line1" value="Verify cold content on demand" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#ffffff;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="530" y="280" width="360" height="27" />
+        </mxCell>
+        <mxCell id="broker-line2" value="Unavailable content stops reuse" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#ffffff;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="530" y="311" width="360" height="27" />
+        </mxCell>
+        <mxCell id="broker-line3" value="No automatic regeneration" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#ffffff;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="530" y="342" width="360" height="27" />
+        </mxCell>
+        <mxCell id="hot" value="" style="rounded=1;arcSize=10;html=0;fillColor=#e8f7ee;strokeColor=#278461;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1020" y="185" width="520" height="260" />
+        </mxCell>
+        <mxCell id="hot-title" value="SQLite keeps coordination state" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=24;fontColor=#18243b;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1040" y="203" width="480" height="36" />
+        </mxCell>
+        <mxCell id="hot-line0" value="Versions, current pointers and receipts" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1040" y="249" width="480" height="27" />
+        </mxCell>
+        <mxCell id="hot-line1" value="Publish audit history and cold references" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1040" y="280" width="480" height="27" />
+        </mxCell>
+        <mxCell id="hot-line2" value="Pending / uncertain claims and budgets" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1040" y="311" width="480" height="27" />
+        </mxCell>
+        <mxCell id="hot-line3" value="Opaque current values stay hot" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1040" y="342" width="480" height="27" />
+        </mxCell>
+        <mxCell id="policy" value="" style="rounded=1;arcSize=10;html=0;fillColor=#ffffff;strokeColor=#c2cbd8;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="550" width="340" height="250" />
+        </mxCell>
+        <mxCell id="policy-title" value="Reviewed local policy" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=23;fontColor=#18243b;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="568" width="300" height="36" />
+        </mxCell>
+        <mxCell id="policy-line0" value="90-day hot history by default" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="614" width="300" height="27" />
+        </mxCell>
+        <mxCell id="policy-line1" value="30 / 90 / 180 days are choices" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="645" width="300" height="27" />
+        </mxCell>
+        <mxCell id="policy-line2" value="Keep 2 recent versions" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="676" width="300" height="27" />
+        </mxCell>
+        <mxCell id="policy-line3" value="Recognize completed results" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="707" width="300" height="27" />
+        </mxCell>
+        <mxCell id="maintenance" value="" style="rounded=1;arcSize=10;html=0;fillColor=#eef0ff;strokeColor=#7970c2;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="510" y="550" width="400" height="250" />
+        </mxCell>
+        <mxCell id="maintenance-title" value="Bounded maintenance" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=23;fontColor=#18243b;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="530" y="568" width="360" height="36" />
+        </mxCell>
+        <mxCell id="maintenance-line0" value="archive defaults to dry run" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="530" y="614" width="360" height="27" />
+        </mxCell>
+        <mxCell id="maintenance-line1" value="--apply moves eligible payloads" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="530" y="645" width="360" height="27" />
+        </mxCell>
+        <mxCell id="maintenance-line2" value="Persisted policy: batch every 5m" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="530" y="676" width="360" height="27" />
+        </mxCell>
+        <mxCell id="maintenance-line3" value="Adaptive item / byte bounds" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="530" y="707" width="360" height="27" />
+        </mxCell>
+        <mxCell id="maintenance-line4" value="Compaction stays explicit" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="530" y="738" width="360" height="27" />
+        </mxCell>
+        <mxCell id="cold" value="" style="rounded=1;arcSize=10;html=0;fillColor=#e8f7ee;strokeColor=#278461;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1020" y="550" width="520" height="250" />
+        </mxCell>
+        <mxCell id="cold-title" value="Private local cold files" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=23;fontColor=#18243b;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1040" y="568" width="480" height="36" />
+        </mxCell>
+        <mxCell id="cold-line0" value="Immutable SHA-256.gzip payloads" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1040" y="614" width="480" height="27" />
+        </mxCell>
+        <mxCell id="cold-line1" value="Owned directory 0700; files 0600" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1040" y="645" width="480" height="27" />
+        </mxCell>
+        <mxCell id="cold-line2" value="Logical cap includes orphan / temp bytes" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1040" y="676" width="480" height="27" />
+        </mxCell>
+        <mxCell id="cold-line3" value="No final archive deletion" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#18243b;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1040" y="707" width="480" height="27" />
+        </mxCell>
+        <mxCell id="footer" value="" style="rounded=1;arcSize=10;html=0;fillColor=#ffffff;strokeColor=#c2cbd8;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="835" width="1480" height="145" />
+        </mxCell>
+        <mxCell id="title" value="Questlock local cold storage" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=34;fontColor=#18243b;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="48" width="1440" height="40" />
+        </mxCell>
+        <mxCell id="subtitle" value="Move eligible payload bytes; preserve publication and reuse identity" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=21;fontColor=#34445e;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="60" y="105" width="1440" height="40" />
+        </mxCell>
+        <mxCell id="bridge1" value="Durable file before committed reference" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#34445e;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1065" y="480" width="460" height="40" />
+        </mxCell>
+        <mxCell id="bridge2" value="Read back through verified cold reference" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#34445e;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1065" y="511" width="460" height="40" />
+        </mxCell>
+        <mxCell id="footer-title" value="Retained state needs capacity and a consistent backup" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=23;fontColor=#18243b;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="865" width="1440" height="40" />
+        </mxCell>
+        <mxCell id="footer1" value="Main-database pages and logical cold bytes have separate caps; WAL and compaction need extra headroom." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#34445e;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="906" width="1440" height="40" />
+        </mxCell>
+        <mxCell id="footer2" value="Back up SQLite + the entire cold directory together. Restore all payloads before moving cold storage or downgrading." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontColor=#34445e;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="80" y="940" width="1440" height="40" />
+        </mxCell>
+        <mxCell id="worker-broker" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#506381;strokeWidth=2;startArrow=block;startFill=1;" edge="1" parent="1" source="workers" target="broker">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="broker-hot" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#506381;strokeWidth=2;startArrow=block;startFill=1;" edge="1" parent="1" source="broker" target="hot">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="policy-batch" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#506381;strokeWidth=2;" edge="1" parent="1" source="policy" target="maintenance">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="archive-cold" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#506381;strokeWidth=2;" edge="1" parent="1" source="maintenance" target="cold">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="hot-cold" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#506381;strokeWidth=2;startArrow=block;startFill=1;exitX=0.9;exitY=1;entryX=0.9;entryY=0;" edge="1" parent="1" source="hot" target="cold">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

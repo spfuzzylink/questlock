@@ -1,5 +1,30 @@
 # Owner maintenance checklist
 
+## Local storage retention (v0.12.0)
+
+Use the [operator guide](storage-retention.md) to review a complete policy,
+inspect `storage info`, preview `storage archive`, and apply bounded batches.
+Keep exact reads, retry receipts, scope isolation, journal history, pending and
+uncertain state, and token/dollar reservations under regression coverage.
+Missing, corrupt or unsafe cold files must stop reads without new generation.
+Exercise interrupted archive/restore, restart, concurrent writers, capacity
+failures, strict policy decoding and resource-pressure deferral with synthetic
+state. Keep old releases intact and test downgrade preparation by restoring all
+archived payloads first.
+
+Check main-database bytes, WAL bytes, free pages, cold bytes and interrupted
+temporary bytes separately. Archival creates reusable SQLite pages; an explicit
+`storage compact` reclaims physical database space and needs additional free
+disk. Neither scheduled maintenance nor restore deletes final cold files.
+Retained metadata can fill the configured database page limit and stop writes.
+Back up a consistent SQLite state and the entire private cold directory together.
+
+Optional Langfuse storage spans contain bounded operation/outcome counts and
+timing only. Validate real readback before claiming storage telemetry works
+against a live service; existing inference telemetry evidence does not establish
+the new storage contract. Report measured payload/cold/file sizes separately,
+without a general compression or total-disk-savings claim.
+
 ## Go execution release gates (v0.10.0)
 
 Keep admission warm-up, bounded snapshots, cancellation, close and telemetry

@@ -18,11 +18,13 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 	"unicode"
 	"unicode/utf8"
 
 	"github.com/spfuzzylink/questlock/protocol"
+	"github.com/spfuzzylink/questlock/retention"
 	_ "modernc.org/sqlite"
 )
 
@@ -43,7 +45,12 @@ type Principal struct {
 	TokenHash string
 }
 
-type Store struct{ db *sql.DB }
+type Store struct {
+	db         *sql.DB
+	path       string
+	observerMu sync.RWMutex
+	observer   func(context.Context, retention.Event)
+}
 
 var identifier = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$`)
 
@@ -100,6 +107,20 @@ CREATE TABLE IF NOT EXISTS sync_authority (
     id INTEGER PRIMARY KEY CHECK (id = 1),
     source_id TEXT NOT NULL,
     cursor_key BLOB NOT NULL
+);
+CREATE TABLE IF NOT EXISTS storage_policy (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    config TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS cold_payloads (
+    scope TEXT NOT NULL,
+    key TEXT NOT NULL,
+    version INTEGER NOT NULL,
+    sha256 TEXT NOT NULL,
+    size INTEGER NOT NULL CHECK (size >= 0),
+    stored_bytes INTEGER NOT NULL CHECK (stored_bytes > 0),
+    PRIMARY KEY (scope, key, version),
+    FOREIGN KEY (scope, key, version) REFERENCES artifact_versions(scope, key, version)
 );
 `
 
@@ -170,7 +191,11 @@ func Open(path string) (*Store, error) {
 	if err = tx.Commit(); err != nil {
 		return fail(fmt.Errorf("commit schema: %w", err))
 	}
-	return &Store{db: db}, nil
+	s := &Store{db: db, path: abs}
+	if err := s.applyStorageLimit(context.Background(), db); err != nil {
+		return fail(err)
+	}
+	return s, nil
 }
 
 func (s *Store) Close() error { return s.db.Close() }
@@ -178,7 +203,8 @@ func (s *Store) Close() error { return s.db.Close() }
 // CreateToken creates a new immutable agent identity. The plaintext token is
 // returned once; only its SHA-256 digest is persisted. Revoked agent IDs cannot
 // be recycled, preserving the meaning of audit and idempotency records.
-func (s *Store) CreateToken(ctx context.Context, agentID, scope string) (string, error) {
+func (s *Store) CreateToken(ctx context.Context, agentID, scope string) (tokenResult string, resultErr error) {
+	defer func() { resultErr = storageError(resultErr) }()
 	if !identifier.MatchString(agentID) || !identifier.MatchString(scope) {
 		return "", invalid("agent ID and scope must be 1–64 ASCII letters, digits, dots, underscores, or hyphens, beginning with a letter or digit")
 	}
@@ -192,6 +218,9 @@ func (s *Store) CreateToken(ctx context.Context, agentID, scope string) (string,
 		return "", err
 	}
 	defer tx.Rollback()
+	if err := s.applyStorageLimit(ctx, tx); err != nil {
+		return "", err
+	}
 	var exists int
 	err = tx.QueryRowContext(ctx, "SELECT 1 FROM agents WHERE agent_id = ?", agentID).Scan(&exists)
 	if err == nil {
@@ -210,11 +239,20 @@ func (s *Store) CreateToken(ctx context.Context, agentID, scope string) (string,
 	return token, nil
 }
 
-func (s *Store) RevokeAgent(ctx context.Context, agentID string) error {
+func (s *Store) RevokeAgent(ctx context.Context, agentID string) (err error) {
+	defer func() { err = storageError(err) }()
 	if !identifier.MatchString(agentID) {
 		return invalid("invalid agent ID")
 	}
-	result, err := s.db.ExecContext(ctx, "UPDATE agents SET active = 0 WHERE agent_id = ?", agentID)
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	if err = s.applyStorageLimit(ctx, tx); err != nil {
+		return err
+	}
+	result, err := tx.ExecContext(ctx, "UPDATE agents SET active = 0 WHERE agent_id = ?", agentID)
 	if err != nil {
 		return err
 	}
@@ -225,7 +263,7 @@ func (s *Store) RevokeAgent(ctx context.Context, agentID string) error {
 	if n == 0 {
 		return &Error{Code: "not_found", Message: "agent not found"}
 	}
-	return nil
+	return tx.Commit()
 }
 
 func (s *Store) Authenticate(ctx context.Context, token string) (Principal, error) {
@@ -244,7 +282,10 @@ func (s *Store) Authenticate(ctx context.Context, token string) (Principal, erro
 // operation ID is permanently bound to the complete original request. Retries
 // return that original version even after newer versions have been published.
 func (s *Store) Publish(ctx context.Context, p Principal, r protocol.PublishRequest) (protocol.PublishResult, error) {
-	return s.publish(ctx, p, r, nil)
+	started := time.Now()
+	result, err := s.publish(ctx, p, r, nil)
+	s.observeStorageFailure(ctx, "read", started, err)
+	return result, storageError(err)
 }
 
 // PublishPinned adds a rejection-only identity precondition inside the existing
@@ -253,7 +294,10 @@ func (s *Store) PublishPinned(ctx context.Context, p Principal, r protocol.Publi
 	if err := expected.Validate(); err != nil {
 		return protocol.PublishResult{}, invalid("invalid expected identity")
 	}
-	return s.publish(ctx, p, r, &expected)
+	started := time.Now()
+	result, err := s.publish(ctx, p, r, &expected)
+	s.observeStorageFailure(ctx, "read", started, err)
+	return result, storageError(err)
 }
 
 func (s *Store) publish(ctx context.Context, p Principal, r protocol.PublishRequest, expected *protocol.Identity) (protocol.PublishResult, error) {
@@ -266,6 +310,9 @@ func (s *Store) publish(ctx context.Context, p Principal, r protocol.PublishRequ
 		return result, err
 	}
 	defer tx.Rollback()
+	if err = s.applyStorageLimit(ctx, tx); err != nil {
+		return result, err
+	}
 	if err = checkActive(ctx, tx, p); err != nil {
 		return result, err
 	}
@@ -279,13 +326,18 @@ func (s *Store) publish(ctx context.Context, p Principal, r protocol.PublishRequ
 		}
 	}
 	var original protocol.Artifact
+	var originalContent sql.NullString
 	var originalExpected int64
 	err = tx.QueryRowContext(ctx, `SELECT v.scope, v.key, v.version, v.content, v.updated_at, o.expected_version
 		FROM operations o JOIN artifact_versions v
 		ON v.scope = o.scope AND v.key = o.key AND v.version = o.version
 		WHERE o.agent_id = ? AND o.operation_id = ?`, p.AgentID, r.OperationID).
-		Scan(&original.Scope, &original.Key, &original.Version, &original.Content, &original.UpdatedAt, &originalExpected)
+		Scan(&original.Scope, &original.Key, &original.Version, &originalContent, &original.UpdatedAt, &originalExpected)
 	if err == nil {
+		original, err = s.resolveContent(ctx, tx, original, originalContent)
+		if err != nil {
+			return result, err
+		}
 		if original.Scope != p.Scope || original.Key != r.Key || originalExpected != r.ExpectedVersion || original.Content != r.Content {
 			current, currentErr := currentVersion(ctx, tx, p.Scope, r.Key)
 			if currentErr != nil {
@@ -338,8 +390,11 @@ func (s *Store) publish(ctx context.Context, p Principal, r protocol.PublishRequ
 	return protocol.PublishResult{Artifact: a}, nil
 }
 
-func (s *Store) Get(ctx context.Context, p Principal, key string) (protocol.Artifact, error) {
+func (s *Store) Get(ctx context.Context, p Principal, key string) (result protocol.Artifact, resultErr error) {
+	started := time.Now()
+	defer func() { s.observeStorageFailure(ctx, "read", started, resultErr) }()
 	var a protocol.Artifact
+	var content sql.NullString
 	if err := validateKey(key); err != nil {
 		return a, err
 	}
@@ -351,11 +406,14 @@ func (s *Store) Get(ctx context.Context, p Principal, key string) (protocol.Arti
 		ON v.scope = a.scope AND v.key = a.key AND v.version = a.current_version
 		JOIN agents g ON g.scope = a.scope AND g.agent_id = ? AND g.token_hash = ? AND g.active = 1
 		WHERE a.scope = ? AND a.key = ?`, p.AgentID, p.TokenHash, p.Scope, key).
-		Scan(&a.Scope, &a.Key, &a.Version, &a.Content, &a.UpdatedAt)
+		Scan(&a.Scope, &a.Key, &a.Version, &content, &a.UpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return a, &Error{Code: "not_found", Message: "artifact not found"}
 	}
-	return a, err
+	if err != nil {
+		return a, err
+	}
+	return s.resolveContent(ctx, s.db, a, content)
 }
 
 // List returns metadata for at most the first 1000 current artifacts ordered by

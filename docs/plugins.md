@@ -55,7 +55,7 @@ and [Claude plugin commands](https://code.claude.com/docs/en/plugins/cli-referen
 ## What is downloaded
 
 The Git catalog contains manifests, a skill, examples, and a launcher. On its
-first `serve` or `try`, the launcher downloads the pinned **v0.11.0** Questlock
+first `serve` or `try`, the launcher downloads the pinned **v0.12.0** Questlock
 archive and `checksums.txt` over HTTPS from this repository's GitHub release.
 It verifies the archive's SHA-256 before caching the executable privately.
 It does not use a `questlock` executable found on `PATH`. Checksums detect a
@@ -76,8 +76,8 @@ The [validation record](plugin-validation-v0.11.0.md) separates native install
 and connection checks from direct protocol execution and public download tests.
 
 To install without a runtime download, get the matching
-`questlock-plugin_0.11.0_OS_ARCH.zip` and `checksums.txt` from
-[Releases](https://github.com/spfuzzylink/questlock/releases/tag/v0.11.0).
+`questlock-plugin_0.12.0_OS_ARCH.zip` and `checksums.txt` from
+[Releases](https://github.com/spfuzzylink/questlock/releases/tag/v0.12.0).
 Compare the ZIP's SHA-256 with its matching checksum entry before extracting;
 use `shasum -a 256` on macOS or `sha256sum` on Linux. The ZIP includes both
 catalogs, both plugin folders, and the matching binary in each plugin.

@@ -1,3 +1,22 @@
+# Questlock 0.12.0 — keep the work, lighten the hot store
+
+**Experimental release.** Older completed work can move to private local cold
+storage and still be reused exactly. Pending claims, budgets, retry receipts and
+sync history stay intact. Missing or corrupt archive bytes stop the read rather
+than starting another model call.
+
+- Choose a complete policy: 30, 90 or 180 days, recent versions, database/cold
+  capacity and bounded batches. CPU and memory signals can scale or defer work.
+- Preview a batch, apply it, verify history, restore payloads or explicitly
+  compact SQLite. Both manual and managed brokers honor a persisted policy.
+- Optional Langfuse storage spans report counts, timing and error categories
+  without exporting task content, paths, credentials or generation usage.
+
+Archival retains history. It does not delete old records, provide a separate
+backup or impose a total filesystem quota. Metadata still needs space, and WAL,
+first migration and compaction require additional disk headroom.
+[Setup and recovery](storage-retention.md).
+
 # Questlock 0.11.0 — install it where you work
 
 **Experimental release.** Codex/ChatGPT desktop and Claude Code now have thin

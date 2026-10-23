@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "cold_dir": "/absolute/private/questlock-cold",
+  "hot_history_days": 90,
+  "keep_recent_versions": 2,
+  "archive_completed_current": true,
+  "max_database_bytes": 268435456,
+  "max_cold_bytes": 2147483648,
+  "batch_items": 32,
+  "batch_bytes": 8388608,
+  "adaptive": true,
+  "min_free_memory_bytes": 268435456,
+  "memory_percent": 2,
+  "max_cpu_load_milli": 1200
+}

@@ -64,3 +64,16 @@ func TestHelpSucceedsWithoutSideEffects(t *testing.T) {
 		t.Fatalf("unexpected default database path %q", defaultDB)
 	}
 }
+
+func TestRejectedStorageStartupDoesNotCreateDatabase(t *testing.T) {
+	for _, args := range [][]string{{"--storage-interval", "0s"}, {"--storage-interval", "25h"}, {"--storage-config", filepath.Join(t.TempDir(), "missing.json")}} {
+		db := filepath.Join(t.TempDir(), "unexpected", "state.db")
+		args = append(args, "--db", db, "--listen", "127.0.0.1:0")
+		if err := serve(args); err == nil {
+			t.Fatal("invalid storage startup accepted")
+		}
+		if _, err := os.Stat(filepath.Dir(db)); !os.IsNotExist(err) {
+			t.Fatalf("rejected storage settings touched database: %v", err)
+		}
+	}
+}

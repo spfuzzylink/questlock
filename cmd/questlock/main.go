@@ -14,12 +14,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/spfuzzylink/questlock/admission"
 	"github.com/spfuzzylink/questlock/internal/configguard"
 	"github.com/spfuzzylink/questlock/internal/httpapi"
 	"github.com/spfuzzylink/questlock/internal/store"
 )
 
-var version = "0.11.0" // Release builds set this from VERSION using -ldflags.
+var version = "0.12.0" // Release builds set this from VERSION using -ldflags.
 const defaultDB = ".questlock/state.db"
 
 func main() {
@@ -58,6 +59,7 @@ Usage:
   questlock team init|plan|run|status|suite|benchmark [flags]
   questlock system-one choose --request PATH --python ABSOLUTE_PINNED_VENV_PYTHON
   questlock resources config|inspect|quest
+  questlock storage config|configure|info|archive|restore|verify|history|compact [flags]
   questlock queue revise --workspace PATH --request FILE [--config PATH]
   questlock quest
   questlock version
@@ -98,6 +100,8 @@ func run(args []string) error {
 		return systemOneCommand(args[1:])
 	case "resources":
 		return resourcesCommand(args[1:])
+	case "storage":
+		return storageCommand(args[1:])
 	case "queue":
 		return queueCommand(args[1:])
 	case "local":
@@ -140,6 +144,9 @@ func serve(args []string) error {
 	dbPath := f.String("db", defaultDB, "SQLite database path")
 	listen := f.String("listen", "127.0.0.1:8080", "HTTP bind address")
 	allowRemoteHTTP := f.Bool("allow-remote-http", false, "allow non-loopback HTTP behind a trusted network boundary and TLS proxy")
+	storageConfig := f.String("storage-config", "", "complete opt-in local retention policy JSON")
+	storageInterval := f.Duration("storage-interval", store.DefaultStorageInterval, "archive batch interval, between 1s and 24h")
+	storageLangfuse := f.Bool("storage-langfuse", false, "opt in to content-free Langfuse storage spans")
 	if err := f.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
 			return nil
@@ -152,11 +159,38 @@ func serve(args []string) error {
 	if err := validateListenAddress(*listen, *allowRemoteHTTP); err != nil {
 		return err
 	}
+	if *storageInterval < time.Second || *storageInterval > 24*time.Hour {
+		return errors.New("storage interval must be between 1s and 24h")
+	}
+	// Validate optional settings before opening or migrating any live database.
+	var configure func(context.Context, *store.Store) error
+	if *storageConfig != "" {
+		policy, err := loadRetentionConfig(*storageConfig)
+		if err != nil {
+			return err
+		}
+		configure = func(ctx context.Context, s *store.Store) error { return s.StorageConfigure(ctx, policy) }
+	}
+	exporter, err := langfuseFromEnvironment(*storageLangfuse, 0)
+	if err != nil {
+		return err
+	}
 	s, err := store.Open(*dbPath)
 	if err != nil {
 		return err
 	}
 	defer s.Close()
+	if exporter != nil {
+		s.SetStorageObserver(storageObserver(exporter))
+	}
+	if configure != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		err := configure(ctx, s)
+		cancel()
+		if err != nil {
+			return storageCommandError(err)
+		}
+	}
 	ln, err := net.Listen("tcp", *listen)
 	if err != nil {
 		return err
@@ -166,6 +200,12 @@ func serve(args []string) error {
 		IdleTimeout: 60 * time.Second, MaxHeaderBytes: 16 << 10}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+	stopMaintenance, err := s.StartStorageMaintenance(ctx, *storageInterval, admission.SystemSource())
+	if err != nil {
+		_ = ln.Close()
+		return err
+	}
+	defer stopMaintenance()
 	fmt.Fprintln(os.Stderr, "Questlock listening on http://"+ln.Addr().String())
 	if host, _, err := net.SplitHostPort(ln.Addr().String()); err == nil {
 		if ip := net.ParseIP(host); ip == nil || !ip.IsLoopback() {

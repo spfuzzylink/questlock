@@ -86,13 +86,33 @@ made by the surrounding assistant. See [plugin lifecycle](docs/plugins.md).
 - Artifact content, pointers, receipts, and publish audit entries are committed
   atomically. The journal is not tamper-proof against the host operator. It does
   not log failed authentication, invalid input, reads, or every administrative action.
-- Request sizes, response sizes, and HTTP timeouts are bounded. Aggregate storage,
-  request concurrency, and rate limiting are not application-level quotas. The
-  Podman recipe applies resource limits, but an authorized client can still exhaust
-  the allocated resources or grow stored history.
+- Request sizes, response sizes, and HTTP timeouts are bounded. Opt-in
+  [local cold retention](docs/storage-retention.md) limits main-database pages
+  and logical cold-file bytes. It retains identities, receipts and audit history;
+  metadata can fill the page limit and stop writes. WAL, compaction workspace,
+  filesystem overhead and other host data need separate disk headroom. Request
+  concurrency and rate limiting are not application-level quotas. The Podman
+  recipe applies resource limits, but an authorized client can still exhaust
+  allocated resources.
 - Content and audit data are not encrypted by the application. Use appropriate
   host disk protection and backups. Tokens may be visible to their owning OS user
   while a client runs. Do not share that identity with untrusted workloads.
+
+Local cold storage shares the broker's trust boundary. Use an absolute path on
+a trusted local filesystem, with an owned mode-0700 cold directory and owned
+mode-0600 regular files. Path ancestors must be real directories, without
+symlinks. Keep every ancestor under trusted operator control; permission checks
+do not make an attacker-writable parent safe. Do not use NFS or mount the cold
+directory into workers. SHA-256 and gzip validation detect damaged payloads;
+they supply neither encryption nor protection from the trusted host operator.
+
+An unavailable or corrupt archive fails the read; it does not clear a claim,
+release an uncertain budget reservation or authorize fresh generation. Preserve
+the database and restore verified cold files. Back up a consistent SQLite state
+with all files in its cold directory. Cold files alone lack identities and
+receipts and are not an independent backup. Restore all archived payloads into
+SQLite before a downgrade or cold-directory change; see the
+[retention recovery procedure](docs/storage-retention.md#restore-move-or-downgrade).
 
 ## Publishing and contributing safely
 

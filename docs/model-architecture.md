@@ -297,12 +297,13 @@ network/TLS boundary; it does not need a shared filesystem. The production
 default remains loopback. See [deployment](deployment.md) and
 [security](../SECURITY.md) before exposing a broker remotely.
 
-This release has one broker host, serialized SQLite writes, and growing artifact
-history. It has no replication, automatic failover, retention/deletion service,
-encrypted result storage, or upstream-billing reconciliation. A result's reuse
-TTL is a validity check; it does not delete the stored result or its historical
-versions. Treat task content and generated text as retained scope data and back
-up the broker accordingly.
+This release has one broker host, serialized SQLite writes, and retained artifact
+history. Optional [local cold retention](storage-retention.md) moves eligible old
+payloads into verified compressed files while preserving identities, receipts,
+claims and ledgers. It adds no deletion, replication, automatic failover,
+encryption or upstream-billing reconciliation. A result's reuse TTL is a validity
+check; it does not delete the result or its historical versions. Back up SQLite
+and its configured cold directory as one consistent retained state.
 
 The current daily ledger accepts at most 1,000 reservations, including settled
 ones, per scope and UTC day. Ledger updates make at most 32 CAS attempts before

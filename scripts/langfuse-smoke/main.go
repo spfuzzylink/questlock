@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/spfuzzylink/questlock/observability"
+	"github.com/spfuzzylink/questlock/retention"
 )
 
 const maxReadBytes = 128 << 10
@@ -33,6 +34,7 @@ type observation struct {
 	ParentObservationID *string            `json:"parentObservationId"`
 	Type                string             `json:"type"`
 	Name                string             `json:"name"`
+	Level               string             `json:"level"`
 	Model               *string            `json:"model"`
 	Input               json.RawMessage    `json:"input"`
 	Output              json.RawMessage    `json:"output"`
@@ -119,6 +121,13 @@ func run() error {
 			return fmt.Errorf("%s quality score was not acknowledged", f.name)
 		}
 	}
+	storageStart := time.Now().UTC().Add(-time.Second)
+	storageEvent := retention.Event{Operation: "archive", Outcome: "error", ErrorCode: "archive_corrupt", StartedAt: storageStart, EndedAt: storageStart.Add(20 * time.Millisecond), Items: 3, Bytes: 2048}
+	storageReceipt, err := exporter.ExportStorage(ctx, storageEvent)
+	if err != nil {
+		return errors.New("storage failure export was not acknowledged")
+	}
+	storageComplete := false
 	ticker := time.NewTicker(2 * time.Second)
 	defer ticker.Stop()
 	for {
@@ -152,8 +161,22 @@ func run() error {
 			}
 			f.completed = true
 		}
+		if !storageComplete {
+			observations, ready, err := read.observations(ctx, storageReceipt)
+			if err != nil {
+				return fmt.Errorf("storage failure observation read failed: %w", err)
+			}
+			if !ready {
+				complete = false
+			} else {
+				if err := validateStorageObservations(storageEvent, storageReceipt, observations); err != nil {
+					return err
+				}
+				storageComplete = true
+			}
+		}
 		if complete {
-			fmt.Println("PASS: self-hosted Langfuse accepted and returned 4 roots, 3 generation children, exclusive token buckets, metadata-only privacy, explicit estimate/local-zero costs, zero-new-usage reuse, streamed first-content/output timing, runtime KV evidence separate from billing, and root quality scores 1/1/0/1.")
+			fmt.Println("PASS: self-hosted Langfuse accepted and returned 4 execution roots, 3 generation children, exclusive token buckets, metadata-only privacy, explicit estimate/local-zero costs, zero-new-usage reuse, streamed first-content/output timing, runtime KV evidence separate from billing, root quality scores 1/1/0/1, and one independent content-free storage failure span.")
 			fmt.Println("Fixtures are deterministic API-contract checks; no model inference or paid API call was made.")
 			return nil
 		}
@@ -383,6 +406,54 @@ func validateObservations(f fixture, observations []observation) error {
 func validateScore(f fixture, scores []score) error {
 	if len(scores) != 1 || scores[0].Name != "questlock.quality" || scores[0].DataType != "NUMERIC" || scores[0].Value == nil || *scores[0].Value != f.score || scores[0].Subject.Kind != "observation" || scores[0].Subject.ID != f.receipt.RootSpanID || scores[0].Subject.TraceID != f.receipt.TraceID {
 		return errors.New("quality score value or root observation relationship mismatch")
+	}
+	return nil
+}
+
+func validateStorageObservations(event retention.Event, receipt observability.Receipt, observations []observation) error {
+	if len(observations) != 1 || receipt.GenerationSpanID != "" {
+		return errors.New("storage event must have exactly one independent span")
+	}
+	o := observations[0]
+	if o.ID != receipt.RootSpanID || o.TraceID != receipt.TraceID || o.Type != "SPAN" || o.Name != "questlock.storage" || o.Level != "ERROR" || nonempty(o.ParentObservationID) || nonempty(o.Model) {
+		return errors.New("storage failure span relationship or classification mismatch")
+	}
+	if !emptyIO(o.Input) || !emptyIO(o.Output) || nonempty(o.UserID) || nonempty(o.SessionID) || nonempty(o.StatusMessage) || nonempty(o.PromptName) || o.CompletionStartTime != nil || o.TimeToFirstToken != nil {
+		return errors.New("storage metadata-only privacy contract violated")
+	}
+	for _, amount := range o.UsageDetails {
+		if amount != 0 {
+			return errors.New("storage span acquired generation usage")
+		}
+	}
+	for _, amount := range o.CostDetails {
+		if amount != 0 {
+			return errors.New("storage span acquired generation cost")
+		}
+	}
+	if o.TotalCost != nil && *o.TotalCost != 0 {
+		return errors.New("storage span acquired a provider charge")
+	}
+	want := map[string]any{
+		"questlock_storage_operation": event.Operation, "questlock_storage_outcome": event.Outcome,
+		"questlock_storage_error_code": event.ErrorCode, "questlock_storage_items": float64(event.Items),
+		"questlock_storage_bytes": float64(event.Bytes), "questlock_storage_duration_ms": float64(event.EndedAt.Sub(event.StartedAt)) / float64(time.Millisecond),
+	}
+	for key, expected := range want {
+		if n, ok := expected.(float64); ok {
+			if !equalNumber(o.Metadata[key], n) {
+				return errors.New("storage count or duration metadata missing or altered")
+			}
+		} else if o.Metadata[key] != expected {
+			return errors.New("storage operation, outcome or controlled error code missing or altered")
+		}
+	}
+	for key := range o.Metadata {
+		if strings.HasPrefix(key, "questlock_") {
+			if _, allowed := want[key]; !allowed {
+				return errors.New("storage observation contains metadata beyond its allowlist")
+			}
+		}
 	}
 	return nil
 }

@@ -146,9 +146,15 @@ func (l *Langfuse) Export(ctx context.Context, e Execution) (Receipt, error) {
 	if err != nil || len(body) > maxPayloadBytes {
 		return receipt, ErrInvalidExecution
 	}
+	return receipt, l.sendTraces(ctx, body)
+}
+
+// sendTraces preserves the same bounded, single-attempt transport for each
+// allowlisted observation type. Callers validate their schema before encoding.
+func (l *Langfuse) sendTraces(ctx context.Context, body []byte) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, l.endpoint, bytes.NewReader(body))
 	if err != nil {
-		return receipt, ErrUnavailable
+		return ErrUnavailable
 	}
 	req.SetBasicAuth(l.publicKey, l.secretKey)
 	req.Header.Set("Content-Type", "application/json")
@@ -157,21 +163,21 @@ func (l *Langfuse) Export(ctx context.Context, e Execution) (Receipt, error) {
 	req.Header.Set("User-Agent", "questlock-otlp")
 	resp, err := l.client.Do(req)
 	if err != nil {
-		return receipt, ErrUnavailable
+		return ErrUnavailable
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return receipt, ErrUnavailable
+		return ErrUnavailable
 	}
 	contentType, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
 	if err != nil || contentType != "application/json" || resp.ContentLength > maxResponseBytes {
-		return receipt, ErrInvalidResponse
+		return ErrInvalidResponse
 	}
 	response, err := io.ReadAll(io.LimitReader(resp.Body, maxResponseBytes+1))
 	if err != nil || len(response) > maxResponseBytes {
-		return receipt, ErrInvalidResponse
+		return ErrInvalidResponse
 	}
-	return receipt, validateAcknowledgement(response)
+	return validateAcknowledgement(response)
 }
 
 func validKey(s string) bool {
