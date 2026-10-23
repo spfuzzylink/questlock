@@ -28,11 +28,10 @@ codex plugin marketplace add spfuzzylink/questlock
 codex plugin add questlock@questlock
 ```
 
-Claude Code:
+Claude Code 2.1.292 or later:
 
 ```sh
-claude plugin marketplace add spfuzzylink/questlock
-claude plugin install questlock@questlock
+claude plugin install questlock --marketplace spfuzzylink/questlock
 ```
 
 Pick your client, start a fresh chat, and ask it to run the first checked task

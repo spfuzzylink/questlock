@@ -4,11 +4,10 @@ Repeating an approved text edit or rebuilding the same result adds work and can
 change correct text. Questlock applies checked literal revisions, reuses exact
 results, and runs bounded tasks through a configured local model.
 
-Install with a current Claude Code client:
+Install with Claude Code 2.1.292 or later:
 
 ```sh
-claude plugin marketplace add spfuzzylink/questlock
-claude plugin install questlock@questlock
+claude plugin install questlock --marketplace spfuzzylink/questlock
 ```
 
 Start a fresh session and run `/questlock:questlock`, or ask:
@@ -25,10 +24,16 @@ The Git package downloads the pinned v0.11.0 runtime archive and checksum over
 HTTPS from the official Questlock GitHub release on first `serve` or `try`.
 It verifies SHA-256 and does not use a binary from `PATH`. The platform
 `questlock-plugin_0.11.0_OS_ARCH.zip` includes the runtime for an offline install;
-verify its matching `checksums.txt` entry, extract it, and register that
-marketplace root with `claude plugin marketplace add .` instead. macOS and Linux
-AMD64/ARM64 are packaged; no Windows binary is provided. This native stdio
-workflow targets Claude Code. It is separate from the Claude Desktop `.mcpb`
+verify its matching `checksums.txt` entry and extract it. From that marketplace
+root, register the local catalog and install the plugin:
+
+```sh
+claude plugin marketplace add .
+claude plugin install questlock@questlock
+```
+
+macOS and Linux AMD64/ARM64 are packaged; no Windows binary is provided. This
+native stdio workflow targets Claude Code. It is separate from the Claude Desktop `.mcpb`
 extension route.
 
 From this plugin folder:

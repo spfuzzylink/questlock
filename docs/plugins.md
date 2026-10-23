@@ -19,7 +19,13 @@ codex plugin marketplace add spfuzzylink/questlock
 codex plugin add questlock@questlock
 ```
 
-For Claude Code:
+For Claude Code 2.1.292 or later:
+
+```sh
+claude plugin install questlock --marketplace spfuzzylink/questlock
+```
+
+For an older Claude Code client with plugin support, register the catalog first:
 
 ```sh
 claude plugin marketplace add spfuzzylink/questlock
@@ -75,10 +81,23 @@ To install without a runtime download, get the matching
 Compare the ZIP's SHA-256 with its matching checksum entry before extracting;
 use `shasum -a 256` on macOS or `sha256sum` on Linux. The ZIP includes both
 catalogs, both plugin folders, and the matching binary in each plugin.
-From the extracted marketplace root, use `.` instead of
-`spfuzzylink/questlock` in the marketplace-add command above. Keep that directory
-for local catalog updates. A catalog already registered as `questlock` must be
-removed through the native client before registering a different source.
+From the extracted marketplace root, choose your client. For Codex:
+
+```sh
+codex plugin marketplace add .
+codex plugin add questlock@questlock
+```
+
+For Claude Code:
+
+```sh
+claude plugin marketplace add .
+claude plugin install questlock@questlock
+```
+
+Keep that directory for local catalog updates. A catalog already registered as
+`questlock` must be removed through the native client before registering a different
+source.
 
 For an offline source qualification, build the checked-out source and copy the
 binary into both plugin roots before installing the local catalog:
