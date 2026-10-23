@@ -66,5 +66,160 @@
   "qualification_date": "2026-10-22",
   "physical_platform": "darwin/arm64",
   "public_directory_listing_verified": false,
-  "public_git_bootstrap_download_verified": false
+  "public_git_bootstrap_download_verified": true,
+  "published_validation": {
+    "release_url": "https://github.com/spfuzzylink/questlock/releases/tag/v0.11.0",
+    "source_commit": "7f0a773135b4e515cc72fcb64a9269deed74bbea",
+    "tag_ci_url": "https://github.com/spfuzzylink/questlock/actions/runs/39891419861",
+    "container_ci_url": "https://github.com/spfuzzylink/questlock/actions/runs/39891872036",
+    "asset_count": 11,
+    "anonymous_https_downloads_verified": true,
+    "all_asset_checksums_match": true,
+    "platforms": {
+      "darwin_amd64": {
+        "archive_sha256": "af1688f1b1c6395ebd4fb14254f328a06b33f9515dd3110040b6dd6eef077204",
+        "plugin_sha256": "7ab405637e87cfdd9590c21e04d11220c69484a41ac04d63866ea5e7876a2978",
+        "binary_sha256": "e5cc5f4b89cfbf443cdd507aac839546298e3bfc359b60d7fce3395b18e950da",
+        "buildinfo": {
+          "arch": "amd64",
+          "cgo_enabled": false,
+          "commit": "7f0a773135b4e515cc72fcb64a9269deed74bbea",
+          "go_version": "go1.27.1",
+          "os": "darwin",
+          "source_dirty": false,
+          "version": "0.11.0"
+        }
+      },
+      "darwin_arm64": {
+        "archive_sha256": "0b99171eb2dc0137b9854fefb69f24d9f6c4c1a1661ef537eb24963b8131a55f",
+        "plugin_sha256": "15f4866af0148697939c00a67c906a3610988c47983006ce8516640bceee719f",
+        "binary_sha256": "ada4c807853db6b0aeeee9f30709e02ed253812457070df70674177756c156c5",
+        "buildinfo": {
+          "arch": "arm64",
+          "cgo_enabled": false,
+          "commit": "7f0a773135b4e515cc72fcb64a9269deed74bbea",
+          "go_version": "go1.27.1",
+          "os": "darwin",
+          "source_dirty": false,
+          "version": "0.11.0"
+        }
+      },
+      "linux_amd64": {
+        "archive_sha256": "a8c3cdb82f91479a69f3ba7893533cd2d8016bc495ac73cf734286e4a4c846d3",
+        "plugin_sha256": "2336b80eeaab4108a4534006ef566218904ad2702456f95eec2b0161f953f249",
+        "binary_sha256": "e96943a1398eeb9a5d60c0a681fbe23023f0f13ac289a537b4d031ecc266a7f4",
+        "buildinfo": {
+          "arch": "amd64",
+          "cgo_enabled": false,
+          "commit": "7f0a773135b4e515cc72fcb64a9269deed74bbea",
+          "go_version": "go1.27.1",
+          "os": "linux",
+          "source_dirty": false,
+          "version": "0.11.0"
+        }
+      },
+      "linux_arm64": {
+        "archive_sha256": "fb3bf72724c336e39451c062cda93660c93c068947c4e6105a9a78398aa6a5df",
+        "plugin_sha256": "68f467199d1a76eb497b03edb17b7a5bee3455341387c9e37ef1566a34fc438a",
+        "binary_sha256": "d4f4b267a9df795dd13eac10c30ac6d30579e52394212a20fed7aad933022e67",
+        "buildinfo": {
+          "arch": "arm64",
+          "cgo_enabled": false,
+          "commit": "7f0a773135b4e515cc72fcb64a9269deed74bbea",
+          "go_version": "go1.27.1",
+          "os": "linux",
+          "source_dirty": false,
+          "version": "0.11.0"
+        }
+      }
+    },
+    "git_catalog_refs_tested": [
+      "v0.11.0",
+      "main"
+    ],
+    "native_cold_start_scope": "one_run_per_client_and_ref_on_macOS_ARM64_not_a_latency_guarantee",
+    "clients": {
+      "claude-code": {
+        "native_version": "2.1.308 (Claude Code)",
+        "install_syntax": [
+          "claude plugin install questlock --marketplace spfuzzylink/questlock"
+        ],
+        "native_git_catalog_commit": "7f0a773135b4e515cc72fcb64a9269deed74bbea",
+        "native_install_seconds": 1.645,
+        "fresh_isolated_home": true,
+        "credentials_imported": false,
+        "runtime_present_before_native_install": false,
+        "git_plugin_bundled_binary_present": false,
+        "downloaded_runtime_sha256": "ada4c807853db6b0aeeee9f30709e02ed253812457070df70674177756c156c5",
+        "downloaded_runtime_matches_reviewed_release": true,
+        "documented_warmup_required": false,
+        "direct_mcp": {
+          "checked_revision": true,
+          "evidence": "direct_packaged_launcher_mcp",
+          "exact_reuse": true,
+          "model_calls": 0,
+          "native_chat_tool_execution_verified": false,
+          "provider_cost_usd": 0,
+          "status": "completed",
+          "tools": [
+            "questlock_delegate",
+            "questlock_revise"
+          ]
+        },
+        "paid_fallback_enabled": false,
+        "native_chat_tool_execution_verified": false,
+        "native_cold_start": {
+          "connected": true,
+          "elapsed_seconds": 1.378,
+          "host_startup_timeout_overridden": false
+        },
+        "pinned_tag_native_cold_start": {
+          "connected": true,
+          "elapsed_seconds": 1.359,
+          "host_startup_timeout_overridden": false
+        }
+      },
+      "codex": {
+        "native_version": "codex-cli 0.163.0-alpha.10.2",
+        "install_syntax": [
+          "codex plugin marketplace add spfuzzylink/questlock",
+          "codex plugin add questlock@questlock"
+        ],
+        "native_git_catalog_commit": "7f0a773135b4e515cc72fcb64a9269deed74bbea",
+        "native_install_seconds": 0.015,
+        "fresh_isolated_home": true,
+        "credentials_imported": false,
+        "runtime_present_before_native_install": false,
+        "git_plugin_bundled_binary_present": false,
+        "downloaded_runtime_sha256": "ada4c807853db6b0aeeee9f30709e02ed253812457070df70674177756c156c5",
+        "downloaded_runtime_matches_reviewed_release": true,
+        "documented_warmup_required": false,
+        "direct_mcp": {
+          "checked_revision": true,
+          "evidence": "direct_packaged_launcher_mcp",
+          "exact_reuse": true,
+          "model_calls": 0,
+          "native_chat_tool_execution_verified": false,
+          "provider_cost_usd": 0,
+          "status": "completed",
+          "tools": [
+            "questlock_delegate",
+            "questlock_revise"
+          ]
+        },
+        "paid_fallback_enabled": false,
+        "native_chat_tool_execution_verified": false,
+        "native_cold_start": {
+          "connected": true,
+          "elapsed_seconds": 1.183,
+          "host_startup_timeout_overridden": false
+        },
+        "pinned_tag_native_cold_start": {
+          "connected": true,
+          "elapsed_seconds": 1.911,
+          "host_startup_timeout_overridden": false
+        }
+      }
+    }
+  }
 }

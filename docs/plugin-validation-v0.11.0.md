@@ -21,6 +21,32 @@ The [machine-readable record](plugin-validation-v0.11.0.json) contains the redac
 observations. The verifier exposes no inference RPC: native loader/connection
 checks and direct MCP task execution remain separate evidence.
 
+## Published Git installs
+
+The public release is now tested too. Fresh profiles installed from both the
+`v0.11.0` Git tag and default `main`, with no bundled runtime or imported keys.
+Both clients downloaded the pinned runtime over HTTPS, checked its checksum,
+and connected without a startup override or manual warmup.
+
+| Default Git install | One observed cold MCP connection |
+| --- | --- |
+| Codex: marketplace add, then plugin add | 1.183 seconds; skill and both tools discovered. |
+| Claude Code: `claude plugin install questlock --marketplace spfuzzylink/questlock` | 1.378 seconds; native health reported connected. |
+
+These are single runs on this Mac and connection, not a latency guarantee.
+Each downloaded binary matched the reviewed runtime. Both direct MCP workflows
+then passed the checked revision and exact reuse with zero model calls and
+$0 provider API charge. Claude's one-command syntax needs 2.1.292 or later;
+the native qualification used 2.1.308.
+
+All 11 [release assets](https://github.com/spfuzzylink/questlock/releases/tag/v0.11.0)
+were downloaded anonymously and matched their published checksums. All four
+BUILDINFO records pin the clean release commit. The
+[tag CI](https://github.com/spfuzzylink/questlock/actions/runs/39891419861)
+and [container publication](https://github.com/spfuzzylink/questlock/actions/runs/39891872036)
+passed. Both native container architectures were published; the prior v0.10.0
+container digest stayed unchanged.
+
 ## Regression coverage
 
 The platform ZIP has an explicit public-file allowlist, normalized metadata,
@@ -54,14 +80,15 @@ The existing Desktop extension route stays separate. Public-directory approval
 is also separate from Git marketplace distribution; see the
 [submission prerequisites](plugins.md#public-directory-status).
 
-The initial native tests used bundled runtimes. Mocked download tests do not
-establish a live cold GitHub download within a native client's startup deadline.
-If that first download times out, use the documented warmup and reconnect route
-or the offline ZIP. Published-tag download checks are recorded separately.
+The initial native tests used bundled runtimes; the public Git runs above
+separately exercised cold downloads. Other networks can still exceed a client's
+startup deadline. If that happens, use the documented warmup and reconnect route
+or the offline ZIP.
 
 These synthetic checked edits establish no general task-quality percentage,
 GPU speedup, token counterfactual or subscription-credit saving. The surrounding
 hosted development chat and review consume their normal allowance. Questlock's
-two release-version stamps and a portable attribution-link edit used its
-checked deterministic revision path with zero model calls and API charge; no
+two release-version stamps, a portable attribution-link edit and three install
+documentation edits used its checked deterministic revision path with zero model
+calls and API charge; no
 matched hosted baseline was measured.
