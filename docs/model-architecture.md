@@ -230,6 +230,14 @@ blocked, and retains any daily reservation. An operator must inspect provider
 records before deliberately moving to another task revision. Changing revision
 allows a new call; it does not recover an unknown upstream charge.
 
+For the built-in Ollama stream, HTTP and caller deadlines bound the wait. A
+partial answer is withheld when the stream stops before confirmed completion
+and usage. Retrying that same snapshot returns `ErrInFlight`; it does not wait
+forever or start another generation. A completed answer's reuse TTL does not
+expire an uncertain claim. Other task snapshots can still run when their
+capacity and budget checks pass. Custom provider callbacks must honor context
+cancellation; an unresponsive callback keeps its occupied capacity.
+
 Known costs use provider-reported uncached input, cache reads, cache writes, and
 output. Reasoning tokens are a reported subset of output and are not charged
 twice. Configured price mistakes, provider counting differences, and a response

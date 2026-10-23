@@ -307,6 +307,85 @@ func TestRunnerLostOllamaStreamKeepsClaimAndDoesNotGenerateAgain(t *testing.T) {
 	}
 }
 
+func TestRunnerStalledOllamaStreamDeadlineRetainsAgedClaimWithoutBlockingOtherTasks(t *testing.T) {
+	for _, deadline := range []string{"http", "caller"} {
+		t.Run(deadline, func(t *testing.T) {
+			var generations atomic.Int32
+			stopped := make(chan struct{})
+			p, calls := ollamaStreamProvider(t, func(w http.ResponseWriter, r *http.Request) {
+				io.Copy(io.Discard, r.Body)
+				w.Header().Set("Content-Type", "application/x-ndjson")
+				writeStreamFrame(w, ollamaContentChunk)
+				if generations.Add(1) == 1 {
+					// No terminal frame or usage arrives before the deadline.
+					<-r.Context().Done()
+					close(stopped)
+					return
+				}
+				writeStreamFrame(w, ollamaLastContentChunk)
+				writeStreamFrame(w, ollamaTerminalChunk)
+			}, nil)
+			r, _ := testRunner(t)
+			r.Provider = p
+			spec := testSpec()
+			spec.Provider, spec.Model, spec.Stream = "ollama", "qwen3:4b", true
+			spec.ReuseForSeconds = 1
+			ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
+			defer cancel()
+			if deadline == "http" {
+				seconds := int64(1)
+				spec.Ollama = &OllamaOptions{GenerationTimeoutSeconds: &seconds}
+			} else {
+				var cancelDeadline context.CancelFunc
+				ctx, cancelDeadline = context.WithTimeout(ctx, time.Second)
+				defer cancelDeadline()
+			}
+			first, err := r.Run(ctx, spec)
+			if !errors.Is(err, context.DeadlineExceeded) || (deadline == "http" && ctx.Err() != nil) {
+				t.Fatalf("stream did not stop at the %s deadline: %v (caller: %v)", deadline, err, ctx.Err())
+			}
+			if first.Response.Text != "" || first.Response.Complete || first.Response.Usage != (Usage{}) || first.GenerationUsage != (Usage{}) || first.ThisRunUsage != (Usage{}) || first.Durable {
+				t.Fatalf("stalled stream approved partial output or usage: %+v", first)
+			}
+			m := first.Measurement
+			if m == nil || m.Outcome != "uncertain" || !m.GenerationCalled || m.KnownGenerationUsage || m.Fingerprint == "" || m.GenerationTiming == nil || m.GenerationTiming.FirstTokenMS == nil || m.GenerationTiming.OutputMS != nil || calls.generate.Load() != 1 {
+				t.Fatalf("stalled stream lost uncertainty or observed timing: %+v", m)
+			}
+			select {
+			case <-stopped:
+			case <-time.After(time.Second):
+				t.Fatal("deadline did not cancel the stalled HTTP request")
+			}
+			key := "inference/v1/jobs/" + m.Fingerprint
+			claim, err := r.Broker.Get(t.Context(), key)
+			if err != nil {
+				t.Fatal(err)
+			}
+			var saved jobRecord
+			if json.Unmarshal([]byte(claim.Content), &saved) != nil || saved.State != "uncertain" || saved.Response != nil {
+				t.Fatal("stalled stream did not retain its durable uncertain claim")
+			}
+			// Completed-result freshness never authorizes retrying an unknown call.
+			later := saved.CreatedAt.Add(2 * time.Hour)
+			r.Now = func() time.Time { return later }
+			again, err := r.Run(t.Context(), spec)
+			if !errors.Is(err, ErrInFlight) || calls.generate.Load() != 1 || again.Measurement.GenerationCalled {
+				t.Fatalf("aged uncertain stream regenerated after reuse TTL: %+v %v", again, err)
+			}
+			independent := spec
+			independent.Task = "independent-local-task"
+			completed, err := r.Run(t.Context(), independent)
+			if err != nil || !completed.Durable || !completed.Response.Complete || completed.Reused || completed.Response.Text != "Useful local answer." || completed.Fingerprint == m.Fingerprint || calls.generate.Load() != 2 {
+				t.Fatalf("uncertain claim blocked an independent local task: %+v %v", completed, err)
+			}
+			retained, err := r.Broker.Get(t.Context(), key)
+			if err != nil || retained.Version != claim.Version || retained.Content != claim.Content {
+				t.Fatalf("independent task altered the uncertain claim: %+v %v", retained, err)
+			}
+		})
+	}
+}
+
 func TestRunnerReusedOllamaStreamSeparatesHistoricalAndCurrentTiming(t *testing.T) {
 	p, calls := ollamaStreamProvider(t, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/x-ndjson")
