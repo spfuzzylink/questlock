@@ -31,7 +31,7 @@ required by this project.
 ## Inspiration and independent work
 
 OpenRouter's model routing and caching ecosystem inspired Questlock's companion
-layer positioning. See the [architecture and source references](docs/model-architecture.md#openrouter-inspiration-and-possible-add-on).
+layer positioning. See the [architecture and source references](https://github.com/spfuzzylink/questlock/blob/main/docs/model-architecture.md#openrouter-inspiration-and-possible-add-on).
 This acknowledgment does not imply a partnership, sponsorship, or endorsement
 by OpenRouter or any model provider.
 
@@ -39,16 +39,16 @@ SGLang provides the native inference runtime, HiCache, HiSparse, and the upstrea
 scheduler/cache simulator described in the runtime guide. Questlock implements
 a separate protocol adapter; it does not implement those GPU kernels or claim
 the upstream benchmarks as its own. See [SGLang](https://github.com/sgl-project/sglang)
-and [the integration boundary](docs/runtime-cache.md).
+and [the integration boundary](https://github.com/spfuzzylink/questlock/blob/main/docs/runtime-cache.md).
 
-See [BRANDING.md](BRANDING.md) for guidance on identifying upstream Questlock,
+See [BRANDING.md](https://github.com/spfuzzylink/questlock/blob/main/BRANDING.md) for guidance on identifying upstream Questlock,
 modified forks, and independently operated services.
 
-The optional [System One decision integration](docs/system-one.md) uses TypeSafe
+The optional [System One decision integration](https://github.com/spfuzzylink/questlock/blob/main/docs/system-one.md) uses TypeSafe
 AI's original [system-one-adapter-python](https://github.com/typesafe-ai/system-one-adapter-python)
 v0.2.1 and `typesafe-sdk` v0.7.0 under MIT. Their original notices are preserved in
-[the adapter license](optional/system-one/TypeSafe-LICENSE) and
-[the SDK license](optional/system-one/TypeSafe-SDK-LICENSE).
+[the adapter license](https://github.com/spfuzzylink/questlock/blob/main/optional/system-one/TypeSafe-LICENSE) and
+[the SDK license](https://github.com/spfuzzylink/questlock/blob/main/optional/system-one/TypeSafe-SDK-LICENSE).
 These separately installed Python dependencies are not required for the normal
 Go CLI. This integration uses caller-selected local Ollama weights; it does not
 include Jev weights or imply TypeSafe endorsement.

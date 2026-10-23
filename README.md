@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/spfuzzylink/questlock/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/spfuzzylink/questlock/actions/workflows/ci.yml)
 
-[Get started](docs/onboarding.md) · [Downloads](https://github.com/spfuzzylink/questlock/releases) · [Architecture](docs/architecture.md) · [Questions](https://github.com/spfuzzylink/questlock/discussions/categories/q-a)
+[Plugins](docs/plugins.md) · [Get started](docs/onboarding.md) · [Downloads](https://github.com/spfuzzylink/questlock/releases) · [Architecture](docs/architecture.md)
 
 </div>
 
@@ -19,7 +19,29 @@ CLI, with a shared SQLite broker underneath.
 
 ## Get going
 
-Download and extract the matching [v0.10.0 archive](https://github.com/spfuzzylink/questlock/releases/tag/v0.10.0), then:
+Already use Codex or Claude Code? Install **Questlock** as a plugin:
+
+Codex / ChatGPT desktop local workflows:
+
+```sh
+codex plugin marketplace add spfuzzylink/questlock
+codex plugin add questlock@questlock
+```
+
+Claude Code:
+
+```sh
+claude plugin marketplace add spfuzzylink/questlock
+claude plugin install questlock@questlock
+```
+
+Pick your client, start a fresh chat, and ask it to run the first checked task
+and repeat it. No provider key or model download is needed. Git installs fetch
+a pinned, checksum-verified runtime on first use; the offline plugin ZIP already
+contains it. [Setup, offline bundles and recovery](docs/plugins.md).
+
+Prefer the guided setup, including Claude Desktop? Download the matching
+[v0.11.0 archive](https://github.com/spfuzzylink/questlock/releases/tag/v0.11.0), then:
 
 ```sh
 ./questlock setup
@@ -92,7 +114,7 @@ each one has a different job.
 | SGLang | Deployment identity, cache namespaces and reported KV counters for standalone dense/HiCache tasks. | [Spec](deploy/sglang/task.json) · [GPU setup and limits](docs/runtime-cache.md#where-hardware-awareness-fits) |
 | Langfuse | Opt-in usage/timing traces without prompts or answers. You can see new generation versus reuse. | [Export example](docs/inference-observability.md#opt-in-to-langfuse) |
 | TypeSafe System One adapter + Ollama | A local label recommendation or abstention; your code keeps control. Uses ordinary Ollama weights, not Jev weights. | [Request](optional/system-one/reuse.json) · [Setup](docs/system-one.md#prepare-explicitly-then-choose) |
-| Codex, Claude Code or Claude Desktop | Explicit checked-edit and bounded-task MCP tools inside your client. | [Guided setup](docs/onboarding.md) |
+| Codex / ChatGPT desktop, Claude Code or Claude Desktop | Explicit checked-edit and bounded-task MCP tools inside your client. | [Plugins](docs/plugins.md) · [Guided setup / Desktop MCPB](docs/onboarding.md) |
 | Workers on your own machines | Scoped HTTPS claims and results through one broker, with durable edge sync. | [Go example](examples/edge/main.go) · [Deployment](docs/local-agent-teams.md) |
 
 <details>

@@ -1,5 +1,22 @@
 # Validation record
 
+## v0.11.0 plugin checks — 2026-10-22
+
+Both native client installations were exercised in empty private profiles,
+without imported credentials, active settings, project rules or model calls.
+Codex loaded the skill and discovered both MCP tools; Claude Code passed strict
+manifest/catalog validation, loaded the components and reported a connected
+MCP server. The packaged launchers independently completed the first checked
+revision and exact result reuse with zero provider tokens and API charge.
+[Report, exact client versions and limits](plugin-validation-v0.11.0.md).
+
+Offline tests cover checksum failure, bounded concurrent bootstrap, cache and
+symlink refusal, literal arguments, read-only doctor, atomic first-fixture
+publication and operator-file preservation. Each native platform CI job also
+exercises both plugins from its ZIP without inference. Native chat execution,
+ChatGPT desktop UI interaction and official public-directory approval are
+separate qualifications; the surrounding hosted chat keeps its normal allowance.
+
 ## v0.10.0 released observations — 2026-10-22
 
 The new Go API, shared input/output/total token quotas and strict task loader

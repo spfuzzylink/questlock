@@ -197,6 +197,12 @@ jobs:
               assert all(archive.read(name).strip() for name in expected - {"manifest.json", "server/questlock"})
           print("Verified Desktop bundle contents and protocol only; native app connection remains unverified.")
           PY
+      - name: Verify both offline plugins in clean profiles without inference
+        env:
+          PACKAGE_SUFFIX: ${{ matrix.suffix }}
+        run: >-
+          python3 scripts/verify_plugins.py
+          --archive "dist/questlock-plugin_$(cat VERSION)_${PACKAGE_SUFFIX}.zip"
       - name: Retain tested packages for tagged release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -205,6 +211,7 @@ jobs:
           path: |
             dist/*.tar.gz
             dist/*.mcpb
+            dist/*.zip
           if-no-files-found: error
           retention-days: 7
   source-container:
@@ -335,16 +342,18 @@ jobs:
           version = Path("../VERSION").read_text().strip()
           archives = {f"questlock_{version}_{target}.tar.gz" for target in ("linux_amd64", "linux_arm64", "darwin_amd64", "darwin_arm64")}
           bundles = {f"questlock_{version}_{target}.mcpb" for target in ("darwin_amd64", "darwin_arm64")}
+          plugins = {f"questlock-plugin_{version}_{target}.zip" for target in ("linux_amd64", "linux_arm64", "darwin_amd64", "darwin_arm64")}
           assert {path.name for path in Path(".").glob("*.tar.gz")} == archives
           assert {path.name for path in Path(".").glob("*.mcpb")} == bundles
+          assert {path.name for path in Path(".").glob("*.zip")} == plugins
           PY
-          sha256sum *.tar.gz *.mcpb > checksums.txt
+          sha256sum *.tar.gz *.mcpb *.zip > checksums.txt
           sha256sum -c checksums.txt
       - name: Publish archives from successful platform jobs
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: >-
-          gh release create "$RELEASE_TAG" dist/*.tar.gz dist/*.mcpb dist/checksums.txt
+          gh release create "$RELEASE_TAG" dist/*.tar.gz dist/*.mcpb dist/*.zip dist/checksums.txt
           --verify-tag --prerelease --title "Questlock ${RELEASE_TAG}"
           --notes-file docs/release-notes.md

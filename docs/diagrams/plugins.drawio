@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mxfile host="app.diagrams.net" type="device" compressed="false">
+  <diagram id="questlock-plugins" name="Plugins">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" background="#f8fafc">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Questlock plugin route" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=34;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="60" y="44" width="1480" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Checked revisions and exact reuse in your local coding client" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=21;fontStyle=0;fontColor=#34445e;" vertex="1" parent="1">
+          <mxGeometry x="60" y="98" width="1480" height="29" as="geometry" />
+        </mxCell>
+        <mxCell id="git" value="" style="rounded=1;arcSize=10;fillColor=#e8f7ee;strokeColor=#278461;strokeWidth=2;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="180" width="280" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="git-title" value="Git catalog" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=23;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="80" y="198" width="240" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="git-line0" value="Package + launcher" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="80" y="238" width="240" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="zip" value="" style="rounded=1;arcSize=10;fillColor=#e8f7ee;strokeColor=#278461;strokeWidth=2;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="310" width="280" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="zip-title" value="Offline platform ZIP" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=23;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="80" y="328" width="240" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="zip-line0" value="Includes pinned binary" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="80" y="368" width="240" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="manager" value="" style="rounded=1;arcSize=10;fillColor=#eef0ff;strokeColor=#7970c2;strokeWidth=2;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="400" y="180" width="320" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="manager-title" value="Native plugin manager" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=22;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="420" y="198" width="280" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="manager-line0" value="Codex / ChatGPT local" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="420" y="238" width="280" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="manager-line1" value="or Claude Code" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="420" y="269" width="280" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="manager-line2" value="Loads skill + local MCP" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="420" y="300" width="280" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="launcher" value="" style="rounded=1;arcSize=10;fillColor=#18243b;strokeColor=#18243b;strokeWidth=2;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="780" y="180" width="340" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="launcher-title" value="Packaged launcher" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=23;fontStyle=1;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="800" y="198" width="300" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="launcher-line0" value="Pinned Questlock runtime" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="800" y="238" width="300" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="launcher-line1" value="ZIP binary or verified download" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="800" y="269" width="300" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="launcher-line2" value="No active config rewrite" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="800" y="300" width="300" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="launcher-line3" value="Paid fallback disabled" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="800" y="331" width="300" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="worker" value="" style="rounded=1;arcSize=10;fillColor=#e8f7ee;strokeColor=#278461;strokeWidth=2;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="180" width="360" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-title" value="Private worker + broker" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=23;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="198" width="320" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-line0" value="Reviewed request files" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="238" width="320" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-line1" value="Managed loopback service" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="269" width="320" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-line2" value="Scoped durable results" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="300" width="320" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-line3" value="Shared local plugin profile" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="331" width="320" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="prompt" value="" style="rounded=1;arcSize=10;fillColor=#ffffff;strokeColor=#c2cbd8;strokeWidth=2;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="480" width="660" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="prompt-title" value="Start with the checked task" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=24;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="80" y="498" width="620" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="prompt-line0" value="Use the packaged skill in a fresh native chat." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="80" y="538" width="620" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="prompt-line1" value="Verify checks, durable publication, and reuse." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="80" y="569" width="620" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="prompt-line2" value="The tool returns text; the caller applies it." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="80" y="600" width="620" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="local" value="" style="rounded=1;arcSize=10;fillColor=#eef0ff;strokeColor=#7970c2;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="480" width="340" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="local-title" value="Approved local model task" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=22;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="800" y="498" width="300" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="local-line0" value="Bounded supplied text + checks" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="800" y="538" width="300" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="local-line1" value="Configured local model only" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="800" y="569" width="300" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="local-line2" value="Explicit request; no paid tier" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="800" y="600" width="300" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="result" value="" style="rounded=1;arcSize=10;fillColor=#e8f7ee;strokeColor=#278461;strokeWidth=2;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="480" width="360" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="result-title" value="First revision + exact reuse" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=22;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="498" width="320" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="result-line0" value="questlock_revise" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="538" width="320" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="result-line1" value="first-task.json, twice" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="569" width="320" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="result-line2" value="Same immutable artifact" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="600" width="320" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="result-line3" value="0 new generation calls" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=22;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="631" width="320" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="desktop" value="" style="rounded=1;arcSize=10;fillColor=#eef0ff;strokeColor=#7970c2;strokeWidth=2;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="750" width="660" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="desktop-title" value="Separate Claude Desktop route" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=22;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="80" y="768" width="620" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="desktop-line0" value="Native .mcpb extension installation" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="80" y="808" width="620" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="desktop-line1" value="Independent of this Claude Code plugin catalog" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="80" y="839" width="620" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="directory" value="" style="rounded=1;arcSize=10;fillColor=#ffffff;strokeColor=#c2cbd8;strokeWidth=2;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="780" y="750" width="760" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="directory-title" value="Public directory: review still required" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=22;fontStyle=1;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="800" y="768" width="720" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="directory-line0" value="Repository catalogs do not establish a public listing." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="800" y="808" width="720" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="directory-line1" value="This route does not claim hosted web connectors." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=19;fontStyle=0;fontColor=#18243b;" vertex="1" parent="1">
+          <mxGeometry x="800" y="839" width="720" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="git-manager" style="edgeStyle=none;rounded=0;html=0;strokeColor=#506381;strokeWidth=2;endArrow=block;endFill=1;startArrow=none;startFill=1;dashed=0;exitX=1.0;exitY=0.5;entryX=0.0;entryY=0.20454545454545456;exitPerimeter=0;entryPerimeter=0;" edge="1" parent="1" source="git" target="manager">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="340" y="225" as="sourcePoint" />
+            <mxPoint x="400" y="225" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zip-manager" style="edgeStyle=none;rounded=0;html=0;strokeColor=#506381;strokeWidth=2;endArrow=block;endFill=1;startArrow=none;startFill=1;dashed=0;exitX=1.0;exitY=0.5;entryX=0.0;entryY=0.7954545454545454;exitPerimeter=0;entryPerimeter=0;" edge="1" parent="1" source="zip" target="manager">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="340" y="355" as="sourcePoint" />
+            <mxPoint x="400" y="355" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="manager-launcher" style="edgeStyle=none;rounded=0;html=0;strokeColor=#506381;strokeWidth=2;endArrow=block;endFill=1;startArrow=none;startFill=1;dashed=0;exitX=1.0;exitY=0.5;entryX=0.0;entryY=0.5;exitPerimeter=0;entryPerimeter=0;" edge="1" parent="1" source="manager" target="launcher">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="290" as="sourcePoint" />
+            <mxPoint x="780" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="launcher-worker" style="edgeStyle=none;rounded=0;html=0;strokeColor=#506381;strokeWidth=2;endArrow=block;endFill=1;startArrow=none;startFill=1;dashed=0;exitX=1.0;exitY=0.5;entryX=0.0;entryY=0.5;exitPerimeter=0;entryPerimeter=0;" edge="1" parent="1" source="launcher" target="worker">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1120" y="290" as="sourcePoint" />
+            <mxPoint x="1180" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="worker-result" style="edgeStyle=none;rounded=0;html=0;strokeColor=#506381;strokeWidth=2;endArrow=block;endFill=1;startArrow=none;startFill=1;dashed=0;exitX=0.5;exitY=1.0;entryX=0.5;entryY=0.0;exitPerimeter=0;entryPerimeter=0;" edge="1" parent="1" source="worker" target="result">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1360" y="400" as="sourcePoint" />
+            <mxPoint x="1360" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="worker-local" style="edgeStyle=none;rounded=0;html=0;strokeColor=#506381;strokeWidth=2;endArrow=block;endFill=1;startArrow=block;startFill=1;dashed=1;exitX=0.0;exitY=0.7727272727272727;entryX=1.0;entryY=0.425;exitPerimeter=0;entryPerimeter=0;" edge="1" parent="1" source="worker" target="local">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1180" y="350" as="sourcePoint" />
+            <mxPoint x="1120" y="565" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1150" y="350" />
+              <mxPoint x="1150" y="565" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend" value="Solid arrows: checked revision path. Dashed: explicitly approved requests to a configured local model." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#34445e;" vertex="1" parent="1">
+          <mxGeometry x="60" y="922" width="1480" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="costs" value="No hosted paid fallback. Normal hosted-chat allowances and local compute costs still apply." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#34445e;" vertex="1" parent="1">
+          <mxGeometry x="60" y="953" width="1480" height="25" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

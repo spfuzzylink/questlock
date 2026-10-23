@@ -1,3 +1,26 @@
+# Questlock 0.11.0 — install it where you work
+
+**Experimental release.** Codex/ChatGPT desktop and Claude Code now have thin
+plugins around the same Go runtime. Add the Git marketplace and enable the
+plugin, or use the platform ZIP for an offline runtime. The first checked task
+and its exact repeat need no model or provider account.
+
+- Native plugin managers own installation and enablement. The launcher does
+  not rewrite client configuration or install hooks.
+- Git startup fetches a pinned, checksum-verified runtime into a private cache;
+  four platform ZIPs include both plugins and their native executables.
+- `questlock plugin try`, `doctor` and `stop` use a separate shared plugin
+  profile. Paid fallback remains disabled; stopping retains the data.
+- Concurrent first starts publish a complete fixture atomically, preserving
+  existing operator files. Existing guided setup and Desktop MCPB remain.
+
+Isolated native Codex and Claude Code installs loaded the skill and connected
+the MCP server. Direct packaged-launcher tests completed the checked revision
+and exact reuse with zero generation. These checks do not claim a native chat
+model turn or free hosted account usage. Official public-directory listing is
+separate from the published Git marketplace and requires vendor eligibility
+and review. [Install](plugins.md) · [Evidence and limits](plugin-validation-v0.11.0.md).
+
 # Questlock 0.10.0 — plug it into your Go app
 
 **Experimental release, published and verified.** Four native archives, two macOS

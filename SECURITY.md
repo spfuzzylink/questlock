@@ -54,6 +54,17 @@ Do not change revisions just to escape pending state.
 
 ## Controls and limits
 
+The optional client plugins run a reviewed local launcher through the native
+plugin manager. Git installs download a pinned runtime from this project's
+GitHub release and verify its checksum before caching it privately. Offline
+ZIPs include the runtime. Checksums do not supply an independent signature.
+The launcher refuses symlinks and writable-by-others cache paths, preserves an
+unexpected runtime and creates no client hooks. Installation and enablement
+belong to the native host; the plugin does not rewrite client settings. The
+MCP worker still accepts only reviewed requests inside its configured directory,
+with paid fallback disabled. This is not an OS sandbox or a control over calls
+made by the surrounding assistant. See [plugin lifecycle](docs/plugins.md).
+
 - The server defaults to literal loopback; non-loopback HTTP binds require an
   explicit flag. The service has no built-in TLS termination. Use a trusted local
   reverse proxy with TLS and authentication appropriate to your deployment before

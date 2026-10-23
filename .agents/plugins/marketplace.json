@@ -1,0 +1,20 @@
+{
+  "name": "questlock",
+  "interface": {
+    "displayName": "Questlock"
+  },
+  "plugins": [
+    {
+      "name": "questlock",
+      "source": {
+        "source": "local",
+        "path": "./plugins/openai"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}
