@@ -23,6 +23,7 @@ import (
 	"github.com/spfuzzylink/questlock/inference"
 	"github.com/spfuzzylink/questlock/internal/httpapi"
 	"github.com/spfuzzylink/questlock/internal/store"
+	"github.com/spfuzzylink/questlock/internal/validityeval"
 	"github.com/spfuzzylink/questlock/protocol"
 	"github.com/spfuzzylink/questlock/semantic"
 )
@@ -128,6 +129,8 @@ type semanticEvalUsage struct {
 }
 
 type semanticEvalReport struct {
+	BatchSize                 int                           `json:"batch_size,omitempty"`
+	BatchVerificationWork     []semantic.ValidityResult     `json:"batch_verification_work,omitempty"`
 	Schema                    int                           `json:"schema"`
 	ProtectedTermsVersion     int                           `json:"protected_terms_version"`
 	Mode                      string                        `json:"mode"`
@@ -164,7 +167,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	report := semanticEvalReport{Schema: 1, ProtectedTermsVersion: semantic.ProtectedTermsVersion, Mode: "local_semantic_validity_diagnostic", Status: "partial_failed", FrozenCorpusSHA256: semanticEvalFrozenSHA256, PhysicalHosts: 1, SourceAnswers: "fixed_labelled_fixtures", RetrievalThresholdMeaning: "Cosine retrieval cutoff only; it is not a validity confidence or quality estimate.", QualityTargetMeaning: "The requested 90–98% target is not a universal guarantee. Metrics and Wilson intervals describe this declared sample only; corpus selection and dependence limit generalization.", MetricMeaning: "TP/FP/TN/FN classify served versus withheld for every labelled pair, including abstentions. Accuracy counts correct serve/withhold decisions; coverage is served/total. Errors, unknowns and unattempted pairs remain visible. Precision is null when nothing is served.", ModelCallBasis: "Logical embedding Embed calls plus verifier Generate calls reported by the inference runner; metadata reads and token-count preflight requests are excluded. Verification attempts, cached verifications and unknown usage are separate.", Errors: []string{}, SourceEmbeddings: []semanticEvalSourceEmbedding{}, Pairs: []semanticEvalPair{}}
 	defer func() {
 		report.TotalMS = float64(time.Since(started)) / float64(time.Millisecond)
-		report.Totals, report.Usage = semanticEvalSummarize(report.Pairs, report.SourceEmbeddings)
+		report.Totals, report.Usage = semanticEvalSummarize(report.Pairs, report.SourceEmbeddings, report.BatchVerificationWork)
 		if runErr == nil {
 			report.Status = "completed"
 		}
@@ -184,9 +187,10 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	embeddingModel := f.String("embedding-model", "all-minilm", "installed local embedding model")
 	verifierModel := f.String("verifier-model", "qwen3.5:4b", "installed local validity-verifier model")
 	threshold := f.Float64("min-similarity", 0.9, "retrieval cosine cutoff; not validity confidence")
+	batchSize := f.Int("batch-size", 1, "1 for standalone validity; 2 for compatible validity pairs")
 	timeout := f.Duration("timeout", 20*time.Minute, "positive total evaluation bound, at most 60m")
 	f.Usage = func() {
-		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving.")
+		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--batch-size 1|2] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving.")
 	}
 	if err := f.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
@@ -195,10 +199,11 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 		return fail("invalid_flags")
 	}
 	report.EmbeddingModel, report.VerifierModel = *embeddingModel, *verifierModel
+	report.BatchSize = *batchSize
 	if !math.IsNaN(*threshold) && !math.IsInf(*threshold, 0) {
 		report.MinSimilarity = *threshold
 	}
-	if f.NArg() != 0 || !*live || *suitePath == "" || *timeout <= 0 || *timeout > 60*time.Minute || math.IsNaN(*threshold) || math.IsInf(*threshold, 0) || *threshold < 0 || *threshold > 1 {
+	if f.NArg() != 0 || !*live || *suitePath == "" || *batchSize < 1 || *batchSize > 2 || *timeout <= 0 || *timeout > 60*time.Minute || math.IsNaN(*threshold) || math.IsInf(*threshold, 0) || *threshold < 0 || *threshold > 1 {
 		return fail("explicit_live_suite_and_bounded_flags_required")
 	}
 	suite, raw, err := loadSemanticEvalSuite(*suitePath)
@@ -236,7 +241,15 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 		return fail("temporary_broker_failed")
 	}
 	defer closeBroker()
-	verifier, err := delegation.NewLocalVerifier(ctx, broker, *base, config)
+	var verifier interface {
+		Identity() string
+		Close()
+	}
+	if *batchSize == 2 {
+		verifier, err = validityeval.NewPairVerifier(ctx, broker, *base, config)
+	} else {
+		verifier, err = delegation.NewLocalVerifier(ctx, broker, *base, config)
+	}
 	if err != nil {
 		return fail("verifier_setup_failed")
 	}
@@ -348,9 +361,11 @@ func newSemanticEvalBroker(ctx context.Context) (inference.Broker, func(), error
 	return broker, closeAll, nil
 }
 
-func semanticEvalRun(ctx context.Context, suite semanticEvalSuite, embedder semantic.Embedder, verifier semantic.Verifier, config semantic.ReuseConfig, threshold float64, report *semanticEvalReport) {
+func semanticEvalRun(ctx context.Context, suite semanticEvalSuite, embedder semantic.Embedder, verifier any, config semantic.ReuseConfig, threshold float64, report *semanticEvalReport) {
 	index := 0
 	for _, c := range suite.Cases {
+		var batchRequests []semantic.ValidityRequest
+		var batchRows []int
 		var original semantic.Embedding
 		var originalErr error
 		source := semanticEvalSourceEmbedding{CaseID: c.ID}
@@ -412,7 +427,22 @@ func semanticEvalRun(ctx context.Context, suite semanticEvalSuite, embedder sema
 						if bindings == nil {
 							bindings = map[string]string{}
 						}
-						result, verifyErr := verifier.Verify(ctx, semantic.ValidityRequest{OriginalQuestion: c.OriginalQuestion, Question: variant.Question, Instructions: c.Instructions, Context: c.Evidence, CachedAnswer: c.Answer, Bindings: bindings, Intent: intent})
+						request := semantic.ValidityRequest{OriginalQuestion: c.OriginalQuestion, Question: variant.Question, Instructions: c.Instructions, Context: c.Evidence, CachedAnswer: c.Answer, Bindings: bindings, Intent: intent}
+						if report.BatchSize > 1 {
+							batchRequests = append(batchRequests, request)
+							batchRows = append(batchRows, index-1)
+							row.VerificationAttempted = false
+							row.Status, row.Abstained = "queued", true
+							row.TotalMS = float64(time.Since(started)) / float64(time.Millisecond)
+							continue
+						}
+						var result semantic.ValidityResult
+						var verifyErr error
+						if single, ok := verifier.(semantic.Verifier); ok {
+							result, verifyErr = single.Verify(ctx, request)
+						} else {
+							verifyErr = errors.New("standalone diagnostic verifier unavailable")
+						}
 						row.Verification = &result
 						row.Verdict = result.Verdict
 						if verifyErr != nil {
@@ -430,6 +460,61 @@ func semanticEvalRun(ctx context.Context, suite semanticEvalSuite, embedder sema
 				}
 			}
 			row.TotalMS = float64(time.Since(started)) / float64(time.Millisecond)
+		}
+		if report.BatchSize > 1 {
+			semanticEvalRunBatches(ctx, verifier, config, report, batchRequests, batchRows)
+		}
+	}
+}
+
+type internalPairVerifier interface {
+	VerifyBatch(context.Context, []semantic.ValidityRequest) (validityeval.BatchVerificationResult, error)
+}
+
+func semanticEvalRunBatches(ctx context.Context, verifier any, config semantic.ReuseConfig, report *semanticEvalReport, requests []semantic.ValidityRequest, rows []int) {
+	for offset := 0; offset < len(requests); {
+		n := min(report.BatchSize, len(requests)-offset)
+		// Avoid an avoidable singleton tail without choosing by expected labels.
+		if len(requests)-offset-n == 1 && n > 2 {
+			n--
+		}
+		selected, indices := requests[offset:offset+n], rows[offset:offset+n]
+		offset += n
+		if n < 2 {
+			report.Pairs[indices[0]].Status = "batch_required"
+			continue
+		}
+		v, ok := verifier.(internalPairVerifier)
+		if !ok {
+			for _, i := range indices {
+				report.Pairs[i].Status, report.Pairs[i].ErrorCategory = "error", "batch_verifier_unavailable"
+			}
+			continue
+		}
+		started := time.Now()
+		batch, err := v.VerifyBatch(ctx, selected)
+		if batch.Work.ReceiptKey != "" {
+			report.BatchVerificationWork = append(report.BatchVerificationWork, batch.Work)
+		}
+		for position, i := range indices {
+			row := &report.Pairs[i]
+			row.TotalMS += float64(time.Since(started)) / float64(time.Millisecond)
+			row.VerificationAttempted = true
+			if err != nil || len(batch.Decisions) != n || !semanticEvalVerified(batch.Work, config) {
+				row.Status, row.ErrorCategory, row.Abstained = "error", "batch_verification_unconfirmed", true
+				continue
+			}
+			result := batch.Decisions[position]
+			row.Verification, row.Verdict = &result, result.Verdict
+			if !result.SharedWork || !result.Reused || result.GenerationCalled || result.InputTokens == nil || result.OutputTokens == nil || *result.InputTokens != 0 || *result.OutputTokens != 0 || result.ReceiptKey != batch.Work.ReceiptKey || !semanticEvalVerified(result, config) {
+				row.Status, row.ErrorCategory, row.Abstained = "error", "verification_evidence_unconfirmed", true
+			} else if result.Verdict == "unknown" || result.Verdict == "" {
+				row.Status, row.Abstained = "abstained", true
+			} else if result.Accepted() {
+				row.Status, row.Served, row.Abstained = "served", true, false
+			} else {
+				row.Status, row.Abstained = "verifier_rejected", false
+			}
 		}
 	}
 }
@@ -451,9 +536,32 @@ func semanticEvalContextCategory(ctx context.Context) string {
 	return "canceled"
 }
 
-func semanticEvalSummarize(pairs []semanticEvalPair, sources []semanticEvalSourceEmbedding) (semanticEvalTotals, semanticEvalUsage) {
+func semanticEvalSummarize(pairs []semanticEvalPair, sources []semanticEvalSourceEmbedding, shared ...[]semantic.ValidityResult) (semanticEvalTotals, semanticEvalUsage) {
 	totals := semanticEvalTotals{Total: len(pairs)}
 	usage := semanticEvalUsage{}
+	countVerification := func(result semantic.ValidityResult) {
+		if result.SharedWork {
+			return
+		}
+		if result.GenerationCalled {
+			usage.VerifierGenerationCalls++
+		}
+		if result.Reused {
+			usage.CachedVerifications++
+		}
+		if result.InputTokens == nil || result.OutputTokens == nil {
+			usage.VerifierUnknownUsageCalls++
+		} else {
+			usage.VerifierKnownUsageCalls++
+			usage.VerifierInputTokens += *result.InputTokens
+			usage.VerifierOutputTokens += *result.OutputTokens
+		}
+	}
+	for _, work := range shared {
+		for _, result := range work {
+			countVerification(result)
+		}
+	}
 	countEmbedding := func(attempted bool, tokens *int64) {
 		if !attempted {
 			return
@@ -510,19 +618,7 @@ func semanticEvalSummarize(pairs []semanticEvalPair, sources []semanticEvalSourc
 			usage.VerificationAttempts++
 		}
 		if result := row.Verification; result != nil {
-			if result.GenerationCalled {
-				usage.VerifierGenerationCalls++
-			}
-			if result.Reused {
-				usage.CachedVerifications++
-			}
-			if result.InputTokens == nil || result.OutputTokens == nil {
-				usage.VerifierUnknownUsageCalls++
-			} else {
-				usage.VerifierKnownUsageCalls++
-				usage.VerifierInputTokens += *result.InputTokens
-				usage.VerifierOutputTokens += *result.OutputTokens
-			}
+			countVerification(*result)
 		}
 	}
 	ratio := func(n, d int) *float64 {

@@ -430,6 +430,13 @@ provenance, local model limits and a frozen 72-variant challenge population.
 Controlled outcome cohorts use v0.15+ readers and workers so auxiliary verifier
 usage is counted through the new `verification_work` field.
 
+When your app already knows several questions mean the same request, declare
+those exact forms in a reviewed, versioned policy. They become one canonical
+task through the Go helper. Later approved forms can use exact reuse without
+embeddings or another model check. Different facts, constraints, bindings or
+runtime still change the task identity. Unlisted wording stays unchanged.
+[Go example and trust boundary](approved-questions.md).
+
 ## When another component is needed
 
 - **Task ownership or worker leases:** a version check does not grant a worker

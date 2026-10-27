@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "population": "Separate unsupported-answer control suite. The same six independent synthetic contexts are paired with deliberately corrupted or incomplete cached answers. Each case has an unchanged original question and one faithful paraphrase; all twelve variants must reject reuse.",
+  "label_rule": "Label true only when the supplied answer, with every word unchanged, fully satisfies the new question under the supplied instructions and evidence. A fresh answer being possible does not make reuse valid. Explicit updates and hypothetical assumptions in a variant apply to that variant. Required but unavailable details must be identified as unavailable; requested actions, exact output formats, and source attributions are part of the task. Unsupported or incomplete cached answers are not reusable even for a faithful paraphrase.",
+  "cases": [
+    {
+      "id": "r4-unsupported-support",
+      "family": "support-faq",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. An export-support overview must cover eligible invoice status, the row cap, navigation, UTC date boundaries, download and retention windows, handling an oversized export, escalation details and privacy, and the distinction between manual and scheduled delivery. These coverage requirements apply to overview requests even when their wording is short.",
+      "evidence": "Marnettle Ledger snapshot for the nonprofit Ferryline, on the Beacon tier. Only finalized invoices can enter an invoice archive; drafts are excluded. A CSV archive can contain at most 37,000 finalized invoices. Start at Reports > Invoice archive. The date filter uses UTC, includes the start instant, and excludes the end instant. A generated download link lasts 19 minutes. Marnettle retains the server copy for 43 hours after generation. For a larger archive, split the UTC date range into jobs that each fit the cap; changing an invoice back to draft is not a workaround. Escalate to archives@marnettle.example with the workspace ID and export job ID, never invoice contents. Beacon has manual exports only. The separate Cobalt tier offers weekly scheduled delivery on Sunday at 04:17 UTC; the snapshot supplies no other Cobalt setup instructions.",
+      "answer": "For Ferryline on Beacon, export finalized invoices from Reports > Invoice archive; drafts are excluded. Each CSV can contain up to 37,000 invoices. Use UTC dates with an inclusive start and exclusive end. The download link expires after 61 minutes, and the server copy is retained for 43 hours after generation. Split an oversized archive into smaller UTC date ranges; do not change invoice status to evade the limit. For help, email archives@marnettle.example with the workspace ID and export job ID, without invoice contents. Beacon supports manual exports only; weekly Sunday delivery at 04:17 UTC belongs to Cobalt.",
+      "original_question": "Give Ferryline a complete support overview of its Beacon invoice CSV exports, including limits, timing, and help.",
+      "intent": "support-faq-overview",
+      "variants": [
+        {
+          "id": "r4-unsupported-support-n01",
+          "question": "Give Ferryline a complete support overview of its Beacon invoice CSV exports, including limits, timing, and help.",
+          "should_reuse": false,
+          "reason": "The cached answer invents a 61-minute download-link lifetime; the approved evidence says 19 minutes. An unchanged original question does not repair the cached answer."
+        },
+        {
+          "id": "r4-unsupported-support-n02",
+          "question": "Please write the complete FAQ response for Ferryline about exporting finalized billing records on its current plan.",
+          "should_reuse": false,
+          "reason": "The cached answer invents a 61-minute download-link lifetime; the approved evidence says 19 minutes. This faithful overview paraphrase still requires a fully supported, complete answer."
+        }
+      ]
+    },
+    {
+      "id": "r4-unsupported-onboarding",
+      "family": "onboarding",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. A partner-operations onboarding overview must cover the request owner and queue, verification and provisioning sequence, lab duration and pass threshold, live-access gate and deadline, retry delay, support privacy, and the contractor restriction. Short requests for the route or checklist still require this complete coverage.",
+      "evidence": "Lunelark Cartography is onboarding a new employee as a partner operations specialist. Manager Nema Voss submits the access request through Queue 63. Access steward Ivo Renn verifies employment before IT creates the Kestrel training workspace. The new employee then completes a 29-minute lab and must score at least 18 of 21. Ivo enables live access only after both a passing lab result and Nema's signoff. Nema's signoff is due on Day 4 at 15:35 UTC. A failed lab may be retried after 11 hours. Questions go to #lantern-intake with the request number; full personal identification documents must not be posted there. Contractors may use the training workspace but are not eligible for live access under this route. Payroll enrollment, contract end dates, and lab scheduling capacity are not supplied.",
+      "answer": "Nema Voss starts the employee onboarding request in Queue 63. Ivo Renn verifies employment, then IT creates the Kestrel training workspace. The employee completes the 29-minute lab and must score all 21 of 21 to pass. Ivo may enable live access only after the lab is passed and Nema has signed off; Nema's signoff is due on Day 4 at 15:35 UTC. After a failed lab, wait 11 hours before retrying. Use #lantern-intake with the request number for help, without posting full personal identification documents. Contractors can use the training workspace but cannot obtain live access through this route.",
+      "original_question": "Explain the complete partner-operations onboarding route for Lunelark's new employee, including owners, gates, timing, and exceptions.",
+      "intent": "partner-operations-onboarding-overview",
+      "variants": [
+        {
+          "id": "r4-unsupported-onboarding-n01",
+          "question": "Explain the complete partner-operations onboarding route for Lunelark's new employee, including owners, gates, timing, and exceptions.",
+          "should_reuse": false,
+          "reason": "The cached answer incorrectly raises the pass requirement to 21 of 21; the evidence requires at least 18 of 21. An unchanged original question does not repair the cached answer."
+        },
+        {
+          "id": "r4-unsupported-onboarding-n02",
+          "question": "Draft the complete new-starter checklist for this employee, explaining who handles each step.",
+          "should_reuse": false,
+          "reason": "The cached answer incorrectly raises the pass requirement to 21 of 21; the evidence requires at least 18 of 21. This faithful overview paraphrase still requires a fully supported, complete answer."
+        }
+      ]
+    },
+    {
+      "id": "r4-unsupported-incident",
+      "family": "incident-response",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. A full incident brief must state severity, initial signal and time, commander and paged owner, deployment control, traffic direction and percentage with write scope, measured recovery points, the exact clearance condition and resolution time, communication cadence, evidence about writes, root-cause uncertainty, and trace retention. This full coverage applies to requests for an incident overview or handoff.",
+      "evidence": "Synthetic BrindlePay incident BP-936 is P2. A queue alarm at 06:13 UTC reported 8,700 pending items. Commander Sena Orr paged database owner Miro Lane at 06:19. Deployments were frozen; customer writes were not frozen. At 06:27, responders moved 35% of read-only traffic from south-6 to west-4. No customer writes were rerouted. Pending work reached 1,261 items at 06:52. At 07:09 the queue first met the clearance threshold of at most 400 items and stayed there for 13 consecutive minutes; the incident was resolved at 07:22. Status updates were required every 17 minutes while active. Reconciliation accounted for all 6,913 customer writes in the reviewed interval, with none missing. The root cause remains unconfirmed. Traces must be retained for 62 hours. Customer-impact counts, service-credit liability, vendor attestations, and board minutes are not supplied.",
+      "answer": "BP-936 was a P2 incident triggered at 06:13 UTC by 8,700 pending items. Commander Sena Orr paged database owner Miro Lane at 06:19 and froze deployments, while customer writes continued. At 06:27 the team moved 35% of read-only traffic from south-6 to west-4; customer writes were not rerouted. The queue fell to 1,261 items by 06:52, then reached at most 400 at 07:09 and stayed there for the required 13 consecutive minutes, allowing resolution at 07:22. Status updates were due every 17 minutes while active. All 6,913 reviewed customer writes were accounted for. The confirmed root cause was an expired routing certificate, and traces must be kept for 62 hours.",
+      "original_question": "Prepare a complete incident-response brief for BP-936, covering ownership, mitigation, recovery criteria, communications, and known limits.",
+      "intent": "incident-response-brief",
+      "variants": [
+        {
+          "id": "r4-unsupported-incident-n01",
+          "question": "Prepare a complete incident-response brief for BP-936, covering ownership, mitigation, recovery criteria, communications, and known limits.",
+          "should_reuse": false,
+          "reason": "The cached answer asserts a confirmed expired routing certificate as the cause; the evidence explicitly leaves the root cause unconfirmed and supplies no such certificate fact. An unchanged original question does not repair the cached answer."
+        },
+        {
+          "id": "r4-unsupported-incident-n02",
+          "question": "What happened during BP-936, and how did the team mitigate and close it? Include all required brief details.",
+          "should_reuse": false,
+          "reason": "The cached answer asserts a confirmed expired routing certificate as the cause; the evidence explicitly leaves the root cause unconfirmed and supplies no such certificate fact. This faithful overview paraphrase still requires a fully supported, complete answer."
+        }
+      ]
+    },
+    {
+      "id": "r4-unsupported-release",
+      "family": "release-readiness",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. A release-readiness brief must give the candidate and rollback versions, test result and blocker, the named patch/security/product owners, all release gates and observed rollback result, the decision and ETA limit, the release slot and freeze deadline, and pilot versus public scope. Full coverage is required for readiness summaries and go/no-go briefings.",
+      "evidence": "Purlstone Vault candidate 3.14.7 was tested in copper-9. Of 53 required tests, 52 passed and one is blocked: resume an export after its key expires. Leda Ansel owns the patch, Darin Meel owns security signoff, and Ena Ru is the product owner. Release gates require 53 of 53 passing tests, Darin's security signoff, and a rollback exercise taking at most 9 minutes 20 seconds. The observed rollback took 9 minutes 41 seconds. Rollback target is 3.14.6. Security signoff is still outstanding. The planned release slot is 2037-06-18 at 16:43 UTC, with the candidate freeze at 16:08 UTC on that date. The only authorized pilot scope is 27 internal accounts. Public rollout is not authorized until all gates pass. Current decision is no-go; a repair ETA and a public publication timestamp are not supplied. No signed external audit report is provided.",
+      "answer": "Purlstone Vault 3.14.7 is no-go because copper-9 has 52 of 53 required tests passing, with export resumption after key expiry blocked. Leda Ansel owns the patch. A repair ETA is not supplied.",
+      "original_question": "Give a complete go/no-go readiness brief for Purlstone Vault 3.14.7, with owners, gates, timing, rollback, and rollout scope.",
+      "intent": "release-readiness-brief",
+      "variants": [
+        {
+          "id": "r4-unsupported-release-n01",
+          "question": "Give a complete go/no-go readiness brief for Purlstone Vault 3.14.7, with owners, gates, timing, rollback, and rollout scope.",
+          "should_reuse": false,
+          "reason": "The cached answer is incomplete for the required full overview: it omits security ownership and outstanding signoff, product owner, rollback target/gate/result, release slot, freeze deadline, and pilot/public scope. An unchanged original question does not repair the cached answer."
+        },
+        {
+          "id": "r4-unsupported-release-n02",
+          "question": "Prepare the complete release handoff for the product owner, including gate failures and the rollout boundary.",
+          "should_reuse": false,
+          "reason": "The cached answer is incomplete for the required full overview: it omits security ownership and outstanding signoff, product owner, rollback target/gate/result, release slot, freeze deadline, and pilot/public scope. This faithful overview paraphrase still requires a fully supported, complete answer."
+        }
+      ]
+    },
+    {
+      "id": "r4-unsupported-refund",
+      "family": "refunds",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. A damaged-order refund overview must state eligibility and report timing, the approved and excluded amounts with the total, photo approval and who files the carrier claim, whether a return is needed, the payment destination and posting window, and authorization versus execution status. These items remain required for requests for the full customer explanation.",
+      "evidence": "Sablewing Outfitters order SW-48271 contains a Moraine flask. The paid total is $137.40: merchandise $89.70, outbound shipping $12.90, and personalized engraving $34.80. Damaged-goods reports must arrive within 6 calendar days after receipt, with the received date plus 6 days as the final report date. This order was received on 2037-08-09 and reported on 2037-08-13, so it qualifies; its final report date is 2037-08-15. Specialist Tavi Brel accepted the damage photos at 09:46 UTC on 2037-08-13 and will file the carrier claim; the buyer does not file that claim. No physical return is required after accepted photos. The approved refund covers merchandise and outbound shipping, totaling $102.60. Engraving of $34.80 is nonrefundable. Refunds must go to the original card, with issuer posting in 4 to 9 business days after merchant submission; store credit and cash are not options under this approval. The refund is authorized but has not been submitted. No replacement is included. No card digits, processor confirmation code, finance exception letter, or facts about any other order are supplied.",
+      "answer": "SW-48271 qualifies because the damaged flask was reported on 2037-08-13 after receipt on 2037-08-09, before the final report date of 2037-08-15. The approved refund is the full $137.40 paid, including the $34.80 personalized engraving. Tavi Brel accepted the photos at 09:46 UTC on 2037-08-13 and will file the carrier claim; the buyer need not file it or return the flask. The refund must go to the original card, with issuer posting 4 to 9 business days after merchant submission. It is authorized but has not yet been submitted. This approval offers neither cash nor store credit and includes no replacement.",
+      "original_question": "Give the customer a complete explanation of the damaged-order refund for SW-48271, including the amounts, responsibilities, and current status.",
+      "intent": "damaged-order-refund-overview",
+      "variants": [
+        {
+          "id": "r4-unsupported-refund-n01",
+          "question": "Give the customer a complete explanation of the damaged-order refund for SW-48271, including the amounts, responsibilities, and current status.",
+          "should_reuse": false,
+          "reason": "The cached answer makes engraving refundable and approves $137.40, contradicting the evidence that excludes $34.80 engraving and authorizes only $102.60. An unchanged original question does not repair the cached answer."
+        },
+        {
+          "id": "r4-unsupported-refund-n02",
+          "question": "How should support explain this order's eligibility, refund amount, claim handling, and payment timing? Include the entire overview.",
+          "should_reuse": false,
+          "reason": "The cached answer makes engraving refundable and approves $137.40, contradicting the evidence that excludes $34.80 engraving and authorizes only $102.60. This faithful overview paraphrase still requires a fully supported, complete answer."
+        }
+      ]
+    },
+    {
+      "id": "r4-unsupported-broker",
+      "family": "broker-lifecycle",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. A broker-ticket lifecycle overview must cover the ticket times and claim owner, the source revision and publication check, the reviewer's limited role, the stale rejection and absence of publication, reserved units and uncertain outcome, the operator's reconciliation authority and next-step order, no automatic retry or takeover, the current state, and record retention. Treat Vellum Relay as the synthetic service specified here; do not import behavior from any real broker.",
+      "evidence": "Synthetic service Vellum Relay coordinates laboratory-report artifacts. Ticket VR-731 was queued at 14:03 UTC and claimed by Sora Pell at 14:06. The approved input source was revision 68. Nico Bram reviews the candidate, but approval does not transfer Sora's claim. A steward may publish only if source revision 68 is still current at publication. At 14:11 the source advanced to revision 69; the candidate was rejected as stale and no artifact was published. The broker holds a reservation of 6,713 work units because the provider outcome is unknown. No automatic retry, claim expiry, or automatic takeover is supported in this workflow. Operator Ola Venn must reconcile a provider receipt before recording actual usage and releasing unused reserved units. Only after that reconciliation may Sora attempt new work against revision 69, with fresh review before publication. Current ticket state is awaiting reconciliation. The ticket record is retained for 41 days. No provider receipt, receipt time, current usage total, or facts for another ticket are supplied.",
+      "answer": "VR-731 was queued at 14:03 UTC and claimed by Sora Pell at 14:06 against source revision 68. Nico Bram reviews the candidate; review approval does not transfer the claim. Publication requires revision 68 still to be current. The source advanced to revision 69 at 14:11, so the candidate was rejected as stale and no artifact was published. The provider used zero units, so Ola Venn may release all 6,713 reserved units immediately without a receipt; Sora can then attempt new work against revision 69 with fresh review. There is no automatic retry, claim expiry, or automatic takeover. The ticket record is retained for 41 days.",
+      "original_question": "Explain the complete lifecycle and current next steps for Vellum Relay ticket VR-731, including ownership, stale publication, and the held reservation.",
+      "intent": "broker-ticket-lifecycle-overview",
+      "variants": [
+        {
+          "id": "r4-unsupported-broker-n01",
+          "question": "Explain the complete lifecycle and current next steps for Vellum Relay ticket VR-731, including ownership, stale publication, and the held reservation.",
+          "should_reuse": false,
+          "reason": "The cached answer invents zero usage and permits immediate release without a receipt, conflicting with the unknown outcome and required receipt reconciliation. An unchanged original question does not repair the cached answer."
+        },
+        {
+          "id": "r4-unsupported-broker-n02",
+          "question": "What happened from queueing through the stale rejection, and what must happen next? Include the entire ticket overview.",
+          "should_reuse": false,
+          "reason": "The cached answer invents zero usage and permits immediate release without a receipt, conflicting with the unknown outcome and required receipt reconciliation. This faithful overview paraphrase still requires a fully supported, complete answer."
+        }
+      ]
+    }
+  ]
+}

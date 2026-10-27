@@ -1,0 +1,793 @@
+{
+  "schema_version": 1,
+  "population": "Fresh synthetic round-three author population: six business families, ten suitable natural paraphrases and ten materially unsuitable variants per family. Purposive challenge cases are not a real-user acceptance sample or a statistically independent representative workload.",
+  "label_rule": "Reuse is true only if the entire cached answer remains supported by the supplied evidence and satisfies the new question together with persistent case instructions, explicit format, required unknowns and read-only scope. Natural paraphrases need not preserve word order. False variants change a material fact, actor-role relation, ordering or condition; require unsupported calculations or new unknowns; change output/scope; or request actions. Overall decisions can remain unchanged while a required factual detail becomes invalid. No retrieval score or implementation behavior determines a label.",
+  "cases": [
+    {
+      "id": "r3-digest",
+      "family": "support-faq",
+      "instructions": "Use only the fictional FAQ and current snapshot. Unless the question explicitly changes the format, answer with exactly four bullets: (1) next digest boundary, remaining wait, eligible alert count; (2) Rina's role and who can change the interval; (3) personal-email mute option and its relation to webhooks; (4) unknown actual delivery time and a statement that no settings were changed. Every response must cover those four parts. Give read-only guidance, never claim an operation occurred, and explicitly mark any additional requested fact absent from evidence as unknown.",
+      "evidence": "Fictional Birchwave FAQ BW-63: eligible alerts are batched at 45-minute boundaries anchored at 08:00 UTC each day. Thus the first boundaries are 08:00, 08:45, and 09:30 UTC. Empty batches are suppressed. Only workspace administrators can change the interval. Editors can mute their own email notifications; muting personal email has no effect on webhook delivery. Moss Quay snapshot at 09:17 UTC: editor Rina Sol has two eligible alerts, created at 09:03 and 09:11 UTC, awaiting the next boundary. Rina has not muted email. Exact delivery time after a batch boundary, recipient count, and mail-transport latency are unrecorded. No setting has been changed.",
+      "answer": "- The next digest boundary is 09:30 UTC, 13 minutes after the 09:17 UTC check; the batch has 2 eligible alerts.\n- Rina Sol is an editor and cannot change the 45-minute interval; a workspace administrator can.\n- Rina may mute her own email notifications, but that does not stop webhook delivery.\n- The actual delivery time is unknown. This is read-only guidance; no notification settings were changed.",
+      "original_question": "What should support tell Rina Sol about Moss Quay's digest timing and her notification options at 09:17 UTC?",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-digest-p01",
+          "question": "Rina is waiting for the digest and wants to adjust notifications. What is the support reply for the current Moss Quay record?",
+          "should_reuse": true,
+          "reason": "The question naturally requests the same support guidance. The standing four-part output requirement preserves timing, alert count, role authority, email/webhook relation, delivery uncertainty, and read-only status; all cached facts remain supported."
+        },
+        {
+          "id": "r3-digest-p02",
+          "question": "Can you explain what Rina should expect next and what controls her editor role gives her in Birchwave?",
+          "should_reuse": true,
+          "reason": "The question naturally requests the same support guidance. The standing four-part output requirement preserves timing, alert count, role authority, email/webhook relation, delivery uncertainty, and read-only status; all cached facts remain supported."
+        },
+        {
+          "id": "r3-digest-p03",
+          "question": "We need a reply to Rina about the queued digest and the settings she can use. How should support explain the present situation?",
+          "should_reuse": true,
+          "reason": "The question naturally requests the same support guidance. The standing four-part output requirement preserves timing, alert count, role authority, email/webhook relation, delivery uncertainty, and read-only status; all cached facts remain supported."
+        },
+        {
+          "id": "r3-digest-p04",
+          "question": "What does BW-63 mean for Rina's two queued alerts and her ability to manage notifications right now?",
+          "should_reuse": true,
+          "reason": "The question naturally requests the same support guidance. The standing four-part output requirement preserves timing, alert count, role authority, email/webhook relation, delivery uncertainty, and read-only status; all cached facts remain supported."
+        },
+        {
+          "id": "r3-digest-p05",
+          "question": "Help the support agent answer Rina's question about when the digest is due and which notification changes she is allowed to make.",
+          "should_reuse": true,
+          "reason": "The question naturally requests the same support guidance. The standing four-part output requirement preserves timing, alert count, role authority, email/webhook relation, delivery uncertainty, and read-only status; all cached facts remain supported."
+        },
+        {
+          "id": "r3-digest-p06",
+          "question": "Please write the customer guidance for this Moss Quay digest, including Rina's options as an editor.",
+          "should_reuse": true,
+          "reason": "The question naturally requests the same support guidance. The standing four-part output requirement preserves timing, alert count, role authority, email/webhook relation, delivery uncertainty, and read-only status; all cached facts remain supported."
+        },
+        {
+          "id": "r3-digest-p07",
+          "question": "How should we set Rina's expectations about the next digest while explaining the notification controls available to her?",
+          "should_reuse": true,
+          "reason": "The question naturally requests the same support guidance. The standing four-part output requirement preserves timing, alert count, role authority, email/webhook relation, delivery uncertainty, and read-only status; all cached facts remain supported."
+        },
+        {
+          "id": "r3-digest-p08",
+          "question": "Rina asks why she is still waiting and whether she can change the interval or mute notifications. Give the FAQ response for this snapshot.",
+          "should_reuse": true,
+          "reason": "The question naturally requests the same support guidance. The standing four-part output requirement preserves timing, alert count, role authority, email/webhook relation, delivery uncertainty, and read-only status; all cached facts remain supported."
+        },
+        {
+          "id": "r3-digest-p09",
+          "question": "Use the recorded Birchwave situation to answer Rina's digest-timing and notification-control questions.",
+          "should_reuse": true,
+          "reason": "The question naturally requests the same support guidance. The standing four-part output requirement preserves timing, alert count, role authority, email/webhook relation, delivery uncertainty, and read-only status; all cached facts remain supported."
+        },
+        {
+          "id": "r3-digest-p10",
+          "question": "Prepare the support answer for Rina: explain the next scheduled digest and what she can do about notification settings.",
+          "should_reuse": true,
+          "reason": "The question naturally requests the same support guidance. The standing four-part output requirement preserves timing, alert count, role authority, email/webhook relation, delivery uncertainty, and read-only status; all cached facts remain supported."
+        },
+        {
+          "id": "r3-digest-n01",
+          "question": "The administrator corrected the schedule anchor to 08:15 UTC, with the 45-minute interval unchanged. What should support tell Rina now?",
+          "should_reuse": false,
+          "reason": "The revised boundaries include 09:00 and 09:45 UTC. At 09:17 the next boundary is 09:45 with a 28-minute wait, not the cached 09:30 and 13 minutes."
+        },
+        {
+          "id": "r3-digest-n02",
+          "question": "Rina has been promoted to workspace administrator. Explain her current digest controls using the otherwise unchanged snapshot.",
+          "should_reuse": false,
+          "reason": "The cached editor restriction is stale: the new role permits Rina to change the interval herself."
+        },
+        {
+          "id": "r3-digest-n03",
+          "question": "The new FAQ says muting personal email also disables that user's webhook deliveries. Give Rina the updated support guidance.",
+          "should_reuse": false,
+          "reason": "The changed relationship between email muting and webhook delivery directly contradicts the cached statement that webhooks are unaffected."
+        },
+        {
+          "id": "r3-digest-n04",
+          "question": "The two queued alerts were withdrawn, leaving zero eligible alerts. Explain whether a digest will be sent at the next boundary.",
+          "should_reuse": false,
+          "reason": "The empty-batch condition now suppresses the digest; the cached answer says there are two eligible alerts awaiting a batch."
+        },
+        {
+          "id": "r3-digest-n05",
+          "question": "Give the support reply with the remaining wait expressed explicitly as an integer number of seconds, rather than minutes.",
+          "should_reuse": false,
+          "reason": "The new required value is 780 seconds. The cached answer states 13 minutes and does not provide the explicitly requested integer-second result."
+        },
+        {
+          "id": "r3-digest-n06",
+          "question": "Add the exact number of digest recipients to the support reply; if the record does not provide it, explicitly say that count is unknown.",
+          "should_reuse": false,
+          "reason": "Recipient count is a newly required unknown. The cached answer reports alert count and unknown delivery time but not the missing recipient count."
+        },
+        {
+          "id": "r3-digest-n07",
+          "question": "Mute Rina's personal email now and confirm the change before giving the support explanation.",
+          "should_reuse": false,
+          "reason": "A cached read-only answer cannot perform the requested setting mutation or confirm it happened; it instead states no settings were changed."
+        },
+        {
+          "id": "r3-digest-n08",
+          "question": "Return the complete reply as one HTML table with columns topic and guidance, with no bullet list.",
+          "should_reuse": false,
+          "reason": "The cached four-bullet response violates the explicitly changed HTML-table format."
+        },
+        {
+          "id": "r3-digest-n09",
+          "question": "The revised role matrix lets editors change intervals and restricts administrators to personal email muting. Explain the current controls under that matrix.",
+          "should_reuse": false,
+          "reason": "The role-to-permission relation is inverted. The cached answer assigns interval editing to administrators and denies it to Rina as an editor."
+        },
+        {
+          "id": "r3-digest-n10",
+          "question": "For the same two alerts, calculate the exact mail-transport latency after batching and explain the measurement; mark missing measurement data unknown.",
+          "should_reuse": false,
+          "reason": "Mail-transport latency is not recorded, so the new calculation needs an explicit unknown and absent-measurement explanation. The cached unknown delivery time does not answer that distinct requirement."
+        }
+      ]
+    },
+    {
+      "id": "r3-contractor",
+      "family": "onboarding",
+      "instructions": "Use only this fictional onboarding record. Unless the question explicitly changes format, give exactly three numbered steps. Always cover completed identity/course requirements and the device-check expiry with remaining validity; sponsor versus independent approver and account-creation ordering; then the project permission, unknown contract end date, and no-action statement. Do not provision accounts or access. State additional required missing facts as unknown.",
+      "evidence": "Fictional Comet Warehouse contractor runbook CW-52: identity and the course must be complete. A device attestation remains valid for 72 hours and must still be valid when access is granted. Sponsor Mira Quill files the request but may not approve it. Independent security reviewer Oren Hale must approve before an IT administrator creates the account. A project owner may then add FallowViewer, which permits reading and forbids secret export. Sorin Pike's Fallow snapshot at 2026-08-13 10:00 UTC: identity and course are complete; device attestation was recorded at 2026-08-10 12:00 UTC; Mira filed the request; Oren has not approved; no account or group grant exists. Contract end date and provisioning completion time are unrecorded.",
+      "answer": "1. Sorin's identity and course are complete. The 72-hour device attestation expires on 2026-08-13 at 12:00 UTC, leaving 2 hours at the 10:00 UTC check; refresh it if it expires before access is granted.\n2. Mira Quill has filed the request but cannot self-approve it. Oren Hale must independently approve before an IT administrator creates the account.\n3. After account creation, a project owner can add FallowViewer for reading without secret export. Contract end date is unknown. This is read-only guidance; no account or access was provisioned.",
+      "original_question": "How should we hand off Sorin Pike's remaining contractor onboarding work for the Fallow project at the recorded check time?",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-contractor-p01",
+          "question": "Sorin's sponsor wants to know what still blocks Fallow access. Explain the remaining onboarding path from this record.",
+          "should_reuse": true,
+          "reason": "The same contractor handoff is requested in natural wording. The standing three-step requirement retains expiry arithmetic, independent approval authority and ordering, project permission, contract-date uncertainty, and the read-only boundary."
+        },
+        {
+          "id": "r3-contractor-p02",
+          "question": "What should the onboarding coordinator tell Sorin about his current prerequisites and the people who must act next?",
+          "should_reuse": true,
+          "reason": "The same contractor handoff is requested in natural wording. The standing three-step requirement retains expiry arithmetic, independent approval authority and ordering, project permission, contract-date uncertainty, and the read-only boundary."
+        },
+        {
+          "id": "r3-contractor-p03",
+          "question": "Please prepare the contractor-access handoff for Sorin using the current Comet Warehouse snapshot.",
+          "should_reuse": true,
+          "reason": "The same contractor handoff is requested in natural wording. The standing three-step requirement retains expiry arithmetic, independent approval authority and ordering, project permission, contract-date uncertainty, and the read-only boundary."
+        },
+        {
+          "id": "r3-contractor-p04",
+          "question": "Can you lay out the next steps toward Sorin's FallowViewer access and explain the limits of that access?",
+          "should_reuse": true,
+          "reason": "The same contractor handoff is requested in natural wording. The standing three-step requirement retains expiry arithmetic, independent approval authority and ordering, project permission, contract-date uncertainty, and the read-only boundary."
+        },
+        {
+          "id": "r3-contractor-p05",
+          "question": "We need to pass Sorin's case to IT. What does IT need to know about readiness, approval ownership, and the remaining sequence?",
+          "should_reuse": true,
+          "reason": "The same contractor handoff is requested in natural wording. The standing three-step requirement retains expiry arithmetic, independent approval authority and ordering, project permission, contract-date uncertainty, and the read-only boundary."
+        },
+        {
+          "id": "r3-contractor-p06",
+          "question": "Give the onboarding guidance for Sorin at the 10:00 UTC check, including the time-sensitive prerequisite and approval chain.",
+          "should_reuse": true,
+          "reason": "The same contractor handoff is requested in natural wording. The standing three-step requirement retains expiry arithmetic, independent approval authority and ordering, project permission, contract-date uncertainty, and the read-only boundary."
+        },
+        {
+          "id": "r3-contractor-p07",
+          "question": "Where does Sorin stand in the Fallow onboarding process, and what should happen before he receives access?",
+          "should_reuse": true,
+          "reason": "The same contractor handoff is requested in natural wording. The standing three-step requirement retains expiry arithmetic, independent approval authority and ordering, project permission, contract-date uncertainty, and the read-only boundary."
+        },
+        {
+          "id": "r3-contractor-p08",
+          "question": "Explain how Sorin can move from the recorded onboarding state to the permitted Fallow project role.",
+          "should_reuse": true,
+          "reason": "The same contractor handoff is requested in natural wording. The standing three-step requirement retains expiry arithmetic, independent approval authority and ordering, project permission, contract-date uncertainty, and the read-only boundary."
+        },
+        {
+          "id": "r3-contractor-p09",
+          "question": "Write the current handoff for the contractor's account request so the sponsor, reviewer, IT, and project owner know their roles.",
+          "should_reuse": true,
+          "reason": "The same contractor handoff is requested in natural wording. The standing three-step requirement retains expiry arithmetic, independent approval authority and ordering, project permission, contract-date uncertainty, and the read-only boundary."
+        },
+        {
+          "id": "r3-contractor-p10",
+          "question": "What is the correct remaining onboarding plan for Sorin, given his current device check and the pending approval?",
+          "should_reuse": true,
+          "reason": "The same contractor handoff is requested in natural wording. The standing three-step requirement retains expiry arithmetic, independent approval authority and ordering, project permission, contract-date uncertainty, and the read-only boundary."
+        },
+        {
+          "id": "r3-contractor-n01",
+          "question": "The updated responsibility matrix makes Oren the request sponsor and Mira the independent security approver. Hand off Sorin's case under those roles.",
+          "should_reuse": false,
+          "reason": "The cached answer binds sponsor/request filing to Mira and independent approval to Oren, so it reverses the updated authority relation."
+        },
+        {
+          "id": "r3-contractor-n02",
+          "question": "The device-attestation validity period is now 24 hours instead of 72. Give the current onboarding handoff.",
+          "should_reuse": false,
+          "reason": "The recorded August 10 attestation is already expired at the August 13 check; the cached August 13 noon expiry and two remaining hours are false."
+        },
+        {
+          "id": "r3-contractor-n03",
+          "question": "A new device attestation was completed at 2026-08-13 09:00 UTC. Explain Sorin's current remaining onboarding work.",
+          "should_reuse": false,
+          "reason": "The fresh attestation expires August 16 at 09:00 UTC, leaving 71 hours, so the cached two-hour expiry assessment is stale."
+        },
+        {
+          "id": "r3-contractor-n04",
+          "question": "Oren's security approval has now been recorded, while account creation is still pending. What remains for Sorin?",
+          "should_reuse": false,
+          "reason": "The cached answer still treats independent approval as outstanding; the next required action is now account creation with a valid attestation."
+        },
+        {
+          "id": "r3-contractor-n05",
+          "question": "The amended process creates the IT account before security review, and only the project grant waits for approval. Explain the new onboarding order.",
+          "should_reuse": false,
+          "reason": "The cached answer requires security approval before account creation, contradicting the expressly revised prerequisite ordering."
+        },
+        {
+          "id": "r3-contractor-n06",
+          "question": "Sorin now needs FallowEditor rather than FallowViewer. Explain the exact permissions and remaining grant path for that role, marking unsupported details unknown.",
+          "should_reuse": false,
+          "reason": "Only FallowViewer is documented. The cached read-only/no-secret-export permission statement does not establish FallowEditor permissions or acknowledge that they are unknown."
+        },
+        {
+          "id": "r3-contractor-n07",
+          "question": "Include the exact provisioning completion time in the handoff, explicitly marking it unknown if no time is recorded.",
+          "should_reuse": false,
+          "reason": "Provisioning completion time is a newly required unknown. The cached answer marks only contract end date unknown and does not answer the completion-time requirement."
+        },
+        {
+          "id": "r3-contractor-n08",
+          "question": "Create Sorin's account and add FallowViewer, then report the onboarding work as completed.",
+          "should_reuse": false,
+          "reason": "This asks for account and access mutations. Cached guidance cannot perform them, and the pending approval prevents a supported completion claim."
+        },
+        {
+          "id": "r3-contractor-n09",
+          "question": "Return the complete onboarding handoff as a JSON array of exactly three strings and no numbered prose.",
+          "should_reuse": false,
+          "reason": "The cached numbered lines do not satisfy the explicitly requested JSON array format."
+        },
+        {
+          "id": "r3-contractor-n10",
+          "question": "The check time is now 2026-08-13 13:00 UTC with no device refresh or other status changes. What is the current onboarding plan?",
+          "should_reuse": false,
+          "reason": "The attestation expired an hour earlier and must be refreshed before grant; the cached answer incorrectly says two hours of validity remain."
+        }
+      ]
+    },
+    {
+      "id": "r3-failover",
+      "family": "incident-handoff",
+      "instructions": "Use only the fictional incident snapshot. Unless explicitly overridden, return exactly five bullets: current state and closure gate; request/tenant impact and duration; ordered routing timeline; commander versus communications roles; and root-cause/reconciliation unknowns with no-action statement. Use accurate arithmetic. Never change incident state, route traffic, or send messages. Any extra required unrecorded finding must be marked unknown.",
+      "evidence": "Fictional QuartzLane incident QL-86 at 15:59 UTC: severity SEV3 and state monitoring. Impact ran 15:41-15:49 UTC: 72 of 240 jobs failed and 9 of 60 tenants were affected. Routing moved from east to west at 15:46 UTC; errors returned to baseline at 15:49 UTC. Closure requires three healthy checks at five-minute intervals after baseline, followed by incident-commander approval. Healthy checks at 15:54 and 15:59 UTC passed; the third is scheduled for 16:04 UTC and has not occurred. Incident commander Devika Rao alone approves closure; communications lead Pavel Nix publishes updates but cannot approve closure. Root cause and data-reconciliation result are unknown. Revenue impact and tenant identities are not recorded. No closure approval has been given.",
+      "answer": "- QL-86 is SEV3 in monitoring at 15:59 UTC. Two of three healthy checks passed; the next check is 16:04 UTC, and closure also requires incident-commander approval.\n- Impact was 72/240 failed jobs (30%) and 9/60 affected tenants (15%) over 8 minutes.\n- Impact began at 15:41 UTC; routing moved east to west at 15:46 UTC; errors returned to baseline at 15:49 UTC.\n- Devika Rao is incident commander and approves closure; Pavel Nix leads communications and cannot approve closure.\n- Root cause and the data-reconciliation result are unknown. This is a read-only handoff; no routing, closure, or message operation was performed.",
+      "original_question": "What should the next on-call engineer receive in the QL-86 handoff at 15:59 UTC?",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-failover-p01",
+          "question": "Please hand QL-86 to the next engineer using the current monitoring snapshot.",
+          "should_reuse": true,
+          "reason": "This remains the same engineering handoff at the same snapshot. The standing five-bullet requirement preserves all impact arithmetic, routing direction, checks and approval conditions, role distinctions, unknowns, and no-action status."
+        },
+        {
+          "id": "r3-failover-p02",
+          "question": "What does the incoming on-call need to know about the QuartzLane incident and the remaining closure requirements?",
+          "should_reuse": true,
+          "reason": "This remains the same engineering handoff at the same snapshot. The standing five-bullet requirement preserves all impact arithmetic, routing direction, checks and approval conditions, role distinctions, unknowns, and no-action status."
+        },
+        {
+          "id": "r3-failover-p03",
+          "question": "Prepare the incident transfer note from the recorded QL-86 state, including who owns the decision to close.",
+          "should_reuse": true,
+          "reason": "This remains the same engineering handoff at the same snapshot. The standing five-bullet requirement preserves all impact arithmetic, routing direction, checks and approval conditions, role distinctions, unknowns, and no-action status."
+        },
+        {
+          "id": "r3-failover-p04",
+          "question": "How should the outgoing engineer explain QL-86's impact, mitigation, and current recovery gate?",
+          "should_reuse": true,
+          "reason": "This remains the same engineering handoff at the same snapshot. The standing five-bullet requirement preserves all impact arithmetic, routing direction, checks and approval conditions, role distinctions, unknowns, and no-action status."
+        },
+        {
+          "id": "r3-failover-p05",
+          "question": "We are changing shifts at 15:59 UTC. Give the incoming team the current QuartzLane handoff.",
+          "should_reuse": true,
+          "reason": "This remains the same engineering handoff at the same snapshot. The standing five-bullet requirement preserves all impact arithmetic, routing direction, checks and approval conditions, role distinctions, unknowns, and no-action status."
+        },
+        {
+          "id": "r3-failover-p06",
+          "question": "Write the QL-86 status handoff so the next engineer understands the evidence and who must act before closure.",
+          "should_reuse": true,
+          "reason": "This remains the same engineering handoff at the same snapshot. The standing five-bullet requirement preserves all impact arithmetic, routing direction, checks and approval conditions, role distinctions, unknowns, and no-action status."
+        },
+        {
+          "id": "r3-failover-p07",
+          "question": "Explain the current QuartzLane monitoring state and the next checkpoint for the incident handover.",
+          "should_reuse": true,
+          "reason": "This remains the same engineering handoff at the same snapshot. The standing five-bullet requirement preserves all impact arithmetic, routing direction, checks and approval conditions, role distinctions, unknowns, and no-action status."
+        },
+        {
+          "id": "r3-failover-p08",
+          "question": "Can you summarize QL-86 for the next on-call, preserving the impact calculations and the approval boundary?",
+          "should_reuse": true,
+          "reason": "This remains the same engineering handoff at the same snapshot. The standing five-bullet requirement preserves all impact arithmetic, routing direction, checks and approval conditions, role distinctions, unknowns, and no-action status."
+        },
+        {
+          "id": "r3-failover-p09",
+          "question": "What is the accurate handoff for the QuartzLane incident from this snapshot?",
+          "should_reuse": true,
+          "reason": "This remains the same engineering handoff at the same snapshot. The standing five-bullet requirement preserves all impact arithmetic, routing direction, checks and approval conditions, role distinctions, unknowns, and no-action status."
+        },
+        {
+          "id": "r3-failover-p10",
+          "question": "Give the shift-transfer briefing for QL-86, including the routing history and what remains uncertain.",
+          "should_reuse": true,
+          "reason": "This remains the same engineering handoff at the same snapshot. The standing five-bullet requirement preserves all impact arithmetic, routing direction, checks and approval conditions, role distinctions, unknowns, and no-action status."
+        },
+        {
+          "id": "r3-failover-n01",
+          "question": "The current roles are reversed: Pavel Nix is incident commander and Devika Rao handles communications. Give the handoff under those assignments.",
+          "should_reuse": false,
+          "reason": "The cached answer grants closure authority to Devika and denies it to Pavel, reversing the newly specified role relationship."
+        },
+        {
+          "id": "r3-failover-n02",
+          "question": "The routing record was corrected: traffic moved from west to east at 15:46 UTC. Give the updated handoff.",
+          "should_reuse": false,
+          "reason": "The cached east-to-west routing direction is wrong under the corrected source/destination relation."
+        },
+        {
+          "id": "r3-failover-n03",
+          "question": "A revised runbook requires only two healthy checks before commander approval. Explain the remaining closure gates at 15:59 UTC.",
+          "should_reuse": false,
+          "reason": "Both required checks have now passed. The cached answer incorrectly requires an additional third check at 16:04 UTC."
+        },
+        {
+          "id": "r3-failover-n04",
+          "question": "The failed-job denominator was corrected to 360 total jobs, with 72 failures. Give the current handoff and calculations.",
+          "should_reuse": false,
+          "reason": "The failure fraction becomes 20%, while the cached answer reports 72/240 and 30%."
+        },
+        {
+          "id": "r3-failover-n05",
+          "question": "It is now 16:05 UTC; the 16:04 check passed and Devika approved closure. Give the current incident state and handoff.",
+          "should_reuse": false,
+          "reason": "The cached monitoring state and pending third-check/approval gates are stale after the stipulated successful check and closure approval."
+        },
+        {
+          "id": "r3-failover-n06",
+          "question": "Investigation now confirms the root cause was a faulty route-weight deployment. Give the updated handoff.",
+          "should_reuse": false,
+          "reason": "The cached answer says root cause is unknown, contradicting the newly confirmed finding."
+        },
+        {
+          "id": "r3-failover-n07",
+          "question": "Add the exact revenue loss to the handoff and explicitly say it is unknown if the evidence cannot support a calculation.",
+          "should_reuse": false,
+          "reason": "Revenue impact is an additional required unknown that the cached answer omits; its root-cause and reconciliation unknowns do not answer the financial-impact question."
+        },
+        {
+          "id": "r3-failover-n08",
+          "question": "Send Pavel the handoff and record QL-86 as closed, then summarize what you did.",
+          "should_reuse": false,
+          "reason": "The task requires messaging and a state mutation. A cached read-only handoff cannot execute or confirm either, and the existing closure gates remain unmet."
+        },
+        {
+          "id": "r3-failover-n09",
+          "question": "Return the complete QL-86 handoff as one JSON object with state, impact, timeline, roles, and unknowns keys.",
+          "should_reuse": false,
+          "reason": "The cached five-bullet text does not meet the explicitly required JSON-object format and keys."
+        },
+        {
+          "id": "r3-failover-n10",
+          "question": "Replace the engineer handoff with exactly two public-facing sentences that contain no internal names or job/tenant counts.",
+          "should_reuse": false,
+          "reason": "The cached five bullets include internal names and counts and violate both the two-sentence format and the changed audience scope."
+        }
+      ]
+    },
+    {
+      "id": "r3-package",
+      "family": "release-readiness",
+      "instructions": "Use the fictional internal-release record only. Unless explicitly overridden, output exactly four labeled lines beginning decision:, passed:, remaining:, and unknowns:. Always include the internal version and decision, test/package/canary evidence with arithmetic, ordered remaining gates and independent reviewer authority, then unknown publication time and no-action status. Do not approve, sign, or publish. Mark extra required absent facts unknown.",
+      "evidence": "Fictional Tideglass 0.9.8 internal-preview snapshot: load tests passed 192/192. Package size is 56 MiB with a maximum of 64 MiB. Three of four canary checks passed; the fourth is pending. Required next gates are strictly ordered: finish the fourth canary check, obtain independent digest review, approve the changelog, then obtain release-captain sign-off. Package author Nell Sato may supply the digest but cannot independently approve her own package. Reviewer Arun Voss performs that independent review; none is recorded yet. Changelog approval and captain sign-off are also absent. This record covers internal preview only and provides no public-production release qualification. Publication time, digest-signature algorithm, and probabilistic failure estimates are unrecorded.",
+      "answer": "decision: Tideglass 0.9.8 internal preview is not ready; the fourth canary check and subsequent approval gates remain open.\npassed: Load tests passed 192/192; 56 MiB is within the 64 MiB cap with 8 MiB headroom; 3/4 canary checks passed (75%), with the fourth pending.\nremaining: Finish the fourth canary check, then Arun Voss independently reviews the digest, then approve the changelog, then obtain release-captain sign-off. Author Nell Sato supplies the digest but cannot self-approve it.\nunknowns: Publication time is unknown. This is read-only guidance; no review, approval, signing, or publication was performed.",
+      "original_question": "Can Tideglass 0.9.8 enter internal preview from this snapshot, and what does the release handoff need to say?",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-package-p01",
+          "question": "Please assess the current Tideglass internal-preview candidate and prepare its readiness handoff.",
+          "should_reuse": true,
+          "reason": "The natural wording still asks for the same internal-preview assessment. The fixed four labeled lines require the same version scope, arithmetic, ordered gates, author/reviewer separation, publication uncertainty, and read-only status."
+        },
+        {
+          "id": "r3-package-p02",
+          "question": "What should the release captain know before deciding whether this 0.9.8 internal preview can proceed?",
+          "should_reuse": true,
+          "reason": "The natural wording still asks for the same internal-preview assessment. The fixed four labeled lines require the same version scope, arithmetic, ordered gates, author/reviewer separation, publication uncertainty, and read-only status."
+        },
+        {
+          "id": "r3-package-p03",
+          "question": "Give the readiness explanation for the recorded Tideglass candidate, including the evidence and unfinished gates.",
+          "should_reuse": true,
+          "reason": "The natural wording still asks for the same internal-preview assessment. The fixed four labeled lines require the same version scope, arithmetic, ordered gates, author/reviewer separation, publication uncertainty, and read-only status."
+        },
+        {
+          "id": "r3-package-p04",
+          "question": "Is the current internal-preview package ready to ship through the documented process? Write the release handoff.",
+          "should_reuse": true,
+          "reason": "The natural wording still asks for the same internal-preview assessment. The fixed four labeled lines require the same version scope, arithmetic, ordered gates, author/reviewer separation, publication uncertainty, and read-only status."
+        },
+        {
+          "id": "r3-package-p05",
+          "question": "We need a status note for Tideglass 0.9.8 internal preview. What passed, what remains, and who may approve the digest?",
+          "should_reuse": true,
+          "reason": "The natural wording still asks for the same internal-preview assessment. The fixed four labeled lines require the same version scope, arithmetic, ordered gates, author/reviewer separation, publication uncertainty, and read-only status."
+        },
+        {
+          "id": "r3-package-p06",
+          "question": "Explain the current internal-preview release position so the next operator can follow the remaining gates.",
+          "should_reuse": true,
+          "reason": "The natural wording still asks for the same internal-preview assessment. The fixed four labeled lines require the same version scope, arithmetic, ordered gates, author/reviewer separation, publication uncertainty, and read-only status."
+        },
+        {
+          "id": "r3-package-p07",
+          "question": "Prepare the Tideglass candidate assessment from this snapshot, preserving the quantitative checks and approval order.",
+          "should_reuse": true,
+          "reason": "The natural wording still asks for the same internal-preview assessment. The fixed four labeled lines require the same version scope, arithmetic, ordered gates, author/reviewer separation, publication uncertainty, and read-only status."
+        },
+        {
+          "id": "r3-package-p08",
+          "question": "What is the correct go-or-wait guidance for the recorded 0.9.8 internal preview?",
+          "should_reuse": true,
+          "reason": "The natural wording still asks for the same internal-preview assessment. The fixed four labeled lines require the same version scope, arithmetic, ordered gates, author/reviewer separation, publication uncertainty, and read-only status."
+        },
+        {
+          "id": "r3-package-p09",
+          "question": "Write the internal release-readiness note for Tideglass, including the author/reviewer separation.",
+          "should_reuse": true,
+          "reason": "The natural wording still asks for the same internal-preview assessment. The fixed four labeled lines require the same version scope, arithmetic, ordered gates, author/reviewer separation, publication uncertainty, and read-only status."
+        },
+        {
+          "id": "r3-package-p10",
+          "question": "Use the current Tideglass record to brief the release operator on readiness and the path still required before publication.",
+          "should_reuse": true,
+          "reason": "The natural wording still asks for the same internal-preview assessment. The fixed four labeled lines require the same version scope, arithmetic, ordered gates, author/reviewer separation, publication uncertainty, and read-only status."
+        },
+        {
+          "id": "r3-package-n01",
+          "question": "The package was remeasured at 68 MiB under the same 64 MiB cap. Give the current internal-preview assessment.",
+          "should_reuse": false,
+          "reason": "The package now exceeds the cap by 4 MiB; the cached passed size check and 8 MiB headroom are false."
+        },
+        {
+          "id": "r3-package-n02",
+          "question": "The fourth canary check has now passed. Give the current release-readiness note and remaining gates.",
+          "should_reuse": false,
+          "reason": "The cached answer still reports 3/4 checks, 75% completion, and an outstanding fourth check instead of 4/4 and 100%."
+        },
+        {
+          "id": "r3-package-n03",
+          "question": "The recorded author is Arun Voss and the independent reviewer is Nell Sato. Explain the current release responsibilities.",
+          "should_reuse": false,
+          "reason": "The cached answer reverses the amended author/reviewer roles and assigns the independent approval to the wrong person."
+        },
+        {
+          "id": "r3-package-n04",
+          "question": "The amended procedure requires independent digest review before the fourth canary check, then changelog approval and captain sign-off. Give that release handoff.",
+          "should_reuse": false,
+          "reason": "The cached plan puts the canary check before digest review, contrary to the newly specified ordering relation."
+        },
+        {
+          "id": "r3-package-n05",
+          "question": "Assess whether Tideglass 0.9.8 is qualified for public production release, explicitly identifying any unsupported production gates.",
+          "should_reuse": false,
+          "reason": "The evidence and cached answer cover internal preview only. They cannot establish public-production qualification or enumerate its unknown requirements."
+        },
+        {
+          "id": "r3-package-n06",
+          "question": "Add the digest-signature algorithm to the readiness note and explicitly mark it unknown when not recorded.",
+          "should_reuse": false,
+          "reason": "The signature algorithm is a new required unknown absent from the cached answer; unknown publication time is not a substitute."
+        },
+        {
+          "id": "r3-package-n07",
+          "question": "Using the three passing canary checks, calculate the exact probability that the fourth will fail, stating unknown if the record cannot support it.",
+          "should_reuse": false,
+          "reason": "An exact failure probability is unsupported by the recorded check counts. The cached completion percentage does not answer or qualify this distinct probability calculation."
+        },
+        {
+          "id": "r3-package-n08",
+          "question": "Approve the digest as Nell and publish the internal preview, then report the completed release.",
+          "should_reuse": false,
+          "reason": "The task requires approval and publication actions, including author self-approval forbidden by the record. Cached read-only guidance cannot perform or attest them."
+        },
+        {
+          "id": "r3-package-n09",
+          "question": "Return the full readiness assessment as JSON with exactly decision, passed, remaining, and unknowns properties.",
+          "should_reuse": false,
+          "reason": "The cached labeled text lines are not the required JSON object."
+        },
+        {
+          "id": "r3-package-n10",
+          "question": "The new policy allows the package author to self-approve the digest and removes independent review entirely. Explain the remaining gates under that policy.",
+          "should_reuse": false,
+          "reason": "The cached mandatory independent review and prohibition on author self-approval no longer match the changed approval condition."
+        }
+      ]
+    },
+    {
+      "id": "r3-seat-refund",
+      "family": "refund-eligibility",
+      "instructions": "Apply only this fictional seat-refund policy. Unless explicitly overridden, provide exactly four numbered lines: eligibility and elapsed-day test; never-activated seat count and refundable arithmetic; excluded charges and reconciliation to total; original-payer route, unknown settlement time and no-refund statement. No transaction may be executed. Mark extra requested missing facts unknown.",
+      "evidence": "Fictional SaffronBoard policy SR-27: monthly-seat requests qualify within 10 elapsed days after purchase, including exactly day 10. Only seats that have never been activated are refundable; deactivating a previously activated seat does not make it refundable. Refunds return only to the original payer. Administrative fees are nonrefundable. Lantern Row invoice SB-219: 7 seats at 18 credits each, plus a 9-credit administrative fee, total 135 credits. Two seats have been activated and five never activated. Purchase: 2026-06-03 15:00 UTC; request: 2026-06-11 15:00 UTC. Original payer is Celia Dune. There is no prior refund. Settlement time, issuer fee, and payment-card suffix are not recorded.",
+      "answer": "1. SB-219 qualifies for a partial monthly-seat refund: the request is 8 elapsed days after purchase, within the inclusive 10-day limit.\n2. Five never-activated seats are refundable: 5 x 18 = 90 credits.\n3. Excluded charges are 2 activated seats x 18 = 36 credits plus the 9-credit administrative fee, totaling 45; 90 refundable + 45 excluded = 135 credits paid.\n4. Any refund must return to original payer Celia Dune. Settlement time is unknown; this is read-only guidance and no refund was issued.",
+      "original_question": "How should we explain Lantern Row's SB-219 refund eligibility and amount from the recorded request?",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-seat-refund-p01",
+          "question": "Please prepare the refund explanation for Lantern Row's current seat-purchase request.",
+          "should_reuse": true,
+          "reason": "The same partial-refund explanation is requested. The standing four-line requirement keeps plan/window eligibility, eight-day arithmetic, never-activated seat condition, charge reconciliation, original-payer route, settlement uncertainty, and no-action scope."
+        },
+        {
+          "id": "r3-seat-refund-p02",
+          "question": "What is the correct eligibility and amount breakdown for SB-219 under the SaffronBoard policy?",
+          "should_reuse": true,
+          "reason": "The same partial-refund explanation is requested. The standing four-line requirement keeps plan/window eligibility, eight-day arithmetic, never-activated seat condition, charge reconciliation, original-payer route, settlement uncertainty, and no-action scope."
+        },
+        {
+          "id": "r3-seat-refund-p03",
+          "question": "Lantern Row asks what it can get back for these seats. Explain the policy outcome and where any refund would go.",
+          "should_reuse": true,
+          "reason": "The same partial-refund explanation is requested. The standing four-line requirement keeps plan/window eligibility, eight-day arithmetic, never-activated seat condition, charge reconciliation, original-payer route, settlement uncertainty, and no-action scope."
+        },
+        {
+          "id": "r3-seat-refund-p04",
+          "question": "Write the read-only refund assessment for the recorded SB-219 invoice and request time.",
+          "should_reuse": true,
+          "reason": "The same partial-refund explanation is requested. The standing four-line requirement keeps plan/window eligibility, eight-day arithmetic, never-activated seat condition, charge reconciliation, original-payer route, settlement uncertainty, and no-action scope."
+        },
+        {
+          "id": "r3-seat-refund-p05",
+          "question": "How should support describe the refundable and excluded parts of Lantern Row's purchase?",
+          "should_reuse": true,
+          "reason": "The same partial-refund explanation is requested. The standing four-line requirement keeps plan/window eligibility, eight-day arithmetic, never-activated seat condition, charge reconciliation, original-payer route, settlement uncertainty, and no-action scope."
+        },
+        {
+          "id": "r3-seat-refund-p06",
+          "question": "Give the customer-facing eligibility explanation for SB-219, preserving the timing test and seat arithmetic.",
+          "should_reuse": true,
+          "reason": "The same partial-refund explanation is requested. The standing four-line requirement keeps plan/window eligibility, eight-day arithmetic, never-activated seat condition, charge reconciliation, original-payer route, settlement uncertainty, and no-action scope."
+        },
+        {
+          "id": "r3-seat-refund-p07",
+          "question": "Use the current record to explain whether Lantern Row qualifies and how the refund total is determined.",
+          "should_reuse": true,
+          "reason": "The same partial-refund explanation is requested. The standing four-line requirement keeps plan/window eligibility, eight-day arithmetic, never-activated seat condition, charge reconciliation, original-payer route, settlement uncertainty, and no-action scope."
+        },
+        {
+          "id": "r3-seat-refund-p08",
+          "question": "What should the refund reviewer tell Lantern Row about this request, the excluded charges, and the payment route?",
+          "should_reuse": true,
+          "reason": "The same partial-refund explanation is requested. The standing four-line requirement keeps plan/window eligibility, eight-day arithmetic, never-activated seat condition, charge reconciliation, original-payer route, settlement uncertainty, and no-action scope."
+        },
+        {
+          "id": "r3-seat-refund-p09",
+          "question": "Prepare the SB-219 support reply on partial refund eligibility, amount, and settlement expectations.",
+          "should_reuse": true,
+          "reason": "The same partial-refund explanation is requested. The standing four-line requirement keeps plan/window eligibility, eight-day arithmetic, never-activated seat condition, charge reconciliation, original-payer route, settlement uncertainty, and no-action scope."
+        },
+        {
+          "id": "r3-seat-refund-p10",
+          "question": "Explain the current SaffronBoard seat-refund decision for Lantern Row without performing a transaction.",
+          "should_reuse": true,
+          "reason": "The same partial-refund explanation is requested. The standing four-line requirement keeps plan/window eligibility, eight-day arithmetic, never-activated seat condition, charge reconciliation, original-payer route, settlement uncertainty, and no-action scope."
+        },
+        {
+          "id": "r3-seat-refund-n01",
+          "question": "The request was received on 2026-06-14 at 15:00 UTC instead. Explain current eligibility and the available refund.",
+          "should_reuse": false,
+          "reason": "The request is now 11 elapsed days after purchase and outside the inclusive ten-day limit; the cached eight-day eligible decision is false."
+        },
+        {
+          "id": "r3-seat-refund-n02",
+          "question": "Three seats have been activated and four have never been activated. Give the current eligibility and amount breakdown.",
+          "should_reuse": false,
+          "reason": "The refundable amount becomes 4 x 18 = 72 credits and excluded charges 63, contradicting the cached five seats, 90 refundable, and 45 excluded."
+        },
+        {
+          "id": "r3-seat-refund-n03",
+          "question": "The 18-credit price is for the entire seven-seat bundle rather than per seat, while the 9-credit fee remains. Explain the supported refund amount or any unknown allocation.",
+          "should_reuse": false,
+          "reason": "The price-to-seat relationship changed. The cached per-seat multiplication and 135-credit total no longer apply, and allocation details require separate support."
+        },
+        {
+          "id": "r3-seat-refund-n04",
+          "question": "A revised exception makes previously activated seats refundable after deactivation; both activated seats are now deactivated. Give the updated refund breakdown.",
+          "should_reuse": false,
+          "reason": "All seven seats are now refundable under the changed condition, for 126 credits with only the 9-credit fee excluded; the cached 90/45 split is wrong."
+        },
+        {
+          "id": "r3-seat-refund-n05",
+          "question": "The request was received exactly on 2026-06-13 at 15:00 UTC. Give the eligibility explanation including elapsed days.",
+          "should_reuse": false,
+          "reason": "Eligibility remains true, but the required elapsed-day value is now 10. The cached explicit eight-day calculation is stale."
+        },
+        {
+          "id": "r3-seat-refund-n06",
+          "question": "The administrative fee was waived at purchase, so total paid was 126 credits. Give the current refund breakdown.",
+          "should_reuse": false,
+          "reason": "The cached 9-credit fee, 45 excluded credits, and 135 total paid are false; the corrected excluded amount is 36 and total 126."
+        },
+        {
+          "id": "r3-seat-refund-n07",
+          "question": "The amended policy routes refunds to the account's current finance administrator rather than the original payer. Explain where this refund must go and any unknown recipient.",
+          "should_reuse": false,
+          "reason": "The cached mandatory original-payer route to Celia Dune contradicts the revised recipient condition; the new administrator identity is not recorded."
+        },
+        {
+          "id": "r3-seat-refund-n08",
+          "question": "Include the exact issuer fee in the breakdown and mark it unknown if the record cannot support the calculation.",
+          "should_reuse": false,
+          "reason": "Issuer fee is a newly required unknown omitted by the cached response; the administrative fee is a separate charge and cannot substitute for it."
+        },
+        {
+          "id": "r3-seat-refund-n09",
+          "question": "Issue the 90-credit refund now and include its payment receipt identifier in the customer reply.",
+          "should_reuse": false,
+          "reason": "The new task requires a refund transaction and receipt. Cached read-only guidance performs neither and supplies no receipt evidence."
+        },
+        {
+          "id": "r3-seat-refund-n10",
+          "question": "Give the complete refund explanation in exactly two sentences, without numbered lines.",
+          "should_reuse": false,
+          "reason": "The cached four numbered lines violate the explicitly changed sentence count and format."
+        }
+      ]
+    },
+    {
+      "id": "r3-maintenance",
+      "family": "shared-broker-lifecycle",
+      "instructions": "Use the fictional CoveBridge record only. Unless explicitly overridden, give exactly five numbered steps covering owner/reporter authority and current process/listener/scope/counts; quiesce and drain before reconciliation; uncertain claim and receipt meaning without forced clear/retry; detach then stop; and old-process/listener replacement gates, unknown ETA and no-action status. Guidance is read-only. No process, client, or claim operation may be performed. Mark additional required missing facts unknown.",
+      "evidence": "Fictional CoveBridge maintenance runbook CB-58: broker owner Priya Gale must authorize a maintenance gate; status reporter Jalen Orr cannot authorize it. After that gate, quiesce writers and drain queued writes to zero before reconciling uncertain outcomes from durable evidence. Then detach every client and stop the broker. Start a same-host replacement using the existing state only after the old process exits and its listener is free. Elapsed time alone never authorizes forced claim clearing or retry. Snapshot at 18:26 UTC: process 9842 owns 127.0.0.1:5526 for scope atlas-drafts; 3 clients remain attached and 5 writes are queued. Claim outline-6 has an unknown outcome. Durable journal entry J-341 records only a reservation, not a published artifact or a confirmed outcome. Maintenance authorization has not been recorded. Recovery ETA, per-second write throughput, and cross-host recovery guarantees are not recorded.",
+      "answer": "1. Owner Priya Gale must authorize maintenance; reporter Jalen Orr cannot. Existing process 9842 serves atlas-drafts on 127.0.0.1:5526, with 3 clients attached and 5 queued writes.\n2. After authorization, quiesce writers and drain the 5 queued writes to zero before reconciling uncertain outcomes.\n3. Reconcile unknown outline-6 from durable evidence. J-341 proves only a reservation, not a published artifact or outcome; do not force-clear or retry the claim merely because time elapsed.\n4. After reconciliation, detach all 3 clients, then stop the broker.\n5. A same-host replacement using existing state must wait for process 9842 to exit and its listener to become free. Recovery ETA is unknown. This is read-only guidance; no maintenance, write, claim, client, or process operation was performed.",
+      "original_question": "What should the operator handoff say about safely maintaining the shared CoveBridge broker in the recorded atlas-drafts state?",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-maintenance-p01",
+          "question": "Prepare the maintenance handoff for this shared CoveBridge broker from the current snapshot.",
+          "should_reuse": true,
+          "reason": "This is the same shared-broker handoff in natural engineering language. Its standing five-step requirement preserves authority roles, snapshot counts, drain-before-reconciliation order, uncertainty and evidence limits, detach/stop/replacement gates, unknown ETA, and no-action scope."
+        },
+        {
+          "id": "r3-maintenance-p02",
+          "question": "How should the next operator handle the recorded atlas-drafts broker state and the uncertain claim?",
+          "should_reuse": true,
+          "reason": "This is the same shared-broker handoff in natural engineering language. Its standing five-step requirement preserves authority roles, snapshot counts, drain-before-reconciliation order, uncertainty and evidence limits, detach/stop/replacement gates, unknown ETA, and no-action scope."
+        },
+        {
+          "id": "r3-maintenance-p03",
+          "question": "What is the documented safe path from the present CoveBridge state to a replacement process?",
+          "should_reuse": true,
+          "reason": "This is the same shared-broker handoff in natural engineering language. Its standing five-step requirement preserves authority roles, snapshot counts, drain-before-reconciliation order, uncertainty and evidence limits, detach/stop/replacement gates, unknown ETA, and no-action scope."
+        },
+        {
+          "id": "r3-maintenance-p04",
+          "question": "Please brief the maintenance operator on authority, drain ordering, uncertainty, and restart gates for this broker.",
+          "should_reuse": true,
+          "reason": "This is the same shared-broker handoff in natural engineering language. Its standing five-step requirement preserves authority roles, snapshot counts, drain-before-reconciliation order, uncertainty and evidence limits, detach/stop/replacement gates, unknown ETA, and no-action scope."
+        },
+        {
+          "id": "r3-maintenance-p05",
+          "question": "Give the read-only operational handoff for the current atlas-drafts shared broker.",
+          "should_reuse": true,
+          "reason": "This is the same shared-broker handoff in natural engineering language. Its standing five-step requirement preserves authority roles, snapshot counts, drain-before-reconciliation order, uncertainty and evidence limits, detach/stop/replacement gates, unknown ETA, and no-action scope."
+        },
+        {
+          "id": "r3-maintenance-p06",
+          "question": "We need a maintenance plan for the broker at 18:26 UTC. Explain the required sequence and evidence limits.",
+          "should_reuse": true,
+          "reason": "This is the same shared-broker handoff in natural engineering language. Its standing five-step requirement preserves authority roles, snapshot counts, drain-before-reconciliation order, uncertainty and evidence limits, detach/stop/replacement gates, unknown ETA, and no-action scope."
+        },
+        {
+          "id": "r3-maintenance-p07",
+          "question": "Write the lifecycle handoff so the next operator knows who can authorize maintenance and when replacement is allowed.",
+          "should_reuse": true,
+          "reason": "This is the same shared-broker handoff in natural engineering language. Its standing five-step requirement preserves authority roles, snapshot counts, drain-before-reconciliation order, uncertainty and evidence limits, detach/stop/replacement gates, unknown ETA, and no-action scope."
+        },
+        {
+          "id": "r3-maintenance-p08",
+          "question": "What does CB-58 require for this broker's current clients, queued writes, and unknown outline-6 outcome?",
+          "should_reuse": true,
+          "reason": "This is the same shared-broker handoff in natural engineering language. Its standing five-step requirement preserves authority roles, snapshot counts, drain-before-reconciliation order, uncertainty and evidence limits, detach/stop/replacement gates, unknown ETA, and no-action scope."
+        },
+        {
+          "id": "r3-maintenance-p09",
+          "question": "Explain the current CoveBridge maintenance state and the ordered work needed before a same-host restart.",
+          "should_reuse": true,
+          "reason": "This is the same shared-broker handoff in natural engineering language. Its standing five-step requirement preserves authority roles, snapshot counts, drain-before-reconciliation order, uncertainty and evidence limits, detach/stop/replacement gates, unknown ETA, and no-action scope."
+        },
+        {
+          "id": "r3-maintenance-p10",
+          "question": "Summarize the broker handover from this snapshot, preserving the owner/reporter distinction and the uncertain-result rule.",
+          "should_reuse": true,
+          "reason": "This is the same shared-broker handoff in natural engineering language. Its standing five-step requirement preserves authority roles, snapshot counts, drain-before-reconciliation order, uncertainty and evidence limits, detach/stop/replacement gates, unknown ETA, and no-action scope."
+        },
+        {
+          "id": "r3-maintenance-n01",
+          "question": "Jalen Orr is now broker owner and Priya Gale is status reporter. Give the maintenance handoff under those assignments.",
+          "should_reuse": false,
+          "reason": "The cached authorization relation is inverted: it names Priya as owner and denies Jalen authority, contrary to the changed roles."
+        },
+        {
+          "id": "r3-maintenance-n02",
+          "question": "The amended runbook requires uncertain-outcome reconciliation before draining queued writes. Give the new maintenance sequence.",
+          "should_reuse": false,
+          "reason": "The cached plan explicitly drains before reconciliation, reversing the newly specified ordering relation."
+        },
+        {
+          "id": "r3-maintenance-n03",
+          "question": "A verified artifact record now establishes that J-341 certifies a completed outline-6 publication rather than just a reservation. Give the current handoff.",
+          "should_reuse": false,
+          "reason": "The cached answer says J-341 is only a reservation and outline-6 remains unknown; the stipulated new evidence invalidates those statements."
+        },
+        {
+          "id": "r3-maintenance-n04",
+          "question": "The revised policy permits forced clearing and retry of an uncertain claim after 7 minutes even without reconciliation. Explain that current policy in the handoff.",
+          "should_reuse": false,
+          "reason": "The cached no-timeout-bypass rule contradicts the explicitly changed condition that now permits clearing and retry after seven minutes."
+        },
+        {
+          "id": "r3-maintenance-n05",
+          "question": "All clients have detached, but 5 writes remain queued. Give the current-state maintenance handoff.",
+          "should_reuse": false,
+          "reason": "The cached answer still reports three attached clients and treats detaching all three as outstanding."
+        },
+        {
+          "id": "r3-maintenance-n06",
+          "question": "There are now 7 queued writes with the same attached clients and process. Give the current handoff.",
+          "should_reuse": false,
+          "reason": "The cached state and drain quantity say five queued writes; both are stale under the updated count of seven."
+        },
+        {
+          "id": "r3-maintenance-n07",
+          "question": "Plan a replacement on another host with a fresh empty state directory and explain the continuity guarantees, marking unsupported guarantees unknown.",
+          "should_reuse": false,
+          "reason": "The cached procedure covers same-host replacement with existing state. It cannot establish cross-host fresh-state continuity or explicitly qualify the required unknown guarantees."
+        },
+        {
+          "id": "r3-maintenance-n08",
+          "question": "Calculate the exact per-second write throughput for the queued work and explicitly state unknown if measurement data are missing.",
+          "should_reuse": false,
+          "reason": "No elapsed write measurements are recorded. The cached queue count and unknown recovery ETA do not supply or qualify the newly required throughput calculation."
+        },
+        {
+          "id": "r3-maintenance-n09",
+          "question": "Authorize maintenance, stop process 9842, and start its replacement now; report the operations as completed.",
+          "should_reuse": false,
+          "reason": "This requires authorization and process mutations that cached guidance cannot perform or attest, with existing drain, claim, and client gates still unmet."
+        },
+        {
+          "id": "r3-maintenance-n10",
+          "question": "Return the full maintenance handoff as exactly five newline-delimited JSON objects, one per step, with no numbered text.",
+          "should_reuse": false,
+          "reason": "The cached five numbered prose lines are not the required newline-delimited JSON objects."
+        }
+      ]
+    }
+  ]
+}

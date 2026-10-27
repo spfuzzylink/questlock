@@ -101,6 +101,20 @@ func TestReuseConfigRequiresExplicitBoundedLocalPolicy(t *testing.T) {
 
 const acceptingVerdict = `{"verdict":"accept","same_intent":true,"same_facts":true,"same_constraints":true,"answer_supported":true}`
 
+func TestDiagnosticSharedWorkPreservesLegacyJSONAndAttribution(t *testing.T) {
+	result := ValidityResult{}
+	encoded, _ := json.Marshal(result)
+	if strings.Contains(string(encoded), "shared_work") {
+		t.Fatal("legacy verdict shape changed")
+	}
+	result.SharedWork = true
+	encoded, _ = json.Marshal(result)
+	var restored ValidityResult
+	if !strings.Contains(string(encoded), `"shared_work":true`) || json.Unmarshal(encoded, &restored) != nil || !restored.SharedWork {
+		t.Fatal("diagnostic shared attribution lost")
+	}
+}
+
 func TestParseVerdictAcceptsOnlyExplicitDecisionFields(t *testing.T) {
 	got, err := ParseVerdict([]byte(acceptingVerdict))
 	if err != nil || !got.Accepted() || got.InputTokens != nil || got.OutputTokens != nil || got.Reused || got.DurationMS != 0 || got.ReceiptKey != "" {
@@ -146,6 +160,7 @@ func TestParseVerdictRejectsAmbiguousOrModelAuthoredExecutionEvidence(t *testing
 		"duration":                    with(`"duration_ms":0`),
 		"receipt":                     with(`"receipt_key":"forged"`),
 		"reuse":                       with(`"reused":true`),
+		"shared work":                 with(`"shared_work":true`),
 		"trailing object":             acceptingVerdict + `{}`,
 		"trailing value":              acceptingVerdict + `true`,
 		"trailing junk":               acceptingVerdict + " rubbish",
@@ -288,6 +303,28 @@ func TestProtectedTermsNaturalLanguageStillRequiresIndependentValidity(t *testin
 	// be rejected. Recognizing arbitrary paraphrases is the verifier's job.
 	if reasons := CheckProtectedTerms("unused labels", "labels not used"); !slices.Contains(reasons, "protected_negations_changed") {
 		t.Fatal("conservative negation policy changed without a separate decision")
+	}
+}
+
+func TestProtectedTermsVersionTwoConservativelyRejectsReorderedTerms(t *testing.T) {
+	// The published lexical policy compares extraction order. Equal term bags
+	// can describe different relationships, so reordered terms remain withheld
+	// before validity inference rather than weakening the established default.
+	for _, test := range []struct{ name, code, original, reordered string }{
+		{"numbers", "protected_numbers_changed", "copy 5 then 6", "copy 6 then 5"},
+		{"identifiers", "protected_identifiers_changed", "Compare API and CLI.", "Compare CLI and API."},
+		{"names", "protected_identifiers_changed", "Explain whether Alice sends OPS-17 to Bob.", "Explain whether Bob sends OPS-17 to Alice."},
+		{"urls", "protected_urls_changed", "Compare https://example.invalid/a and https://example.invalid/b", "Compare https://example.invalid/b and https://example.invalid/a"},
+		{"quotes", "protected_quotes_changed", `Compare "alpha" and "beta".`, `Compare "beta" and "alpha".`},
+		{"negations", "protected_negations_changed", "Compare not and never.", "Compare never and not."},
+		{"operators", "protected_operators_changed", "Compare < and >.", "Compare > and <."},
+		{"units", "protected_units_changed", "Compare 5 mg and 5 g.", "Compare 5 g and 5 mg."},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			if reasons := CheckProtectedTerms(test.original, test.reordered); !slices.Contains(reasons, test.code) {
+				t.Fatalf("published ordered guard changed: %q -> %q: %v", test.original, test.reordered, reasons)
+			}
+		})
 	}
 }
 

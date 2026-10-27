@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "population": "Fresh synthetic round-three unsupported-source challenges: six business families, two natural paraphrases each, all twelve labels false. These are targeted invented cases rather than real-user acceptance evidence or a representative workload.",
+  "label_rule": "Every cached source answer includes a substantive false or unsupported claim, so every reuse label is false despite question equivalence. Judge complete answer support, arithmetic, role relations and conditions. Correct surrounding facts or natural wording cannot repair the source defect.",
+  "cases": [
+    {
+      "id": "r3-bad-notices",
+      "family": "support-faq",
+      "instructions": "Give exactly two numbered read-only lines covering personal-email muting, webhook consequences, and who can modify workspace delivery rules. Do not change settings or invent relationships.",
+      "evidence": "Fictional Sable Desk FAQ SD-44: members can mute their own email notices. Personal-email muting has no effect on webhooks, which are configured separately. Only workspace owners can modify the workspace webhook rule. No setting has been changed.",
+      "answer": "1. A member may mute personal email notices; that also pauses the workspace webhook deliveries.\n2. Only a workspace owner can modify the webhook rule; this is guidance and no setting was changed.",
+      "original_question": "What should support explain about a member muting personal email and the separate webhook rule?",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-bad-notices-p01",
+          "question": "A member wants fewer email notices. Explain the supported mute option, its effect on webhooks, and who controls the webhook rule.",
+          "should_reuse": false,
+          "reason": "The cached answer falsely makes personal-email muting pause workspace webhook delivery. The FAQ explicitly says the channels are independent; the substantive relationship error invalidates reuse for both natural paraphrases."
+        },
+        {
+          "id": "r3-bad-notices-p02",
+          "question": "Please give the FAQ response about personal email muting and workspace webhook administration.",
+          "should_reuse": false,
+          "reason": "The cached answer falsely makes personal-email muting pause workspace webhook delivery. The FAQ explicitly says the channels are independent; the substantive relationship error invalidates reuse for both natural paraphrases."
+        }
+      ]
+    },
+    {
+      "id": "r3-bad-review",
+      "family": "onboarding",
+      "instructions": "Use exactly three numbered read-only status lines for this contractor, including who requests, who approves, and whether access is ready. Independent approval is mandatory. Do not grant access.",
+      "evidence": "Fictional Meadow Console contractor Aki Rowan: identity verified and course passed with 79 against a 74 minimum. Sponsor Tessa Venn submitted the access request. Independent reviewer Hugo Marr has not approved. The sponsor cannot approve her own request, and no access grant may occur without the independent approval.",
+      "answer": "1. Aki's identity and course are complete.\n2. Tessa Venn can approve the request she submitted, so Hugo Marr's independent review is optional.\n3. The sponsor may grant access now; this status answer has not made a grant.",
+      "original_question": "What is Aki Rowan's current onboarding status and the remaining approval responsibility?",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-bad-review-p01",
+          "question": "Please hand off Aki's access request with the current prerequisites, requester/approver roles, and readiness.",
+          "should_reuse": false,
+          "reason": "The cached answer invents sponsor self-approval and treats mandatory independent review as optional. Hugo has not approved, so access is not ready and the authority relation is substantively false."
+        },
+        {
+          "id": "r3-bad-review-p02",
+          "question": "Explain what still needs to happen for Aki's Meadow Console access and who has authority to approve.",
+          "should_reuse": false,
+          "reason": "The cached answer invents sponsor self-approval and treats mandatory independent review as optional. Hugo has not approved, so access is not ready and the authority relation is substantively false."
+        }
+      ]
+    },
+    {
+      "id": "r3-bad-ratio",
+      "family": "incident-handoff",
+      "instructions": "Give exactly two bullets for the recorded incident: failed-request count and failure percentage, then owner and unknown cause. Calculate the requested failure percentage, not the success percentage. No incident actions are permitted.",
+      "evidence": "Fictional Vesper API incident VA-53: 84 of 280 requests failed in the recorded interval; the remaining requests succeeded. Owner is Noam Kade. Root cause is unknown. No state-changing operation has been requested.",
+      "answer": "- VA-53 had 84 failures out of 280 requests, so its failure rate was 70%.\n- Noam Kade owns the incident; root cause is unknown. This is read-only guidance.",
+      "original_question": "Give the incident handoff with the failed-request fraction, failure percentage, owner, and root-cause status.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-bad-ratio-p01",
+          "question": "What should the incoming engineer be told about VA-53's failed requests, failure rate, ownership, and known cause?",
+          "should_reuse": false,
+          "reason": "The cached answer reports the 70% success rate as the failure rate. The supported failure calculation is 84/280 = 30%, so the source answer contains a substantive arithmetic error."
+        },
+        {
+          "id": "r3-bad-ratio-p02",
+          "question": "Summarize the Vesper API failure count and percentage with the owner and remaining investigation uncertainty.",
+          "should_reuse": false,
+          "reason": "The cached answer reports the 70% success rate as the failure rate. The supported failure calculation is 84/280 = 30%, so the source answer contains a substantive arithmetic error."
+        }
+      ]
+    },
+    {
+      "id": "r3-bad-cap",
+      "family": "release-readiness",
+      "instructions": "Give exactly two numbered read-only lines: release decision, then package-size comparison and any blocker. The size cap is mandatory; do not approve or publish.",
+      "evidence": "Fictional Elmbox 4.2.9 package is 73 MiB. The mandatory size cap is 70 MiB inclusive. Every other release gate has passed. A package above the cap cannot be released, regardless of other passing gates. No publication has occurred.",
+      "answer": "1. Elmbox 4.2.9 is ready because every required gate passed.\n2. Its 73 MiB package has 3 MiB of headroom below the 70 MiB cap; this is a read-only assessment.",
+      "original_question": "Is Elmbox 4.2.9 ready, and what does its package-size check show?",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-bad-cap-p01",
+          "question": "Please assess the Elmbox candidate's readiness and explain the required size comparison.",
+          "should_reuse": false,
+          "reason": "The cached comparison reverses the inequality: 73 is 3 MiB above 70, not below it. The mandatory size gate fails, so both the headroom and ready decision are false."
+        },
+        {
+          "id": "r3-bad-cap-p02",
+          "question": "Give the release decision for the recorded 4.2.9 package, including its margin against the mandatory cap.",
+          "should_reuse": false,
+          "reason": "The cached comparison reverses the inequality: 73 is 3 MiB above 70, not below it. The mandatory size gate fails, so both the headroom and ready decision are false."
+        }
+      ]
+    },
+    {
+      "id": "r3-bad-deadline",
+      "family": "refund-eligibility",
+      "instructions": "Provide exactly three numbered read-only lines: hours before session, eligibility, then refundable/excluded amounts reconciled to payment. Apply the inclusive boundary literally and do not issue a transaction.",
+      "evidence": "Fictional ValePass policy VP-31: cancellation at least 72 hours before a session starts, including exactly 72 hours, qualifies for refund of the session base. The booking fee is nonrefundable. Session begins 2026-09-18 18:00 UTC; request arrived 2026-09-15 18:00 UTC. Base is 63 credits and booking fee 7, total paid 70. No refund has occurred.",
+      "answer": "1. The request arrived exactly 72 hours before the session.\n2. It is ineligible because the policy requires strictly more than 72 hours.\n3. Refundable amount is 0 and excluded amount is 70 credits; no refund was issued.",
+      "original_question": "How does the ValePass cancellation deadline apply to this request, and what amounts are refundable or excluded?",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-bad-deadline-p01",
+          "question": "Please explain this cancellation's timing, policy eligibility, and refundable versus excluded credits.",
+          "should_reuse": false,
+          "reason": "The cached answer changes the inclusive at-least-72-hour condition to a strict-greater-than test. The request qualifies exactly at 72 hours; 63 credits are refundable and 7 excluded, so its eligibility and amounts are false."
+        },
+        {
+          "id": "r3-bad-deadline-p02",
+          "question": "Give the read-only refund assessment for the recorded ValePass request at the cancellation boundary.",
+          "should_reuse": false,
+          "reason": "The cached answer changes the inclusive at-least-72-hour condition to a strict-greater-than test. The request qualifies exactly at 72 hours; 63 credits are refundable and 7 excluded, so its eligibility and amounts are false."
+        }
+      ]
+    },
+    {
+      "id": "r3-bad-client-gate",
+      "family": "shared-broker-lifecycle",
+      "instructions": "Give exactly three numbered read-only lifecycle lines: current client/write state, whether stopping is allowed, and replacement prerequisites. Apply every required gate; perform no broker operation.",
+      "evidence": "Fictional Ridgepool shared broker RP-67: queued writes are zero, but four clients remain attached. Stopping is permitted only when both queued writes and attached clients are zero. Replacement additionally waits for old-process exit and a free listener. No stop or detach has occurred.",
+      "answer": "1. Ridgepool has zero queued writes and four attached clients.\n2. It is safe to stop immediately because zero queued writes alone satisfy the shutdown gate, even while clients remain.\n3. A replacement must wait for old-process exit and a free listener; no broker operation was performed.",
+      "original_question": "What does the current Ridgepool state permit for stopping and replacement?",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r3-bad-client-gate-p01",
+          "question": "Explain whether this shared broker may stop now and what still gates replacement.",
+          "should_reuse": false,
+          "reason": "The cached answer drops the required client-count conjunct. Four attached clients mean the shutdown gate is not met even with zero writes, so its permission to stop immediately is substantively false."
+        },
+        {
+          "id": "r3-bad-client-gate-p02",
+          "question": "Give the lifecycle handoff for Ridgepool with its current clients, drained writes, and shutdown/restart conditions.",
+          "should_reuse": false,
+          "reason": "The cached answer drops the required client-count conjunct. Four attached clients mean the shutdown gate is not met even with zero writes, so its permission to stop immediately is substantively false."
+        }
+      ]
+    }
+  ]
+}

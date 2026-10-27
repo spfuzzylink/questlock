@@ -48,6 +48,14 @@ class PatternTests(unittest.TestCase):
         self.assertFalse(GUARD.content_issues(b"$HOME/project public-builder@users.noreply.github.com"))
         self.assertFalse(GUARD.content_issues(b"contact@example.com git@github.com"))
 
+    def test_reserved_example_domains_do_not_allow_real_or_metadata_addresses(self):
+        self.assertEqual(GUARD.content_issues(b"help@nettlebridge.example contact@team.docs.example"), set())
+        self.assertFalse(GUARD.public_email(b"contact@team.example", metadata=True))
+        for domain in (b"example.attacker", b"team.example.attacker", b"notexample.test"):
+            address = b"contact" + b"@" + domain
+            self.assertFalse(GUARD.public_email(address))
+            self.assertIn("email address outside public/example allowlist", GUARD.content_issues(address))
+
     def test_guard_and_tests_do_not_contain_matching_fixture_literals(self):
         for path in (SCRIPT, Path(__file__)):
             self.assertEqual(GUARD.content_issues(path.read_bytes()), set())

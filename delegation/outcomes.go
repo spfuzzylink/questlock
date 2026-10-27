@@ -23,6 +23,14 @@ func NewOutcomeRunID() (string, error) {
 
 func RecordOutcome(ctx context.Context, broker inference.Broker, request Request, result *Result, runID string) {
 	task := outcomes.Task{ID: request.Spec.Task, Revision: request.Spec.Revision}
+	if result.SemanticReuse != nil {
+		for _, verification := range result.SemanticReuse.Verifications {
+			if verification.SharedWork {
+				result.OutcomeTracking = &OutcomeTracking{Status: "failed", RunID: runID, Task: task, ErrorCategory: "shared_work_requires_batch_accounting"}
+				return
+			}
+		}
+	}
 	record := OutcomeRecord(request, *result, runID)
 	tracking := &OutcomeTracking{Status: "failed", RunID: runID, Task: task, Record: &record}
 	result.OutcomeTracking = tracking
@@ -85,6 +93,12 @@ func OutcomeRecord(request Request, result Result, runID string) outcomes.Run {
 	}
 	if result.SemanticReuse != nil {
 		for i, verification := range result.SemanticReuse.Verifications {
+			if verification.SharedWork {
+				// Even a cancellation before a receipt is available must fail
+				// registration through this per-member helper.
+				record.VerificationWork = append(record.VerificationWork, outcomes.Attempt{TierID: "reuse-verifier-shared", CostBasis: "shared_work_requires_batch_accounting"})
+				continue
+			}
 			fingerprint := strings.TrimPrefix(verification.ReceiptKey, "inference/v1/jobs/")
 			if fingerprint == "" {
 				continue

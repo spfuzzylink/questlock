@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Approved question forms">
+    <mxGraphModel dx="1400" dy="600" grid="1" gridSize="10" page="1" pageWidth="1400" pageHeight="600" background="#080c19">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="request" value="Requested wording&#10;An approved read-only task&#10;Current facts and constraints" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#15152e;strokeColor=#9d7dff;fontColor=#f4f3ff;fontSize=18;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="160" width="280" height="110" />
+        </mxCell>
+        <mxCell id="match" value="Exact listed form?&#10;Reviewed application policy&#10;No similarity or model decision" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#15152e;strokeColor=#9d7dff;fontColor=#f4f3ff;fontSize=18;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="380" y="160" width="280" height="110" />
+        </mxCell>
+        <mxCell id="canonical" value="Prepare canonical request&#10;Canonical input + bound revision&#10;Other request fields unchanged" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#15152e;strokeColor=#9d7dff;fontColor=#f4f3ff;fontSize=18;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="720" y="160" width="280" height="110" />
+        </mxCell>
+        <mxCell id="router" value="Existing router / runner&#10;Same scope and runtime&#10;Existing claims, checks and budgets" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#15152e;strokeColor=#9d7dff;fontColor=#f4f3ff;fontSize=18;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1060" y="160" width="280" height="110" />
+        </mxCell>
+        <mxCell id="unknown" value="Unknown form&#10;Return original unchanged&#10;Caller keeps ordinary workflow" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#15152e;strokeColor=#9d7dff;fontColor=#f4f3ff;fontSize=18;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="380" y="370" width="280" height="110" />
+        </mxCell>
+        <mxCell id="result" value="Generate once, then reuse&#10;Valid exact repeat: 0 model calls&#10;Expiry and uncertain state still apply" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#15152e;strokeColor=#9d7dff;fontColor=#f4f3ff;fontSize=18;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1060" y="370" width="280" height="110" />
+        </mxCell>
+        <mxCell id="e0" source="request" target="match" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#93f9e5;fontColor=#93f9e5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e1" source="match" target="canonical" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#93f9e5;fontColor=#93f9e5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e2" source="canonical" target="router" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#93f9e5;fontColor=#93f9e5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e3" source="match" target="unknown" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#93f9e5;fontColor=#93f9e5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e4" source="unknown" target="router" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#93f9e5;fontColor=#93f9e5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1">
+            <Array>
+              <mxPoint x="1020" y="425" />
+              <mxPoint x="1020" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" source="router" target="result" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#93f9e5;fontColor=#93f9e5;" edge="1" parent="1">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="title" value="Questlock: different approved words, one exact task" style="text;html=0;fontColor=#cbc6e2;align=left;fontSize=20;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="35" width="1300" height="35" />
+        </mxCell>
+        <mxCell id="subtitle" value="Your app defines equivalence. Questlock keeps the existing execution and reuse boundary." style="text;html=0;fontColor=#cbc6e2;align=left;fontSize=20;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="85" width="1300" height="35" />
+        </mxCell>
+        <mxCell id="footer" value="Known forms need no embeddings or verifier. Unknown wording is never added automatically." style="text;html=0;fontColor=#cbc6e2;align=left;fontSize=20;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="515" width="1300" height="35" />
+        </mxCell>
+        <mxCell id="trust" value="A cheaper repeat still needs a correct original answer. Application approval is a trust boundary." style="text;html=0;fontColor=#cbc6e2;align=left;fontSize=20;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="550" width="1300" height="35" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

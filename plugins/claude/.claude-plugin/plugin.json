@@ -1,7 +1,7 @@
 {
   "name": "questlock",
   "displayName": "Questlock",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "Apply checked text revisions, reuse exact results, and run bounded local model tasks through a durable local broker.",
   "author": {
     "name": "Questlock contributors",

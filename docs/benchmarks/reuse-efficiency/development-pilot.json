@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "population": "Old public development pilot, first eligible and first ineligible pair per family; not held-out.",
+  "label_rule": "Reuse is allowed only when the saved answer completely satisfies the variant question under the same approved evidence and instructions, including its scope, conditions, intent, and requested format.",
+  "cases": [
+    {
+      "id": "support-faq",
+      "family": "support-faq",
+      "instructions": "Answer the customer's question using only the approved support policy. Preserve the requested scope and format; do not invent unsupported procedures or perform account changes.",
+      "evidence": "For a customer account, a customer who can access the registered email resets a forgotten password by choosing Forgot password on the sign-in page, opening the emailed reset link, and setting a new password. A reset link is valid for 24 hours and works once. An expired or already-used link requires a new reset request. A customer who cannot access the registered email must contact the support desk for an identity check. Employee accounts use the staff console instead. Resetting a password does not disable multi-factor authentication.",
+      "answer": "Choose Forgot password on the sign-in page, open the link sent to your registered email, and set a new password within 24 hours.",
+      "original_question": "How should a customer who can access their registered email reset a forgotten account password, and how long is the reset link valid?",
+      "variants": [
+        {
+          "id": "support-faq-positive-01",
+          "question": "I forgot my customer account password but can still read my registered email. What should I do, and when does the reset link expire?",
+          "should_reuse": true,
+          "reason": "The customer has the same email access and requests the same reset procedure and 24-hour deadline."
+        },
+        {
+          "id": "support-faq-negative-01",
+          "question": "My customer password reset link is 25 hours old. What must I do before I can set a new password?",
+          "should_reuse": false,
+          "reason": "The link has expired; the answer must require a new reset request instead of instructing the customer to use that link."
+        }
+      ]
+    },
+    {
+      "id": "internal-onboarding",
+      "family": "internal-onboarding",
+      "instructions": "Answer using only the approved wiki access policy. Preserve distinctions between employee, contractor, and administrator access, and honor the requested format and detail.",
+      "evidence": "A permanent employee requests standard internal wiki access in the Team Portal. The employee's manager approves the request. The request form requires a team name, a business reason, and a training-completion date. Contractors request wiki access through their project sponsor, followed by Security approval. Wiki administrator access requires a separate Security review even for permanent employees. A declined standard request does not grant access; an employee must correct the stated issue and submit a new request. Standard employee access is not automatic and cannot skip manager approval.",
+      "answer": "Submit a wiki access request in the Team Portal; the employee's manager approves it.",
+      "original_question": "How does a permanent employee request standard internal wiki access, and who approves the request?",
+      "variants": [
+        {
+          "id": "internal-onboarding-positive-01",
+          "question": "Where should a permanent employee ask for ordinary internal wiki access, and whose approval is needed?",
+          "should_reuse": true,
+          "reason": "Ordinary access means the same standard employee access with the same portal and manager approval."
+        },
+        {
+          "id": "internal-onboarding-negative-01",
+          "question": "How does a contractor request internal wiki access, and who approves it?",
+          "should_reuse": false,
+          "reason": "Contractors use a project sponsor and Security approval, not the employee portal and manager route."
+        }
+      ]
+    },
+    {
+      "id": "incident-brief",
+      "family": "incident-brief",
+      "instructions": "Summarize only the requested incident and affected scope using the approved incident notes. Respect requested inclusions, exclusions, output format, and hypothetical conditions.",
+      "evidence": "INC-17 was a database outage caused by a faulty connection-pool rollout. It began at 10:00 UTC and ended at 10:18 UTC. Checkout requests failed for 18 minutes in the West region; the East region had no user impact. A rollback restored service. INC-18 was a separate cache incident that caused search timeouts for seven minutes and was resolved by restarting cache workers. The runbook says that if rollback does not restore service during a database incident, the responder must page the database on-call and keep the incident open.",
+      "answer": "INC-17 was a database outage caused by a faulty connection-pool rollout; checkout requests failed in the West region for 18 minutes, and service recovered after rollback.",
+      "original_question": "Give a one-sentence summary of database outage INC-17 that includes its cause, user impact, and resolution.",
+      "variants": [
+        {
+          "id": "incident-brief-positive-01",
+          "question": "Summarize INC-17 in one sentence, covering what caused the database outage, what users experienced, and how service was restored.",
+          "should_reuse": true,
+          "reason": "The saved sentence covers the same incident, cause, checkout impact, and rollback recovery."
+        },
+        {
+          "id": "incident-brief-negative-01",
+          "question": "Give a one-sentence summary of INC-18 that includes its cause, user impact, and resolution.",
+          "should_reuse": false,
+          "reason": "INC-18 is the separate cache incident, with different impact, duration, and recovery."
+        }
+      ]
+    },
+    {
+      "id": "release-readiness",
+      "family": "release-readiness",
+      "instructions": "Assess only the requested commit and stated release conditions using the approved check record and release policy. A readiness assessment does not execute a release. Do not invent deployment commands.",
+      "evidence": "Releasing a commit requires passing unit tests, integration tests, and a security scan. Commit abc123 has passed all three checks, and its security scan is two hours old. A security scan older than 24 hours must be rerun before release. A revoked scan does not count as a pass. Commit def456 passed unit tests and its security scan but failed integration tests. The approved evidence contains no deployment commands, environment credentials, or authority to execute a release.",
+      "answer": "Commit abc123 passed unit tests, integration tests, and the security scan, so it meets the required checks and is ready for release.",
+      "original_question": "Does commit abc123 meet the required release checks, and what readiness decision follows?",
+      "variants": [
+        {
+          "id": "release-readiness-positive-01",
+          "question": "Based on the required check results, is abc123 ready to release? State which checks support the decision.",
+          "should_reuse": true,
+          "reason": "The saved answer states readiness and names all three passing required checks."
+        },
+        {
+          "id": "release-readiness-negative-01",
+          "question": "Does commit def456 meet the required release checks, and what readiness decision follows?",
+          "should_reuse": false,
+          "reason": "The changed commit failed integration tests and is not ready for release."
+        }
+      ]
+    },
+    {
+      "id": "refund-eligibility",
+      "family": "refund-eligibility",
+      "instructions": "Apply only the approved standard refund policy to the requested order and stated conditions. Preserve requested amounts, scope, and output format.",
+      "evidence": "Standard refunds cover unused merchandise requested within 30 days of delivery. Used merchandise is ineligible. Order ORD-17 was delivered 12 days ago, is unused, and contains one refundable item priced at 42 dollars plus six dollars shipping. Shipping charges are not refunded, and there are no taxes or other charges on ORD-17. Order ORD-18 was delivered 35 days ago and is unused. No exception or extended return window is approved for either order.",
+      "answer": "Order ORD-17 is eligible for a refund because it was delivered 12 days ago, is unused, and falls within the 30-day return window.",
+      "original_question": "Is order ORD-17 eligible for a standard refund, and why?",
+      "variants": [
+        {
+          "id": "refund-eligibility-positive-01",
+          "question": "Can ORD-17 receive a refund under the standard policy? Explain the eligibility.",
+          "should_reuse": true,
+          "reason": "The same order is unused and within the same 30-day window."
+        },
+        {
+          "id": "refund-eligibility-negative-01",
+          "question": "Is order ORD-18 eligible for a standard refund, and why?",
+          "should_reuse": false,
+          "reason": "The changed order is 35 days old and falls outside the 30-day window."
+        }
+      ]
+    },
+    {
+      "id": "shared-broker-lifecycle",
+      "family": "shared-broker-lifecycle",
+      "instructions": "Answer the requested broker lifecycle question from the approved design notes. Distinguish explanations from requested configuration changes or recovery operations. Do not invent commands, perform changes, or treat missing archives as permission for new generation.",
+      "evidence": "The broker's primary store is SQLite. When optional local cold retention is enabled, superseded payloads can move from SQLite to gzip files on trusted local storage. Identities, receipts, and audit history remain in SQLite. A backup must contain a consistent database and every cold file; the database alone cannot recover archived payloads. A broker that has never enabled local cold retention keeps all historical payloads in SQLite, so a consistent database backup covers those payloads without cold files. If an archived payload is missing or corrupt, reading that payload fails. Such failure does not release an uncertain reservation or authorize fresh generation. This design has no S3 archive mode. These notes contain no executable configuration or recovery commands and authorize no configuration change or deletion.",
+      "answer": "With local cold retention enabled, the broker can move superseded payloads from SQLite to trusted local gzip files while keeping identities, receipts, and audit history in SQLite; backups must include a consistent database and all cold files.",
+      "original_question": "Explain the broker's historical-payload retention choice and the backup requirement when local cold retention is enabled.",
+      "variants": [
+        {
+          "id": "shared-broker-lifecycle-positive-01",
+          "question": "How does optional local cold retention store older broker payloads, what remains in SQLite, and what must a backup include?",
+          "should_reuse": true,
+          "reason": "The saved explanation covers archived payload location, retained metadata, and the complete backup requirement."
+        },
+        {
+          "id": "shared-broker-lifecycle-negative-01",
+          "question": "Disable the broker's local cold retention and delete all historical payloads now.",
+          "should_reuse": false,
+          "reason": "This requests configuration mutation and deletion; a conceptual retention explanation does not perform or appropriately address those operations."
+        }
+      ]
+    }
+  ]
+}

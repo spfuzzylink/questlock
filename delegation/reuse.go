@@ -34,6 +34,7 @@ type ControlledReuser struct {
 type ReuseObservation struct {
 	Mode                   string                    `json:"mode"`
 	Status                 string                    `json:"status"`
+	ResourceAdmission      *ReuseResourceAdmission   `json:"resource_admission,omitempty"`
 	Partition              string                    `json:"partition,omitempty"`
 	Source                 *semantic.Source          `json:"source,omitempty"`
 	Similarity             float64                   `json:"similarity,omitempty"`
@@ -46,6 +47,44 @@ type ReuseObservation struct {
 	Indexed                bool                      `json:"indexed"`
 	GenerationAvoided      bool                      `json:"generation_avoided"`
 	HistoricalUsageIsProxy bool                      `json:"historical_usage_is_proxy"`
+}
+
+// ReuseResourceAdmission explains an actual optional-reuse resource probe.
+// Availability is advisory headroom; nil means no valid measurement was read.
+// No command output, source label or probe error is included.
+type ReuseResourceAdmission struct {
+	Reason               string             `json:"reason"`
+	MemoryPressure       admission.Pressure `json:"memory_pressure,omitempty"`
+	AvailableMemoryBytes *int64             `json:"available_memory_bytes"`
+}
+
+func reuseResourceAdmission(s admission.Snapshot, err error, now time.Time) *ReuseResourceAdmission {
+	diagnostic := &ReuseResourceAdmission{Reason: "sample_unavailable"}
+	if err != nil || !s.Known {
+		return diagnostic
+	}
+	diagnostic.Reason = "sample_invalid"
+	if s.At.IsZero() || s.At.After(now) || s.AvailableMemoryBytes < 0 || s.CPUStallMilliPercent < 0 || s.CPUStallMilliPercent > 100000 || s.LoadCapacityMilli < 0 || s.LoadCapacityMilli > 1e9 || s.LoadMilli < 0 || s.LoadMilli > 1e12 || (s.MemoryPressure != admission.Normal && s.MemoryPressure != admission.High && s.MemoryPressure != admission.Critical) {
+		return diagnostic
+	}
+	available := s.AvailableMemoryBytes
+	diagnostic.AvailableMemoryBytes = &available
+	diagnostic.MemoryPressure = s.MemoryPressure
+	switch {
+	case now.Sub(s.At) > 5*time.Second:
+		diagnostic.Reason = "sample_expired"
+	case s.MemoryPressure != admission.Normal:
+		diagnostic.Reason = "memory_pressure"
+	case s.AvailableMemoryBytes < 256*admission.MiB:
+		diagnostic.Reason = "insufficient_memory"
+	case s.CPUStallMilliPercent >= 20000:
+		diagnostic.Reason = "cpu_stall"
+	case s.LoadCapacityMilli > 0 && s.LoadMilli > 2*s.LoadCapacityMilli:
+		diagnostic.Reason = "load"
+	default:
+		diagnostic.Reason = "ready"
+	}
+	return diagnostic
 }
 
 type reuseProof struct {
@@ -163,7 +202,8 @@ func (r *controlledResolver) Resolve(ctx context.Context, spec inference.Spec) (
 	}
 	if o.Resources != nil {
 		s, err := o.Resources.Sample(ctx)
-		if err != nil || !s.Known || s.At.IsZero() || time.Since(s.At) > 5*time.Second || s.AvailableMemoryBytes < 256*admission.MiB || s.MemoryPressure != admission.Normal || s.CPUStallMilliPercent >= 20000 || (s.LoadCapacityMilli > 0 && s.LoadMilli > 2*s.LoadCapacityMilli) {
+		obs.ResourceAdmission = reuseResourceAdmission(s, err, time.Now())
+		if obs.ResourceAdmission.Reason != "ready" {
 			obs.Status = "resource_pressure"
 			return nil, nil
 		}
@@ -293,11 +333,15 @@ func (r *controlledResolver) candidate(ctx context.Context, candidate semantic.C
 	obs.Verifications = append(obs.Verifications, verdict)
 	if err != nil {
 		obs.Status = "verification_failed"
-		return nil, false, errors.New("controlled verification outcome unconfirmed")
+		return nil, false, errors.Join(inference.ErrReuseUncertain, errors.New("controlled verification outcome unconfirmed"))
+	}
+	if verdict.SharedWork {
+		obs.Status = "verification_unconfirmed"
+		return nil, false, errors.Join(inference.ErrReuseUncertain, errors.New("shared diagnostic verification is unavailable for answer reuse"))
 	}
 	if !verdict.Complete || !verdict.Durable || verdict.InputTokens == nil || verdict.OutputTokens == nil || *verdict.InputTokens < 0 || *verdict.OutputTokens < 0 || *verdict.InputTokens > r.config.VerifierMaxInputTokens || *verdict.OutputTokens > r.config.VerifierMaxOutputTokens || verdict.ReceiptKey == "" {
 		obs.Status = "verification_unconfirmed"
-		return nil, false, errors.New("controlled verification evidence is incomplete")
+		return nil, false, errors.Join(inference.ErrReuseUncertain, errors.New("controlled verification evidence is incomplete"))
 	}
 	if !verdict.Accepted() {
 		obs.Rejections = append(obs.Rejections, "verifier_rejected_or_abstained")

@@ -20,7 +20,7 @@ import (
 	"github.com/spfuzzylink/questlock/internal/store"
 )
 
-var version = "0.15.0" // Release builds set this from VERSION using -ldflags.
+var version = "0.16.0" // Release builds set this from VERSION using -ldflags.
 const defaultDB = ".questlock/state.db"
 
 func main() {
@@ -60,7 +60,7 @@ Usage:
   questlock team init|plan|run|status|suite|benchmark [flags]
   questlock system-one choose --request PATH --python ABSOLUTE_PINNED_VENV_PYTHON
   questlock resources config|inspect|quest
-  questlock semantic init|quest [flags]
+  questlock semantic init|quest|reuse-quest|evaluate [flags]
   questlock storage config|configure|info|archive|restore|verify|history|compact [flags]
   questlock queue revise --workspace PATH --request FILE [--config PATH]
   questlock quest

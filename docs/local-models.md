@@ -1,8 +1,9 @@
 # Local models: routine work without provider credits
 
-This guide covers **v0.4.0 experimental**, including the bounded worker, evaluation,
-streaming measurements, and [explicit human outcome feedback](outcomes.md). Install a [release binary](installation.md) or
-build the source.
+Run bounded tasks on installed local weights, keep checked results, and measure
+whether reuse helped. Install a [release binary](installation.md) or build the
+source. [Human acceptance and later rework](outcomes.md) are recorded separately
+from model completion and format checks.
 
 Use Questlock's `ollama` provider to run a bounded handoff, repository summary,
 or extraction on installed local model weights. Accepted local requests need no

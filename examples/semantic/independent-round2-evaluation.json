@@ -1,0 +1,793 @@
+{
+  "schema_version": 1,
+  "population": "Fresh synthetic round-two author population: six business families, ten suitable paraphrases and ten unsuitable variants per family. It is not a sample of real-user acceptance or a statistically independent representative workload.",
+  "label_rule": "Reuse is suitable only when the complete cached answer remains factually supported by the supplied synthetic evidence and fully satisfies the new question, its requested format, its scope, and its read-only boundary. Similar wording alone is insufficient. Missing required unknowns, changed calculations or prerequisites, unsupported assertions, and requests to perform an action are unsuitable. Labels concern answer validity, not retrieval similarity or a particular verifier.",
+  "cases": [
+    {
+      "id": "r2-faq",
+      "family": "support-faq",
+      "instructions": "Answer using only the approved FAQ and snapshot. Give read-only guidance; do not retry exports or claim an operation was performed. Obey the question's explicit output format. Report required facts absent from evidence as unknown.",
+      "evidence": "Fictional LumenDesk FAQ FAQ-37: a failed export may be retried no earlier than 15 minutes after its latest failed attempt. A successful bundle link lasts 72 hours from completion, not from the request. The saved selection excludes archived rows. Pine Harbor workspace snapshot at 14:06 UTC: latest attempt failed at 13:52 UTC; 164 active rows and 9 archived rows match the filter. No bundle has completed and no download link exists. Completion time and failure cause are not recorded. No retry has been performed.",
+      "answer": "- At 14:06 UTC the export is failed; its earliest retry is 14:07 UTC, so wait 1 minute.\n- The saved selection will include 164 active rows and exclude the 9 archived rows.\n- A completed bundle link lasts 72 hours from completion; no link exists yet.\n- Completion time is unknown. This is guidance only; no retry has been performed.",
+      "original_question": "Using FAQ-37 and the 14:06 UTC Pine Harbor snapshot, give four bullets covering retry status and waiting time, saved-selection row count, link availability and lifetime, and unknown completion time. Confirm this is guidance and no retry was performed.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-faq-p01",
+          "question": "For Pine Harbor at 14:06 UTC, explain in four bullets when the failed export can be retried and how long remains, which rows the saved selection includes, whether a link exists and its lifetime after success, and the unknown completion time. Keep it read-only and say no retry occurred.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-faq-p02",
+          "question": "Produce four read-only FAQ bullets for the 14:06 UTC Pine Harbor case: retry gate plus remaining wait, active versus archived rows, current link state plus expiry rule, and unavailable completion time. State that no retry has been carried out.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-faq-p03",
+          "question": "At the recorded 14:06 UTC check, what should Pine Harbor know about the retry delay, rows in the saved export, the download link and its validity, and the unrecorded finish time? Use four bullets and make clear this guidance has not triggered a retry.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-faq-p04",
+          "question": "Rephrase the FAQ guidance for Pine Harbor's existing snapshot as four bullets: earliest retry and remaining minute, included and excluded rows, download-link availability and duration, then unknown completion time with no action taken.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-faq-p05",
+          "question": "Give Pine Harbor a four-bullet explanation of the current failed export at 14:06 UTC. Include the earliest permitted retry and wait, saved-filter row totals, whether a link is ready and how long a successful link lasts, and the unknown completion time; no retry should be claimed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-faq-p06",
+          "question": "Based only on FAQ-37 and the unchanged Pine Harbor record, list four bullets on retry timing, active/archived selection, link status and lifetime, and the unavailable completion estimate. Include the remaining wait at 14:06 UTC and say the advice did not perform a retry.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-faq-p07",
+          "question": "Write the read-only support response in four bullets for Pine Harbor at 14:06 UTC: failed-export retry timing and wait, rows selected, link readiness plus its expiry basis, and unknown completion time. Record that nothing was retried.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-faq-p08",
+          "question": "For the existing Pine Harbor failure, use four bullets to answer the retry-when-and-how-long, selected-row-count, link-now-and-how-long, and completion-time questions at 14:06 UTC. State that this is guidance with no retry performed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-faq-p09",
+          "question": "In four bullets, summarize FAQ-37 for the 14:06 UTC Pine Harbor export: current state and remaining retry delay, the saved selection, link existence and lifetime, and the unrecorded completion time. Preserve the read-only/no-retry statement.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-faq-p10",
+          "question": "What does the approved FAQ say for this same Pine Harbor snapshot about retry timing and remaining wait, included versus excluded rows, the absent link and its eventual validity period, and the unknown finish time? Answer in four bullets as guidance only, with no retry performed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-faq-n01",
+          "question": "Use the same four bullets, but report the remaining retry wait at 14:08 UTC instead of the recorded check time.",
+          "should_reuse": false,
+          "reason": "At 14:08 UTC the retry gate has passed; the cached answer still says to wait 1 minute at 14:06 UTC."
+        },
+        {
+          "id": "r2-faq-n02",
+          "question": "An updated Pine Harbor record says the latest failure was at 13:54 UTC. In four bullets give the retry wait at 14:06 UTC and the other original FAQ details.",
+          "should_reuse": false,
+          "reason": "The changed last-failure time makes the earliest retry 14:09 UTC and the wait 3 minutes, contradicting the cached timing."
+        },
+        {
+          "id": "r2-faq-n03",
+          "question": "In four bullets give the original FAQ guidance after changing the saved selection to include archived rows as well as active rows.",
+          "should_reuse": false,
+          "reason": "Including archived rows changes the selected count to 173 and reverses the cached exclusion of 9 archived rows."
+        },
+        {
+          "id": "r2-faq-n04",
+          "question": "The bundle has now completed at 17:30 UTC. In four bullets give its link state and exact expiry time as well as the FAQ guidance.",
+          "should_reuse": false,
+          "reason": "The cached answer says no bundle or link exists and lacks the required expiry of 17:30 UTC three days after completion."
+        },
+        {
+          "id": "r2-faq-n05",
+          "question": "In four bullets explain the retry, row selection, and link lifetime, and identify the failure cause; explicitly mark any absent cause as unknown.",
+          "should_reuse": false,
+          "reason": "The failure cause is a newly required unknown; the cached answer reports only completion time as unknown and does not answer the cause question."
+        },
+        {
+          "id": "r2-faq-n06",
+          "question": "Give the same Pine Harbor guidance as a single JSON object with keys retry_at, wait_minutes, row_count, link_exists, link_lifetime_hours, completion_time, and retry_performed.",
+          "should_reuse": false,
+          "reason": "The cached four-bullet prose does not satisfy the explicitly required JSON object and keys."
+        },
+        {
+          "id": "r2-faq-n07",
+          "question": "Retry Pine Harbor's failed export when allowed, then confirm the operation and provide the original four support bullets.",
+          "should_reuse": false,
+          "reason": "The new task requires an operation and confirmation. A cached read-only explanation cannot perform or attest that retry."
+        },
+        {
+          "id": "r2-faq-n08",
+          "question": "In four bullets confirm that Pine Harbor's bundle will be finished within 5 minutes, then give the retry and link details.",
+          "should_reuse": false,
+          "reason": "There is no supported completion guarantee; the cached answer correctly states an unknown completion time and cannot satisfy the requested guarantee."
+        },
+        {
+          "id": "r2-faq-n09",
+          "question": "Instead of the export guidance, use four bullets to give the exact total size in bytes of the forthcoming Pine Harbor bundle and explain how it was measured.",
+          "should_reuse": false,
+          "reason": "Bundle size and measurement are absent from evidence and the cached answer; the new question requires a different answer with an explicit unknown."
+        },
+        {
+          "id": "r2-faq-n10",
+          "question": "Use the original four-bullet format for a snapshot with 161 active rows and 12 archived rows, keeping the same failed attempt time.",
+          "should_reuse": false,
+          "reason": "The cached selection of 164 active rows and 9 excluded archived rows is false under the changed counts even though the combined total is unchanged."
+        }
+      ]
+    },
+    {
+      "id": "r2-onboarding",
+      "family": "onboarding",
+      "instructions": "Use only the approved onboarding record. Explain outstanding work in the requested format and order. Do not grant access, book appointments, or claim an action happened. State required unrecorded facts as unknown.",
+      "evidence": "Fictional Aster Ledger onboarding runbook ONB-26: manager sponsorship and a signed confidentiality agreement come first. A security-course score of at least 85 is then required. Identity verification can be scheduled only after a passing score. Security sign-off follows verified identity. Only after that sign-off may a workspace owner grant LedgerReader, which permits reading and does not permit payment exports. Nori Bell's Vela workspace record: sponsorship and agreement complete, course score 82, identity verification not started, security sign-off pending, no LedgerReader grant. Hardware ship date and the workspace owner's personal name are not recorded.",
+      "answer": "1. Sponsorship and the agreement are complete; Nori must retake the security course and reach at least 85 because the recorded score is 82.\n2. After passing the course, schedule and complete identity verification.\n3. After identity verification, obtain security sign-off.\n4. After sign-off, a workspace owner can grant LedgerReader for reading only, without payment exports. Hardware ship date is unknown; this is guidance and no access has been changed.",
+      "original_question": "For Nori Bell in Vela, give four numbered read-only onboarding steps in prerequisite order. Mention the completed prerequisites and course shortfall, identity and security gates, who can grant LedgerReader and its permission limit, and the unknown hardware ship date. Confirm no access was changed.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-onboarding-p01",
+          "question": "Using Nori Bell's unchanged Vela record, give four numbered steps for the remaining onboarding sequence. Include completed sponsorship/agreement, the failing course score and pass mark, identity before security approval, the workspace-owner grant and read-only limit, and unknown hardware shipping. Say no access changed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-onboarding-p02",
+          "question": "Write four numbered read-only onboarding steps for Nori in Vela: established prerequisites and course retake, identity after passing, security sign-off after identity, and the eventual LedgerReader grant by a workspace owner. Include no payment exports, unknown hardware ship date, and no access modification.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-onboarding-p03",
+          "question": "What must happen next for Nori Bell's Vela onboarding, in four numbered steps? Cover what is already complete, the score gap, identity and sign-off order, the role allowed to grant the reading group and its export restriction, and unavailable hardware timing. State no access was changed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-onboarding-p04",
+          "question": "Explain Nori's remaining ONB-26 path as four numbered steps in order, with completed prerequisites, course threshold versus recorded result, identity and security requirements, workspace-owner provisioning of LedgerReader, the permission boundary, and unknown hardware ship date. Keep it guidance only and note no access changes.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-onboarding-p05",
+          "question": "For the same Nori Bell record, list four ordered numbered onboarding instructions without performing them. Include the already satisfied prerequisites, the training retake and pass mark, identity then security sign-off, who grants LedgerReader and what it allows, plus the unknown hardware date and no-change statement.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-onboarding-p06",
+          "question": "Produce the four-numbered-step handoff for Vela's Nori Bell using ONB-26. Preserve the prerequisite order, explain the incomplete course requirement, identify the workspace-owner grant with reading/no payment export, mark hardware shipping unknown, and say no access was modified.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-onboarding-p07",
+          "question": "Give Nori a read-only four-step numbered plan from the current Vela snapshot through LedgerReader access. Identify completed sponsorship and agreement, the required higher course result, identity and security gates in order, the granting role and permission limits, and the unrecorded hardware ship date. No access change should be claimed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-onboarding-p08",
+          "question": "In four numbered steps, describe the same remaining onboarding work for Nori Bell: current prerequisites, training gap, subsequent identity check, security sign-off and eventual workspace-owner reader grant. Include its export limit, unknown hardware ship date, and guidance/no-access-change statement.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-onboarding-p09",
+          "question": "Use four numbered steps to relay the approved onboarding sequence for Nori at Vela, noting completed initial requirements, the score/pass-mark issue, identity before security sign-off, owner-only LedgerReader provisioning, reading-only permission, and unknown hardware shipping. State nothing was changed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-onboarding-p10",
+          "question": "Based on the unchanged ONB-26 snapshot, explain the route to Nori Bell's Vela reader access in four numbered read-only steps. Preserve all prerequisites, the course shortfall, identity/security ordering, workspace-owner grant and export restriction, the unknown ship date, and no access change.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-onboarding-n01",
+          "question": "Give the same four onboarding steps, but Nori's corrected course score is 88 and every other recorded state is unchanged.",
+          "should_reuse": false,
+          "reason": "A passing score removes the required retake; the cached first step incorrectly treats 82 as the current failing score."
+        },
+        {
+          "id": "r2-onboarding-n02",
+          "question": "Give four numbered steps after identity verification has already been completed and security sign-off remains pending.",
+          "should_reuse": false,
+          "reason": "The cached answer still requires scheduling and completing identity verification, which is no longer outstanding."
+        },
+        {
+          "id": "r2-onboarding-n03",
+          "question": "Manager sponsorship has been withdrawn. Give Nori's four numbered next steps and remaining gates.",
+          "should_reuse": false,
+          "reason": "The original prerequisite is no longer complete; the cached statement that sponsorship is complete and training is the next step is unsupported."
+        },
+        {
+          "id": "r2-onboarding-n04",
+          "question": "For the same Nori record, give four numbered steps naming the individual workspace owner who will approve the grant; state explicitly if that personal name is unknown.",
+          "should_reuse": false,
+          "reason": "The required personal name is unrecorded. The cached answer identifies a role but does not state that the personal name is unknown."
+        },
+        {
+          "id": "r2-onboarding-n05",
+          "question": "The new runbook requires identity verification before a course retake. Give four numbered steps in that revised prerequisite order.",
+          "should_reuse": false,
+          "reason": "The new ordering reverses the cached course-before-identity sequence, so the cached plan does not satisfy the revised runbook."
+        },
+        {
+          "id": "r2-onboarding-n06",
+          "question": "Give four numbered steps for granting LedgerWriter rather than LedgerReader, including the exact permissions that group carries.",
+          "should_reuse": false,
+          "reason": "LedgerWriter and its permissions are not documented. The cached answer only describes LedgerReader and cannot answer the changed access scope."
+        },
+        {
+          "id": "r2-onboarding-n07",
+          "question": "Give the original onboarding plan as a JSON array of exactly four objects, each containing step and prerequisite keys.",
+          "should_reuse": false,
+          "reason": "The numbered prose does not satisfy the required JSON structure or prerequisite fields."
+        },
+        {
+          "id": "r2-onboarding-n08",
+          "question": "Book Nori's identity appointment and grant LedgerReader, then report the four numbered onboarding steps as completed.",
+          "should_reuse": false,
+          "reason": "The new question requests actions and completion claims. Cached guidance has neither performed them nor established the missing prerequisites."
+        },
+        {
+          "id": "r2-onboarding-n09",
+          "question": "The amended ONB-26 pass threshold is 90. Give the same four numbered onboarding steps for Nori's recorded result of 82.",
+          "should_reuse": false,
+          "reason": "The cached answer directs Nori to reach at least 85, which is insufficient under the changed threshold of 90."
+        },
+        {
+          "id": "r2-onboarding-n10",
+          "question": "In four numbered steps include the exact monthly payment-export quota for LedgerReader and explain how it is calculated.",
+          "should_reuse": false,
+          "reason": "The group has no payment-export permission and no quota calculation is recorded. The cached answer lacks the newly requested explicit quota explanation or unknown qualification."
+        }
+      ]
+    },
+    {
+      "id": "r2-incident",
+      "family": "incident-handoff",
+      "instructions": "Create read-only incident handoff text from this snapshot only. Preserve recorded chronology and calculate from stated counts. Treat absent investigation findings as unknown. Follow the question's requested structure; do not change incident state or execute mitigations.",
+      "evidence": "Fictional Prism Ferry incident PF-74 at the 09:31 UTC handoff on 2026-02-18: severity SEV2. From 09:14 through 09:26 UTC, 360 of 1800 requests failed and 48 of 120 partitions were affected. Fallback was enabled at 09:23 UTC; error rate returned to baseline at 09:26 UTC. Runbook closure requires 10 full minutes continuously at baseline; at 09:31 UTC that observation window is incomplete. The next check is 09:36 UTC. On-call owner is Imani Cole. Root cause and permanent-data-loss assessment are unknown; neither has a recorded finding. A rollback has not been executed.",
+      "answer": "| Field | Handoff |\n|---|---|\n| Severity and state | SEV2; mitigated, with closure observation still incomplete at 09:31 UTC. |\n| Impact | 360/1800 requests failed (20%); 48/120 partitions affected (40%); impact interval was 12 minutes. |\n| Timeline | Impact began 09:14 UTC; fallback enabled 09:23 UTC; errors returned to baseline 09:26 UTC. No rollback was executed. |\n| Next gate | Check at 09:36 UTC; close only if the full 10 minutes since 09:26 UTC remained at baseline. |\n| Owner | Imani Cole. |\n| Unknowns | Root cause and permanent data loss are unknown. This is a read-only handoff; no incident state was changed. |",
+      "original_question": "At the 09:31 UTC PF-74 handoff, provide a two-column Markdown table with exactly six body rows: severity and state, impact with request/partition percentages and duration, timeline including rollback status, next closure gate, owner, and unknowns. State this is read-only and no incident state changed.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-incident-p01",
+          "question": "For PF-74 at 09:31 UTC, write the read-only handoff as a two-column Markdown table with six body rows: severity/state; impact including both percentages and duration; ordered timeline with rollback status; next closure gate; owner; and unknown investigation findings. Say no incident state was changed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-incident-p02",
+          "question": "Summarize the unchanged 09:31 UTC PF-74 snapshot in a six-body-row, two-column Markdown table. Cover severity and current state, calculated request and partition impact plus length, chronology and whether rollback ran, the next closure condition, on-call owner, and unknown root cause/data loss. Include the read-only/no-state-change note.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-incident-p03",
+          "question": "Create a six-row handoff table for PF-74 using two Markdown columns at the recorded 09:31 UTC check. Include severity/state, impact ratios as percentages and interval duration, ordered events and rollback state, closure check and condition, owner, and unknowns; no state-changing work should be claimed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-incident-p04",
+          "question": "Use a two-column Markdown table with six body rows to hand off PF-74 at 09:31 UTC: severity/state, impact arithmetic, chronology with rollback status, next close-or-wait gate, responsible owner, and unknown cause and loss. Indicate it is read-only and the incident was not updated.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-incident-p05",
+          "question": "At the original PF-74 snapshot, give six body rows in a two-column Markdown handoff table for status/severity, request and partition percentages with duration, event order and rollback status, the closure gate, the owner, and unknown investigations. Preserve the 09:31 UTC read-only scope and no-state-change statement.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-incident-p06",
+          "question": "Write the PF-74 handoff for the same 09:31 UTC observation in a two-column Markdown table of six body rows. Show severity and state, both impact percentages and elapsed impact, timeline and unexecuted rollback, the next observation/closure requirement, owner, and unknown cause/loss; state no incident modification occurred.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-incident-p07",
+          "question": "Provide the approved 09:31 UTC PF-74 facts as a read-only six-body-row Markdown table with two columns. Rows must cover severity/state, impact with calculations, ordered mitigation chronology and rollback, the next closure gate, on-call owner, and unknown root cause and permanent loss. Confirm no state changes.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-incident-p08",
+          "question": "For the unchanged PF-74 incident, use six body rows and two Markdown columns to report severity/state, request/partition impact percentages and duration, timeline with rollback status, earliest conditional closure check, ownership, and unknown findings at 09:31 UTC. Include the no-action handoff statement.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-incident-p09",
+          "question": "Give a two-column Markdown table with exactly six body rows for the 09:31 UTC PF-74 transfer: current severity/state, impact calculations and duration, chronology/rollback, closure observation gate, named owner, and unknown cause and data loss. Keep it read-only and note no state was changed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-incident-p10",
+          "question": "Relay the same PF-74 09:31 UTC record in six body rows of a two-column Markdown table, including severity/state, computed impact, ordered times and rollback status, next closure condition, owner, and required unknowns. Say this handoff has not changed incident state.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-incident-n01",
+          "question": "Use the original six-row table, but the handoff is now at 09:37 UTC and monitoring confirms baseline continuously since 09:26 UTC.",
+          "should_reuse": false,
+          "reason": "The 10-minute gate is now satisfied. The cached state says the observation window is incomplete and points to a future 09:36 UTC check."
+        },
+        {
+          "id": "r2-incident-n02",
+          "question": "Use the original six-row table under a revised closure rule requiring only 5 full minutes at baseline.",
+          "should_reuse": false,
+          "reason": "At 09:31 UTC the revised five-minute requirement is satisfied; the cached ten-minute gate and incomplete-state description are no longer valid."
+        },
+        {
+          "id": "r2-incident-n03",
+          "question": "Correct the affected partition count to 60 of 120 and give the same incident handoff table.",
+          "should_reuse": false,
+          "reason": "The required partition percentage is now 50%, while the cached answer reports 48/120 and 40%."
+        },
+        {
+          "id": "r2-incident-n04",
+          "question": "Give the same six-row table but add the exact customer-account count affected; label that count unknown if not documented.",
+          "should_reuse": false,
+          "reason": "Account count is an additional required unknown absent from both evidence and cached answer; partition counts do not supply it."
+        },
+        {
+          "id": "r2-incident-n05",
+          "question": "For the same handoff include a definitive finding that permanent data loss was zero.",
+          "should_reuse": false,
+          "reason": "The loss assessment is unknown; no definitive zero-loss finding is supported, so the cached unknown cannot satisfy this asserted result."
+        },
+        {
+          "id": "r2-incident-n06",
+          "question": "At 09:31 UTC the assigned on-call owner has changed to Jules Adebayo. Give the same six-row handoff table.",
+          "should_reuse": false,
+          "reason": "The cached answer names Imani Cole and is stale for the changed ownership condition."
+        },
+        {
+          "id": "r2-incident-n07",
+          "question": "Give the PF-74 handoff as exactly two customer-facing sentences with no table, including the current state and next update.",
+          "should_reuse": false,
+          "reason": "The cached six-row internal handoff table violates the new sentence count, audience, and no-table requirement."
+        },
+        {
+          "id": "r2-incident-n08",
+          "question": "Execute the rollback now and change PF-74 to resolved, then provide the original six-row table.",
+          "should_reuse": false,
+          "reason": "The requested rollback and incident-state mutation cannot be fulfilled by a cached read-only handoff, and resolution prerequisites have not been established."
+        },
+        {
+          "id": "r2-incident-n09",
+          "question": "A corrected timeline says baseline returned at 09:28 UTC, while the 09:31 UTC handoff time and ten-minute closure rule stay unchanged. Give the same table.",
+          "should_reuse": false,
+          "reason": "The revised impact interval is 14 minutes and earliest closure check is 09:38 UTC, contradicting the cached 12-minute interval and 09:36 UTC gate."
+        },
+        {
+          "id": "r2-incident-n10",
+          "question": "Give the same six-row table after an additional 90 failed requests were added to the original 1800-request interval total, with that total unchanged.",
+          "should_reuse": false,
+          "reason": "The failed-request count becomes 450/1800 or 25%; the cached 360/1800 and 20% are no longer correct."
+        }
+      ]
+    },
+    {
+      "id": "r2-release",
+      "family": "release-readiness",
+      "instructions": "Assess the named release only from the approved snapshot. Provide read-only readiness guidance in the requested format. Never publish, attest, approve, or invent completion of a gate. Required absent times or commands must be marked unknown.",
+      "evidence": "Fictional Harborline release 3.6.2 snapshot at 16:40 UTC: all 412 required unit tests passed. Migration dry run passed in 7 minutes against a maximum permitted duration of 8 minutes. Security has zero critical and zero high findings; two medium findings have recorded acceptance by Ravi Sen for this release. Rollback drill is pending, and artifact provenance attestation is missing. The release procedure requires a completed rollback drill, then artifact attestation, then release-captain approval, before publication. No release-captain approval or publication has happened. Documentation gate passed. Publication ETA, expected customer downtime, and the executable rollback command are not recorded.",
+      "answer": "- Harborline 3.6.2 is not ready at 16:40 UTC: rollback drill and artifact provenance attestation remain incomplete, and release-captain approval has not happened.\n- Evidence already passed: 412/412 required unit tests, documentation, and migration dry run at 7 minutes against the 8-minute maximum, leaving 1 minute of headroom.\n- Security has 0 critical, 0 high, and 2 medium findings accepted by Ravi Sen for this release. Complete the rollback drill, then artifact attestation, then obtain release-captain approval before publication.\n- Publication ETA is unknown. This is read-only guidance; no drill, attestation, approval, or publication has been performed by this answer.",
+      "original_question": "For Harborline 3.6.2 at 16:40 UTC, use four bullets to assess readiness, identify passed gates including dry-run headroom, report security acceptance and remaining gates in order, and state the unknown publication ETA. Keep this read-only and confirm no gate or publication was performed.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-release-p01",
+          "question": "Give four read-only readiness bullets for Harborline 3.6.2 at 16:40 UTC: present decision and blockers, passed checks including migration time headroom, security findings/acceptance and the remaining approval sequence, and unavailable publication ETA. State no gate completion or release was performed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-release-p02",
+          "question": "Using the unchanged 3.6.2 snapshot, write four bullets on Harborline readiness. Cover blockers, successful test/documentation/migration gates with the one-minute margin, the accepted security findings and ordered remaining steps, and unknown publication timing; include the read-only/no-operations statement.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-release-p03",
+          "question": "At the recorded 16:40 UTC check, what is Harborline 3.6.2's readiness, which gates passed and with what migration headroom, what security findings were accepted by whom, and what must happen next in order? Answer in four bullets with unknown ETA and no performed approval or publishing.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-release-p04",
+          "question": "Produce the four-bullet release-readiness handoff for Harborline 3.6.2 from this same snapshot. Include missing gates, passed checks and dry-run margin, security acceptance plus ordered prerequisites to publishing, and the unknown publication ETA. Say the answer performed none of the release operations.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-release-p05",
+          "question": "Assess the existing Harborline 3.6.2 record in four bullets: readiness and blockers, successful gates with migration headroom, security status and the remaining ordered gates, then publication ETA and read-only/no-action status.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-release-p06",
+          "question": "Write four bullets explaining why the current Harborline 3.6.2 snapshot is not yet ready, the evidence that already passed including test counts and dry-run margin, the security acceptance and required next-step order, and unknown publication timing. Keep it read-only and disclaim any performed gate or release.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-release-p07",
+          "question": "For Harborline 3.6.2 at the same 16:40 UTC point, report four bullets containing readiness, passed gates and timing margin, accepted security findings with owner and the remaining prerequisite sequence, and unknown ETA. Confirm that this guidance completed no drill, attestation, approval, or publication.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-release-p08",
+          "question": "Give the read-only 3.6.2 readiness explanation in four bullets using only the snapshot: state and remaining blockers; completed gates with migration budget headroom; security acceptance and next steps in order; and the absent release time. Note no release work was performed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-release-p09",
+          "question": "Summarize Harborline 3.6.2 at 16:40 UTC in four bullets with readiness/blockers, successful checks and dry-run headroom, accepted security findings and publishing prerequisites in order, plus unknown publication ETA. Preserve the no-action scope.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-release-p10",
+          "question": "Use four bullets for the unchanged Harborline 3.6.2 release assessment, covering the decision, passed gates and margin, security acceptance and remaining ordered gates, and unknown publication time. State it is read-only and did not execute or approve anything.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-release-n01",
+          "question": "Assess Harborline 3.6.3 rather than 3.6.2 in four bullets and explicitly mark that version's unknown gate states.",
+          "should_reuse": false,
+          "reason": "The evidence and cached answer are specific to 3.6.2; no 3.6.3 gate status is supplied, so copying 3.6.2 results would be unsupported."
+        },
+        {
+          "id": "r2-release-n02",
+          "question": "The rollback drill is now recorded as passed. Give the same four-bullet 3.6.2 readiness handoff with remaining gates only.",
+          "should_reuse": false,
+          "reason": "The cached answer says the rollback drill remains incomplete and must be completed, which contradicts the updated state."
+        },
+        {
+          "id": "r2-release-n03",
+          "question": "The rollback drill and provenance attestation are now complete, but captain approval is pending. Give the original four-bullet readiness assessment.",
+          "should_reuse": false,
+          "reason": "Only captain approval remains, while the cached answer reports two already-completed gates as missing."
+        },
+        {
+          "id": "r2-release-n04",
+          "question": "Give four readiness bullets, additionally stating the migration dry run as a percentage of its allowed time budget.",
+          "should_reuse": false,
+          "reason": "The newly required budget calculation is 7/8 or 87.5%; the cached answer gives a one-minute margin but omits the percentage."
+        },
+        {
+          "id": "r2-release-n05",
+          "question": "A corrected dry-run record says the migration took 9 minutes, with the same 8-minute maximum. Give the same four readiness bullets.",
+          "should_reuse": false,
+          "reason": "The migration gate now fails by one minute, contradicting the cached passed result and positive headroom."
+        },
+        {
+          "id": "r2-release-n06",
+          "question": "In the four-bullet assessment include the executable rollback command and mark it unknown if the snapshot does not record it.",
+          "should_reuse": false,
+          "reason": "The rollback command is a required absent fact, but the cached answer does not mention that command or its unknown status."
+        },
+        {
+          "id": "r2-release-n07",
+          "question": "Give the original readiness assessment as a JSON object with exactly ready, blockers, passed, security, next_steps, and publication_eta keys.",
+          "should_reuse": false,
+          "reason": "The cached bullet list does not satisfy the required JSON object and exact key set."
+        },
+        {
+          "id": "r2-release-n08",
+          "question": "Publish Harborline 3.6.2 and record captain approval, then provide the original four readiness bullets.",
+          "should_reuse": false,
+          "reason": "Publication and approval are requested external actions; cached guidance cannot execute or attest them and the gates remain incomplete."
+        },
+        {
+          "id": "r2-release-n09",
+          "question": "Give the same four readiness bullets and explicitly state the expected customer downtime, using unknown where absent.",
+          "should_reuse": false,
+          "reason": "Customer downtime is a separate required unknown absent from the cached answer; publication ETA unknown does not answer downtime."
+        },
+        {
+          "id": "r2-release-n10",
+          "question": "One of the two medium findings has been reclassified as high and has no release waiver. Give the same four-bullet readiness assessment.",
+          "should_reuse": false,
+          "reason": "The cached zero-high security status and acceptance of two medium findings are false under the reclassification."
+        }
+      ]
+    },
+    {
+      "id": "r2-refund",
+      "family": "refund-eligibility",
+      "instructions": "Apply only the fictional policy and invoice record. Explain eligibility and arithmetic as read-only text in the requested format. Do not issue a refund or promise settlement. Required absent transaction or tax facts must be marked unknown.",
+      "evidence": "Fictional Juniperboard policy RF-18: a monthly subscription request is eligible when submitted within 21 elapsed days of purchase, including exactly day 21, and usage is at most 150 processed units. Annual subscriptions are ineligible. For eligible requests only the subscription base is refundable; setup fees and prepaid-credit purchases are not. North Finch Studio invoice R-5832: monthly base 84 credits, setup fee 16 credits, prepaid credits 20 credits, total paid 120 credits. Purchase was 2026-05-04 10:00 UTC and refund request was 2026-05-24 10:00 UTC. Usage is 148 processed units. No prior refund or refund transaction is recorded. Settlement time and tax treatment are not recorded.",
+      "answer": "1. North Finch Studio's R-5832 request is eligible: it is monthly, 20 elapsed days after purchase within the inclusive 21-day window, and usage is 148, within the 150-unit maximum.\n2. Refundable amount is the 84-credit subscription base.\n3. Excluded amount is 36 credits: 16 setup + 20 prepaid credits; 84 refundable + 36 excluded = 120 credits paid.\n4. Settlement time is unknown. This is a read-only eligibility explanation; no refund transaction has been performed.",
+      "original_question": "For North Finch Studio invoice R-5832, provide four numbered lines: eligibility with elapsed-day and usage tests, refundable amount, excluded charges with reconciliation to total paid, and unknown settlement time. State that this is read-only and no refund was performed.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-refund-p01",
+          "question": "Use four numbered lines to assess R-5832 for North Finch Studio: eligibility and the elapsed-days/usage checks, refundable credits, nonrefundable items and sum back to paid total, then unknown settlement time. Keep it read-only and say no refund was processed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-refund-p02",
+          "question": "For the unchanged North Finch Studio request, give four numbered lines explaining eligibility under RF-18 with day and usage arithmetic, the refundable base, excluded charges reconciled to the invoice total, and unknown settlement timing. Include that this answer issued no refund.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-refund-p03",
+          "question": "Explain R-5832 in four numbered read-only lines: eligibility by plan, elapsed window and units; amount refundable; excluded fees/credits with the payment reconciliation; and the unavailable settlement estimate. Confirm no refund transaction happened.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-refund-p04",
+          "question": "Give North Finch Studio's original RF-18 decision as four numbered lines with the 20-day/usage checks, refundable subscription amount, excluded setup and prepaid credits plus total arithmetic, and unknown settlement time. State it is guidance and no refund was performed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-refund-p05",
+          "question": "In four numbered lines, review the same R-5832 record for refund eligibility, including elapsed days and usage, then refundable amount, nonrefundable breakdown and total reconciliation, then the unknown settlement time and read-only/no-refund statement.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-refund-p06",
+          "question": "For North Finch Studio at the recorded request time, answer in four numbered lines covering policy eligibility and both quantitative tests, eligible credits, excluded invoice components and the full paid total, and unknown settlement timing. Do not claim a refund action occurred.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-refund-p07",
+          "question": "Write the four-numbered-line RF-18 explanation for invoice R-5832 from the same evidence: decision with plan/window/usage, refundable credits, excluded amounts and addition to total, and unknown settlement time. Include no refund performed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-refund-p08",
+          "question": "Provide four numbered read-only lines for the unchanged North Finch Studio invoice and request. Include eligibility and elapsed-day/units comparison, refundable base, excluded charges reconciled with payment, and unavailable settlement time; state no transaction was executed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-refund-p09",
+          "question": "Assess the same R-5832 request using four numbered lines for eligibility with timing and usage arithmetic, refundable amount, excluded setup/prepaid charges and sum, and the unknown settlement estimate. Preserve the read-only scope and no-refund confirmation.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-refund-p10",
+          "question": "Give the original North Finch Studio refund explanation in four numbered lines, preserving the monthly-plan decision, elapsed-day and usage limits, refund amount, excluded-charge reconciliation, and unknown settlement time. Say the explanation has not issued a refund.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-refund-n01",
+          "question": "The request timestamp is corrected to 2026-05-26 10:00 UTC. Give the same four numbered refund lines.",
+          "should_reuse": false,
+          "reason": "The request is now 22 elapsed days after purchase and ineligible; the cached 20-day eligible decision and 84-credit refund are wrong."
+        },
+        {
+          "id": "r2-refund-n02",
+          "question": "Recorded usage is now 151 processed units. Give the same four numbered eligibility lines for R-5832.",
+          "should_reuse": false,
+          "reason": "151 exceeds the 150-unit maximum; the cached answer still states 148 and eligibility."
+        },
+        {
+          "id": "r2-refund-n03",
+          "question": "R-5832 is corrected to an annual subscription with the same charges and dates. Give the original four-line eligibility assessment.",
+          "should_reuse": false,
+          "reason": "Annual subscriptions are ineligible, so the cached monthly-plan decision and refundable amount cannot be reused."
+        },
+        {
+          "id": "r2-refund-n04",
+          "question": "The request arrived on 2026-05-25 10:00 UTC, exactly at the inclusive deadline. Give the same four numbered lines including the elapsed-day test.",
+          "should_reuse": false,
+          "reason": "Eligibility remains true but the newly required elapsed-day value is 21, contradicting the cached statement of 20 elapsed days."
+        },
+        {
+          "id": "r2-refund-n05",
+          "question": "Correct the setup fee to 14 credits and total paid to 118 credits, leaving all other original facts unchanged. Give the same four numbered lines.",
+          "should_reuse": false,
+          "reason": "The excluded amount becomes 34 credits and the total 118; the cached 16-credit setup fee, 36 excluded, and 120 paid are false."
+        },
+        {
+          "id": "r2-refund-n06",
+          "question": "A 42-credit portion of the eligible base has already been refunded. Give the same four lines but report the remaining refundable amount.",
+          "should_reuse": false,
+          "reason": "Only 42 credits remain refundable; the cached answer reports the full 84 and does not account for the prior refund."
+        },
+        {
+          "id": "r2-refund-n07",
+          "question": "An approved exception now makes all 20 prepaid-credit credits refundable too. Give the original four numbered refund lines.",
+          "should_reuse": false,
+          "reason": "The refundable total becomes 104 and excluded charges 16; the cached 84/36 split contradicts the changed exception."
+        },
+        {
+          "id": "r2-refund-n08",
+          "question": "Give the same eligibility explanation as CSV with one header row and one data row containing eligible, elapsed_days, usage, refundable, excluded, total_paid, settlement_time, and refund_performed.",
+          "should_reuse": false,
+          "reason": "The numbered prose does not satisfy the requested CSV structure and fields."
+        },
+        {
+          "id": "r2-refund-n09",
+          "question": "Issue the eligible 84-credit refund to North Finch Studio and give its transaction identifier in the original four-line response.",
+          "should_reuse": false,
+          "reason": "The new task requires a refund action and transaction identifier. Cached read-only guidance cannot perform or substantiate either."
+        },
+        {
+          "id": "r2-refund-n10",
+          "question": "Use four numbered lines for the original assessment and explicitly state the tax treatment of refunded credits, marking it unknown if absent.",
+          "should_reuse": false,
+          "reason": "Tax treatment is a separate required unknown absent from the cached answer; unknown settlement time does not address taxes."
+        }
+      ]
+    },
+    {
+      "id": "r2-broker",
+      "family": "shared-broker-lifecycle",
+      "instructions": "Use the fictional Larchbus runbook and snapshot only. Provide read-only lifecycle guidance and preserve its ordering and uncertainty rules. Do not stop, clear, retry, detach, or start any process. State required unrecorded facts as unknown and follow the requested format.",
+      "evidence": "Fictional Larchbus lifecycle runbook LB-41: the existing shared broker remains in service while clients are attached. Owner Leah Moss must first pause new intake, then reconcile every uncertain claim from durable evidence, then drain queued receipts to zero, then detach all clients, then stop the broker. A replacement may start only after the old process has exited and its listener is free. Uncertain claims must never be cleared or automatically retried merely because time elapsed. At 10:42 UTC, broker process 7314 owns 127.0.0.1:4517 for scope chart-build; two clients remain attached and three receipts are queued. Claim card-17 has an unknown outcome; worker Wren last held it. Journal receipt J-88 is durable but does not certify a completed card-17 artifact. No completion artifact is recorded for card-17. Recovery ETA and the attached clients' individual names are not recorded.",
+      "answer": "1. Keep the existing broker 7314 on 127.0.0.1:4517 for chart-build in service for now: 2 clients remain attached, 3 receipts are queued, and card-17 has an unknown outcome.\n2. Owner Leah Moss must first pause new intake, then reconcile card-17 from durable evidence; J-88 proves a durable receipt, not a completed card-17 artifact. Do not clear or automatically retry the uncertain claim.\n3. After reconciliation, drain queued receipts to zero, then detach all clients.\n4. Only after those gates may the broker stop; a replacement must wait for process 7314 to exit and the listener to become free.\n5. Recovery ETA is unknown. This is read-only guidance; no intake, claim, receipt, client, or process operation has been performed.",
+      "original_question": "At the 10:42 UTC Larchbus chart-build snapshot, give five numbered read-only lifecycle handoff steps. Include current broker/client/queue and uncertain-claim status, the named owner and reconciliation rule including what J-88 proves, ordered drain/detach/stop/replacement gates, and unknown recovery ETA. Confirm no operation was performed.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-broker-p01",
+          "question": "For the same 10:42 UTC Larchbus snapshot, provide five numbered read-only steps covering current process/listener/scope, attached clients and queued receipts, card-17 uncertainty, Leah Moss's ordered reconciliation responsibilities and J-88's limit, shutdown/replacement gates, and unknown recovery ETA. State no operation happened.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-broker-p02",
+          "question": "Write five numbered lifecycle handoff steps for chart-build at 10:42 UTC. Preserve the existing broker and client/receipt counts, unknown card-17 outcome, owner-led pause and reconciliation with the durable-receipt distinction, drain/detach/stop/start order, and absent recovery estimate. Keep it guidance with no action performed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-broker-p03",
+          "question": "Using LB-41 and the unchanged snapshot, explain in five numbered steps the current broker state, remaining clients/receipts and uncertain claim, who pauses/reconciles and what J-88 establishes, ordered shutdown/replacement conditions, and unknown ETA. Include the read-only/no-operations statement.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-broker-p04",
+          "question": "Give the five-numbered-step read-only handoff for the existing Larchbus chart-build broker at 10:42 UTC, including process/listener, client and receipt totals, card-17 uncertainty and J-88 limits, Leah Moss's role, reconciliation before draining and detaching, stop/replacement gates, and unknown recovery time. Say no changes occurred.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-broker-p05",
+          "question": "For the original chart-build lifecycle record, use five numbered steps to describe what stays running now, the client/queue/claim state, the owner and safe reconciliation sequence, the receipt-versus-artifact distinction, shutdown and replacement gates in order, and unavailable recovery ETA. Confirm no operations were carried out.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-broker-p06",
+          "question": "At the recorded Larchbus handoff time, give five numbered guidance steps with broker identity, listener and scope, clients/receipts and uncertain card-17 status, Leah Moss's pause-and-reconcile duties plus J-88 qualification, ordered drain/detach/stop/restart conditions, and unknown ETA. Keep it read-only with no performed operations.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-broker-p07",
+          "question": "Summarize LB-41 for the same 10:42 UTC chart-build state in five numbered read-only steps. Include active broker and counts, the uncertain claim, the named owner and no-clear/no-auto-retry rule with J-88's limited meaning, the ordered lifecycle gates, and unknown recovery ETA; note no action was taken.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-broker-p08",
+          "question": "Produce five numbered lifecycle instructions as read-only handoff text for Larchbus chart-build, preserving the current broker/client/receipt facts, card-17 uncertainty, owner-led pause/reconciliation and receipt evidence limit, drain then detach then stop then gated replacement, and unknown ETA. State nothing was performed.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-broker-p09",
+          "question": "For the unchanged broker snapshot, explain the safe next sequence in five numbered steps, including process/listener/scope and counts, uncertain card-17, Leah Moss and the reconciliation/J-88 restriction, ordered receipt/client/shutdown/replacement gates, and unrecorded recovery timing. Include a no-operation statement.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-broker-p10",
+          "question": "Use five numbered steps to relay the original 10:42 UTC Larchbus lifecycle state and plan: existing broker with clients and queued receipts, uncertain claim, responsible owner and durable-evidence rule, shutdown/replacement prerequisites in order, and unknown recovery ETA. Keep the answer read-only and confirm no action happened.",
+          "should_reuse": true,
+          "reason": "The same evidence snapshot, requested facts, four-part or explicitly stated output format, and read-only scope are preserved; the complete cached answer satisfies this paraphrase."
+        },
+        {
+          "id": "r2-broker-n01",
+          "question": "The snapshot is corrected to one attached client and three queued receipts. Give the same five numbered lifecycle steps.",
+          "should_reuse": false,
+          "reason": "The cached current-state count of two attached clients is false under the corrected snapshot."
+        },
+        {
+          "id": "r2-broker-n02",
+          "question": "All receipts have now drained to zero but two clients remain attached. Give the same five numbered current-state lifecycle handoff.",
+          "should_reuse": false,
+          "reason": "The cached answer still reports three queued receipts and treats draining them as outstanding."
+        },
+        {
+          "id": "r2-broker-n03",
+          "question": "A verified completion artifact now confirms card-17 succeeded. Give the same five lifecycle steps with the current claim state.",
+          "should_reuse": false,
+          "reason": "The cached answer describes card-17 as uncertain and requiring reconciliation, contradicting the newly verified completion."
+        },
+        {
+          "id": "r2-broker-n04",
+          "question": "Clear the uncertain card-17 claim and immediately retry it, then provide the original five-step lifecycle handoff.",
+          "should_reuse": false,
+          "reason": "The request asks for claim mutations forbidden by the runbook and outside read-only answer reuse; no cached text can perform or attest them."
+        },
+        {
+          "id": "r2-broker-n05",
+          "question": "Move the shared broker to another host and keep its chart-build clients connected, then give five numbered lifecycle steps.",
+          "should_reuse": false,
+          "reason": "The new task requires a host migration and continuity guarantees absent from this single-snapshot runbook; cached local shutdown guidance does not fulfill it."
+        },
+        {
+          "id": "r2-broker-n06",
+          "question": "Use an amended runbook that permits starting the replacement before process 7314 exits, provided the listener is still occupied. Give five numbered steps for that rule.",
+          "should_reuse": false,
+          "reason": "The revised condition reverses the cached replacement gate, which requires both old-process exit and a free listener."
+        },
+        {
+          "id": "r2-broker-n07",
+          "question": "In the original five-step handoff explicitly name each attached client, marking the names unknown if not recorded.",
+          "should_reuse": false,
+          "reason": "The individual client names are a newly required unknown; the cached answer only provides their count and omits that names are unknown."
+        },
+        {
+          "id": "r2-broker-n08",
+          "question": "Give the original lifecycle handoff as a JSON object containing process, clients, receipts, claim, owner, ordered_gates, recovery_eta, and operations_performed.",
+          "should_reuse": false,
+          "reason": "The numbered prose does not satisfy the required JSON object and key set."
+        },
+        {
+          "id": "r2-broker-n09",
+          "question": "A new durable record says J-88 certifies the completed card-17 artifact. Give the same five numbered steps using that evidence.",
+          "should_reuse": false,
+          "reason": "The cached answer expressly says J-88 does not establish a completed artifact and card-17 remains unknown, contradicting the changed evidence."
+        },
+        {
+          "id": "r2-broker-n10",
+          "question": "Owner responsibility has transferred from Leah Moss to Mateo Reed. Give the same five numbered lifecycle steps for the current owner.",
+          "should_reuse": false,
+          "reason": "The cached answer assigns pause and reconciliation duties to Leah Moss, which is stale for the changed ownership."
+        }
+      ]
+    }
+  ]
+}

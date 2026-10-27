@@ -220,7 +220,11 @@ func (r Runner) run(ctx context.Context, s Spec, resolver ReuseResolver) (result
 		resolution, resolveErr := resolver.Resolve(ctx, s)
 		measurement.PhaseMS["reuse_resolution"] = milliseconds(time.Since(phase))
 		if resolveErr != nil {
-			saveState(key, version, record, "blocked")
+			state := "blocked"
+			if errors.Is(resolveErr, ErrReuseUncertain) {
+				state = "uncertain"
+			}
+			saveState(key, version, record, state)
 			return Result{}, fmt.Errorf("reuse resolution failed: %w", resolveErr)
 		}
 		if resolution != nil {

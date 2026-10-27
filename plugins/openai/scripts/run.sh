@@ -12,7 +12,7 @@ case "$questlock_client" in codex|claude-code) ;; *) questlock_fail 'unsupported
 
 questlock_script_dir=$(CDPATH= cd -P "$(dirname "$0")" && pwd)
 questlock_plugin_root=$(CDPATH= cd -P "$questlock_script_dir/.." && pwd)
-questlock_version=0.15.0
+questlock_version=0.16.0
 [ ! -L "$questlock_plugin_root/bin" ] && [ ! -L "$questlock_plugin_root/bin/questlock" ] || questlock_fail 'bundled runtime must not be a symlink'
 questlock_binary="$questlock_plugin_root/bin/questlock"
 

@@ -97,20 +97,23 @@ type ValidityRequest struct {
 // ValidityResult separates the verdict from execution evidence supplied by the
 // trusted adapter. Missing usage is unknown; it is never inferred as zero.
 type ValidityResult struct {
-	GenerationCalled bool    `json:"generation_called"`
-	Complete         bool    `json:"complete"`
-	Durable          bool    `json:"durable"`
-	Verdict          string  `json:"verdict"`
-	SameIntent       bool    `json:"same_intent"`
-	SameFacts        bool    `json:"same_facts"`
-	SameConstraints  bool    `json:"same_constraints"`
-	AnswerSupported  bool    `json:"answer_supported"`
-	InputTokens      *int64  `json:"input_tokens"`
-	OutputTokens     *int64  `json:"output_tokens"`
-	Reused           bool    `json:"reused"`
-	DurationMS       float64 `json:"duration_ms"`
-	ReceiptKey       string  `json:"receipt_key,omitempty"`
-	OutputSHA256     string  `json:"output_sha256,omitempty"`
+	GenerationCalled bool   `json:"generation_called"`
+	Complete         bool   `json:"complete"`
+	Durable          bool   `json:"durable"`
+	Verdict          string `json:"verdict"`
+	SameIntent       bool   `json:"same_intent"`
+	SameFacts        bool   `json:"same_facts"`
+	SameConstraints  bool   `json:"same_constraints"`
+	AnswerSupported  bool   `json:"answer_supported"`
+	InputTokens      *int64 `json:"input_tokens"`
+	OutputTokens     *int64 `json:"output_tokens"`
+	Reused           bool   `json:"reused"`
+	// SharedWork identifies a zero-incremental-usage decision whose model work
+	// is accounted once by its batch's separate work record and shared receipt.
+	SharedWork   bool    `json:"shared_work,omitempty"`
+	DurationMS   float64 `json:"duration_ms"`
+	ReceiptKey   string  `json:"receipt_key,omitempty"`
+	OutputSHA256 string  `json:"output_sha256,omitempty"`
 }
 
 type Verifier interface {

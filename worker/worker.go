@@ -17,6 +17,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/spfuzzylink/questlock/admission"
 	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/inference"
 	"github.com/spfuzzylink/questlock/revision"
@@ -278,6 +279,13 @@ func safeOutput(result delegation.Result, err error) toolOutput {
 	}
 	result.BudgetDiagnostic = diagnostic
 	result.SemanticReuse = safeSemanticReuse(result.SemanticReuse)
+	if result.OutcomeTracking != nil {
+		tracking := *result.OutcomeTracking
+		if tracking.ErrorCategory != "shared_work_requires_batch_accounting" {
+			tracking.ErrorCategory = ""
+		}
+		result.OutcomeTracking = &tracking
+	}
 	result.Attempts = append([]delegation.Attempt{}, result.Attempts...)
 	for i := range result.Attempts {
 		// Upstream response identifiers/model/stop labels are not needed to
@@ -349,6 +357,25 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 		observation.Status = "unavailable"
 	}
 	observation.Partition = safeDigest(observation.Partition)
+	observation.ResourceAdmission = nil
+	if original.ResourceAdmission != nil {
+		diagnostic := *original.ResourceAdmission
+		switch diagnostic.Reason {
+		case "sample_unavailable", "sample_invalid", "sample_expired", "memory_pressure", "insufficient_memory", "cpu_stall", "load", "ready":
+		default:
+			diagnostic.Reason = "sample_unavailable"
+		}
+		switch diagnostic.MemoryPressure {
+		case admission.Normal, admission.High, admission.Critical:
+		default:
+			diagnostic.MemoryPressure = ""
+		}
+		diagnostic.AvailableMemoryBytes = copyCount(diagnostic.AvailableMemoryBytes)
+		if diagnostic.AvailableMemoryBytes != nil && *diagnostic.AvailableMemoryBytes < 0 {
+			diagnostic.AvailableMemoryBytes = nil
+		}
+		observation.ResourceAdmission = &diagnostic
+	}
 	observation.Source = nil
 	if original.Source != nil {
 		source := *original.Source
