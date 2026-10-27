@@ -164,6 +164,17 @@ func validateRun(r Run) error {
 			return err
 		}
 	}
+	if len(r.VerificationWork) > MaxVerificationWork {
+		return invalid("run cannot contain more than ten auxiliary verification work records")
+	}
+	for _, a := range r.VerificationWork {
+		if !strings.HasPrefix(a.TierID, "reuse-verifier-") || len(a.TierID) == len("reuse-verifier-") || a.Fingerprint == "" || a.CostBasis == "deterministic_edit" {
+			return invalid("verification work requires a verifier tier, fingerprint, and inference accounting basis")
+		}
+		if err := validateAttempt(a); err != nil {
+			return err
+		}
+	}
 	if len(r.Attempts) == 2 {
 		first := r.Attempts[0]
 		if first.CheckPassed || !first.Complete || !first.Durable || !first.UsageKnown {
@@ -244,10 +255,12 @@ func validateLedger(l ledger, task Task, version int64) error {
 			return invalid("stored run ID, timestamp, or version is invalid")
 		}
 		versions[r.Version], runs[r.ID] = true, r.Version
-		for _, a := range r.Attempts {
-			if a.EstimatedCostUSD != nil {
-				if err := addFinite(&knownCost, *a.EstimatedCostUSD); err != nil {
-					return err
+		for _, work := range [2][]Attempt{r.Attempts, r.VerificationWork} {
+			for _, a := range work {
+				if a.EstimatedCostUSD != nil {
+					if err := addFinite(&knownCost, *a.EstimatedCostUSD); err != nil {
+						return err
+					}
 				}
 			}
 		}

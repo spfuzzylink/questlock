@@ -97,3 +97,19 @@ serves an alternative answer or avoids generation. Exact reuse skips embeddings.
 Keep embedding usage separate from generation usage, retain misses and failures,
 and never interpret a similarity score as answer validity or human acceptance.
 Workers do not download missing weights or enable paid fallback.
+
+For controlled reuse on a compatible worker, check
+`request_schemas.semantic_reuse_modes` for `controlled`. An explicitly reviewed
+`semantic_reuse` policy is limited to read-only text with one local tier, no
+escalation, a positive source reuse window, current evidence and checks, an
+intent and business bindings. The local embedding retrieves; protected-term,
+source-provenance and local-verifier checks authorize reuse. Changed evidence or
+constraints need a new snapshot. Similarity is not validity. Optional
+`wait_for_candidate_ms` waits before generation for a peer's completed source;
+it cannot stop an already-running peer or clear its claim. Require a completed,
+durable, checked result, then review its meaning. Keep all outcome-cohort readers
+at v0.15.0+ when `verification_work` is recorded. Count verifier and embedding
+work, misses and failures separately; exact original reuse still skips both.
+Use `semantic reuse-quest` offline and a declared labeled population for live
+qualification. Do not turn measured sample precision into a general accuracy
+promise, or historical source tokens into actual current savings.

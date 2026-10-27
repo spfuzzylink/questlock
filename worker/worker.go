@@ -6,6 +6,7 @@ package worker
 import (
 	"bytes"
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
@@ -19,6 +20,7 @@ import (
 	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/inference"
 	"github.com/spfuzzylink/questlock/revision"
+	"github.com/spfuzzylink/questlock/semantic"
 )
 
 const (
@@ -275,11 +277,26 @@ func safeOutput(result delegation.Result, err error) toolOutput {
 		diagnostic = safeBudgetDiagnostic(result.BudgetDiagnostic)
 	}
 	result.BudgetDiagnostic = diagnostic
+	result.SemanticReuse = safeSemanticReuse(result.SemanticReuse)
 	result.Attempts = append([]delegation.Attempt{}, result.Attempts...)
 	for i := range result.Attempts {
 		// Upstream response identifiers/model/stop labels are not needed to
 		// account for attempts, and could carry arbitrary provider text.
 		result.Attempts[i].Result.Response = inference.Response{}
+		if result.Attempts[i].Result.ReuseKind != "semantic" {
+			result.Attempts[i].Result.ReuseKind = ""
+		}
+		if original := result.Attempts[i].Result.Resolution; original != nil {
+			resolution := *original
+			resolution.Response = inference.Response{}
+			resolution.PolicyID = safeDigest(resolution.PolicyID)
+			resolution.VerificationKey = safeJobReference(resolution.VerificationKey)
+			resolution.Source.Key = safeJobReference(resolution.Source.Key)
+			resolution.Source.SHA256 = safeDigest(resolution.Source.SHA256)
+			resolution.Source.OutputSHA256 = safeDigest(resolution.Source.OutputSHA256)
+			resolution.Source.RequestFingerprint = safeDigest(resolution.Source.RequestFingerprint)
+			result.Attempts[i].Result.Resolution = &resolution
+		}
 		result.Attempts[i].BudgetDiagnostic = safeBudgetDiagnostic(result.Attempts[i].BudgetDiagnostic)
 		result.Attempts[i].Result.BudgetDiagnostic = safeBudgetDiagnostic(result.Attempts[i].Result.BudgetDiagnostic)
 	}
@@ -312,6 +329,80 @@ func safeOutput(result delegation.Result, err error) toolOutput {
 		output.Status, output.ErrorCategory = "stopped", "stopped"
 	}
 	return output
+}
+
+// Reuse observations contain decisions and source references, never a second
+// answer channel. Keep model/provider text out of string-typed metadata even if
+// an executor bypasses the router's stricter parsing and controlled labels.
+func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseObservation {
+	if original == nil {
+		return nil
+	}
+	observation := *original
+	observation.Mode = ""
+	if original.Mode == "controlled" {
+		observation.Mode = "controlled"
+	}
+	switch observation.Status {
+	case "not_called", "wait_canceled", "verifier_unavailable", "busy", "resource_pressure", "embedding_unavailable", "embedding_failed", "search_failed", "miss_or_rejected", "provenance_unavailable", "invalid_provenance", "source_unavailable", "verification_failed", "verification_unconfirmed", "source_changed", "verified_candidate", "reused", "skipped_exact", "index_source_unavailable", "index_plan_invalid", "index_provenance_conflict", "index_provenance_unavailable", "index_provenance_unconfirmed", "index_failed":
+	default:
+		observation.Status = "unavailable"
+	}
+	observation.Partition = safeDigest(observation.Partition)
+	observation.Source = nil
+	if original.Source != nil {
+		source := *original.Source
+		if safeJobReference(source.Key) != "" && safeDigest(source.SHA256) != "" && safeDigest(source.OutputSHA256) != "" && source.Version > 0 {
+			observation.Source = &source
+		}
+	}
+	observation.EmbeddingInputTokens = copyCount(original.EmbeddingInputTokens)
+	observation.Verifications = make([]semantic.ValidityResult, len(original.Verifications))
+	for i, verdict := range original.Verifications {
+		switch verdict.Verdict {
+		case "accept", "reject", "unknown":
+		default:
+			verdict.Verdict = "unknown"
+		}
+		verdict.ReceiptKey = safeJobReference(verdict.ReceiptKey)
+		verdict.OutputSHA256 = safeDigest(verdict.OutputSHA256)
+		verdict.InputTokens, verdict.OutputTokens = copyCount(verdict.InputTokens), copyCount(verdict.OutputTokens)
+		observation.Verifications[i] = verdict
+	}
+	observation.Rejections = []string{}
+	for _, code := range original.Rejections {
+		switch code {
+		case "missing_provenance", "source_not_eligible", "current_checks_failed", "verifier_rejected_or_abstained", "invalid_protected_text", "invalid_protected_quotes", "protected_numbers_changed", "protected_identifiers_changed", "protected_urls_changed", "protected_quotes_changed", "protected_negations_changed", "protected_operators_changed", "protected_units_changed":
+			observation.Rejections = append(observation.Rejections, code)
+		}
+	}
+	return &observation
+}
+
+func safeDigest(value string) string {
+	if len(value) != 64 || value != strings.ToLower(value) {
+		return ""
+	}
+	if _, err := hex.DecodeString(value); err != nil {
+		return ""
+	}
+	return value
+}
+
+func safeJobReference(value string) string {
+	const prefix = "inference/v1/jobs/"
+	if strings.HasPrefix(value, prefix) && safeDigest(strings.TrimPrefix(value, prefix)) != "" {
+		return value
+	}
+	return ""
+}
+
+func copyCount(original *int64) *int64 {
+	if original == nil {
+		return nil
+	}
+	count := *original
+	return &count
 }
 
 func safeBudgetDiagnostic(diagnostic *inference.BudgetDiagnostic) *inference.BudgetDiagnostic {

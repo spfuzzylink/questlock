@@ -14,6 +14,8 @@ const (
 	MaxRuns        = 256
 	MaxEvents      = 256
 	MaxCohortTasks = 256
+	// Verification work is auxiliary accounting and never a target attempt.
+	MaxVerificationWork = 10
 )
 
 var (
@@ -49,10 +51,11 @@ type Attempt struct {
 }
 
 type Run struct {
-	ID            string    `json:"id"`
-	RequestDigest string    `json:"request_digest"`
-	Status        string    `json:"status"` // completed, quality_failed, stopped
-	Attempts      []Attempt `json:"attempts"`
+	ID               string    `json:"id"`
+	RequestDigest    string    `json:"request_digest"`
+	Status           string    `json:"status"` // completed, quality_failed, stopped
+	Attempts         []Attempt `json:"attempts"`
+	VerificationWork []Attempt `json:"verification_work,omitempty"` // Accounting only; cannot establish target completion or human acceptance.
 }
 
 // Feedback is explicitly human-asserted. A final accepted artifact can differ

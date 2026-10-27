@@ -20,6 +20,11 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS = ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64")
 PUBLIC_FILES = (
+    "docs/controlled-reuse-validation-v0.15.0.md", "docs/controlled-reuse-validation-v0.15.0.json",
+    "docs/controlled-reuse.md", "docs/diagrams/controlled-reuse.drawio", "docs/diagrams/controlled-reuse.svg",
+    "examples/semantic/controlled-evaluation.json",
+    "examples/semantic/support-faq.controlled.request.json",
+    "examples/semantic/support-faq.controlled-paraphrase.request.json",
     "docs/semantic-shadow.md", "docs/semantic-shadow-validation-v0.14.0.json",
     "docs/diagrams/semantic-shadow.drawio", "docs/diagrams/semantic-shadow.svg",
     "examples/semantic/README.md", "examples/semantic/support-faq.request.json",

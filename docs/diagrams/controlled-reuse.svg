@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1160" viewBox="0 0 1440 1160" role="img" aria-labelledby="title desc">
+<title id="title">Questlock: controlled answer reuse</title>
+<desc id="desc">Exact original answers skip embedding and verifier inference. On a miss, the runner claims the target task before retrieving related questions. Source provenance, protected terms, current checks and a local validity verifier must pass before a durable source alias can serve the answer. A known miss or rejection proceeds to fresh local generation. Pending, uncertain and unconfirmed outcomes stop. All validation overhead is counted separately.</desc>
+<defs>
+<marker id="arrow-mint" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="#93f9e5"/></marker>
+<marker id="arrow-purple" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="#9d7dff"/></marker>
+</defs>
+<rect width="1440" height="1160" rx="20" fill="#080c19"/>
+<text x="60" y="66" font-family="Arial, sans-serif" font-size="31" fill="#f4f3ff" font-weight="700">Questlock: controlled answer reuse</text>
+<text x="60" y="105" font-family="Arial, sans-serif" font-size="19" fill="#cbc6e2">Retrieve a related question. Serve its answer only while it satisfies the current request.</text>
+<path d="M330 262L410 262" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow-mint)"/>
+<path d="M680 262L760 262" fill="none" stroke="#9d7dff" stroke-width="2" marker-end="url(#arrow-purple)"/>
+<path d="M545 175L545 150L1245 150L1245 175" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow-mint)"/>
+<path d="M895 350L895 418L195 418L195 480" fill="none" stroke="#9d7dff" stroke-width="2" marker-end="url(#arrow-purple)"/>
+<path d="M330 572L410 572" fill="none" stroke="#9d7dff" stroke-width="2" marker-end="url(#arrow-purple)"/>
+<path d="M680 572L760 572" fill="none" stroke="#9d7dff" stroke-width="2" marker-end="url(#arrow-purple)"/>
+<path d="M1030 572L1110 572" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow-mint)"/>
+<path d="M1245 480L1245 350" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow-mint)"/>
+<path d="M195 665L195 825" fill="none" stroke="#9d7dff" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrow-purple)"/>
+<path d="M545 665L545 745L195 745" fill="none" stroke="#9d7dff" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrow-purple)"/>
+<path d="M895 665L895 745L545 745" fill="none" stroke="#9d7dff" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrow-purple)"/>
+<path d="M680 902L760 902" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow-mint)"/>
+<rect x="60" y="175" width="270" height="175" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="78" y="211" font-family="Arial, sans-serif" font-size="21" fill="#f4f3ff" font-weight="700">Approved request</text>
+<text x="78" y="254" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Read-only task + intent</text>
+<text x="78" y="283" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Current facts and checks</text>
+<rect x="410" y="175" width="270" height="175" rx="14" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="428" y="211" font-family="Arial, sans-serif" font-size="21" fill="#f4f3ff" font-weight="700">Exact lookup</text>
+<text x="428" y="254" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Original hit: skip models</text>
+<text x="428" y="283" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Alias: source + policy check</text>
+<rect x="760" y="175" width="270" height="175" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="778" y="211" font-family="Arial, sans-serif" font-size="21" fill="#f4f3ff" font-weight="700">Claim current task</text>
+<text x="778" y="254" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Versioned ownership first</text>
+<text x="778" y="283" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Target generation waits</text>
+<rect x="1110" y="175" width="270" height="175" rx="14" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="1128" y="211" font-family="Arial, sans-serif" font-size="21" fill="#f4f3ff" font-weight="700">Return checked answer</text>
+<text x="1128" y="254" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Complete + durable</text>
+<text x="1128" y="283" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Current checks pass</text>
+<rect x="60" y="480" width="270" height="185" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="78" y="516" font-family="Arial, sans-serif" font-size="21" fill="#f4f3ff" font-weight="700">Retrieve candidates</text>
+<text x="78" y="559" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">One local question embedding</text>
+<text x="78" y="588" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Optional wait; same vector</text>
+<text x="78" y="617" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">At most 32 scoped lookups</text>
+<rect x="410" y="480" width="270" height="185" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="428" y="516" font-family="Arial, sans-serif" font-size="21" fill="#f4f3ff" font-weight="700">Validate original source</text>
+<text x="428" y="559" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Question provenance</text>
+<text x="428" y="588" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Current facts, checks and TTL</text>
+<rect x="760" y="480" width="270" height="185" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="778" y="516" font-family="Arial, sans-serif" font-size="21" fill="#f4f3ff" font-weight="700">Local answer validity</text>
+<text x="778" y="559" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Strict five-field verdict</text>
+<text x="778" y="588" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Reject or abstain: fresh path</text>
+<rect x="1110" y="480" width="270" height="185" rx="14" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="1128" y="516" font-family="Arial, sans-serif" font-size="21" fill="#f4f3ff" font-weight="700">Publish source alias</text>
+<text x="1128" y="559" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Matching verifier policy</text>
+<text x="1128" y="588" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Original expiry; no chains</text>
+<rect x="60" y="825" width="620" height="155" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="78" y="861" font-family="Arial, sans-serif" font-size="21" fill="#f4f3ff" font-weight="700">Fresh local generation</text>
+<text x="78" y="904" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Only after a known miss or rejection</text>
+<text x="78" y="933" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Normal token limits and current checks</text>
+<rect x="760" y="825" width="620" height="155" rx="14" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="778" y="861" font-family="Arial, sans-serif" font-size="21" fill="#f4f3ff" font-weight="700">Return checked fresh answer</text>
+<text x="778" y="904" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">Complete + durable generation</text>
+<text x="778" y="933" font-family="Arial, sans-serif" font-size="16" fill="#cbc6e2">May index original question + source</text>
+<text x="590" y="138" font-family="Arial, sans-serif" font-size="15" fill="#93f9e5">Original exact hit: no embedding or verifier inference</text>
+<text x="697" y="249" font-family="Arial, sans-serif" font-size="15" fill="#9d7dff">Miss</text>
+<text x="575" y="447" font-family="Arial, sans-serif" font-size="16" fill="#9d7dff">Own the target claim before semantic work</text>
+<text x="1265" y="403" font-family="Arial, sans-serif" font-size="15" fill="#93f9e5">Revalidate</text>
+<text x="1265" y="426" font-family="Arial, sans-serif" font-size="15" fill="#93f9e5">then serve</text>
+<text x="1045" y="553" font-family="Arial, sans-serif" font-size="15" fill="#93f9e5">Accept</text>
+<text x="240" y="786" font-family="Arial, sans-serif" font-size="17" fill="#9d7dff">Known miss, guard rejection or verifier abstention</text>
+<text x="60" y="388" font-family="Arial, sans-serif" font-size="17" fill="#cbc6e2">Pending / uncertain: stop. Unconfirmed source, verifier or publication: stop; no automatic takeover or retry.</text>
+<rect x="60" y="1020" width="1320" height="80" rx="14" fill="#15152e" stroke="#373454" stroke-width="2"/>
+<text x="80" y="1051" font-family="Arial, sans-serif" font-size="20" fill="#93f9e5" font-weight="700">Count embedding and verifier work on every attempt.</text>
+<text x="80" y="1080" font-family="Arial, sans-serif" font-size="17" fill="#cbc6e2">Source tokens are a historical proxy. Use matched fresh runs to measure net savings.</text>
+<text x="60" y="1136" font-family="Arial, sans-serif" font-size="17" fill="#cbc6e2">A passing guard and model verdict remain task-specific evidence, not a universal correctness guarantee.</text>
+</svg>

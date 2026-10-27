@@ -86,6 +86,19 @@ type preparedRunner struct {
 
 func (p *preparedRunner) RuntimeIdentity() string { return p.runner.RuntimeIdentity() }
 
+func (p *preparedRunner) Lookup(ctx context.Context, spec inference.Spec) (inference.Result, bool, error) {
+	return p.runner.Lookup(ctx, spec)
+}
+
+func (p *preparedRunner) RunWithResolver(ctx context.Context, spec inference.Spec, resolver inference.ReuseResolver) (inference.Result, error) {
+	result, err := p.runner.RunWithResolver(ctx, spec, resolver)
+	if result.Measurement != nil && p.setupClaimed.CompareAndSwap(false, true) {
+		result.Measurement.ProviderSetupStartedAt, result.Measurement.ProviderSetupEndedAt = p.setupStart.UTC(), p.setupEnd.UTC()
+		result.Measurement.ProviderSetupMS = float64(p.setupEnd.Sub(p.setupStart)) / float64(time.Millisecond)
+	}
+	return result, err
+}
+
 func (p *preparedRunner) Run(ctx context.Context, spec inference.Spec) (inference.Result, error) {
 	result, err := p.runner.Run(ctx, spec)
 	if result.Measurement != nil && p.setupClaimed.CompareAndSwap(false, true) {

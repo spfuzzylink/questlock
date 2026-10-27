@@ -152,6 +152,8 @@ type Prices struct {
 }
 
 type Result struct {
+	ReuseKind              string                   `json:"reuse_kind,omitempty"`
+	Resolution             *ReuseResolution         `json:"resolution,omitempty"`
 	BudgetDiagnostic       *BudgetDiagnostic        `json:"budget_diagnostic,omitempty"`
 	GenerationRuntimeCache *RuntimeCacheObservation `json:"generation_runtime_cache,omitempty"`
 	GenerationTiming       *GenerationTiming        `json:"generation_timing,omitempty"`

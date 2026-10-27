@@ -5,6 +5,8 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"math"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/spfuzzylink/questlock/inference"
@@ -80,6 +82,29 @@ func OutcomeRecord(request Request, result Result, runID string) outcomes.Run {
 			}
 		}
 		record.Attempts = append(record.Attempts, item)
+	}
+	if result.SemanticReuse != nil {
+		for i, verification := range result.SemanticReuse.Verifications {
+			fingerprint := strings.TrimPrefix(verification.ReceiptKey, "inference/v1/jobs/")
+			if fingerprint == "" {
+				continue
+			} // No started inference job to register.
+			zero := float64(0)
+			item := outcomes.Attempt{TierID: "reuse-verifier-" + strconv.Itoa(i+1), Fingerprint: fingerprint, GenerationCalled: verification.GenerationCalled, Reused: verification.Reused, CostBasis: "local_token_charge", EstimatedCostUSD: &zero, Complete: verification.Complete, Durable: verification.Durable, CheckPassed: verification.Accepted(), OutputSHA256: verification.OutputSHA256}
+			if verification.InputTokens != nil && verification.OutputTokens != nil {
+				item.UsageKnown = true
+				item.Usage = inference.Usage{InputTokens: *verification.InputTokens, UncachedInputTokens: *verification.InputTokens, OutputTokens: *verification.OutputTokens}
+			}
+			if verification.Reused {
+				item.CostBasis = "reuse_zero"
+			}
+			if !verification.GenerationCalled && !verification.Reused {
+				item.UsageKnown = true
+				item.Usage = inference.Usage{}
+				item.CostBasis = "no_generation"
+			}
+			record.VerificationWork = append(record.VerificationWork, item)
+		}
 	}
 	return record
 }

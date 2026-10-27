@@ -1,5 +1,44 @@
 # Architecture
 
+## Controlled answer reuse
+
+An approved read-only delegation can opt into a separate controlled path. Exact
+lookup remains first. On an eligible miss, the inference runner wins the target
+CAS claim before local embedding and candidate validation, and before target
+token counting or generation. The shared broker stores scoped vectors and
+original-question provenance alongside the existing job artifacts.
+
+An optional candidate wait repeats at most 32 bounded index lookups using the
+same query embedding before target generation. It neither interrupts another
+agent nor clears its claim. The local pressure gate skips only optional reuse;
+callers supply main-generation resource admission separately.
+
+Retrieval similarity only selects candidates. The resolver checks the source
+question's request binding, current source hashes/version/expiry, explicit facts
+and constraints, protected terms and current output checks. A bounded local
+verifier must then affirm answer validity. Accepted text is published as a
+durable source alias; replay revalidates the source and matching verifier policy.
+Aliases inherit the original expiry and cannot become sources for another alias.
+
+![Controlled answer reuse preserves exact lookup and target claim ownership](diagrams/controlled-reuse.svg)
+
+Known misses or rejections can continue fresh local generation; unconfirmed
+source, verifier or publication outcomes stop without automatic retry. Existing
+pending and uncertain jobs remain fenced. Embedding and verifier work are
+reported separately from target generation. A saved source's token count is a
+historical proxy, while matched fresh runs establish net savings.
+
+Outcome registration keeps auxiliary verifier inference in `VerificationWork`
+(`verification_work` in JSON), separate from target attempts and human acceptance.
+Controlled cohorts need v0.15+ workers and outcome readers; older strict readers
+cannot consume that new field. Embedding usage stays in the semantic observation.
+
+The same broker API supports Go agent clients on one or several machines; each
+process owns its local runtime and admission. This adds no distributed takeover,
+multi-writer database or physical multi-machine benchmark. See the
+[controlled contract and qualification limits](controlled-reuse.md) and
+[editable draw.io source](diagrams/controlled-reuse.drawio).
+
 ## Semantic shadow observation
 
 An approved delegation can opt into a semantic observer after successful fresh,

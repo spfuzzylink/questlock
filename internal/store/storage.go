@@ -7,11 +7,14 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/spfuzzylink/questlock/protocol"
 	"github.com/spfuzzylink/questlock/retention"
+	"github.com/spfuzzylink/questlock/semantic"
 )
 
 // Retention is opt-in. NULL is an archived payload, never empty content. Old
@@ -43,6 +46,17 @@ CREATE TABLE cold_payloads (
  PRIMARY KEY(scope,key,version), FOREIGN KEY(scope,key,version) REFERENCES artifact_versions(scope,key,version));
 `
 
+// This private checkpoint is allocated only after retention is configured. It
+// never names a claim owner or changes artifact identities or receipt history.
+const archiveCheckpointSchema = `CREATE TABLE IF NOT EXISTS storage_archive_checkpoint (
+ id INTEGER PRIMARY KEY CHECK(id=1), scope TEXT NOT NULL, key TEXT NOT NULL,
+ version INTEGER NOT NULL CHECK(version>=0));`
+
+const (
+	minimumArchiveScanItems = 64
+	minimumArchiveScanBytes = 64 << 10
+)
+
 type storageQuerier interface {
 	rowQuerier
 	ExecContext(context.Context, string, ...any) (sql.Result, error)
@@ -63,13 +77,15 @@ type StorageInfo struct {
 }
 
 type StorageReport struct {
-	Operation string `json:"operation"`
-	Status    string `json:"status"`
-	Items     int64  `json:"items"`
-	Bytes     int64  `json:"bytes"`
-	DryRun    bool   `json:"dry_run"`
-	Deferred  bool   `json:"deferred"`
-	Reason    string `json:"reason,omitempty"`
+	Operation    string `json:"operation"`
+	Status       string `json:"status"`
+	Items        int64  `json:"items"`
+	Bytes        int64  `json:"bytes"`
+	DryRun       bool   `json:"dry_run"`
+	Deferred     bool   `json:"deferred"`
+	Reason       string `json:"reason,omitempty"`
+	ScannedItems int64  `json:"scanned_items,omitempty"`
+	ScannedBytes int64  `json:"scanned_bytes,omitempty"`
 }
 
 func storagePolicy(ctx context.Context, q rowQuerier) (*retention.Config, error) {
@@ -204,6 +220,9 @@ func (s *Store) StorageConfigure(ctx context.Context, c retention.Config) (err e
 		}
 	}
 	data, _ := json.Marshal(c)
+	if _, err = tx.ExecContext(ctx, archiveCheckpointSchema); err != nil {
+		return err
+	}
 	if _, err = tx.ExecContext(ctx, "INSERT INTO storage_policy(id,config) VALUES(1,?) ON CONFLICT(id) DO UPDATE SET config=excluded.config", string(data)); err != nil {
 		return err
 	}
@@ -259,7 +278,13 @@ func completedCurrent(a protocol.Artifact) bool {
 				Complete bool `json:"complete"`
 			} `json:"response"`
 		}
-		return json.Unmarshal([]byte(a.Content), &v) == nil && v.Schema == 1 && v.State == "complete" && v.Response != nil && v.Response.Complete && a.Key == "inference/v1/jobs/"+v.Fingerprint
+		if json.Unmarshal([]byte(a.Content), &v) != nil {
+			return false
+		}
+		if v.State == "resolved" {
+			return resolvedCurrent(a)
+		}
+		return v.Schema == 1 && v.State == "complete" && v.Response != nil && v.Response.Complete && a.Key == "inference/v1/jobs/"+v.Fingerprint
 	}
 	if strings.HasPrefix(a.Key, "revision/v1/results/") && a.Version == 1 {
 		var v struct {
@@ -268,9 +293,126 @@ func completedCurrent(a protocol.Artifact) bool {
 		}
 		return json.Unmarshal([]byte(a.Content), &v) == nil && v.Schema == 1 && a.Key == "revision/v1/results/"+v.Request
 	}
+	if strings.HasPrefix(a.Key, "semantic/v1/provenance/") && a.Version == 1 && len(a.Content) <= 64<<10 {
+		var proof struct {
+			Schema           int                 `json:"schema"`
+			Question         string              `json:"question"`
+			RequestSHA256    string              `json:"request_sha256"`
+			Partition        string              `json:"partition"`
+			EmbeddingModelID string              `json:"embedding_model_id"`
+			Source           *archiveReuseSource `json:"source"`
+		}
+		return protocol.DecodeSyncJSON([]byte(a.Content), &proof) == nil && proof.Schema == 1 && proof.Source != nil && proof.Source.valid() &&
+			a.Key == "semantic/v1/provenance/"+proof.Source.SHA256 && archiveHash(proof.RequestSHA256) && archiveHash(proof.Partition) && archiveHash(proof.EmbeddingModelID) &&
+			len(proof.Question) <= semantic.MaxInputBytes && utf8.ValidString(proof.Question) && strings.TrimSpace(proof.Question) != ""
+	}
 	return false
 }
 
+// These are shape checks for closed payload retention, not authorization to
+// reuse an answer. The inference reader still validates source identity, hashes,
+// checks, expiry, and policy after reading exactly the same hot or cold bytes.
+type archiveReuseSource struct {
+	Key                string `json:"key"`
+	Version            int64  `json:"version"`
+	SHA256             string `json:"sha256"`
+	OutputSHA256       string `json:"output_sha256"`
+	RequestFingerprint string `json:"request_fingerprint"`
+}
+
+func (s archiveReuseSource) valid() bool {
+	return archiveJobKey(s.Key) && s.Version > 0 && archiveHash(s.SHA256) && archiveHash(s.OutputSHA256) && archiveHash(s.RequestFingerprint)
+}
+
+func archiveHash(value string) bool {
+	if len(value) != 64 {
+		return false
+	}
+	for _, c := range value {
+		if !(c >= '0' && c <= '9' || c >= 'a' && c <= 'f') {
+			return false
+		}
+	}
+	return true
+}
+
+func archiveJobKey(key string) bool {
+	const prefix = "inference/v1/jobs/"
+	return strings.HasPrefix(key, prefix) && archiveHash(strings.TrimPrefix(key, prefix))
+}
+
+func resolvedCurrent(a protocol.Artifact) bool {
+	var job struct {
+		Schema             int             `json:"schema"`
+		State              string          `json:"state"`
+		Fingerprint        string          `json:"fingerprint"`
+		RequestFingerprint string          `json:"request_fingerprint"`
+		CreatedAt          time.Time       `json:"created_at"`
+		ExpiresAt          time.Time       `json:"expires_at"`
+		Response           json.RawMessage `json:"response"`
+		BudgetKey          string          `json:"budget_key,omitempty"`
+		Reservation        string          `json:"reservation,omitempty"`
+		ReservedMicros     int64           `json:"reserved_micros,omitempty"`
+		TokenBudgetKey     string          `json:"token_budget_key,omitempty"`
+		Resolution         *struct {
+			PolicyID        string             `json:"policy_id"`
+			Source          archiveReuseSource `json:"source"`
+			Response        json.RawMessage    `json:"response"`
+			VerificationKey string             `json:"verification_key"`
+		} `json:"resolution"`
+	}
+	if protocol.DecodeSyncJSON([]byte(a.Content), &job) != nil || job.Schema != 1 || job.State != "resolved" || !archiveHash(job.Fingerprint) || !archiveHash(job.RequestFingerprint) || a.Key != "inference/v1/jobs/"+job.Fingerprint || job.CreatedAt.IsZero() || !job.ExpiresAt.After(job.CreatedAt) || job.Reservation != "" || job.ReservedMicros != 0 || job.Resolution == nil {
+		return false
+	}
+	r := job.Resolution
+	if !archiveHash(r.PolicyID) || !archiveJobKey(r.VerificationKey) || !r.Source.valid() || r.Source.Key == a.Key {
+		return false
+	}
+	var response struct {
+		Complete bool   `json:"complete"`
+		Text     string `json:"text"`
+	}
+	if json.Unmarshal(job.Response, &response) != nil || !response.Complete || response.Text == "" || semanticDigest(response.Text) != r.Source.OutputSHA256 {
+		return false
+	}
+	// A resolved job stores the same original response in both locations. Decode
+	// with exact JSON numbers so field ordering cannot affect this comparison.
+	var outer, inner any
+	aDecoder := json.NewDecoder(strings.NewReader(string(job.Response)))
+	bDecoder := json.NewDecoder(strings.NewReader(string(r.Response)))
+	aDecoder.UseNumber()
+	bDecoder.UseNumber()
+	return aDecoder.Decode(&outer) == nil && bDecoder.Decode(&inner) == nil && reflect.DeepEqual(outer, inner)
+}
+
+type archiveCheckpoint struct {
+	scope, key string
+	version    int64
+}
+
+func loadArchiveCheckpoint(ctx context.Context, tx *sql.Tx) (archiveCheckpoint, error) {
+	var checkpoint archiveCheckpoint
+	err := tx.QueryRowContext(ctx, "SELECT scope,key,version FROM storage_archive_checkpoint WHERE id=1").Scan(&checkpoint.scope, &checkpoint.key, &checkpoint.version)
+	if errors.Is(err, sql.ErrNoRows) {
+		return archiveCheckpoint{}, nil
+	}
+	if err == nil && checkpoint != (archiveCheckpoint{}) && (!identifier.MatchString(checkpoint.scope) || validateKey(checkpoint.key) != nil || checkpoint.version < 1) {
+		return archiveCheckpoint{}, invalid("stored archive checkpoint is invalid")
+	}
+	return checkpoint, err
+}
+
+type archiveScanItem struct {
+	artifact protocol.Artifact
+	bytes    sql.NullInt64
+	current  int64
+}
+
+// StorageArchive reads at most max(64, budget.Items*16) metadata rows and
+// max(64 KiB, budget.Bytes) payload bytes per invocation. Artifact output remains
+// bounded by budget.Items and budget.Bytes. A private SQLite checkpoint advances
+// rejected rows atomically with archival and wraps after exhausting the keyspace;
+// dry runs preserve it. The checkpoint schema is allocated only with retention.
 func (s *Store) StorageArchive(ctx context.Context, dryRun bool, now time.Time, budget retention.Budget) (report StorageReport, err error) {
 	report = StorageReport{Operation: "archive", Status: "complete", DryRun: dryRun}
 	started := time.Now()
@@ -306,31 +448,67 @@ func (s *Store) StorageArchive(ctx context.Context, dryRun bool, now time.Time, 
 	if budget.Items < 1 || budget.Items > c.BatchItems || budget.Bytes < 1 || budget.Bytes > c.BatchBytes {
 		return report, invalid("archive batch exceeds the configured resource bounds")
 	}
-	cutoff := now.UTC().Add(-time.Duration(c.HotHistoryDays) * 24 * time.Hour)
-	rows, err := tx.QueryContext(ctx, `SELECT v.scope,v.key,v.version,v.content,v.updated_at,a.current_version
- FROM artifact_versions v JOIN artifacts a ON a.scope=v.scope AND a.key=v.key
- WHERE v.content IS NOT NULL AND length(CAST(v.content AS BLOB)) BETWEEN 1 AND ? AND julianday(v.updated_at)<julianday(?)
- AND (v.version<=a.current_version-? OR (? AND v.version=a.current_version AND
- CASE WHEN json_valid(v.content) THEN
- (v.key LIKE 'inference/v1/jobs/%' AND json_extract(v.content,'$.schema')=1 AND json_extract(v.content,'$.state')='complete' AND json_extract(v.content,'$.response.complete')=1 AND v.key='inference/v1/jobs/'||json_extract(v.content,'$.fingerprint'))
- OR (v.key LIKE 'revision/v1/results/%' AND v.version=1 AND json_extract(v.content,'$.schema')=1 AND v.key='revision/v1/results/'||json_extract(v.content,'$.request_sha256'))
- ELSE 0 END))
- ORDER BY v.updated_at,v.scope,v.key,v.version LIMIT ?`, budget.Bytes, cutoff.Format(time.RFC3339Nano), c.KeepRecentVersions, c.ArchiveCompletedCurrent, budget.Items*16)
+	// Older configured stores acquire the checkpoint lazily. Dry runs roll this
+	// transaction back, including any first-time checkpoint schema allocation.
+	if _, err = tx.ExecContext(ctx, archiveCheckpointSchema); err != nil {
+		return report, err
+	}
+	checkpoint, err := loadArchiveCheckpoint(ctx, tx)
 	if err != nil {
 		return report, err
 	}
-	items := []protocol.Artifact{}
+	cutoff := now.UTC().Add(-time.Duration(c.HotHistoryDays) * 24 * time.Hour)
+	// Page metadata in primary-key order before fetching or decoding content.
+	// Both row work and inspected payload bytes have explicit per-call bounds;
+	// rejected records advance the durable cursor instead of starving later rows.
+	scanItems := max(minimumArchiveScanItems, budget.Items*16)
+	scanBytes := max(int64(minimumArchiveScanBytes), budget.Bytes)
+	rows, err := tx.QueryContext(ctx, `SELECT v.scope,v.key,v.version,length(CAST(v.content AS BLOB)),v.updated_at,a.current_version
+ FROM artifact_versions v JOIN artifacts a ON a.scope=v.scope AND a.key=v.key
+ WHERE (v.scope,v.key,v.version)>(?,?,?)
+ ORDER BY v.scope,v.key,v.version LIMIT ?`, checkpoint.scope, checkpoint.key, checkpoint.version, scanItems)
+	if err != nil {
+		return report, err
+	}
+	page := make([]archiveScanItem, 0, scanItems)
 	for rows.Next() {
-		var a protocol.Artifact
-		var current int64
-		if err = rows.Scan(&a.Scope, &a.Key, &a.Version, &a.Content, &a.UpdatedAt, &current); err != nil {
+		var item archiveScanItem
+		a := &item.artifact
+		if err = rows.Scan(&a.Scope, &a.Key, &a.Version, &item.bytes, &a.UpdatedAt, &item.current); err != nil {
 			break
 		}
-		when, e := time.Parse(time.RFC3339Nano, a.UpdatedAt)
-		if e != nil || !when.Before(cutoff) {
+		page = append(page, item)
+	}
+	if e := rows.Err(); err == nil {
+		err = e
+	}
+	if e := rows.Close(); err == nil {
+		err = e
+	}
+	if err != nil {
+		return report, err
+	}
+	report.ScannedItems = int64(len(page))
+	items := []protocol.Artifact{}
+	next := checkpoint
+	processed := 0
+	for i, item := range page {
+		a := item.artifact
+		when, parseErr := time.Parse(time.RFC3339Nano, a.UpdatedAt)
+		potentialCurrent := c.ArchiveCompletedCurrent && a.Version == item.current && (strings.HasPrefix(a.Key, "inference/v1/jobs/") || strings.HasPrefix(a.Key, "revision/v1/results/") || strings.HasPrefix(a.Key, "semantic/v1/provenance/"))
+		inspect := item.bytes.Valid && item.bytes.Int64 > 0 && item.bytes.Int64 <= budget.Bytes && parseErr == nil && when.Before(cutoff) && (a.Version <= item.current-int64(c.KeepRecentVersions) || potentialCurrent)
+		if inspect && item.bytes.Int64 > scanBytes-report.ScannedBytes {
+			break // Do not advance past a payload that the next call can inspect.
+		}
+		next, processed = archiveCheckpoint{a.Scope, a.Key, a.Version}, i+1
+		if !inspect {
 			continue
 		}
-		if a.Version == current && !completedCurrent(a) {
+		if err = tx.QueryRowContext(ctx, "SELECT content FROM artifact_versions WHERE scope=? AND key=? AND version=?", a.Scope, a.Key, a.Version).Scan(&a.Content); err != nil {
+			return report, err
+		}
+		report.ScannedBytes += int64(len(a.Content))
+		if a.Version == item.current && !completedCurrent(a) {
 			continue
 		}
 		if int64(len(a.Content)) > budget.Bytes-report.Bytes {
@@ -343,14 +521,10 @@ func (s *Store) StorageArchive(ctx context.Context, dryRun bool, now time.Time, 
 			break
 		}
 	}
-	if e := rows.Err(); err == nil {
-		err = e
-	}
-	if e := rows.Close(); err == nil {
-		err = e
-	}
-	if err != nil {
-		return report, err
+	if processed == len(page) && len(page) < scanItems {
+		next = archiveCheckpoint{} // Wrap once the current traversal is exhausted.
+	} else if report.Items < int64(budget.Items) {
+		report.Reason = "scan_limit"
 	}
 	if dryRun {
 		report.Status = "dry_run"
@@ -369,6 +543,9 @@ func (s *Store) StorageArchive(ctx context.Context, dryRun bool, now time.Time, 
 		if _, err = tx.ExecContext(ctx, "INSERT INTO cold_payloads(scope,key,version,sha256,size,stored_bytes) VALUES(?,?,?,?,?,?)", a.Scope, a.Key, a.Version, ref.Digest, ref.Size, ref.StoredBytes); err != nil {
 			return report, err
 		}
+	}
+	if _, err = tx.ExecContext(ctx, "INSERT INTO storage_archive_checkpoint(id,scope,key,version) VALUES(1,?,?,?) ON CONFLICT(id) DO UPDATE SET scope=excluded.scope,key=excluded.key,version=excluded.version", next.scope, next.key, next.version); err != nil {
+		return report, err
 	}
 	if err = tx.Commit(); err != nil {
 		return report, err

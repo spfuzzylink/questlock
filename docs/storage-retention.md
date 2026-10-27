@@ -26,6 +26,10 @@ An archive batch selects nonempty content older than `hot_history_days`:
 - When `archive_completed_current` is true, recognized complete
   `inference/v1/jobs/` results and immutable version-1 `revision/v1/results/`
   results can move even while current. Their embedded identity must match the key.
+- That same opt-in also covers well-formed closed controlled-reuse aliases and
+  their immutable `semantic/v1/provenance/` question records. Their source
+  references, hashes and response evidence stay intact. Archival does not approve
+  an answer: normal reuse still checks the original source and expiry on read.
 
 Opaque current values, pending or uncertain claims, budget ledgers, team state
 and outcome records stay hot. Archival never deletes their identities or older
@@ -38,6 +42,20 @@ content can share one file. Interrupted work may leave unreferenced final files;
 they remain retained and count toward cold capacity. Reads check the digest,
 uncompressed length and gzip representation. Missing or corrupt files stop the
 read, exact retry or reuse; preserve the claim and recover verified storage.
+
+Each call scans at most `max(64, batch_items × 16)` metadata rows and inspects
+at most `max(64 KiB, batch_bytes)` payload bytes, using the effective invocation
+budget when adaptive admission reduces it. Output keeps the configured item and
+byte caps. A private SQLite checkpoint advances past skipped records atomically
+with archival and wraps at the end. Dry runs do not advance it. The checkpoint
+table is allocated only after retention is enabled; it changes no artifact or
+claim format. Existing restore-before-downgrade guidance still applies.
+
+`scanned_items` and `scanned_bytes` describe that work. A result with zero archived
+items and `reason: "scan_limit"` means the traversal is unfinished, so continue
+with later non-dry batches. It does not establish that no eligible payloads
+remain. Restarting the broker preserves progress; opaque or malformed current
+records cannot permanently hide later eligible records behind the scan cap.
 
 ## Choose a complete policy
 

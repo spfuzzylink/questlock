@@ -134,6 +134,23 @@ identity or the checked result. A score is not proof of correctness. Same-scope
 members remain trusted cooperating writers, and the host operator, SQLite files
 and backups retain the existing confidentiality boundary.
 
+## Controlled answer reuse
+
+Controlled answer reuse is a separate, explicit opt-in for read-only text tasks.
+It binds the question provenance, source version and hashes, evidence, runtime,
+checks and verifier policy. Changed bindings or expired source data cannot be
+made reusable by a high similarity score. Pending or uncertain claims are never
+cleared to make a candidate fit. Optional peer waiting stops before generation;
+it does not cancel another worker.
+
+The local verifier receives both questions, the cached answer and the approved
+context. Treat these as sensitive input and untrusted data, including any prompt
+injection in historical text. A strict verdict and lexical guards reduce risk;
+they do not prove correctness. Qualify the intended workload, retain false
+acceptances and abstentions, and keep human review where the consequence needs
+it. This feature does not replay external actions or add tool permissions.
+See [controlled reuse](docs/controlled-reuse.md) for limits and accounting.
+
 ## Publishing and contributing safely
 
 Only reviewed source and documentation belong in this repository. Do not add

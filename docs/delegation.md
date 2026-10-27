@@ -314,3 +314,14 @@ checks; human feedback is not exported to Langfuse in this release.
 The request digest and tier ID derive stable job identity. Repeating the same approved request preserves normal snapshot reuse and uncertainty rules; the router never changes a revision to force generation. Update the approved revision when facts change. Review retained broker records before deliberately creating a new attempt after an uncertain outcome.
 
 Result attempts retain checks, usage, outcome, and an output digest while omitting failed answer text. Only a passing selected tier exposes `response`; MCP additionally strips provider response identifiers and labels from attempts. Require a successful CLI exit and `status: "completed"` before using the selected text, then review it for the surrounding task.
+
+## Reuse a related answer
+
+For read-only text, an explicit [controlled reuse policy](controlled-reuse.md)
+can inspect an earlier answer before starting new generation. It binds the
+current facts and checks, validates the original source, then asks a local
+verifier whether the unchanged answer satisfies the new request. A retrieval
+score alone cannot serve it. Keep one local tier and no escalation; record
+verifier work as well as answer work. Exact snapshots keep their existing reuse
+path. Use [shadow mode](semantic-shadow.md) first when the workload has not yet
+been qualified.

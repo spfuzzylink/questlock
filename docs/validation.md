@@ -1,5 +1,16 @@
 # Validation record
 
+## Controlled reuse — 2026-10-27
+
+The corrected local policy served 23/36 eligible paraphrases and none of 36
+invalid variants in a 72-pair development challenge. The 95% precision interval
+was 85.7–100%; this does not establish universal 90–98% accuracy. Six live short
+workflows retained resource-pressure skips and a factual model failure. The
+one checked paraphrase reuse avoided target generation but used 370 more
+generation tokens than its fresh comparison, plus 30 embedding tokens. All 12
+exact repeats used zero new model tokens. Paid fallback stayed off; API spend
+was $0. [Full observations, earlier run, costs and limits](controlled-reuse-validation-v0.15.0.md).
+
 ## Local semantic shadow observation — 2026-10-27
 
 All six authored pairs passed with local `all-minilm` embeddings: paraphrases

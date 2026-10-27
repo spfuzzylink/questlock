@@ -1,0 +1,262 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device" compressed="false">
+  <diagram id="controlled-reuse" name="Controlled answer reuse">
+    <mxGraphModel dx="1440" dy="1160" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1160" background="#080c19">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="heading" value="Questlock: controlled answer reuse" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=31;fontColor=#f4f3ff;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="34" width="1300" height="39" as="geometry" />
+        </mxCell>
+        <mxCell id="intro" value="Retrieve a related question. Serve its answer only while it satisfies the current request." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=19;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="60" y="85" width="1300" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="request-exact" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#93f9e5;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="262" as="sourcePoint" />
+            <mxPoint x="410" y="262" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="exact-miss" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#9d7dff;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="680" y="262" as="sourcePoint" />
+            <mxPoint x="760" y="262" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="exact-original-hit" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#93f9e5;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="545" y="175" as="sourcePoint" />
+            <mxPoint x="1245" y="175" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="545" y="150" />
+              <mxPoint x="1245" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="claim-retrieve" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#9d7dff;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="895" y="350" as="sourcePoint" />
+            <mxPoint x="195" y="480" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="895" y="418" />
+              <mxPoint x="195" y="418" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="retrieve-check" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#9d7dff;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="572" as="sourcePoint" />
+            <mxPoint x="410" y="572" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="check-verify" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#9d7dff;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="680" y="572" as="sourcePoint" />
+            <mxPoint x="760" y="572" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="verify-alias" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#93f9e5;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1030" y="572" as="sourcePoint" />
+            <mxPoint x="1110" y="572" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="alias-answer" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#93f9e5;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1245" y="480" as="sourcePoint" />
+            <mxPoint x="1245" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="retrieve-miss" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#9d7dff;strokeWidth=2;dashed=1;dashPattern=7 5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="195" y="665" as="sourcePoint" />
+            <mxPoint x="195" y="825" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="check-reject" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#9d7dff;strokeWidth=2;dashed=1;dashPattern=7 5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="545" y="665" as="sourcePoint" />
+            <mxPoint x="195" y="745" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="545" y="745" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="verify-reject" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#9d7dff;strokeWidth=2;dashed=1;dashPattern=7 5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="895" y="665" as="sourcePoint" />
+            <mxPoint x="545" y="745" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="895" y="745" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fresh-answer" value="" style="endArrow=block;endFill=1;rounded=0;strokeColor=#93f9e5;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="680" y="902" as="sourcePoint" />
+            <mxPoint x="760" y="902" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="approved" value="" style="rounded=1;arcSize=10;fillColor=#15152e;strokeColor=#9d7dff;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="175" width="270" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="approved-title" value="Approved request" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=21;fontColor=#f4f3ff;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="78" y="189" width="234" height="29" as="geometry" />
+        </mxCell>
+        <mxCell id="approved-body-0" value="Read-only task + intent" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="78" y="237" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="approved-body-1" value="Current facts and checks" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="78" y="266" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="exact" value="" style="rounded=1;arcSize=10;fillColor=#15152e;strokeColor=#93f9e5;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="410" y="175" width="270" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="exact-title" value="Exact lookup" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=21;fontColor=#f4f3ff;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="428" y="189" width="234" height="29" as="geometry" />
+        </mxCell>
+        <mxCell id="exact-body-0" value="Original hit: skip models" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="428" y="237" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="exact-body-1" value="Alias: source + policy check" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="428" y="266" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="claim" value="" style="rounded=1;arcSize=10;fillColor=#15152e;strokeColor=#9d7dff;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="760" y="175" width="270" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="claim-title" value="Claim current task" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=21;fontColor=#f4f3ff;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="778" y="189" width="234" height="29" as="geometry" />
+        </mxCell>
+        <mxCell id="claim-body-0" value="Versioned ownership first" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="778" y="237" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="claim-body-1" value="Target generation waits" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="778" y="266" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="answer" value="" style="rounded=1;arcSize=10;fillColor=#15152e;strokeColor=#93f9e5;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="175" width="270" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="answer-title" value="Return checked answer" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=21;fontColor=#f4f3ff;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1128" y="189" width="234" height="29" as="geometry" />
+        </mxCell>
+        <mxCell id="answer-body-0" value="Complete + durable" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1128" y="237" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="answer-body-1" value="Current checks pass" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1128" y="266" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="retrieve" value="" style="rounded=1;arcSize=10;fillColor=#15152e;strokeColor=#9d7dff;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="480" width="270" height="185" as="geometry" />
+        </mxCell>
+        <mxCell id="retrieve-title" value="Retrieve candidates" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=21;fontColor=#f4f3ff;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="78" y="494" width="234" height="29" as="geometry" />
+        </mxCell>
+        <mxCell id="retrieve-body-0" value="One local question embedding" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="78" y="542" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="retrieve-body-1" value="Optional wait; same vector" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="78" y="571" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="checks" value="" style="rounded=1;arcSize=10;fillColor=#15152e;strokeColor=#9d7dff;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="410" y="480" width="270" height="185" as="geometry" />
+        </mxCell>
+        <mxCell id="checks-title" value="Validate original source" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=21;fontColor=#f4f3ff;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="428" y="494" width="234" height="29" as="geometry" />
+        </mxCell>
+        <mxCell id="checks-body-0" value="Question provenance" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="428" y="542" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="checks-body-1" value="Current facts, checks and TTL" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="428" y="571" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="verify" value="" style="rounded=1;arcSize=10;fillColor=#15152e;strokeColor=#9d7dff;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="760" y="480" width="270" height="185" as="geometry" />
+        </mxCell>
+        <mxCell id="verify-title" value="Local answer validity" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=21;fontColor=#f4f3ff;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="778" y="494" width="234" height="29" as="geometry" />
+        </mxCell>
+        <mxCell id="verify-body-0" value="Strict five-field verdict" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="778" y="542" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="verify-body-1" value="Reject or abstain: fresh path" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="778" y="571" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="alias" value="" style="rounded=1;arcSize=10;fillColor=#15152e;strokeColor=#93f9e5;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="480" width="270" height="185" as="geometry" />
+        </mxCell>
+        <mxCell id="alias-title" value="Publish source alias" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=21;fontColor=#f4f3ff;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1128" y="494" width="234" height="29" as="geometry" />
+        </mxCell>
+        <mxCell id="alias-body-0" value="Matching verifier policy" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1128" y="542" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="alias-body-1" value="Original expiry; no chains" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1128" y="571" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="fresh" value="" style="rounded=1;arcSize=10;fillColor=#15152e;strokeColor=#9d7dff;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="825" width="620" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="fresh-title" value="Fresh local generation" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=21;fontColor=#f4f3ff;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="78" y="839" width="584" height="29" as="geometry" />
+        </mxCell>
+        <mxCell id="fresh-body-0" value="Only after a known miss or rejection" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="78" y="887" width="584" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="fresh-body-1" value="Normal token limits and current checks" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="78" y="916" width="584" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="fresh-output" value="" style="rounded=1;arcSize=10;fillColor=#15152e;strokeColor=#93f9e5;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="760" y="825" width="620" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="fresh-output-title" value="Return checked fresh answer" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=21;fontColor=#f4f3ff;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="778" y="839" width="584" height="29" as="geometry" />
+        </mxCell>
+        <mxCell id="fresh-output-body-0" value="Complete + durable generation" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="778" y="887" width="584" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="fresh-output-body-1" value="May index original question + source" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="778" y="916" width="584" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="hit-label" value="Original exact hit: no embedding or verifier inference" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=15;fontColor=#93f9e5;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="590" y="122" width="620" height="23" as="geometry" />
+        </mxCell>
+        <mxCell id="miss-label" value="Miss" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=15;fontColor=#9d7dff;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="697" y="233" width="60" height="23" as="geometry" />
+        </mxCell>
+        <mxCell id="claim-label" value="Own the target claim before semantic work" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#9d7dff;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="575" y="430" width="650" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="alias-label" value="Revalidate" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=15;fontColor=#93f9e5;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1265" y="387" width="130" height="23" as="geometry" />
+        </mxCell>
+        <mxCell id="alias-label-2" value="then serve" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=15;fontColor=#93f9e5;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1265" y="410" width="130" height="23" as="geometry" />
+        </mxCell>
+        <mxCell id="accept-label" value="Accept" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=15;fontColor=#93f9e5;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1045" y="537" width="75" height="23" as="geometry" />
+        </mxCell>
+        <mxCell id="fresh-label" value="Known miss, guard rejection or verifier abstention" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=17;fontColor=#9d7dff;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="240" y="768" width="950" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="stop-note" value="Pending / uncertain: stop. Unconfirmed source, verifier or publication: stop; no automatic takeover or retry." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=17;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="60" y="370" width="1320" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="accounting" value="" style="rounded=1;arcSize=10;fillColor=#15152e;strokeColor=#373454;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1020" width="1320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="accounting-title" value="Count embedding and verifier work on every attempt." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=20;fontColor=#93f9e5;fillColor=none;strokeColor=none;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1030" width="1280" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="accounting-body" value="Source tokens are a historical proxy. Use matched fresh runs to measure net savings." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=17;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1062" width="1280" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="limit-note" value="A passing guard and model verdict remain task-specific evidence, not a universal correctness guarantee." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=17;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1118" width="1320" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="retrieve-body-2" value="At most 32 scoped lookups" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=top;spacing=0;fontFamily=Arial;fontSize=16;fontColor=#cbc6e2;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="78" y="600" width="234" height="24" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

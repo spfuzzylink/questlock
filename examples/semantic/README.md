@@ -65,3 +65,18 @@ generation usage. A candidate score is not a validity proof.
 Embedding errors are diagnostic and do not trigger fallback or generation retry.
 
 [Full boundaries, limits and qualification cases](../../docs/semantic-shadow.md).
+
+## Try controlled reuse
+
+The complete [source request](support-faq.controlled.request.json) and
+[paraphrase request](support-faq.controlled-paraphrase.request.json) opt into
+read-only answer reuse. Run them in that order against the same broker and
+runtime, using the worker command above with these filenames. Repeat each file
+to check exact reuse. The pair uses a declared retrieval cutoff of 0.75 and
+strict checks for the fictional facts; it does not promise that every installed
+verifier will accept the paraphrase. Inspect `semantic_reuse` and outcome
+registration, including verifier usage. A complete rejection may generate a
+fresh answer; an uncertain outcome stops.
+
+All outcome readers for this cohort need v0.15.0+. The existing files above keep
+shadow behavior. [Controlled serving, Go wiring and limits](../../docs/controlled-reuse.md).

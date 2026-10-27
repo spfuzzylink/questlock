@@ -123,3 +123,8 @@ semantic/**
 **/*_test.go
 # Finder metadata is never a Go build input, even when its suffix is .go.
 **/.*
+
+!internal/controlledquest/
+internal/controlledquest/**
+!internal/controlledquest/*.go
+internal/controlledquest/*_test.go
