@@ -22,6 +22,8 @@ type collectedRunner struct {
 	records *[]telemetryRecord
 }
 
+func (r collectedRunner) RuntimeIdentity() string { return r.inner.RuntimeIdentity() }
+
 func (r collectedRunner) Run(ctx context.Context, spec inference.Spec) (inference.Result, error) {
 	result, err := r.inner.Run(ctx, spec)
 	if r.records != nil && result.Measurement != nil {

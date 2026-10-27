@@ -380,6 +380,27 @@ Paid worker escalation needs process `--allow-paid` too. Direct provider
 protocols remain available. The [example spec](../examples/inference/openrouter-summary.json)
 is for offline planning; live paid routing and invoice savings remain unvalidated.
 
+## 10. Reworded questions with the same approved facts
+
+A support team asks the same policy question in different words. **Questlock**
+can record possible prior matches while each fresh request still generates and
+checks its own answer. The optional observer runs afterward; it never serves a
+candidate or avoids generation. An exact repeat still uses the existing exact
+path without embedding calls.
+
+**Implemented boundary:** shadow observations are scoped and bind evidence,
+variables, actual task/revision, instructions, context, checks, model tier and
+pinned runtime. The broker validates the current complete source and expiry;
+changed facts or constraints cannot cross a partition through a similarity score.
+Vectors remain sensitive data inside the same bounded Go/SQLite store.
+
+**Your qualification:** compare paraphrases against controls that change one
+relevant fact or constraint. Record false candidates and embedding overhead.
+The six-case offline quest uses simulated embeddings and timings; it establishes
+neither embedding quality nor a saving. Start with the
+[synthetic FAQ pair and changed-policy control](../examples/semantic/README.md),
+then read the [shadow-only contract](semantic-shadow.md).
+
 ## When another component is needed
 
 - **Task ownership or worker leases:** a version check does not grant a worker

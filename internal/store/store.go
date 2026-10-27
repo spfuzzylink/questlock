@@ -46,10 +46,12 @@ type Principal struct {
 }
 
 type Store struct {
-	db         *sql.DB
-	path       string
-	observerMu sync.RWMutex
-	observer   func(context.Context, retention.Event)
+	db            *sql.DB
+	path          string
+	observerMu    sync.RWMutex
+	observer      func(context.Context, retention.Event)
+	semanticMu    sync.Mutex
+	semanticReady bool
 }
 
 var identifier = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$`)

@@ -8,7 +8,8 @@ opt-in scope/day quotas in the broker. Providers and telemetry stay explicit.
 `execution.LoadSpec` reads a bounded task configuration; `admission.LoadConfig`
 reads resource settings. [Complete example](go-integration.md).
 
-This adds a Go integration surface; the broker HTTP routes below stay the same.
+For optional semantic candidate observations, the
+[shadow guide](semantic-shadow.md#from-go) shows the checked workflow adapter.
 
 ## Broker HTTP API
 
@@ -26,6 +27,14 @@ The native broker defaults to `http://127.0.0.1:8080`. Every `/v1/` endpoint req
 | GET | `/v1/audit?limit=100` | Latest scoped publish events, newest first; maximum 1,000 |
 | GET | `/v1/identity` | Authenticated persistent authority, scope and receipt agent; no query fields |
 | POST | `/v1/sync` | Bounded snapshot and accepted changes in the token's scope; read-only |
+| POST | `/v1/semantic/query` | Bounded shadow-candidate search in the authenticated scope; never returns an answer |
+| POST | `/v1/semantic/entry` | Index a checked caller's complete, fresh result reference; preserves artifacts and claims |
+
+The semantic routes accept strict JSON (including duplicate-field rejection),
+at most 128 KiB. They reject query strings. `client.QuerySemantic` and
+`client.PutSemantic` expose the typed Go contract. The index is created lazily:
+capacity failure in this optional feature does not prevent ordinary exact reads.
+See [limits, source validation and scope rules](semantic-shadow.md).
 
 ## Publish
 

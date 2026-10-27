@@ -77,3 +77,12 @@ location, local model setup, diagnostics, and removal. Report only measured
 usage: deterministic edits and exact reuse have zero this-run generation usage;
 historical model costs remain historical. Do not estimate token savings, model
 latency, or human effort from a fixture.
+
+For optional semantic observations on a compatible worker, check
+`request_schemas.semantic_shadow_modes` for `shadow`. Only add an explicitly
+reviewed `semantic_shadow` policy to a bounded delegation request. Shadow mode
+records local embedding candidates after checked fresh generation; it never
+serves an alternative answer or avoids generation. Exact reuse skips embeddings.
+Keep embedding usage separate from generation usage, retain misses and failures,
+and never interpret a similarity score as answer validity or human acceptance.
+Workers do not download missing weights or enable paid fallback.

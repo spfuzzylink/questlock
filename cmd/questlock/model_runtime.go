@@ -84,6 +84,8 @@ type preparedRunner struct {
 	setupClaimed         atomic.Bool
 }
 
+func (p *preparedRunner) RuntimeIdentity() string { return p.runner.RuntimeIdentity() }
+
 func (p *preparedRunner) Run(ctx context.Context, spec inference.Spec) (inference.Result, error) {
 	result, err := p.runner.Run(ctx, spec)
 	if result.Measurement != nil && p.setupClaimed.CompareAndSwap(false, true) {

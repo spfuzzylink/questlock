@@ -69,6 +69,9 @@ func (router Router) Run(ctx context.Context, request Request) (Result, error) {
 		if quality {
 			response := answer.Response
 			result.SelectedTier, result.Response, result.Status = tier.ID, &response, "completed"
+			if request.SemanticShadow != nil {
+				result.SemanticShadow = router.Shadow.observe(ctx, request, tier, runner, answer)
+			}
 			return result, nil
 		}
 		// Known bad answers are distinct from an incomplete/uncertain call.
