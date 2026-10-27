@@ -13,7 +13,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 TOP_LEVEL = {"go.mod", "go.sum", "LICENSE", "ATTRIBUTION.md", "THIRD_PARTY_NOTICES.md"}
 GO_DIRECTORIES = {
-    "semantic", "internal/semanticquest",
+    "semantic", "internal/semanticquest", "internal/controlledquest",
     "cmd/questlock", "internal/store", "internal/httpapi", "internal/agentsetup", "internal/configguard", "internal/onboardingclient",
     "internal/localruntime", "internal/desktopbundle", "internal/nativeagent", "internal/teamquest", "team",
     "client", "protocol", "inference", "admission", "edge", "internal/edgequest", "systemone", "observability", "evaluation", "delegation", "worker", "outcomes", "revision", "retention", "writing",
@@ -37,7 +37,7 @@ EMBEDDED_FILES = {
 REQUIRED_FILES = TOP_LEVEL | EMBEDDED_FILES | {
     "writing/writing.go", "writing/index.go", "cmd/questlock/writing.go",
     "retention/config.go", "retention/cold.go", "retention/cold_files_unix.go", "retention/cold_files_other.go",
-    "internal/teamquest/quest.go", "team/engine.go", "internal/nativeagent/provider.go", "protocol/data_json.go",
+    "internal/controlledquest/quest.go", "internal/teamquest/quest.go", "team/engine.go", "internal/nativeagent/provider.go", "protocol/data_json.go",
     "internal/configguard/guard.go", "internal/onboardingclient/client.go",
     "internal/localruntime/runtime.go", "internal/desktopbundle/bundle.go",
     "edge/edge.go", "internal/edgequest/quest.go", "systemone/runner.go",
@@ -46,6 +46,7 @@ REQUIRED_FILES = TOP_LEVEL | EMBEDDED_FILES | {
     "observability/langfuse.go", "evaluation/fixtures.go", "delegation/router.go", "worker/worker.go", "outcomes/store.go", "revision/types.go", "admission/scheduler.go",
 }
 PRIVATE_SENTINELS = (
+    "internal/controlledquest/context-private.token", "internal/controlledquest/nested/context-private.go",
     "writing/context-private.json", "writing/nested/context-private.go",
     "retention/context-private.gzip", "retention/context-private.json", "retention/nested/context-private.go",
     "internal/teamquest/context-private.token", "internal/teamquest/nested/context-private.go",

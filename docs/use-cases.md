@@ -401,6 +401,35 @@ neither embedding quality nor a saving. Start with the
 [synthetic FAQ pair and changed-policy control](../examples/semantic/README.md),
 then read the [shadow-only contract](semantic-shadow.md).
 
+## 11. Agents share an answer to a related question
+
+Two support agents ask how the same kind of customer can reset a password. The
+second question uses different words. With explicit read-only controlled reuse,
+Questlock can retrieve the first answer, check its original question and current
+evidence, then serve it if protected terms, current checks and a local verifier
+all permit reuse. A changed account type, email-access condition or requested
+format needs a fresh answer when the saved one no longer satisfies the request.
+
+The same pattern applies to onboarding, incident handoffs, release readiness and
+refund explanations. Agent processes can share scoped broker memory across
+workspaces or machines while each runs its own local models. They still retain
+the normal pending/uncertain stop behavior; reuse cannot cancel another worker
+or replay an account change, refund or other external action.
+
+If a related answer is still being produced, an optional bounded wait can query
+for it before generating again. It reuses one embedding, makes at most 32 index
+lookups, and does not interrupt or take over the other worker. The default wait
+is zero. A pressure-related skip affects optional reuse, not normal generation.
+
+Measure served-answer precision, false acceptances, coverage and confidence
+intervals per family. Include embedding and verifier work even when a candidate
+is rejected. Validation can cost more tokens or time than a cheap fresh answer.
+Historical answers in cold storage keep their original expiry. The
+[controlled reuse guide](controlled-reuse.md) covers request fields, source
+provenance, local model limits and a frozen 72-variant challenge population.
+Controlled outcome cohorts use v0.15+ readers and workers so auxiliary verifier
+usage is counted through the new `verification_work` field.
+
 ## When another component is needed
 
 - **Task ownership or worker leases:** a version check does not grant a worker

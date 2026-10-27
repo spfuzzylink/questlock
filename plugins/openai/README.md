@@ -31,10 +31,10 @@ twice. Expect checked synthetic JSON, durable publication,
 provider account is needed for this task. An older worker without status can
 keep its existing task tools; update/restart it deliberately when needed.
 
-The Git package downloads the pinned v0.14.0 runtime archive and checksum over
+The Git package downloads the pinned v0.15.0 runtime archive and checksum over
 HTTPS from the official Questlock GitHub release on first `serve` or `try`.
 It verifies SHA-256 and does not use a binary from `PATH`. The platform
-`questlock-plugin_0.14.0_OS_ARCH.zip` includes the runtime for an offline install;
+`questlock-plugin_0.15.0_OS_ARCH.zip` includes the runtime for an offline install;
 verify its matching `checksums.txt` entry, extract it, and register that
 marketplace root with `codex plugin marketplace add .` instead. macOS and Linux
 AMD64/ARM64 are packaged; no Windows binary is provided. This is a desktop local
@@ -91,7 +91,7 @@ broker affects both clients. Paid fallback is disabled. Failed checks never
 trigger an automatic model rewrite. Checks are not human acceptance, and the
 surrounding hosted assistant can still consume normal account allowances.
 
-[Full guide, source builds, and public-directory prerequisites](https://github.com/spfuzzylink/questlock/blob/v0.14.0/docs/plugins.md)
-· [Revision contract](https://github.com/spfuzzylink/questlock/blob/v0.14.0/docs/checked-revisions.md)
-· [Local models](https://github.com/spfuzzylink/questlock/blob/v0.14.0/docs/local-models.md)
+[Full guide, source builds, and public-directory prerequisites](https://github.com/spfuzzylink/questlock/blob/v0.15.0/docs/plugins.md)
+· [Revision contract](https://github.com/spfuzzylink/questlock/blob/v0.15.0/docs/checked-revisions.md)
+· [Local models](https://github.com/spfuzzylink/questlock/blob/v0.15.0/docs/local-models.md)
 · [Official Codex commands](https://learn.chatgpt.com/docs/developer-commands?surface=cli#codex-plugin)

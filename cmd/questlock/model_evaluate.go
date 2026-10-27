@@ -24,6 +24,23 @@ type collectedRunner struct {
 
 func (r collectedRunner) RuntimeIdentity() string { return r.inner.RuntimeIdentity() }
 
+func (r collectedRunner) Lookup(ctx context.Context, spec inference.Spec) (inference.Result, bool, error) {
+	return r.inner.Lookup(ctx, spec)
+}
+
+func (r collectedRunner) RunWithResolver(ctx context.Context, spec inference.Spec, resolver inference.ReuseResolver) (inference.Result, error) {
+	result, err := r.inner.RunWithResolver(ctx, spec, resolver)
+	if r.records != nil && result.Measurement != nil {
+		record := telemetryRecord{execution: observation(spec, result)}
+		if err == nil && result.Response.Complete && result.Durable && result.Response.Text != "" {
+			_, pass := evaluation.CheckOutput(result.Response.Text, r.checks)
+			record.quality = &pass
+		}
+		*r.records = append(*r.records, record)
+	}
+	return result, err
+}
+
 func (r collectedRunner) Run(ctx context.Context, spec inference.Spec) (inference.Result, error) {
 	result, err := r.inner.Run(ctx, spec)
 	if r.records != nil && result.Measurement != nil {

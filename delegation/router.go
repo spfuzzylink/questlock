@@ -40,7 +40,20 @@ func (router Router) Run(ctx context.Context, request Request) (Result, error) {
 			result.Attempts = append(result.Attempts, Attempt{TierID: tier.ID, ErrorCategory: "runner_initialization_failed", Checks: evaluation.NotEvaluated(request.Checks)})
 			return result, ErrStopped
 		}
-		answer, runErr := runner.Run(ctx, spec)
+		var controlled *controlledResolver
+		var answer inference.Result
+		var runErr error
+		if request.SemanticReuse != nil {
+			controlled, err = router.Reuse.resolver(ctx, request, tier, runner)
+			if err != nil {
+				return result, ErrStopped
+			}
+			defer controlled.close()
+			answer, runErr = controlled.runner.RunWithResolver(ctx, spec, controlled)
+			result.SemanticReuse = controlled.observation
+		} else {
+			answer, runErr = runner.Run(ctx, spec)
+		}
 		checks, quality := evaluation.NotEvaluated(request.Checks), false
 		complete := runErr == nil && knownComplete(answer, spec)
 		if complete {
@@ -54,6 +67,11 @@ func (router Router) Run(ctx context.Context, request Request) (Result, error) {
 			attempt.OutputSHA256 = hex.EncodeToString(digest[:])
 		}
 		attempt.Result.Response.Text = ""
+		if answer.Resolution != nil {
+			redacted := *answer.Resolution
+			redacted.Response = inference.Response{}
+			attempt.Result.Resolution = &redacted
+		}
 		if runErr != nil {
 			result.BudgetDiagnostic = diagnostic
 			attempt.ErrorCategory = errorCategory(runErr)
@@ -67,6 +85,9 @@ func (router Router) Run(ctx context.Context, request Request) (Result, error) {
 		}
 		result.Attempts = append(result.Attempts, attempt)
 		if quality {
+			if controlled != nil {
+				controlled.finish(ctx, answer)
+			}
 			response := answer.Response
 			result.SelectedTier, result.Response, result.Status = tier.ID, &response, "completed"
 			if request.SemanticShadow != nil {

@@ -33,17 +33,18 @@ type jobRecord struct {
 	BudgetDiagnostic *BudgetDiagnostic `json:"budget_diagnostic,omitempty"`
 	// RequestFingerprint binds the approved plan without persisting a serving
 	// runtime identity. Legacy records omit it and remain usable for inference.
-	RequestFingerprint string    `json:"request_fingerprint,omitempty"`
-	Schema             int       `json:"schema"`
-	Fingerprint        string    `json:"fingerprint"`
-	State              string    `json:"state"`
-	CreatedAt          time.Time `json:"created_at"`
-	ExpiresAt          time.Time `json:"expires_at"`
-	Response           *Response `json:"response,omitempty"`
-	BudgetKey          string    `json:"budget_key,omitempty"`
-	Reservation        string    `json:"reservation,omitempty"`
-	ReservedMicros     int64     `json:"reserved_micros,omitempty"`
-	TokenBudgetKey     string    `json:"token_budget_key,omitempty"`
+	RequestFingerprint string           `json:"request_fingerprint,omitempty"`
+	Schema             int              `json:"schema"`
+	Fingerprint        string           `json:"fingerprint"`
+	State              string           `json:"state"`
+	CreatedAt          time.Time        `json:"created_at"`
+	ExpiresAt          time.Time        `json:"expires_at"`
+	Response           *Response        `json:"response,omitempty"`
+	BudgetKey          string           `json:"budget_key,omitempty"`
+	Reservation        string           `json:"reservation,omitempty"`
+	ReservedMicros     int64            `json:"reserved_micros,omitempty"`
+	TokenBudgetKey     string           `json:"token_budget_key,omitempty"`
+	Resolution         *ReuseResolution `json:"resolution,omitempty"`
 }
 
 func (r Runner) now() time.Time {
@@ -54,6 +55,16 @@ func (r Runner) now() time.Time {
 }
 
 func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
+	return r.run(ctx, s, nil)
+}
+
+// RunWithResolver preserves exact reuse and claim ownership, then consults the
+// explicit resolver before any target token count, reservation or generation.
+func (r Runner) RunWithResolver(ctx context.Context, s Spec, resolver ReuseResolver) (Result, error) {
+	return r.run(ctx, s, resolver)
+}
+
+func (r Runner) run(ctx context.Context, s Spec, resolver ReuseResolver) (result Result, runErr error) {
 	started := time.Now()
 	measurement := &Measurement{StartedAt: started.UTC(), PhaseMS: make(map[string]float64)}
 	defer func() {
@@ -155,6 +166,22 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 			if s.ReuseForSeconds > 0 && r.now().Before(saved.ExpiresAt) && r.now().Before(saved.CreatedAt.Add(time.Duration(s.ReuseForSeconds)*time.Second)) {
 				return savedResult(saved, s, true), nil
 			}
+		case "resolved":
+			if saved.Resolution == nil || saved.RequestFingerprint != plan.Fingerprint {
+				return Result{}, errors.New("invalid stored resolved response")
+			}
+			if resolver != nil && resolver.Identity() != "" && resolver.Identity() == saved.Resolution.PolicyID {
+				source, err := r.validateResolution(ctx, s, saved.Resolution)
+				if err != nil {
+					return Result{}, err
+				}
+				if saved.Response == nil || !sameResponse(*saved.Response, saved.Resolution.Response) || !saved.CreatedAt.Equal(source.CreatedAt) || saved.ExpiresAt.After(source.ExpiresAt) || !validReuseWindow(saved.CreatedAt, saved.ExpiresAt, s.ReuseForSeconds, r.now()) {
+					return Result{}, errors.New("invalid or expired stored resolved response")
+				}
+				return resolvedResult(saved, s), nil
+			}
+			// This target never generated. A caller that did not authorize the
+			// recorded policy can replace it through ordinary CAS admission.
 		case "blocked": // A preflight rejection never called Generate; safe to retry.
 		default:
 			return Result{}, errors.New("unknown stored inference state")
@@ -183,6 +210,45 @@ func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
 		return Result{}, err
 	}
 	version = a.Version
+	if resolver != nil {
+		phase = time.Now()
+		policyID := resolver.Identity()
+		if !validReuseID(policyID) {
+			saveState(key, version, record, "blocked")
+			return Result{}, errors.New("reuse resolver identity is invalid")
+		}
+		resolution, resolveErr := resolver.Resolve(ctx, s)
+		measurement.PhaseMS["reuse_resolution"] = milliseconds(time.Since(phase))
+		if resolveErr != nil {
+			saveState(key, version, record, "blocked")
+			return Result{}, fmt.Errorf("reuse resolution failed: %w", resolveErr)
+		}
+		if resolution != nil {
+			if resolution.PolicyID != policyID || resolver.Identity() != policyID {
+				saveState(key, version, record, "blocked")
+				return Result{}, errors.New("reuse resolution policy differs from resolver identity")
+			}
+			source, resolveErr := r.validateResolution(ctx, s, resolution)
+			if resolveErr != nil {
+				saveState(key, version, record, "blocked")
+				return Result{}, resolveErr
+			}
+			record.State, record.Resolution = "resolved", cloneResolution(resolution)
+			record.Response = &record.Resolution.Response
+			record.Reservation = "" // The target never reserved generation quota.
+			record.CreatedAt, record.ExpiresAt = source.CreatedAt, source.ExpiresAt
+			if cap := source.CreatedAt.Add(time.Duration(s.ReuseForSeconds) * time.Second); cap.Before(record.ExpiresAt) {
+				record.ExpiresAt = cap
+			}
+			phase = time.Now()
+			_, err = r.publish(ctx, key, version, claimID+"-resolved", record)
+			measurement.PhaseMS["publication"] = milliseconds(time.Since(phase))
+			if err != nil {
+				return Result{Fingerprint: fingerprint}, fmt.Errorf("resolved result publication unconfirmed; do not regenerate automatically: %w", err)
+			}
+			return resolvedResult(record, s), nil
+		}
+	}
 	// Count after winning ownership, so simultaneous workers do not even
 	// duplicate the provider token-count request. It performs no generation.
 	phase = time.Now()

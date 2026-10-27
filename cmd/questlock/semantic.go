@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/spfuzzylink/questlock/internal/controlledquest"
 	"github.com/spfuzzylink/questlock/internal/semanticquest"
 	"github.com/spfuzzylink/questlock/semantic"
 )
@@ -21,8 +22,21 @@ import (
 func semanticCommand(args []string) error { return semanticCommandIO(args, os.Stdout, os.Stderr) }
 
 func semanticCommandIO(args []string, output, diagnostics io.Writer) error {
+	if len(args) > 0 && args[0] == "evaluate" {
+		return semanticEvaluateCommand(args[1:], output, diagnostics)
+	}
+	if len(args) > 0 && args[0] == "reuse-quest" {
+		if len(args) != 1 {
+			return errors.New("semantic reuse-quest takes no flags; it uses deterministic offline fixtures")
+		}
+		report, err := controlledquest.Run(context.Background())
+		if writeErr := writeModelJSON(output, report); writeErr != nil {
+			return writeErr
+		}
+		return err
+	}
 	if len(args) == 0 || (len(args) == 1 && (args[0] == "--help" || args[0] == "help")) {
-		_, err := io.WriteString(diagnostics, "Usage: questlock semantic init [--model all-minilm] [--ollama-url URL] [--timeout 5m]\n       questlock semantic quest [--live --embedding-model all-minilm --ollama-url URL]\nInit explicitly downloads a missing local embedding model and checks it. Shadow never serves an alternative answer.\n")
+		_, err := io.WriteString(diagnostics, "Usage: questlock semantic init [--model all-minilm] [--ollama-url URL] [--timeout 5m]\n       questlock semantic quest [--live --embedding-model all-minilm --ollama-url URL]\n       questlock semantic reuse-quest\n       questlock semantic evaluate --live --suite PATH [--verifier-model MODEL]\nInit explicitly downloads a missing local embedding model and checks it. Shadow never serves an alternative answer; controlled reuse is explicit.\n")
 		return err
 	}
 	if args[0] != "init" && args[0] != "quest" {

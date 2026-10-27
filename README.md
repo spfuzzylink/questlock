@@ -87,6 +87,7 @@ Read-only by default, with no imported provider credentials or paid fallback.
 | Evidence of a win | Records usage and timing, plus explicit acceptance or later human rework. |
 | Repeated writing with changing facts | Combines an approved reference with today's evidence, checks length and keeps a reviewed answer index. |
 | Evidence about related questions | Observes possible semantic matches after fresh checked generation, without serving a candidate or avoiding generation. |
+| A related question whose answer is still valid | Opt-in controlled reuse checks source provenance, current constraints and a local verifier before serving the saved text. |
 
 [Put a local agent team to work on your own machines](docs/use-cases.md#a-local-agent-team-using-the-machines-you-already-have).
 
@@ -167,6 +168,7 @@ not recommendations.
 ./questlock resources quest      # bounded queues and pressure-aware admission
 ./questlock team quest           # three scoped HTTPS workers; scripted providers
 ./questlock semantic quest       # shadow observations; simulated embeddings
+./questlock semantic reuse-quest # controlled reuse; scripted providers
 ```
 
 These demos use temporary state and no model account. Local inference needs
@@ -175,6 +177,13 @@ policy; guided setup enables no paid escalation.
 
 Semantic observation is opt-in and shadow-only. Exact reuse stays first and needs
 no embedding model. [Boundaries and examples](docs/semantic-shadow.md).
+
+[Controlled answer reuse](docs/controlled-reuse.md) is a separate opt-in path for
+read-only questions. Related wording retrieves a candidate; current evidence,
+source provenance, deterministic guards and a local verifier decide whether the
+saved answer can serve. Measure correctness and validation overhead on your task.
+An optional bounded wait can find a peer's finishing answer without interrupting
+it. The guide includes the Go wiring and explicit local quality-evaluation command.
 
 ## Keep older work without keeping every payload hot
 

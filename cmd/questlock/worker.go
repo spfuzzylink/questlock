@@ -128,7 +128,15 @@ func workerCommandBroker(args []string, input io.ReadCloser, output, diagnostics
 			}
 			return collectedRunner{inner: &preparedRunner{runner: inference.Runner{Broker: broker, Provider: provider}, setupStart: started, setupEnd: ended}, checks: request.Checks, records: target}, nil
 		}
-		router := delegation.Router{Factory: factory, AllowPaid: *allowPaid, Shadow: shadow}
+		reuse := &delegation.ControlledReuser{Broker: broker, Index: broker, EmbedderFactory: shadow.EmbedderFactory, Resources: admission.SystemSource(), VerifierFactory: func(ctx context.Context, c semantic.ReuseConfig) (semantic.Verifier, error) {
+			v, err := delegation.NewLocalVerifier(ctx, broker, *ollamaURL, c)
+			if err != nil {
+				return nil, err
+			}
+			v.DailyTokenBudget = request.Policy.Local.Spec.DailyTokenBudget
+			return v, nil
+		}}
+		router := delegation.Router{Factory: factory, AllowPaid: *allowPaid, Shadow: shadow, Reuse: reuse}
 		result, err := router.Run(ctx, request)
 		if request.TrackOutcome {
 			recordWorkerOutcome(ctx, broker, request, &result, outcomeRunID)

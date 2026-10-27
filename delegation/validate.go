@@ -38,6 +38,15 @@ func Load(reader io.Reader) (Request, error) {
 // A configured hosted tier is rejected unless this caller explicitly opts in,
 // even when the local tier could produce a passing answer.
 func Validate(request Request, allowPaid bool) error {
+	if request.SemanticReuse != nil {
+		c, err := semantic.NormalizeReuseConfig(*request.SemanticReuse)
+		if err != nil {
+			return err
+		}
+		if request.SemanticShadow != nil || len(request.Spec.Input) > c.MaxInputBytes || request.Policy.Escalation != nil {
+			return errors.New("controlled reuse requires one local tier, bounded input and no simultaneous shadow policy")
+		}
+	}
 	if request.SemanticShadow != nil {
 		if _, err := semantic.NormalizeConfig(*request.SemanticShadow); err != nil {
 			return err
@@ -127,6 +136,7 @@ func tiers(policy Policy) []Tier {
 func requestDigest(request Request) string {
 	request.TrackOutcome = false // Accounting opt-in does not change generated work.
 	request.SemanticShadow = nil // Observing opportunities cannot change exact reuse or claims.
+	request.SemanticReuse = nil  // Reuse policy cannot change the original generation fingerprint.
 	encoded, _ := json.Marshal(request)
 	digest := sha256.Sum256(encoded)
 	return hex.EncodeToString(digest[:])

@@ -15,11 +15,12 @@ import (
 // Request.Spec supplies approved task, revision, prompt and context only.
 // Every model and resource setting comes from the explicit tier templates.
 type Request struct {
-	TrackOutcome   bool               `json:"track_outcome,omitempty"` // Opt-in shared accounting; excluded from generation identity.
-	Spec           inference.Spec     `json:"spec"`
-	Policy         Policy             `json:"policy"`
-	Checks         []evaluation.Check `json:"checks"`
-	SemanticShadow *semantic.Config   `json:"semantic_shadow,omitempty"` // Advisory observation; excluded from generation identity.
+	TrackOutcome   bool                  `json:"track_outcome,omitempty"` // Opt-in shared accounting; excluded from generation identity.
+	Spec           inference.Spec        `json:"spec"`
+	Policy         Policy                `json:"policy"`
+	Checks         []evaluation.Check    `json:"checks"`
+	SemanticShadow *semantic.Config      `json:"semantic_shadow,omitempty"` // Advisory observation; excluded from generation identity.
+	SemanticReuse  *semantic.ReuseConfig `json:"semantic_reuse,omitempty"`  // Explicit controlled answer reuse; excluded from generation identity.
 }
 
 type Policy struct {
@@ -44,6 +45,7 @@ type Router struct {
 	Factory   RunnerFactory
 	AllowPaid bool // Caller permission, never read from request JSON or environment.
 	Shadow    *ShadowObserver
+	Reuse     *ControlledReuser
 }
 
 type Attempt struct {
@@ -57,6 +59,7 @@ type Attempt struct {
 }
 
 type Result struct {
+	SemanticReuse    *ReuseObservation           `json:"semantic_reuse,omitempty"`
 	SemanticShadow   *semantic.Observation       `json:"semantic_shadow,omitempty"`
 	BudgetDiagnostic *inference.BudgetDiagnostic `json:"budget_diagnostic,omitempty"`
 	OutcomeTracking  *OutcomeTracking            `json:"outcome_tracking,omitempty"`

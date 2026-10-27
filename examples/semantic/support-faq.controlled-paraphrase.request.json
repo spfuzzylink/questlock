@@ -1,0 +1,72 @@
+{
+  "spec": {
+    "task": "synthetic-support/status-faq",
+    "revision": "approved-policy-1",
+    "instructions": "Return only a JSON object with status_url and response_hours. Copy the status URL and support response window from the required policy context. Use no other facts.",
+    "input": "How do I see current service status, and how long should a support response take?",
+    "context": [
+      {
+        "id": "approved-policy",
+        "text": "Synthetic support policy: service health is published at https://status.example.invalid. Support replies within 24 hours.",
+        "required": true,
+        "stable": true
+      }
+    ]
+  },
+  "policy": {
+    "local": {
+      "id": "local-support",
+      "spec": {
+        "provider": "ollama",
+        "model": "qwen3.5:4b",
+        "max_context_bytes": 4096,
+        "max_input_tokens": 8192,
+        "max_output_tokens": 128,
+        "reuse_for_seconds": 3600,
+        "ollama": {
+          "format": "json",
+          "temperature": 0,
+          "think": false,
+          "keep_alive_seconds": 0,
+          "prompt_mode": "bounded_text"
+        }
+      }
+    }
+  },
+  "checks": [
+    {
+      "id": "strict-json",
+      "kind": "json_valid"
+    },
+    {
+      "id": "approved-facts",
+      "kind": "json_equals",
+      "expected": {
+        "status_url": "https://status.example.invalid",
+        "response_hours": 24
+      }
+    }
+  ],
+  "semantic_reuse": {
+    "mode": "controlled",
+    "family": "support-faq",
+    "domain": "synthetic-support",
+    "evidence_revision": "policy-1",
+    "bindings": {
+      "policy": "policy-1",
+      "status_url": "https://status.example.invalid",
+      "response_hours": "24"
+    },
+    "embedding_model": "all-minilm",
+    "min_similarity": 0.75,
+    "top_k": 3,
+    "max_scan": 1000,
+    "max_entries": 1000,
+    "max_input_bytes": 8192,
+    "timeout_ms": 60000,
+    "read_only": true,
+    "intent": "answer-service-health-and-support-window",
+    "verifier_model": "qwen3.5:4b"
+  },
+  "track_outcome": true
+}

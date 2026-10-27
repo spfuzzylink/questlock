@@ -18,9 +18,9 @@ func addFinite(total *float64, value float64) error {
 
 // Report never scans a possibly truncated artifact listing. The caller chooses
 // a bounded explicit cohort, whose entries must all have registered ledgers.
-// Every recorded attempt contributes to the numerator, including failed,
-// rejected, reopened, and still-unreviewed tasks. Only current explicit human
-// acceptance contributes to the denominator.
+// Every recorded target attempt and auxiliary verification contributes to the
+// numerator, including failed, rejected, reopened, and still-unreviewed tasks.
+// Only current explicit human acceptance contributes to the denominator.
 func (s Store) Report(ctx context.Context, tasks []Task, hourlyRateUSD *float64) (Report, error) {
 	if len(tasks) < 1 || len(tasks) > MaxCohortTasks {
 		return Report{}, invalid("report requires 1 to 256 explicit cohort tasks")
@@ -50,15 +50,17 @@ func (s Store) Report(ctx context.Context, tasks []Task, hourlyRateUSD *float64)
 		}
 		t := TaskSummary{Task: task, Version: snapshot.Version, State: snapshot.State, RunCount: len(snapshot.Runs)}
 		for _, run := range snapshot.Runs {
-			t.AttemptCount += len(run.Attempts)
-			for _, a := range run.Attempts {
-				if !a.UsageKnown {
-					t.MissingUsage++
-				}
-				if a.EstimatedCostUSD == nil {
-					t.MissingInferenceCosts++
-				} else if err := addFinite(&t.KnownInferenceSubtotalUSD, *a.EstimatedCostUSD); err != nil {
-					return Report{}, err
+			t.AttemptCount += len(run.Attempts) + len(run.VerificationWork)
+			for _, work := range [2][]Attempt{run.Attempts, run.VerificationWork} {
+				for _, a := range work {
+					if !a.UsageKnown {
+						t.MissingUsage++
+					}
+					if a.EstimatedCostUSD == nil {
+						t.MissingInferenceCosts++
+					} else if err := addFinite(&t.KnownInferenceSubtotalUSD, *a.EstimatedCostUSD); err != nil {
+						return Report{}, err
+					}
 				}
 			}
 		}

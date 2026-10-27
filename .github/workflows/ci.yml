@@ -93,6 +93,7 @@ jobs:
           unpacked/questlock model runtime-quest
           unpacked/questlock revise quest
           unpacked/questlock semantic quest
+          unpacked/questlock semantic reuse-quest
           unpacked/questlock edge quest
           unpacked/questlock resources quest
           unpacked/questlock team quest
@@ -255,6 +256,9 @@ jobs:
           docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
             --memory=256m --cpus=1 --pids-limit=128 \
             --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" semantic quest
+          docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+            --memory=256m --cpus=1 --pids-limit=128 \
+            --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" semantic reuse-quest
           docker run --rm --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges \
             --memory=256m --cpus=1 --pids-limit=128 \
             --tmpfs /data:rw,nosuid,nodev,noexec,size=64m,mode=1777 "$image" edge quest
