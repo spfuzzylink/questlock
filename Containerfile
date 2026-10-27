@@ -9,6 +9,7 @@ COPY internal/ ./internal/
 COPY client/ ./client/
 COPY protocol/ ./protocol/
 COPY inference/ ./inference/
+COPY semantic/ ./semantic/
 COPY observability/ ./observability/
 COPY evaluation/ ./evaluation/
 COPY delegation/ ./delegation/

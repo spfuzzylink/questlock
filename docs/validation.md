@@ -1,5 +1,19 @@
 # Validation record
 
+## Local semantic shadow observation — 2026-10-27
+
+All six authored pairs passed with local `all-minilm` embeddings: paraphrases
+found eligible candidates, changed evidence missed, and exact repeats skipped
+embedding work. Answers in this six-case run came from a fixture provider.
+A separate real `qwen3.5:4b` writing task passed its checks, reused the exact
+answer with zero new generation tokens, then generated a checked answer for a
+paraphrase while observing an older candidate. Shadow mode avoided no generation.
+Paid fallback stayed disabled and provider API spend was $0.
+[Allowlisted inputs, observations and limits](semantic-shadow-validation-v0.14.0.json)
+and the [reproduction guide](semantic-shadow.md#qualification-and-limits) keep
+embedding usage separate from generation usage. These are local smoke checks,
+not held-out quality, human-acceptance or cluster-throughput benchmarks.
+
 ## Real writing and exact reuse — 2026-10-23
 
 A real local Gemma 3 12B task produced 141 words in two paragraphs. It used

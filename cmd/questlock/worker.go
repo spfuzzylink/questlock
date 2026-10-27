@@ -11,11 +11,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/spfuzzylink/questlock/admission"
 	"github.com/spfuzzylink/questlock/client"
 	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/inference"
 	"github.com/spfuzzylink/questlock/observability"
 	"github.com/spfuzzylink/questlock/revision"
+	"github.com/spfuzzylink/questlock/semantic"
 	"github.com/spfuzzylink/questlock/worker"
 )
 
@@ -85,6 +87,9 @@ func workerCommandBroker(args []string, input io.ReadCloser, output, diagnostics
 	}
 	process, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+	shadow := &delegation.ShadowObserver{Broker: broker, Index: broker, Resources: admission.SystemSource(), EmbedderFactory: func(ctx context.Context, config semantic.Config) (semantic.Embedder, error) {
+		return semantic.NewOllamaEmbedderContext(ctx, *ollamaURL, config.EmbeddingModel, config.MaxInputBytes)
+	}}
 	run := func(ctx context.Context, request delegation.Request) (delegation.Result, []telemetryRecord, error) {
 		if err := delegation.Validate(request, *allowPaid); err != nil {
 			return delegation.Result{}, nil, err
@@ -123,7 +128,7 @@ func workerCommandBroker(args []string, input io.ReadCloser, output, diagnostics
 			}
 			return collectedRunner{inner: &preparedRunner{runner: inference.Runner{Broker: broker, Provider: provider}, setupStart: started, setupEnd: ended}, checks: request.Checks, records: target}, nil
 		}
-		router := delegation.Router{Factory: factory, AllowPaid: *allowPaid}
+		router := delegation.Router{Factory: factory, AllowPaid: *allowPaid, Shadow: shadow}
 		result, err := router.Run(ctx, request)
 		if request.TrackOutcome {
 			recordWorkerOutcome(ctx, broker, request, &result, outcomeRunID)

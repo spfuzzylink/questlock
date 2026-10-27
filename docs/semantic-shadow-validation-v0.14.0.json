@@ -1,0 +1,589 @@
+{
+  "schema": 1,
+  "observed_on": "2026-10-27",
+  "kind": "local_embedding_smoke_check",
+  "source_basis": "Pre-release implementation working tree; six-case fixture generation with real local embeddings, plus a separate live local writing smoke check. See release source and CI for final qualification.",
+  "embedding_model": "all-minilm:latest",
+  "embedding_dimensions": 384,
+  "similarity_threshold": 0.8,
+  "default_threshold": 0.9,
+  "calibration_or_held_out_benchmark": false,
+  "provider_api_spend_usd": 0,
+  "paid_fallback_enabled": false,
+  "generation_avoided_by_semantic": 0,
+  "limits": [
+    "Six authored paraphrase pairs and contract-change controls, not a production error-rate estimate.",
+    "Text generation in the six-case report is deterministic; live_generation records a separate local writing smoke check, not a latency or bill-savings benchmark.",
+    "Two isolated scoped credentials on one physical host; no physical-cluster throughput claim.",
+    "Embedding usage is separate from generation and is not deducted from the generation daily-token ledger."
+  ],
+  "report": {
+    "mode": "live_embeddings_fixture_generation",
+    "generation": "deterministic_fixture",
+    "physical_hosts": 1,
+    "isolated_clients": 2,
+    "passed": 6,
+    "total": 6,
+    "fixture_generation_calls": 18,
+    "embedding_calls": 18,
+    "generation_avoided_by_semantic": 0,
+    "provider_api_spend_usd": 0,
+    "cases": [
+      {
+        "id": "support-faq",
+        "passed": true,
+        "exact_skipped_embedding": true,
+        "candidate_observed": true,
+        "guard_rejected": true,
+        "broker_restarted": false,
+        "first_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "62ecdfac469a4ee3d004b15773ee8d434aef597b6d00be1a933194e02f3a1e56",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 10,
+          "embedding_ms": 18.987875,
+          "total_ms": 79.565083,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "paraphrase_shadow": {
+          "mode": "shadow",
+          "status": "candidates",
+          "partition": "62ecdfac469a4ee3d004b15773ee8d434aef597b6d00be1a933194e02f3a1e56",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 10,
+          "embedding_ms": 13.342542,
+          "total_ms": 96.7695,
+          "search": {
+            "candidates": [
+              {
+                "source": {
+                  "key": "inference/v1/jobs/b33474253f6912d2453aca79a127444714249558489e681e388c49e0a81c461c",
+                  "version": 2,
+                  "sha256": "69a7bd643aa2aebac82b82c2359640baa1766ebcd649fc5078119a7eb0af3492",
+                  "output_sha256": "86ff58253ca99cf232e631f2fb5da93013e51de0898c7c99caecf95f105e71de"
+                },
+                "similarity": 0.9927704823921671,
+                "created_at": "2026-10-27T18:04:27.480662Z",
+                "expires_at": "2026-10-27T19:04:27.480662Z"
+              }
+            ],
+            "scanned": 1,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "negative_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "024343468ccbb98bddb75b384bc1e711806abaf4eb0c4bb6fd7cdb1a3e293ec6",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 19,
+          "embedding_ms": 13.803875,
+          "total_ms": 114.349,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        }
+      },
+      {
+        "id": "internal-onboarding",
+        "passed": true,
+        "exact_skipped_embedding": true,
+        "candidate_observed": true,
+        "guard_rejected": true,
+        "broker_restarted": false,
+        "first_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "75a50f3e4536410a53e0e25c66693fc0977ee2195b8dc1b6dc18be742c62a72e",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 13,
+          "embedding_ms": 10.902333,
+          "total_ms": 113.173041,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "paraphrase_shadow": {
+          "mode": "shadow",
+          "status": "candidates",
+          "partition": "75a50f3e4536410a53e0e25c66693fc0977ee2195b8dc1b6dc18be742c62a72e",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 12,
+          "embedding_ms": 10.419542,
+          "total_ms": 104.03575,
+          "search": {
+            "candidates": [
+              {
+                "source": {
+                  "key": "inference/v1/jobs/a05c94ff820250e1656aa078d2ab619be77e8a53ecc3b6682bf1dc9364cc12d7",
+                  "version": 2,
+                  "sha256": "9fc4b9e82367c0b39e5ff93cb927320065a8888c035a1d80c4c86f01796a8a92",
+                  "output_sha256": "0fb30ac515a3512631bd3975d9e123183ece9e11f10b4a0ab8431281f3a0ef63"
+                },
+                "similarity": 0.9544439152785601,
+                "created_at": "2026-10-27T18:04:27.777378Z",
+                "expires_at": "2026-10-27T19:04:27.777378Z"
+              }
+            ],
+            "scanned": 1,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "negative_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "86a8eb6658602e0b91ed81fb58312f02eab367111a833cbddde7b856888024e8",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 21,
+          "embedding_ms": 192.2205,
+          "total_ms": 286.008667,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        }
+      },
+      {
+        "id": "incident-brief",
+        "passed": true,
+        "exact_skipped_embedding": true,
+        "candidate_observed": true,
+        "guard_rejected": true,
+        "broker_restarted": false,
+        "first_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "063606057df63898acb203e1cbc77160e301b8bee7476a562b2e25c3eb9dc38c",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 15,
+          "embedding_ms": 14.472958,
+          "total_ms": 112.825,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "paraphrase_shadow": {
+          "mode": "shadow",
+          "status": "candidates",
+          "partition": "063606057df63898acb203e1cbc77160e301b8bee7476a562b2e25c3eb9dc38c",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 17,
+          "embedding_ms": 10.933833,
+          "total_ms": 117.045792,
+          "search": {
+            "candidates": [
+              {
+                "source": {
+                  "key": "inference/v1/jobs/baa71f3ba392f6ace2902bc9a2998ee0bebb5dace445d0fa1b67baa6feba3718",
+                  "version": 2,
+                  "sha256": "f46b547815499f068bda863e89e94c9b6460bbdf9723c7e387a5724c81cf00e4",
+                  "output_sha256": "1a61318042fb59fe328b118e5a76a996e4f626997cff4850c3c0c99d554891f0"
+                },
+                "similarity": 0.9422885591679231,
+                "created_at": "2026-10-27T18:04:28.288079Z",
+                "expires_at": "2026-10-27T19:04:28.288079Z"
+              }
+            ],
+            "scanned": 1,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "negative_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "b18a88e429e03813fbe84cdabfec59908609b25c835a8ff20d3d9c0981f79636",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 26,
+          "embedding_ms": 42.248666,
+          "total_ms": 141.828667,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        }
+      },
+      {
+        "id": "release-readiness",
+        "passed": true,
+        "exact_skipped_embedding": true,
+        "candidate_observed": true,
+        "guard_rejected": true,
+        "broker_restarted": false,
+        "first_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "9d35dd0462844c5113cdeb79b436d9a0b9a1a8dad7e5c3e0d30df94047c4235b",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 15,
+          "embedding_ms": 15.983209,
+          "total_ms": 131.670833,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "paraphrase_shadow": {
+          "mode": "shadow",
+          "status": "candidates",
+          "partition": "9d35dd0462844c5113cdeb79b436d9a0b9a1a8dad7e5c3e0d30df94047c4235b",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 13,
+          "embedding_ms": 11.7335,
+          "total_ms": 82.202042,
+          "search": {
+            "candidates": [
+              {
+                "source": {
+                  "key": "inference/v1/jobs/6133066abd7ba280b3cd6c0dbc26f54815b6cb998807ab7a52aa964cdd29d96c",
+                  "version": 2,
+                  "sha256": "e5ebad74c28a8cb8c7eab5663200114ec5c8a6e30c3453049a4d77bfede53c71",
+                  "output_sha256": "93fd9c619ca6d6875912f715a4b6251d0d235e6a541b2bc0d1dcae216a004b14"
+                },
+                "similarity": 0.9293808920044313,
+                "created_at": "2026-10-27T18:04:28.666307Z",
+                "expires_at": "2026-10-27T19:04:28.666307Z"
+              }
+            ],
+            "scanned": 1,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "negative_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "4945ceb05ac25491dd5cd5e0117fa6c1678adcbe627d24fce7fd8cd9bd9905b8",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 22,
+          "embedding_ms": 9.760417,
+          "total_ms": 78.593959,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        }
+      },
+      {
+        "id": "refund-eligibility",
+        "passed": true,
+        "exact_skipped_embedding": true,
+        "candidate_observed": true,
+        "guard_rejected": true,
+        "broker_restarted": false,
+        "first_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "1f7339f0291b3dd2347b0767867d2e89e81cf5853dcb67b686d815df374443a8",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 17,
+          "embedding_ms": 11.776,
+          "total_ms": 83.489375,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "paraphrase_shadow": {
+          "mode": "shadow",
+          "status": "candidates",
+          "partition": "1f7339f0291b3dd2347b0767867d2e89e81cf5853dcb67b686d815df374443a8",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 16,
+          "embedding_ms": 14.906833,
+          "total_ms": 115.836583,
+          "search": {
+            "candidates": [
+              {
+                "source": {
+                  "key": "inference/v1/jobs/67739469738e1ee598613a72a8e19a540380eeee6f6892edac5e65bc18817bb4",
+                  "version": 2,
+                  "sha256": "a0dfb20ccd36f35ed514796119768ca99acf484cfc58576ac0f50ac8ccc6fcb4",
+                  "output_sha256": "8722ca57ce53f6c7af4ecb38ed0169b7051af62baf1b634e2ab2e2a3930bd4af"
+                },
+                "similarity": 0.9620252159232022,
+                "created_at": "2026-10-27T18:04:28.965955Z",
+                "expires_at": "2026-10-27T19:04:28.965955Z"
+              }
+            ],
+            "scanned": 1,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "negative_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "36f0618c027816655e246ce7f5945cb3be7ea5388f39333523eec7494e6dc6b3",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 25,
+          "embedding_ms": 9.940375,
+          "total_ms": 80.039291,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        }
+      },
+      {
+        "id": "shared-broker-lifecycle",
+        "passed": true,
+        "exact_skipped_embedding": true,
+        "candidate_observed": true,
+        "guard_rejected": true,
+        "broker_restarted": true,
+        "first_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "bb3b1b1307c5ec07bbf77440bd5800d1819f125a6bc64d6ea11e67deffb4ca81",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 13,
+          "embedding_ms": 11.381708,
+          "total_ms": 88.874125,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "paraphrase_shadow": {
+          "mode": "shadow",
+          "status": "candidates",
+          "partition": "bb3b1b1307c5ec07bbf77440bd5800d1819f125a6bc64d6ea11e67deffb4ca81",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 15,
+          "embedding_ms": 11.883917,
+          "total_ms": 132.1515,
+          "search": {
+            "candidates": [
+              {
+                "source": {
+                  "key": "inference/v1/jobs/e00b40273e04c439bc7029101a685ba43df7a7cb635d27c790d336eadf8c1cc9",
+                  "version": 2,
+                  "sha256": "754b6231b26348830ac53e7ef9c8e3c24b50cc31d6a9069aca69bc1b3847ee92",
+                  "output_sha256": "895dc44743b2d1e4d6bc2609114c52224a49b7753eebadbee24b0fbf1a54d27e"
+                },
+                "similarity": 0.9614493157292068,
+                "created_at": "2026-10-27T18:04:29.253949Z",
+                "expires_at": "2026-10-27T19:04:29.253949Z"
+              }
+            ],
+            "scanned": 1,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        },
+        "negative_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "7dfe1f08d9ddb445d12ca0d897092320d8fc4584d1d9bedd2706074c28433386",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 24,
+          "embedding_ms": 135.97825,
+          "total_ms": 286.181875,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        }
+      }
+    ]
+  },
+  "live_generation": {
+    "model": "qwen3.5:4b",
+    "provider": "ollama",
+    "task": "Synthetic password-reset policy, answer in one short sentence.",
+    "paid_fallback_enabled": false,
+    "provider_api_spend_usd": 0,
+    "human_acceptance": "not_asserted",
+    "calls": [
+      {
+        "name": "first",
+        "status": "completed",
+        "quality_passed": true,
+        "checks": [
+          {
+            "id": "policy-word",
+            "kind": "contains",
+            "passed": true
+          },
+          {
+            "id": "short",
+            "kind": "word_count",
+            "passed": true,
+            "observed": 16
+          }
+        ],
+        "answer": "To reset your account password, open the password reset page and use the email verification link.",
+        "answer_sha256": "9c2b552e4d7bd2c89160e6af27a4d7d0b25726a3ad7265a6154a64dca41e0739",
+        "generation_reused": false,
+        "this_run_usage": {
+          "input_tokens": 132,
+          "uncached_input_tokens": 132,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 18
+        },
+        "semantic_shadow": {
+          "mode": "shadow",
+          "status": "miss",
+          "partition": "a0c1ec79073b43e806ff80a2c04ac75f8d9aceb37bbe1c8b4d51671368060037",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 10,
+          "embedding_ms": 540.829667,
+          "total_ms": 732.983958,
+          "search": {
+            "candidates": [],
+            "scanned": 0,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        }
+      },
+      {
+        "name": "exact",
+        "status": "completed",
+        "quality_passed": true,
+        "checks": [
+          {
+            "id": "policy-word",
+            "kind": "contains",
+            "passed": true
+          },
+          {
+            "id": "short",
+            "kind": "word_count",
+            "passed": true,
+            "observed": 16
+          }
+        ],
+        "answer": "To reset your account password, open the password reset page and use the email verification link.",
+        "answer_sha256": "9c2b552e4d7bd2c89160e6af27a4d7d0b25726a3ad7265a6154a64dca41e0739",
+        "generation_reused": true,
+        "this_run_usage": {
+          "input_tokens": 0,
+          "uncached_input_tokens": 0,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 0
+        },
+        "semantic_shadow": {
+          "mode": "shadow",
+          "status": "skipped_exact",
+          "embedding_input_tokens": null,
+          "total_ms": 0.000917,
+          "indexed": false,
+          "generation_avoided": false
+        }
+      },
+      {
+        "name": "paraphrase",
+        "status": "completed",
+        "quality_passed": true,
+        "checks": [
+          {
+            "id": "policy-word",
+            "kind": "contains",
+            "passed": true
+          },
+          {
+            "id": "short",
+            "kind": "word_count",
+            "passed": true,
+            "observed": 16
+          }
+        ],
+        "answer": "To reset your account password, open the password reset page and use the email verification link.",
+        "answer_sha256": "9c2b552e4d7bd2c89160e6af27a4d7d0b25726a3ad7265a6154a64dca41e0739",
+        "generation_reused": false,
+        "this_run_usage": {
+          "input_tokens": 132,
+          "uncached_input_tokens": 132,
+          "cache_read_tokens": 0,
+          "cache_write_tokens": 0,
+          "output_tokens": 18
+        },
+        "semantic_shadow": {
+          "mode": "shadow",
+          "status": "candidates",
+          "partition": "a0c1ec79073b43e806ff80a2c04ac75f8d9aceb37bbe1c8b4d51671368060037",
+          "embedding_model_id": "374d7952742209a6cef00e9601fd02ff11eb769af08676d867bdd1bd24b7b54f",
+          "embedding_input_tokens": 10,
+          "embedding_ms": 538.142041,
+          "total_ms": 705.521542,
+          "search": {
+            "candidates": [
+              {
+                "source": {
+                  "key": "inference/v1/jobs/62de7fe8aab66f4a3e79548f45aa908b30c5fdebd3a3a0ed9ad73a6cfa868ef9",
+                  "version": 2,
+                  "sha256": "3ffdb3ebefd725c52234ea5eb5ef74b8e3770713922054eb198ea16ce7acf2aa",
+                  "output_sha256": "9c2b552e4d7bd2c89160e6af27a4d7d0b25726a3ad7265a6154a64dca41e0739"
+                },
+                "similarity": 0.9927704823921671,
+                "created_at": "2026-10-27T18:08:21.849842Z",
+                "expires_at": "2026-10-27T19:08:21.849842Z"
+              }
+            ],
+            "scanned": 1,
+            "truncated": false
+          },
+          "indexed": true,
+          "generation_avoided": false
+        }
+      }
+    ],
+    "semantic_generation_avoided": 0
+  }
+}

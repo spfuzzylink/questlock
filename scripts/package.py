@@ -20,6 +20,10 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS = ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64")
 PUBLIC_FILES = (
+    "docs/semantic-shadow.md", "docs/semantic-shadow-validation-v0.14.0.json",
+    "docs/diagrams/semantic-shadow.drawio", "docs/diagrams/semantic-shadow.svg",
+    "examples/semantic/README.md", "examples/semantic/support-faq.request.json",
+    "examples/semantic/support-faq.paraphrase.request.json", "examples/semantic/support-faq.changed-evidence.request.json",
     "docs/writing-reuse-success-report.md",
     "docs/benchmarks/writing-reuse/observation.json", "docs/benchmarks/writing-reuse/request.json",
     "docs/benchmarks/writing-reuse/answer.txt", "docs/benchmarks/writing-reuse/verify.py",

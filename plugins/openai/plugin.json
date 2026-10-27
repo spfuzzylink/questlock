@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "questlock",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Apply checked text revisions, reuse exact results, and run bounded local model tasks through a durable local broker.",
   "author": {
     "name": "Questlock contributors",

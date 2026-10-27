@@ -88,3 +88,12 @@ Result reuse is opt-in for an exact task snapshot whose answer remains valid. Up
 `sh scripts/run.sh quest` validates six model-coordination scenarios offline; `sh scripts/run.sh revise-quest` validates three simple and three complex deterministic-revision scenarios without a model. `questlock model evaluate` compares six deterministic public fixtures with negative quality controls; simulated timings are not benchmarks. Use `model evaluate --live` only for an approved fresh evaluation scope and retain failures without rerunning to force a selection. Optional `stream: true` on Ollama measures client-observed first content and output intervals; non-streaming and reused results have no new generation timing.
 
 Local inference runs on the user's hardware without provider token metering; hardware, electricity, and time remain costs. Questlock rejects cloud models and non-loopback Ollama endpoints. It does not train weights, proxy the whole assistant protocol, or change the chat's global model. The surrounding hosted assistant still consumes its normal allowance. Available skills and tools make bounded delegation possible in future chats; they do not guarantee automatic use in every conversation.
+
+For optional semantic observations on a compatible worker, check
+`request_schemas.semantic_shadow_modes` for `shadow`. Only add an explicitly
+reviewed `semantic_shadow` policy to a bounded delegation request. Shadow mode
+records local embedding candidates after checked fresh generation; it never
+serves an alternative answer or avoids generation. Exact reuse skips embeddings.
+Keep embedding usage separate from generation usage, retain misses and failures,
+and never interpret a similarity score as answer validity or human acceptance.
+Workers do not download missing weights or enable paid fallback.

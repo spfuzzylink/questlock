@@ -9,15 +9,17 @@ import (
 	"github.com/spfuzzylink/questlock/evaluation"
 	"github.com/spfuzzylink/questlock/inference"
 	"github.com/spfuzzylink/questlock/outcomes"
+	"github.com/spfuzzylink/questlock/semantic"
 )
 
 // Request.Spec supplies approved task, revision, prompt and context only.
 // Every model and resource setting comes from the explicit tier templates.
 type Request struct {
-	TrackOutcome bool               `json:"track_outcome,omitempty"` // Opt-in shared accounting; excluded from generation identity.
-	Spec         inference.Spec     `json:"spec"`
-	Policy       Policy             `json:"policy"`
-	Checks       []evaluation.Check `json:"checks"`
+	TrackOutcome   bool               `json:"track_outcome,omitempty"` // Opt-in shared accounting; excluded from generation identity.
+	Spec           inference.Spec     `json:"spec"`
+	Policy         Policy             `json:"policy"`
+	Checks         []evaluation.Check `json:"checks"`
+	SemanticShadow *semantic.Config   `json:"semantic_shadow,omitempty"` // Advisory observation; excluded from generation identity.
 }
 
 type Policy struct {
@@ -41,6 +43,7 @@ type RunnerFactory func(Tier) (Runner, error)
 type Router struct {
 	Factory   RunnerFactory
 	AllowPaid bool // Caller permission, never read from request JSON or environment.
+	Shadow    *ShadowObserver
 }
 
 type Attempt struct {
@@ -54,6 +57,7 @@ type Attempt struct {
 }
 
 type Result struct {
+	SemanticShadow   *semantic.Observation       `json:"semantic_shadow,omitempty"`
 	BudgetDiagnostic *inference.BudgetDiagnostic `json:"budget_diagnostic,omitempty"`
 	OutcomeTracking  *OutcomeTracking            `json:"outcome_tracking,omitempty"`
 	RequestSHA256    string                      `json:"request_sha256"`

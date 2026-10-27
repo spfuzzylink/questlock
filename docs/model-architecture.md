@@ -1,5 +1,26 @@
 # Model cost-control architecture: what, why, how
 
+## Semantic shadow observation
+
+**Questlock** can now observe related inputs after an approved task has already
+produced a fresh, complete, durable answer passing its declared checks. It embeds
+the input with an explicitly installed local Ollama model, queries older sources
+in the same bound partition, then indexes the source. The observation records
+embedding usage and time separately from generation. Missing token counts stay
+unknown.
+
+Only shadow mode is supported. A candidate serves no answer, avoids no generation
+and changes no claim or result. Existing exact reuse runs first without embedding
+calls. Scope, evidence, facts, constraints, checks, model tier and pinned runtime
+remain boundaries; a high score cannot override them. Model or index failures are
+diagnostic, with no speculative or verifier generation and no fallback.
+
+See the [architecture and limits](semantic-shadow.md),
+[synthetic request pairs](../examples/semantic/README.md), and
+[editable graph](diagrams/semantic-shadow.drawio). The offline quest uses
+simulated embeddings and timings; it does not establish real model quality or
+savings.
+
 ## v0.6.0: avoid generation for exact edits
 
 The next layer is a checked `revision` operation beside the model Runner. The
@@ -81,7 +102,7 @@ model/provider without requesting availability fallbacks or automatic selection.
 | --- | --- | --- |
 | Explicit Go Runner and CLI | Review selected context; use the scoped broker; preserve direct-provider counts, native SGLang tokenization, OpenRouter operator bounds, and distinct usage categories | Chosen. The caller constructs an explicit bounded task and adapter contract. |
 | Transparent OpenAI-compatible HTTP proxy | Existing clients could change one base URL | Future option. Native tool calls, hosted streaming, multimodal input, stateful sessions, and provider-specific limits require a broader protocol contract than this implementation supports. Local content streaming remains an explicit bounded measurement option. |
-| Similarity or semantic cache | Reuse answers for loosely related requests | Deferred. A similar repository review can be wrong after one important change. Exact effective-request reuse with an explicit task revision is easier to evaluate. |
+| Semantic observation | Measure possible related-input candidates | Shadow-only. Fresh checked generation still supplies the answer; bound partitions and source validation limit observations. Semantic answer serving remains deferred. |
 | Central model/provider router | Access many providers and implement availability fallbacks | Compose with a router instead of rebuilding its entire catalog, billing, and routing system. An adapter must advertise counting and usage capabilities. |
 | Direct shared filesystem between workers | Appears simple for a local experiment | Use authenticated HTTP access to one broker instead. Workers do not mount or edit the SQLite database. |
 | New distributed storage engine | Could eventually support broker replication and failover | Deferred. The current guarantees rely on local SQLite transactions. HTTP access from workers does not establish high availability or distributed-database correctness. |

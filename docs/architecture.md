@@ -1,5 +1,25 @@
 # Architecture
 
+## Semantic shadow observation
+
+An approved delegation can opt into a semantic observer after successful fresh,
+complete and durable checked generation. The normal answer is already selected;
+the observer queries older sources and then indexes the new one. Exact reuse
+remains first and bypasses embeddings. Candidates never serve text, merge claims
+or authorize another generation.
+
+The same scoped Go/SQLite broker stores bounded vectors and validates current
+source versions, hashes and expiry, including cold payloads. A separately
+installed loopback Ollama model creates embeddings; no vector daemon or native
+extension is added. Failures affect only the additive shadow diagnostic.
+
+![Exact reuse precedes fresh generation and optional shadow observation](diagrams/semantic-shadow.svg)
+
+See [partition identity, resource limits and qualification](semantic-shadow.md),
+the [complete requests](../examples/semantic/README.md), and the
+[editable draw.io graph](diagrams/semantic-shadow.drawio). Scores are not validity
+proofs, and shadow mode avoids no generation.
+
 ## Client plugins
 
 The plugins are thin packages around the same Go runtime. A native client owns

@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="980" viewBox="0 0 1440 980" role="img" aria-labelledby="title desc">
+<title id="title">Questlock: semantic shadow observations</title>
+<desc id="desc">Exact reuse serves the existing checked answer without embeddings. A fresh checked answer is served normally; an optional shadow observer then binds scope and task facts, embeds locally, queries valid older sources and indexes the new source in the same SQLite broker. Only candidate diagnostics return. No semantic answer is served and no generation is avoided.</desc>
+<defs>
+<marker id="arrow-mint" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="#93f9e5"/></marker>
+<marker id="arrow-purple" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0L10 4L0 8Z" fill="#9d7dff"/></marker>
+</defs>
+<rect width="1440" height="980" rx="20" fill="#080c19"/>
+<rect x="735" y="440" width="670" height="224" rx="16" fill="none" stroke="#373454" stroke-width="2"/>
+<rect x="60" y="730" width="1320" height="150" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<path d="M330 237L410 237" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow-mint)"/>
+<path d="M680 237L760 237" fill="none" stroke="#9d7dff" stroke-width="2" marker-end="url(#arrow-purple)"/>
+<path d="M1030 237L1110 237" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow-mint)"/>
+<path d="M545 160L545 145L1245 145L1245 160" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow-mint)"/>
+<path d="M895 315L895 429L195 429L195 490" fill="none" stroke="#9d7dff" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrow-purple)"/>
+<path d="M330 565L410 565" fill="none" stroke="#9d7dff" stroke-width="2" marker-end="url(#arrow-purple)"/>
+<path d="M680 565L760 565" fill="none" stroke="#9d7dff" stroke-width="2" marker-end="url(#arrow-purple)"/>
+<path d="M1030 565L1110 565" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow-mint)"/>
+<path d="M1245 640L1245 680L720 680L720 730" fill="none" stroke="#9d7dff" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrow-purple)"/>
+<g font-family="Arial, sans-serif" fill="#f4f3ff">
+<rect x="60" y="160" width="270" height="155" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="78" y="194" font-size="21" font-weight="700">Approved request</text>
+<text x="78" y="232" font-size="16" fill="#cbc6e2">Explicit task + checks</text>
+<text x="78" y="258" font-size="16" fill="#cbc6e2">Optional semantic_shadow</text>
+<rect x="410" y="160" width="270" height="155" rx="14" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="428" y="194" font-size="21" font-weight="700">Existing exact reuse</text>
+<text x="428" y="232" font-size="16" fill="#cbc6e2">Same durable snapshot</text>
+<text x="428" y="258" font-size="16" fill="#cbc6e2">Hit: no model or embedding</text>
+<rect x="760" y="160" width="270" height="155" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="778" y="194" font-size="21" font-weight="700">Fresh generation</text>
+<text x="778" y="232" font-size="16" fill="#cbc6e2">Complete + durable</text>
+<text x="778" y="258" font-size="16" fill="#cbc6e2">Declared checks pass</text>
+<rect x="1110" y="160" width="270" height="155" rx="14" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="1128" y="194" font-size="21" font-weight="700">Normal checked answer</text>
+<text x="1128" y="232" font-size="16" fill="#cbc6e2">Existing result + usage</text>
+<text x="1128" y="258" font-size="16" fill="#cbc6e2">Always the served answer</text>
+<rect x="60" y="490" width="270" height="150" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="78" y="524" font-size="21" font-weight="700">Bound partition</text>
+<text x="78" y="562" font-size="16" fill="#cbc6e2">Scope + facts + constraints</text>
+<text x="78" y="588" font-size="16" fill="#cbc6e2">Checks + model + runtime</text>
+<text x="78" y="614" font-size="16" fill="#cbc6e2">Changed boundary: miss</text>
+<rect x="410" y="490" width="270" height="150" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="428" y="524" font-size="21" font-weight="700">Local embeddings</text>
+<text x="428" y="562" font-size="16" fill="#cbc6e2">Pinned Ollama identity</text>
+<text x="428" y="588" font-size="16" fill="#cbc6e2">Literal loopback only</text>
+<text x="428" y="614" font-size="16" fill="#cbc6e2">Separate usage + time</text>
+<rect x="760" y="490" width="270" height="150" rx="14" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="778" y="524" font-size="21" font-weight="700">Query + validate</text>
+<text x="778" y="562" font-size="16" fill="#cbc6e2">Older eligible sources</text>
+<text x="778" y="588" font-size="16" fill="#cbc6e2">Current hash/version/TTL</text>
+<text x="778" y="614" font-size="16" fill="#cbc6e2">Bounded scan + top-k</text>
+<rect x="1110" y="490" width="270" height="150" rx="14" fill="#15152e" stroke="#93f9e5" stroke-width="2"/>
+<text x="1128" y="524" font-size="21" font-weight="700">Index new source</text>
+<text x="1128" y="562" font-size="16" fill="#cbc6e2">After querying</text>
+<text x="1128" y="588" font-size="16" fill="#cbc6e2">Bound entries + source TTL</text>
+<text x="1128" y="614" font-size="16" fill="#cbc6e2">No claim/result changes</text>
+<text x="60" y="73" font-size="31" fill="#f4f3ff" font-weight="700">Questlock: semantic shadow observations</text>
+<text x="60" y="108" font-size="19" fill="#cbc6e2">Exact reuse stays first. Fresh checked generation still supplies every answer in shadow mode.</text>
+<text x="60" y="140" font-size="15" fill="#93f9e5" font-weight="700">NORMAL ANSWER PATH</text>
+<text x="858" y="138" font-size="15" fill="#93f9e5">Exact hit: existing answer; skip embeddings</text>
+<text x="699" y="236" font-size="15" fill="#cbc6e2">Miss</text>
+<text x="410" y="353" font-size="16" fill="#cbc6e2">Exact observation: skipped_exact</text>
+<text x="60" y="397" font-size="16" fill="#9d7dff" font-weight="700">OPTIONAL SHADOW · AFTER FRESH CHECKED GENERATION</text>
+<text x="760" y="470" font-size="17" fill="#93f9e5" font-weight="700">Authenticated scoped broker · Go + SQLite</text>
+<text x="85" y="782" font-size="23" fill="#93f9e5" font-weight="700">Additive shadow observation</text>
+<text x="85" y="818" font-size="19" fill="#f4f3ff">Candidates + scores + bounded scan coverage + embedding usage and time</text>
+<text x="85" y="853" font-size="18" fill="#cbc6e2">No answer served · No generation avoided · No speculative or verifier generation</text>
+<text x="963" y="712" font-size="16" fill="#cbc6e2">Diagnostic only; no route to answer serving</text>
+<text x="60" y="928" font-size="17" fill="#cbc6e2">Vectors are sensitive. Same SQLite store; no vector daemon or native extension.</text>
+<text x="60" y="958" font-size="17" fill="#cbc6e2">Source validity and expiry still apply. Shadow failures authorize no retry or paid fallback.</text>
+</g>
+</svg>

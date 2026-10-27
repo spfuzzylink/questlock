@@ -13,6 +13,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 TOP_LEVEL = {"go.mod", "go.sum", "LICENSE", "ATTRIBUTION.md", "THIRD_PARTY_NOTICES.md"}
 GO_DIRECTORIES = {
+    "semantic", "internal/semanticquest",
     "cmd/questlock", "internal/store", "internal/httpapi", "internal/agentsetup", "internal/configguard", "internal/onboardingclient",
     "internal/localruntime", "internal/desktopbundle", "internal/nativeagent", "internal/teamquest", "team",
     "client", "protocol", "inference", "admission", "edge", "internal/edgequest", "systemone", "observability", "evaluation", "delegation", "worker", "outcomes", "revision", "retention", "writing",

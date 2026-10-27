@@ -114,6 +114,26 @@ receipts and are not an independent backup. Restore all archived payloads into
 SQLite before a downgrade or cold-directory change; see the
 [retention recovery procedure](docs/storage-retention.md#restore-move-or-downgrade).
 
+## Semantic shadow data
+
+The optional [semantic observer](docs/semantic-shadow.md) sends approved input to
+an explicitly configured literal-loopback Ollama embedding endpoint. It disables
+environment proxies and redirects; model failures produce a diagnostic without
+paid fallback or generation retry. Weights are installed separately from the
+core binary. Exact reuse bypasses embeddings.
+
+Vectors are sensitive task data, not anonymized summaries. The existing broker
+stores them in SQLite behind authenticated, scope-bound semantic query and entry
+routes. Scope comes from the bearer credential, not a request-supplied scope.
+Entry, scan, input, timeout and TTL limits bound shadow work. The index validates
+current source version, hashes, completeness and freshness, including sources in
+cold storage; it cannot extend a source's reuse window.
+
+Similarity never authorizes answer serving or changes claims, checks, task
+identity or the checked result. A score is not proof of correctness. Same-scope
+members remain trusted cooperating writers, and the host operator, SQLite files
+and backups retain the existing confidentiality boundary.
+
 ## Publishing and contributing safely
 
 Only reviewed source and documentation belong in this repository. Do not add

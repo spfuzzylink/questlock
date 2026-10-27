@@ -31,7 +31,7 @@ func New(s *store.Store) http.Handler {
 			allowed = "GET"
 		case "/v1/artifact":
 			allowed = "GET, POST"
-		case "/v1/sync", "/v1/artifact/pinned":
+		case "/v1/sync", "/v1/artifact/pinned", "/v1/semantic/query", "/v1/semantic/entry":
 			allowed = "POST"
 		default:
 			writeError(w, http.StatusNotFound, "not_found", "route not found", 0)
@@ -58,6 +58,8 @@ func New(s *store.Store) http.Handler {
 			return
 		}
 		switch r.URL.Path {
+		case "/v1/semantic/query", "/v1/semantic/entry":
+			serveSemantic(w, r, s, principal)
 		case "/v1/identity":
 			if r.URL.RawQuery != "" {
 				writeError(w, http.StatusBadRequest, "invalid", "identity accepts no query fields", 0)

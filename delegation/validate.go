@@ -12,6 +12,7 @@ import (
 
 	"github.com/spfuzzylink/questlock/evaluation"
 	"github.com/spfuzzylink/questlock/inference"
+	"github.com/spfuzzylink/questlock/semantic"
 )
 
 // Load reads at most 1MiB of request JSON. Authorization is deliberately not a
@@ -37,6 +38,11 @@ func Load(reader io.Reader) (Request, error) {
 // A configured hosted tier is rejected unless this caller explicitly opts in,
 // even when the local tier could produce a passing answer.
 func Validate(request Request, allowPaid bool) error {
+	if request.SemanticShadow != nil {
+		if _, err := semantic.NormalizeConfig(*request.SemanticShadow); err != nil {
+			return err
+		}
+	}
 	base := request.Spec
 	if base.Provider != "" || base.Model != "" || base.Stream || base.ReasoningEffort != "" || base.MaxContextBytes != 0 || base.MaxInputTokens != 0 || base.MaxOutputTokens != 0 || base.CacheMode != "" || base.ReuseForSeconds != 0 || base.Prices != nil || base.MaxCostUSD != 0 || base.DailyBudgetUSD != 0 || base.SGLang != nil || base.OpenRouter != nil || base.Ollama != nil {
 		return errors.New("request spec supplies task, revision, instructions, input and context only; model/resource settings belong to each tier spec")
@@ -120,6 +126,7 @@ func tiers(policy Policy) []Tier {
 
 func requestDigest(request Request) string {
 	request.TrackOutcome = false // Accounting opt-in does not change generated work.
+	request.SemanticShadow = nil // Observing opportunities cannot change exact reuse or claims.
 	encoded, _ := json.Marshal(request)
 	digest := sha256.Sum256(encoded)
 	return hex.EncodeToString(digest[:])
