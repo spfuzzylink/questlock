@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600" role="img" aria-labelledby="title desc">
+<title id="title">Questlock: approved questions, existing exact reuse</title>
+<desc id="desc">A reviewed finite application policy maps an exact approved wording to one canonical request. Unknown forms stay unchanged. The normal runner preserves claims, scope, runtime, checks, budgets and expiry.</desc>
+<rect width="1400" height="600" fill="#080c19"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#93f9e5"/></marker></defs>
+<g font-family="Arial, sans-serif">
+<text x="40" y="60" font-size="31" fill="#f4f3ff" font-weight="700">Questlock: different approved words, one exact task</text>
+<text x="40" y="103" font-size="20" fill="#cbc6e2">Your app defines equivalence. Questlock keeps the existing execution and reuse boundary.</text>
+<polyline points="320,215 380,215" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="660,215 720,215" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1000,215 1060,215" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="520,270 520,370" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="660,425 1020,425 1020,260 1060,260" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="1200,270 1200,370" fill="none" stroke="#93f9e5" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="160" width="280" height="110" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="56" y="192" font-size="20" fill="#f4f3ff" font-weight="700">Requested wording</text>
+<text x="56" y="223" font-size="16" fill="#cbc6e2">An approved read-only task</text>
+<text x="56" y="248" font-size="16" fill="#cbc6e2">Current facts and constraints</text>
+<rect x="380" y="160" width="280" height="110" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="396" y="192" font-size="20" fill="#f4f3ff" font-weight="700">Exact listed form?</text>
+<text x="396" y="223" font-size="16" fill="#cbc6e2">Reviewed application policy</text>
+<text x="396" y="248" font-size="16" fill="#cbc6e2">No similarity or model decision</text>
+<rect x="720" y="160" width="280" height="110" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="736" y="192" font-size="20" fill="#f4f3ff" font-weight="700">Prepare canonical request</text>
+<text x="736" y="223" font-size="16" fill="#cbc6e2">Canonical input + bound revision</text>
+<text x="736" y="248" font-size="16" fill="#cbc6e2">Other request fields unchanged</text>
+<rect x="1060" y="160" width="280" height="110" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="1076" y="192" font-size="20" fill="#f4f3ff" font-weight="700">Existing router / runner</text>
+<text x="1076" y="223" font-size="16" fill="#cbc6e2">Same scope and runtime</text>
+<text x="1076" y="248" font-size="16" fill="#cbc6e2">Existing claims, checks and budgets</text>
+<rect x="380" y="370" width="280" height="110" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="396" y="402" font-size="20" fill="#f4f3ff" font-weight="700">Unknown form</text>
+<text x="396" y="433" font-size="16" fill="#cbc6e2">Return original unchanged</text>
+<text x="396" y="458" font-size="16" fill="#cbc6e2">Caller keeps ordinary workflow</text>
+<rect x="1060" y="370" width="280" height="110" rx="14" fill="#15152e" stroke="#9d7dff" stroke-width="2"/>
+<text x="1076" y="402" font-size="20" fill="#f4f3ff" font-weight="700">Generate once, then reuse</text>
+<text x="1076" y="433" font-size="16" fill="#cbc6e2">Valid exact repeat: 0 model calls</text>
+<text x="1076" y="458" font-size="16" fill="#cbc6e2">Expiry and uncertain state still apply</text>
+<text x="670" y="201" font-size="14" fill="#93f9e5">Yes</text>
+<text x="530" y="323" font-size="14" fill="#93f9e5">No</text>
+<text x="40" y="536" font-size="18" fill="#cbc6e2">Known forms need no embeddings or verifier. Unknown wording is never added automatically.</text>
+<text x="40" y="569" font-size="18" fill="#cbc6e2">A cheaper repeat still needs a correct original answer. Application approval is a trust boundary.</text>
+</g></svg>

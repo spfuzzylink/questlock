@@ -10,6 +10,7 @@ test:
 
 check:
 	python3 -m unittest discover -s scripts -p 'test_*.py'
+	python3 docs/benchmarks/reuse-efficiency/verify.py
 	python3 scripts/check-public-source.py
 	$(GO) vet ./...
 	$(GO) test -race ./...

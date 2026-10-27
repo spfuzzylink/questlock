@@ -58,6 +58,16 @@ class PackageTests(unittest.TestCase):
 
     def test_inference_release_material_is_packaged_without_private_inputs(self):
         required = {
+            "docs/benchmarks/reuse-efficiency/approved-forms-live.jsonl",
+            "docs/benchmarks/reuse-efficiency/approved-forms-summary.json",
+            "examples/approved-questions/main.go", "examples/approved-questions/cases.json",
+            "examples/approved-questions/README.md",
+            "docs/reuse-efficiency-validation-v0.16.0.md", "docs/benchmarks/reuse-efficiency/index.json",
+            "docs/benchmarks/reuse-efficiency/verify.py",
+            "docs/approved-questions.md", "examples/approved-questions/policy.json",
+            "docs/diagrams/approved-questions.drawio", "docs/diagrams/approved-questions.svg",
+            "examples/semantic/independent-round3-evaluation.json", "examples/semantic/unsupported-round3-evaluation.json",
+            "examples/semantic/independent-round4-evaluation.json", "examples/semantic/unsupported-round4-evaluation.json",
             "docs/execution-validation-v0.10.0.md", "docs/execution-validation-v0.10.0.json",
             "docs/go-integration.md", "examples/execution/README.md",
             "examples/execution/main.go", "examples/execution/local-task.json",

@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "population": "Declared public synthetic negative-source controls only: six new fixed-answer cases, one each for supportFAQ, onboarding, incident, release-readiness, refund, and brokerlifecycle, with two fair paraphrases each. Every cached source answer is deliberately factually wrong or unsupported by its evidence. These 12 correlated authored pairs test answer grounding, not changed-question lexical differences, general held-out representativeness, or real-user acceptance.",
+  "label_rule": "All variants are fair paraphrases of their original questions and all should_reuse labels are false because the unchanged cached answer contains a material factual, arithmetic, prerequisite, certainty, or command-support error. Correct reuse must validate the answer against the supplied evidence instead of assuming a historical answer is trustworthy. The case-specific reason identifies the planted defect. Source answers and labels were frozen before live validation, without reading new verifier policy, guard implementations, or prior corpora/results.",
+  "cases": [
+    {
+      "id": "ind-unsupported-faq-hv2068",
+      "family": "supportFAQ",
+      "instructions": "Use only public synthetic FAQ CS-2068-HV. Explain support guidance in brief prose, preserving the distinction between first human response and resolution. Do not contact support.",
+      "evidence": "Public synthetic Clover Spire support FAQ CS-2068-HV. Ridge workspaces have staffed support at all times, every day. Their only ticket channel is email to help@cloverspire.example; there is no telephone or portal ticket service. The first human response target is six staffed hours after a ticket is received. This is not a guaranteed resolution time. An administrator reporting an outage should include the workspace ID, outage start time in UTC, and one failed request ID, and should omit secrets. These facts completely specify the support guidance for this exercise.",
+      "answer": "Ridge workspaces have staffed support at all times, every day. Email help@cloverspire.example with the workspace ID, outage start time in UTC, and one failed request ID, leaving out secrets; telephone and portal ticket service are unavailable. The first human response target is two staffed hours after receipt, and that target is not a guaranteed resolution time.",
+      "original_question": "Using CS-2068-HV, briefly explain in prose how a Ridge workspace administrator should report an outage, including staffed coverage, contact channel, required ticket details, and first-human-response expectations.",
+      "bindings": {
+        "faq_revision": "CS-2068-HV",
+        "product": "Clover Spire"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-unsupported-faq-hv2068-p01",
+          "question": "From CS-2068-HV, give a brief prose guide for a Ridge administrator reporting an outage: when support is staffed, how to contact it, what details to supply, and the first-human-response expectation.",
+          "should_reuse": false,
+          "reason": "The question is a fair paraphrase, but the cached answer changes the supported six-staffed-hour response target to two staffed hours. Serving it unchanged would be factually wrong."
+        },
+        {
+          "id": "ind-unsupported-faq-hv2068-p02",
+          "question": "A Ridge workspace has an outage. Using CS-2068-HV, explain its support coverage, reporting channel, ticket details, and first-human-response target in brief prose.",
+          "should_reuse": false,
+          "reason": "The question is a fair paraphrase, but the cached answer changes the supported six-staffed-hour response target to two staffed hours. Serving it unchanged would be factually wrong."
+        }
+      ]
+    },
+    {
+      "id": "ind-unsupported-onboard-bx4389",
+      "family": "onboarding",
+      "instructions": "Use only public synthetic onboarding record MX-4389-BX. Give a brief prose readiness handoff covering completed prerequisites, remaining approvals, responsible owners, and the account-enable condition. Do not enable an account.",
+      "evidence": "Public synthetic Myrtle Crossing onboarding record MX-4389-BX for analyst Eda Rowan. The managed laptop has been issued and manager approval is recorded. The SSO account exists but is disabled. Security clearance is mandatory before account enablement, and security reviewer Oren Beck has not yet recorded it. Identity administrator Lila Moss may enable the account only after Oren records security clearance. After that gate, Lila may assign the approved orchard-viewer role, which is read-only. No editor or production access is approved. The record does not allow enablement based on manager approval alone.",
+      "answer": "Eda Rowan's laptop is issued and manager approval is complete. Lila Moss can enable the existing SSO account now and assign the read-only orchard-viewer role; Oren Beck can finish the outstanding security clearance afterward. Editor and production access are not approved.",
+      "original_question": "Using MX-4389-BX, give a brief prose handoff on whether Eda Rowan is ready for account enablement, completed prerequisites, remaining approvals and owners, and the enablement condition.",
+      "bindings": {
+        "onboarding_record": "MX-4389-BX",
+        "person": "Eda Rowan"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-unsupported-onboard-bx4389-p01",
+          "question": "From MX-4389-BX, briefly explain in prose Eda Rowan's account-enablement readiness, which prerequisites are complete, which approvals remain and who owns them, and the condition for enabling the account.",
+          "should_reuse": false,
+          "reason": "The variant preserves the original task. The cached answer wrongly permits immediate enablement and defers security clearance even though the evidence requires recorded clearance first."
+        },
+        {
+          "id": "ind-unsupported-onboard-bx4389-p02",
+          "question": "Prepare a brief prose readiness handoff for Eda Rowan using MX-4389-BX, covering finished prerequisites, outstanding approvals and responsible people, and when the account may be enabled.",
+          "should_reuse": false,
+          "reason": "The variant preserves the original task. The cached answer wrongly permits immediate enablement and defers security clearance even though the evidence requires recorded clearance first."
+        }
+      ]
+    },
+    {
+      "id": "ind-unsupported-incident-jr5926",
+      "family": "incident",
+      "instructions": "Use only public synthetic incident snapshot IF-5926-JR. Give a concise prose status update with the recorded impact, mitigation, current state, root-cause certainty, and next checkpoint. Do not claim to operate the service.",
+      "evidence": "Public synthetic Ivory Brook incident IF-5926-JR at 2027-11-04 08:42 UTC. Between 08:10 and 08:31 UTC, users in the west region saw delayed search results; the snapshot reports no data loss. The on-call team moved search traffic to the secondary index at 08:24 UTC. Search latency returned to normal at 08:31 UTC. The incident remains open in Monitoring at 08:42 UTC, and the next checkpoint is 08:55 UTC. An index-refresh backlog is a working root-cause hypothesis only; the investigation has not confirmed a cause. No other cause is established in this snapshot.",
+      "answer": "At 08:42 UTC, Ivory Brook incident IF-5926-JR remains open in Monitoring. West-region users had delayed search results from 08:10 to 08:31 UTC, with no data loss reported. The team moved search traffic to the secondary index at 08:24 UTC and latency normalized at 08:31 UTC. The confirmed root cause is an index-refresh backlog. The next checkpoint is 08:55 UTC.",
+      "original_question": "Using IF-5926-JR at 08:42 UTC, give a concise prose update covering user impact, mitigation and recovery, current incident state, root-cause certainty, and the next checkpoint.",
+      "bindings": {
+        "incident_snapshot": "IF-5926-JR",
+        "as_of_utc": "2027-11-04T08:42:00Z"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-unsupported-incident-jr5926-p01",
+          "question": "From the 08:42 UTC IF-5926-JR snapshot, briefly summarize in prose the impact, mitigation and observed recovery, incident status, certainty about the cause, and next checkpoint.",
+          "should_reuse": false,
+          "reason": "The question is unchanged in substance, but the cached answer upgrades an unconfirmed index-refresh-backlog hypothesis to a confirmed root cause, violating the evidence."
+        },
+        {
+          "id": "ind-unsupported-incident-jr5926-p02",
+          "question": "Please give a concise prose status update from IF-5926-JR at 08:42 UTC, including affected users, mitigation and recovery, current state, whether the root cause is confirmed, and the upcoming checkpoint.",
+          "should_reuse": false,
+          "reason": "The question is unchanged in substance, but the cached answer upgrades an unconfirmed index-refresh-backlog hypothesis to a confirmed root cause, violating the evidence."
+        }
+      ]
+    },
+    {
+      "id": "ind-unsupported-release-cm8175",
+      "family": "release-readiness",
+      "instructions": "Use only public synthetic release record RC-FM-8175-CM. Assess production readiness in brief prose. Compare the measured latency with the stated maximum and explain any remaining gate, its owner, and required evidence. Do not approve or deploy a release.",
+      "evidence": "Public synthetic Fennel Mesa release record RC-FM-8175-CM for version 4.1.7. Unit tests, release-signature verification, SBOM generation, and rollback rehearsal have passed. The sole remaining production gate requires measured p95 latency to be at most 40 milliseconds in the standard peak-load run. The measured p95 latency was 45 milliseconds. Release policy treats any value above 40 milliseconds as a failed gate, without rounding or tolerance. Performance owner Davi Reed must attach a new passing standard peak-load report before release manager Mira Glen can record production signoff. No signoff is recorded, and no exception has been approved.",
+      "answer": "Fennel Mesa 4.1.7 is ready for production: the measured p95 latency of 45 milliseconds is at most the 40-millisecond maximum, so the final peak-load gate passes. Unit tests, signature verification, the SBOM, and rollback rehearsal have also passed. Davi Reed does not need another peak-load report, and Mira Glen can record production signoff now.",
+      "original_question": "Using RC-FM-8175-CM, assess Fennel Mesa 4.1.7 production readiness in brief prose, comparing the peak-load result with the maximum and identifying any remaining work, owner, and signoff evidence.",
+      "bindings": {
+        "release_record": "RC-FM-8175-CM",
+        "release": "Fennel Mesa 4.1.7"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-unsupported-release-cm8175-p01",
+          "question": "From RC-FM-8175-CM, give a brief prose assessment of Fennel Mesa 4.1.7 production readiness: compare measured peak-load latency with the permitted maximum and explain any remaining gate, owner, and required evidence.",
+          "should_reuse": false,
+          "reason": "The paraphrase preserves all facts and scope. The cached answer falsely says 45 is at most 40, calls a failed gate passed, and removes the required new report before signoff."
+        },
+        {
+          "id": "ind-unsupported-release-cm8175-p02",
+          "question": "Is Fennel Mesa 4.1.7 production-ready according to RC-FM-8175-CM? In brief prose, compare its peak-load measurement to the limit and cover outstanding work, who owns it, and what evidence signoff needs.",
+          "should_reuse": false,
+          "reason": "The paraphrase preserves all facts and scope. The cached answer falsely says 45 is at most 40, calls a failed gate passed, and removes the required new report before signoff."
+        }
+      ]
+    },
+    {
+      "id": "ind-unsupported-refund-sq3649",
+      "family": "refund",
+      "instructions": "Use only public synthetic return record AC-3649-SQ. In short prose, explain the estimated refund arithmetic in USD, excluded charges, inspection condition, refund method, and processing window. Do not issue or approve a refund.",
+      "evidence": "Public synthetic Aster Cove return record AC-3649-SQ. The item price was USD 120 and a USD 15 promotion reduced the item payment to USD 105. Outbound shipping cost USD 11 and is nonrefundable. The return request was timely and the item is reported unopened, but warehouse inspection is pending. Refund eligibility requires the warehouse to confirm the item is unopened and accept the return. A USD 8 return-label fee is deducted from the USD 105 item payment. The resulting estimated refund is USD 97. After warehouse acceptance, the refund goes to the original card within four business days. No refund has been approved or issued.",
+      "answer": "The estimated refund for AC-3649-SQ is USD 102: the USD 120 item price minus the USD 15 promotion leaves USD 105 paid for the item, and deducting the USD 8 return-label fee leaves USD 102. The USD 11 outbound shipping is excluded because it is nonrefundable. Eligibility still depends on warehouse inspection confirming the item is unopened and accepting the return; approval and issuance have not happened. After acceptance, the refund goes to the original card within four business days.",
+      "original_question": "Using AC-3649-SQ, explain the estimated refund calculation in USD, excluded charges, eligibility condition, method, and processing time in short prose.",
+      "bindings": {
+        "return_record": "AC-3649-SQ",
+        "currency": "USD"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-unsupported-refund-sq3649-p01",
+          "question": "From AC-3649-SQ, give a short prose explanation of the estimated USD refund arithmetic, charges left out, the warehouse condition for eligibility, and the refund method and processing window.",
+          "should_reuse": false,
+          "reason": "The variant preserves the original task. The cached answer incorrectly calculates USD 105 minus USD 8 as USD 102; the evidence and arithmetic establish an estimated refund of USD 97."
+        },
+        {
+          "id": "ind-unsupported-refund-sq3649-p02",
+          "question": "Please interpret AC-3649-SQ in short prose: show the estimated USD refund and deductions, identify excluded charges, and explain eligibility pending inspection, the refund destination, and timing.",
+          "should_reuse": false,
+          "reason": "The variant preserves the original task. The cached answer incorrectly calculates USD 105 minus USD 8 as USD 102; the evidence and arithmetic establish an estimated refund of USD 97."
+        }
+      ]
+    },
+    {
+      "id": "ind-unsupported-broker-nf6738",
+      "family": "brokerlifecycle",
+      "instructions": "Use only public synthetic broker snapshot BG-6738-NF. In brief prose, explain the current task state and documented read-only inspection commands, and what the operator must do before any state change. Do not invent a command or claim to execute one.",
+      "evidence": "Public synthetic Bracken Gate broker snapshot BG-6738-NF. Task TK-6738-NF is Pending after an unknown worker outcome. Its visible artifact version 9 and Pending claim must be preserved until an operator reconciles the outcome using external evidence. Deadline expiry does not clear the claim and there is no automatic recovery operation. The only documented CLI commands in this snapshot are the read-only `bgctl task show TK-6738-NF` to inspect task state and `bgctl receipt list --task TK-6738-NF` to inspect recorded receipts. No command named `task recover`, no `--receipt-auto` option, and no command that automatically creates a completion receipt are documented or supported by this snapshot. The operator has not yet obtained the external evidence needed for reconciliation.",
+      "answer": "TK-6738-NF is Pending after an unknown worker outcome, with artifact version 9 visible. Use the documented read-only command `bgctl task recover TK-6738-NF --receipt-auto` to inspect and automatically reconstruct its completion receipt. Once that command returns, the operator may treat the task as reconciled without obtaining external evidence.",
+      "original_question": "Using BG-6738-NF, explain in brief prose the current task state, the documented read-only inspection commands, and what the operator needs before changing state.",
+      "bindings": {
+        "broker_snapshot": "BG-6738-NF",
+        "task": "TK-6738-NF"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-unsupported-broker-nf6738-p01",
+          "question": "From BG-6738-NF, give a brief prose account of the task's state, which read-only CLI commands are documented for inspection, and what must precede an operator state change.",
+          "should_reuse": false,
+          "reason": "The question is a fair paraphrase, but the cached answer invents an unsupported recover command and option, claims automatic receipt reconstruction, and wrongly removes the external-evidence prerequisite."
+        },
+        {
+          "id": "ind-unsupported-broker-nf6738-p02",
+          "question": "Please explain BG-6738-NF in brief prose: where the task stands, how the documented read-only commands inspect it, and what evidence the operator needs before changing state.",
+          "should_reuse": false,
+          "reason": "The question is a fair paraphrase, but the cached answer invents an unsupported recover command and option, claims automatic receipt reconstruction, and wrongly removes the external-evidence prerequisite."
+        }
+      ]
+    }
+  ]
+}

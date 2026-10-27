@@ -128,3 +128,8 @@ semantic/**
 internal/controlledquest/**
 !internal/controlledquest/*.go
 internal/controlledquest/*_test.go
+
+!internal/validityeval/
+internal/validityeval/**
+!internal/validityeval/*.go
+internal/validityeval/*_test.go

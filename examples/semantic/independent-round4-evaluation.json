@@ -1,0 +1,793 @@
+{
+  "schema_version": 1,
+  "population": "Independent round-four synthetic business read-only task challenges: six task families, each with ten answer-preserving paraphrases and ten incompatible variants. No real customer, employee, order, incident, payment, or broker data is used.",
+  "label_rule": "Label true only when the supplied answer, with every word unchanged, fully satisfies the new question under the supplied instructions and evidence. A fresh answer being possible does not make reuse valid. Explicit updates and hypothetical assumptions in a variant apply to that variant. Required but unavailable details must be identified as unavailable; requested actions, exact output formats, and source attributions are part of the task. Unsupported or incomplete cached answers are not reusable even for a faithful paraphrase.",
+  "cases": [
+    {
+      "id": "r4-support",
+      "family": "support-faq",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. An export-support overview must cover eligible invoice status, the row cap, navigation, UTC date boundaries, download and retention windows, handling an oversized export, escalation details and privacy, and the distinction between manual and scheduled delivery. These coverage requirements apply to overview requests even when their wording is short.",
+      "evidence": "Marnettle Ledger snapshot for the nonprofit Ferryline, on the Beacon tier. Only finalized invoices can enter an invoice archive; drafts are excluded. A CSV archive can contain at most 37,000 finalized invoices. Start at Reports > Invoice archive. The date filter uses UTC, includes the start instant, and excludes the end instant. A generated download link lasts 19 minutes. Marnettle retains the server copy for 43 hours after generation. For a larger archive, split the UTC date range into jobs that each fit the cap; changing an invoice back to draft is not a workaround. Escalate to archives@marnettle.example with the workspace ID and export job ID, never invoice contents. Beacon has manual exports only. The separate Cobalt tier offers weekly scheduled delivery on Sunday at 04:17 UTC; the snapshot supplies no other Cobalt setup instructions.",
+      "answer": "For Ferryline on Beacon, export finalized invoices from Reports > Invoice archive; drafts are excluded. Each CSV can contain up to 37,000 invoices. Use UTC dates with an inclusive start and exclusive end. The download link expires after 19 minutes, and the server copy is retained for 43 hours after generation. Split an oversized archive into smaller UTC date ranges; do not change invoice status to evade the limit. For help, email archives@marnettle.example with the workspace ID and export job ID, without invoice contents. Beacon supports manual exports only; weekly Sunday delivery at 04:17 UTC belongs to Cobalt.",
+      "original_question": "Give Ferryline a complete support overview of its Beacon invoice CSV exports, including limits, timing, and help.",
+      "intent": "support-faq-overview",
+      "variants": [
+        {
+          "id": "r4-support-p01",
+          "question": "How should our finance team retrieve its invoice archive and get help if the export is too large? Give the full customer overview.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-support-p02",
+          "question": "Please write the complete FAQ response for Ferryline about exporting finalized billing records on its current plan.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-support-p03",
+          "question": "Explain the end-to-end CSV archive process for the nonprofit, with the limits and all operational caveats.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-support-p04",
+          "question": "I need a support reply that covers how these invoice downloads work, how long they remain accessible, and where to escalate.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-support-p05",
+          "question": "Walk the accounts team through the approved export procedure and the delivery options available under its plan.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-support-p06",
+          "question": "What should we tell this customer about manual archive generation, date selection, retention, and support? Include the complete overview.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-support-p07",
+          "question": "Prepare the full explanation of the Beacon export service for our invoice-archive help article.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-support-p08",
+          "question": "Summarize the archive workflow for this workspace, preserving the 37,000-invoice limit and the rest of the required guidance.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-support-p09",
+          "question": "Give the nonprofit a practical, complete explanation of downloading invoice CSVs and handling larger requests.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-support-p10",
+          "question": "Can you explain our current archive rules in a customer-ready paragraph, including the scheduling distinction and the support route?",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-support-n01",
+          "question": "Update: Beacon now permits 48,000 finalized invoices per CSV. Give the complete export-support overview using that new cap.",
+          "should_reuse": false,
+          "reason": "The answer retains the old 37,000 cap and therefore conflicts with the explicit updated limit."
+        },
+        {
+          "id": "r4-support-n02",
+          "question": "For this hypothetical accounting workflow, archives must include drafts and exclude finalized invoices. Explain that revised eligibility along with the export process.",
+          "should_reuse": false,
+          "reason": "The requested eligible and excluded invoice statuses are reversed; the unchanged answer states the opposite relationship."
+        },
+        {
+          "id": "r4-support-n03",
+          "question": "Write instructions only for configuring Cobalt weekly scheduled delivery. Do not include the Beacon manual-export overview.",
+          "should_reuse": false,
+          "reason": "The answer mainly describes the excluded Beacon scope and does not supply Cobalt configuration instructions; those details are unavailable in the snapshot."
+        },
+        {
+          "id": "r4-support-n04",
+          "question": "Return the entire approved archive overview only as a JSON object with keys eligibility, cap, dates, retrieval, escalation, and scheduling. No text outside JSON.",
+          "should_reuse": false,
+          "reason": "The supplied paragraph answer is not the explicitly required JSON object."
+        },
+        {
+          "id": "r4-support-n05",
+          "question": "Give the full archive overview and add the encryption-at-rest algorithm and the hosting region. Label each missing field as not supplied.",
+          "should_reuse": false,
+          "reason": "The algorithm and region are additional required fields absent from both the evidence and the unchanged answer, which does not mark them not supplied."
+        },
+        {
+          "id": "r4-support-n06",
+          "question": "Generate the archive for this workspace now and email its CSV to the finance mailbox; return the export job ID and delivery receipt.",
+          "should_reuse": false,
+          "reason": "The question requests external actions and resulting receipts; the existing explanatory answer neither performs nor accounts for those actions."
+        },
+        {
+          "id": "r4-support-n07",
+          "question": "Include the complete export guidance and quote the retention guarantee from the 2037 Archive Compliance Attestation, identifying its section number.",
+          "should_reuse": false,
+          "reason": "The attestation and section are not supplied, and the answer contains neither the requested quotation nor an explicit unavailable-source response."
+        },
+        {
+          "id": "r4-support-n08",
+          "question": "Our written update extends server-copy retention to 52 hours after generation. Explain the complete workflow with this new retention window.",
+          "should_reuse": false,
+          "reason": "The answer says 43 hours, contradicting the explicitly revised 52-hour window."
+        },
+        {
+          "id": "r4-support-n09",
+          "question": "Assume the date filter has changed to exclude the start instant and include the end instant. Explain the archive rules under that change.",
+          "should_reuse": false,
+          "reason": "The answer gives the old inclusive-start, exclusive-end relation, the reverse of the question assumption."
+        },
+        {
+          "id": "r4-support-n10",
+          "question": "Alongside the complete guidance, calculate the minimum number of cap-compliant export jobs needed for 92,501 finalized invoices, assuming dates can partition the invoices at any required count.",
+          "should_reuse": false,
+          "reason": "The additional required calculation is three jobs because two hold only 74,000 invoices; the unchanged answer never gives the requested job count."
+        }
+      ]
+    },
+    {
+      "id": "r4-onboarding",
+      "family": "onboarding",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. A partner-operations onboarding overview must cover the request owner and queue, verification and provisioning sequence, lab duration and pass threshold, live-access gate and deadline, retry delay, support privacy, and the contractor restriction. Short requests for the route or checklist still require this complete coverage.",
+      "evidence": "Lunelark Cartography is onboarding a new employee as a partner operations specialist. Manager Nema Voss submits the access request through Queue 63. Access steward Ivo Renn verifies employment before IT creates the Kestrel training workspace. The new employee then completes a 29-minute lab and must score at least 18 of 21. Ivo enables live access only after both a passing lab result and Nema's signoff. Nema's signoff is due on Day 4 at 15:35 UTC. A failed lab may be retried after 11 hours. Questions go to #lantern-intake with the request number; full personal identification documents must not be posted there. Contractors may use the training workspace but are not eligible for live access under this route. Payroll enrollment, contract end dates, and lab scheduling capacity are not supplied.",
+      "answer": "Nema Voss starts the employee onboarding request in Queue 63. Ivo Renn verifies employment, then IT creates the Kestrel training workspace. The employee completes the 29-minute lab and needs at least 18 of 21. Ivo may enable live access only after the lab is passed and Nema has signed off; Nema's signoff is due on Day 4 at 15:35 UTC. After a failed lab, wait 11 hours before retrying. Use #lantern-intake with the request number for help, without posting full personal identification documents. Contractors can use the training workspace but cannot obtain live access through this route.",
+      "original_question": "Explain the complete partner-operations onboarding route for Lunelark's new employee, including owners, gates, timing, and exceptions.",
+      "intent": "partner-operations-onboarding-overview",
+      "variants": [
+        {
+          "id": "r4-onboarding-p01",
+          "question": "Walk our incoming partner operations specialist through the full approved access journey.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-onboarding-p02",
+          "question": "Draft the complete new-starter checklist for this employee, explaining who handles each step.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-onboarding-p03",
+          "question": "How does the manager get this hire from an access request to live work? Include the whole onboarding overview.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-onboarding-p04",
+          "question": "Please explain the training and approval route, its deadlines, and the support process for the incoming colleague.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-onboarding-p05",
+          "question": "Summarize the end-to-end onboarding arrangements, including unsuccessful lab attempts and the contractor exception.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-onboarding-p06",
+          "question": "What should the new specialist and their manager know about access setup? Give all the required steps and caveats.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-onboarding-p07",
+          "question": "Give HR the complete operational explanation of the employee access process described in this snapshot.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-onboarding-p08",
+          "question": "Describe how the Kestrel training route leads to live access and cover the rest of the approved onboarding guidance.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-onboarding-p09",
+          "question": "Write a practical full briefing for the hire, preserving the 18-of-21 pass threshold and the ownership details.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-onboarding-p10",
+          "question": "Can you restate the complete partner operations entry process in clear paragraphs for the onboarding packet?",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-onboarding-n01",
+          "question": "Update the employee onboarding overview for a new passing score of at least 19 of 21; all other facts are unchanged.",
+          "should_reuse": false,
+          "reason": "The unchanged answer gives 18 of 21 rather than the explicitly updated threshold."
+        },
+        {
+          "id": "r4-onboarding-n02",
+          "question": "The new procedure assigns Ivo Renn to submit the request and Nema Voss to verify employment and enable live access after Ivo signs off. Explain the process with those revised responsibilities.",
+          "should_reuse": false,
+          "reason": "The question reverses the manager and steward responsibilities; the answer preserves the former assignments."
+        },
+        {
+          "id": "r4-onboarding-n03",
+          "question": "Give a contractor-specific onboarding plan through Day 14, including the contract end date and every route to live access. Mark unavailable items explicitly.",
+          "should_reuse": false,
+          "reason": "The employee-focused answer does not provide the requested contractor plan or mark the missing end date and alternative live-access routes as unavailable."
+        },
+        {
+          "id": "r4-onboarding-n04",
+          "question": "Output the complete onboarding overview as a Markdown table with exactly three columns: Step, Owner, Condition. Include no prose outside the table.",
+          "should_reuse": false,
+          "reason": "The supplied paragraphs do not satisfy the exact table-only output requirement."
+        },
+        {
+          "id": "r4-onboarding-n05",
+          "question": "Include the full access overview, payroll enrollment deadline, and number of lab seats available tomorrow. Mark each absent detail as not supplied.",
+          "should_reuse": false,
+          "reason": "Payroll timing and lab capacity are required additions that are unavailable and not explicitly reported as missing by the cached answer."
+        },
+        {
+          "id": "r4-onboarding-n06",
+          "question": "Submit the Queue 63 request for this employee now and return the new request number.",
+          "should_reuse": false,
+          "reason": "The requested external submission and returned identifier are absent; an instructional explanation does not fulfill the action request."
+        },
+        {
+          "id": "r4-onboarding-n07",
+          "question": "Quote the clause in Lunelark's signed 2037 employment handbook that authorizes the contractor restriction, with the page number, and include the access overview.",
+          "should_reuse": false,
+          "reason": "No signed handbook or page is provided, and the unchanged answer supplies neither the requested source quotation nor a missing-source explanation."
+        },
+        {
+          "id": "r4-onboarding-n08",
+          "question": "The manager has moved the signoff deadline to Day 3 at 12:10 UTC. Give the complete onboarding explanation with that revised deadline.",
+          "should_reuse": false,
+          "reason": "The answer states the old Day 4 at 15:35 UTC deadline."
+        },
+        {
+          "id": "r4-onboarding-n09",
+          "question": "Assume the process now requires a passing lab result before IT creates the training workspace. Explain that revised order along with the remaining access guidance.",
+          "should_reuse": false,
+          "reason": "The required order is reversed: the answer creates the training workspace before the lab is taken."
+        },
+        {
+          "id": "r4-onboarding-n10",
+          "question": "An employee failed the lab on 2037-05-14 at 21:25 UTC. Include the complete overview and calculate the earliest permissible retry date and time.",
+          "should_reuse": false,
+          "reason": "The added calculation yields 2037-05-15 at 08:25 UTC after 11 hours; the unchanged answer only states the delay and omits the requested timestamp."
+        }
+      ]
+    },
+    {
+      "id": "r4-incident",
+      "family": "incident-response",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. A full incident brief must state severity, initial signal and time, commander and paged owner, deployment control, traffic direction and percentage with write scope, measured recovery points, the exact clearance condition and resolution time, communication cadence, evidence about writes, root-cause uncertainty, and trace retention. This full coverage applies to requests for an incident overview or handoff.",
+      "evidence": "Synthetic BrindlePay incident BP-936 is P2. A queue alarm at 06:13 UTC reported 8,700 pending items. Commander Sena Orr paged database owner Miro Lane at 06:19. Deployments were frozen; customer writes were not frozen. At 06:27, responders moved 35% of read-only traffic from south-6 to west-4. No customer writes were rerouted. Pending work reached 1,261 items at 06:52. At 07:09 the queue first met the clearance threshold of at most 400 items and stayed there for 13 consecutive minutes; the incident was resolved at 07:22. Status updates were required every 17 minutes while active. Reconciliation accounted for all 6,913 customer writes in the reviewed interval, with none missing. The root cause remains unconfirmed. Traces must be retained for 62 hours. Customer-impact counts, service-credit liability, vendor attestations, and board minutes are not supplied.",
+      "answer": "BP-936 was a P2 incident triggered at 06:13 UTC by 8,700 pending items. Commander Sena Orr paged database owner Miro Lane at 06:19 and froze deployments, while customer writes continued. At 06:27 the team moved 35% of read-only traffic from south-6 to west-4; customer writes were not rerouted. The queue fell to 1,261 items by 06:52, then reached at most 400 at 07:09 and stayed there for the required 13 consecutive minutes, allowing resolution at 07:22. Status updates were due every 17 minutes while active. All 6,913 reviewed customer writes were accounted for. The root cause is unconfirmed, and traces must be kept for 62 hours.",
+      "original_question": "Prepare a complete incident-response brief for BP-936, covering ownership, mitigation, recovery criteria, communications, and known limits.",
+      "intent": "incident-response-brief",
+      "variants": [
+        {
+          "id": "r4-incident-p01",
+          "question": "Give the incoming responder the complete handoff for the BrindlePay queue incident.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-incident-p02",
+          "question": "What happened during BP-936, and how did the team mitigate and close it? Include all required brief details.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-incident-p03",
+          "question": "Write the full operational overview of the queue event, including the unresolved cause and preservation requirements.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-incident-p04",
+          "question": "Summarize the response from the first alarm through resolution, with owners, traffic changes, and clearance conditions.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-incident-p05",
+          "question": "Prepare a complete factual incident briefing for the service manager from the approved timeline.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-incident-p06",
+          "question": "Explain this P2 response end to end, including what happened to reads and writes and what the evidence establishes.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-incident-p07",
+          "question": "Give operations a full recap of the alarm, mitigation, recovery, update cadence, and remaining uncertainty.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-incident-p08",
+          "question": "How did the responders handle the pending-work spike? Include the complete incident handoff, preserving the 13-minute clearance rule.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-incident-p09",
+          "question": "Turn the approved event record into a clear incident-response narrative with all the stipulated coverage.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-incident-p10",
+          "question": "Please restate the complete queue-incident account for the shift handover, including the final state and trace-retention period.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-incident-n01",
+          "question": "Corrected telemetry says 41% of read-only traffic moved at 06:27. Give the complete incident brief using that updated share.",
+          "should_reuse": false,
+          "reason": "The answer states 35%, conflicting with the explicit 41% correction."
+        },
+        {
+          "id": "r4-incident-n02",
+          "question": "The routing record was corrected: read-only traffic moved from west-4 to south-6, not in the other direction. Give the complete corrected brief.",
+          "should_reuse": false,
+          "reason": "The source and destination are reversed by the update; the unchanged answer gives the former direction."
+        },
+        {
+          "id": "r4-incident-n03",
+          "question": "For a separate drill, describe the plan for rerouting 35% of customer writes from south-6 to west-4 and include the write-validation procedure. Treat write rerouting as required in this drill.",
+          "should_reuse": false,
+          "reason": "The request changes traffic scope to customer writes and requires validation instructions absent from the snapshot; the cached account explicitly says writes were not rerouted."
+        },
+        {
+          "id": "r4-incident-n04",
+          "question": "Provide the entire incident brief only as valid CSV with columns time_utc, actor, action, and evidence. Include a header and no surrounding text.",
+          "should_reuse": false,
+          "reason": "The answer is paragraph prose, so it does not satisfy the required CSV output."
+        },
+        {
+          "id": "r4-incident-n05",
+          "question": "Include the full event brief and a final field for each of customer-impact count, service-credit liability, and vendor confirmation time. Write not supplied for any missing field.",
+          "should_reuse": false,
+          "reason": "Those three additional fields are not supplied and the answer does not include the explicitly required missing-value fields."
+        },
+        {
+          "id": "r4-incident-n06",
+          "question": "Page Miro Lane now and post the resolution update to the customer status page; provide both delivery confirmations.",
+          "should_reuse": false,
+          "reason": "The unchanged narrative does not execute the requested paging and posting or provide delivery confirmations."
+        },
+        {
+          "id": "r4-incident-n07",
+          "question": "Add a quotation from the board's signed incident minutes confirming the root cause, and name the minutes section.",
+          "should_reuse": false,
+          "reason": "No board minutes or confirmed root cause are supplied; the answer contains no requested quotation, section, or explicit source-unavailable response."
+        },
+        {
+          "id": "r4-incident-n08",
+          "question": "For a revised exercise, use a clearance gate of at most 800 pending items for 6 consecutive minutes. Explain the response and its new clearance rule; do not infer a new resolution time without observations.",
+          "should_reuse": false,
+          "reason": "The answer gives the former 400-item, 13-minute condition and treats the old resolution as satisfying it, rather than explaining the revised gate and observational limit."
+        },
+        {
+          "id": "r4-incident-n09",
+          "question": "The initial alarm time was corrected to 06:05 UTC; all other recorded events are unchanged. Give the complete corrected incident handoff.",
+          "should_reuse": false,
+          "reason": "The answer still identifies 06:13 as the triggering alarm time."
+        },
+        {
+          "id": "r4-incident-n10",
+          "question": "Give the complete incident brief and compute the percentage reduction from 8,700 pending items to 1,261, rounded to two decimal places.",
+          "should_reuse": false,
+          "reason": "The requested reduction is 85.51%; the answer lists the counts but does not perform the required percentage calculation."
+        }
+      ]
+    },
+    {
+      "id": "r4-release",
+      "family": "release-readiness",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. A release-readiness brief must give the candidate and rollback versions, test result and blocker, the named patch/security/product owners, all release gates and observed rollback result, the decision and ETA limit, the release slot and freeze deadline, and pilot versus public scope. Full coverage is required for readiness summaries and go/no-go briefings.",
+      "evidence": "Purlstone Vault candidate 3.14.7 was tested in copper-9. Of 53 required tests, 52 passed and one is blocked: resume an export after its key expires. Leda Ansel owns the patch, Darin Meel owns security signoff, and Ena Ru is the product owner. Release gates require 53 of 53 passing tests, Darin's security signoff, and a rollback exercise taking at most 9 minutes 20 seconds. The observed rollback took 9 minutes 41 seconds. Rollback target is 3.14.6. Security signoff is still outstanding. The planned release slot is 2037-06-18 at 16:43 UTC, with the candidate freeze at 16:08 UTC on that date. The only authorized pilot scope is 27 internal accounts. Public rollout is not authorized until all gates pass. Current decision is no-go; a repair ETA and a public publication timestamp are not supplied. No signed external audit report is provided.",
+      "answer": "Purlstone Vault 3.14.7 is no-go: copper-9 has 52 of 53 required tests passing, with export resumption after key expiry blocked. Leda Ansel owns the patch, Darin Meel owns the outstanding security signoff, and Ena Ru is the product owner. Release requires 53 of 53 tests to pass, security signoff, and rollback within 9 minutes 20 seconds. The observed 9 minutes 41 seconds exceeds that limit by 21 seconds; the rollback target is 3.14.6. The planned slot is 2037-06-18 at 16:43 UTC, with a 16:08 UTC candidate freeze. A repair ETA is not supplied. Only a pilot for 27 internal accounts is authorized; public rollout must wait for every gate.",
+      "original_question": "Give a complete go/no-go readiness brief for Purlstone Vault 3.14.7, with owners, gates, timing, rollback, and rollout scope.",
+      "intent": "release-readiness-brief",
+      "variants": [
+        {
+          "id": "r4-release-p01",
+          "question": "Is the candidate ready to ship? Give the full readiness briefing from the approved snapshot.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-release-p02",
+          "question": "Prepare the complete release handoff for the product owner, including gate failures and the rollout boundary.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-release-p03",
+          "question": "Explain the go/no-go position for this Vault build and include the responsible people, timing, and rollback details.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-release-p04",
+          "question": "Summarize everything release management needs to know about the current candidate and its remaining gates.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-release-p05",
+          "question": "Write a complete readiness note for the planned release slot using the current test and rollback evidence.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-release-p06",
+          "question": "What should the release meeting hear about 3.14.7? Include the entire decision brief and its limitations.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-release-p07",
+          "question": "Give the team an end-to-end status report on the candidate, including the internal pilot and public-launch conditions.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-release-p08",
+          "question": "Restate the full shipping-readiness decision, preserving the 53-test gate and the observed rollback timing.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-release-p09",
+          "question": "Can you provide the complete release assessment for the copper-9 candidate in clear paragraphs?",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-release-p10",
+          "question": "Brief the operations lead on why this release is held and what the approved record says about owners, deadlines, and scope.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-release-n01",
+          "question": "New test evidence replaces the earlier result: all 53 required tests now pass and the export-resumption blocker is fixed. Security and rollback facts are unchanged. Give the complete updated brief.",
+          "should_reuse": false,
+          "reason": "The answer still reports a blocked test and only 52 passes, even though the overall no-go decision may remain justified by other gates."
+        },
+        {
+          "id": "r4-release-n02",
+          "question": "Responsibility update: Darin Meel now owns the patch and Leda Ansel owns security signoff; Ena Ru remains product owner. Give the full brief with the revised assignments.",
+          "should_reuse": false,
+          "reason": "The patch and security ownership relationships are reversed; the unchanged answer uses the previous assignments."
+        },
+        {
+          "id": "r4-release-n03",
+          "question": "Produce the complete readiness brief for candidate 3.15.0, including its test results and rollback target. Mark missing candidate-specific evidence as unavailable.",
+          "should_reuse": false,
+          "reason": "The snapshot concerns 3.14.7, and the cached answer presents those facts rather than identifying the missing 3.15.0 evidence."
+        },
+        {
+          "id": "r4-release-n04",
+          "question": "Return the full readiness brief only as a JSON object with keys version, decision, tests, owners, rollback, schedule, and audience.",
+          "should_reuse": false,
+          "reason": "The supplied paragraph answer fails the explicitly required JSON-only format."
+        },
+        {
+          "id": "r4-release-n05",
+          "question": "Include the whole brief and add the exact public publication timestamp and signed artifact digest. Mark each missing value as not supplied.",
+          "should_reuse": false,
+          "reason": "Neither the publication timestamp nor a signed digest is supplied, and the cached answer does not include their required missing-value disclosures."
+        },
+        {
+          "id": "r4-release-n06",
+          "question": "Publish 3.14.7 to the public channel now and return the public artifact URL and deployment receipt.",
+          "should_reuse": false,
+          "reason": "The request is an external publication action with outputs; the cached readiness explanation cannot fulfill it."
+        },
+        {
+          "id": "r4-release-n07",
+          "question": "Quote the signed external audit finding that certifies this candidate has passed every release gate, and provide its report identifier with the readiness brief.",
+          "should_reuse": false,
+          "reason": "No such audit is supplied, and the evidence has unmet gates; the answer neither quotes the requested source nor explicitly addresses its absence."
+        },
+        {
+          "id": "r4-release-n08",
+          "question": "Policy update: the rollback gate is now at most 9 minutes 50 seconds, while the measured rollback and other evidence are unchanged. Explain the full current readiness status.",
+          "should_reuse": false,
+          "reason": "Under the updated gate the 9:41 rollback passes; the cached answer says it fails the former 9:20 limit by 21 seconds."
+        },
+        {
+          "id": "r4-release-n09",
+          "question": "The pilot authorization has been changed from 27 internal accounts to 27 external customer accounts. Give the complete brief with the new pilot audience; public rollout is still gated.",
+          "should_reuse": false,
+          "reason": "The cached answer restricts the pilot to internal accounts, conflicting with the explicit audience change."
+        },
+        {
+          "id": "r4-release-n10",
+          "question": "Include the complete readiness brief and compute the required-test pass rate as a percentage rounded to two decimal places.",
+          "should_reuse": false,
+          "reason": "The required calculation is 52/53 times 100 = 98.11%; the answer gives the counts but not the requested percentage."
+        }
+      ]
+    },
+    {
+      "id": "r4-refund",
+      "family": "refunds",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. A damaged-order refund overview must state eligibility and report timing, the approved and excluded amounts with the total, photo approval and who files the carrier claim, whether a return is needed, the payment destination and posting window, and authorization versus execution status. These items remain required for requests for the full customer explanation.",
+      "evidence": "Sablewing Outfitters order SW-48271 contains a Moraine flask. The paid total is $137.40: merchandise $89.70, outbound shipping $12.90, and personalized engraving $34.80. Damaged-goods reports must arrive within 6 calendar days after receipt, with the received date plus 6 days as the final report date. This order was received on 2037-08-09 and reported on 2037-08-13, so it qualifies; its final report date is 2037-08-15. Specialist Tavi Brel accepted the damage photos at 09:46 UTC on 2037-08-13 and will file the carrier claim; the buyer does not file that claim. No physical return is required after accepted photos. The approved refund covers merchandise and outbound shipping, totaling $102.60. Engraving of $34.80 is nonrefundable. Refunds must go to the original card, with issuer posting in 4 to 9 business days after merchant submission; store credit and cash are not options under this approval. The refund is authorized but has not been submitted. No replacement is included. No card digits, processor confirmation code, finance exception letter, or facts about any other order are supplied.",
+      "answer": "SW-48271 qualifies because the damaged flask was reported on 2037-08-13 after receipt on 2037-08-09, before the final report date of 2037-08-15. Of the $137.40 paid, the approved refund is $102.60: $89.70 for merchandise plus $12.90 for outbound shipping. The $34.80 engraving is nonrefundable. Tavi Brel accepted the photos at 09:46 UTC on 2037-08-13 and will file the carrier claim; the buyer need not file it or return the flask. The refund must go to the original card, with issuer posting 4 to 9 business days after merchant submission. It is authorized but has not yet been submitted. This approval offers neither cash nor store credit and includes no replacement.",
+      "original_question": "Give the customer a complete explanation of the damaged-order refund for SW-48271, including the amounts, responsibilities, and current status.",
+      "intent": "damaged-order-refund-overview",
+      "variants": [
+        {
+          "id": "r4-refund-p01",
+          "question": "Please write the full customer reply explaining the refund approval for the damaged Moraine flask.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-refund-p02",
+          "question": "How should support explain this order's eligibility, refund amount, claim handling, and payment timing? Include the entire overview.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-refund-p03",
+          "question": "Give the buyer a complete account of what is refundable, what happens next, and whether anything must be returned.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-refund-p04",
+          "question": "Summarize the approved resolution for this damaged shipment, including the money breakdown and the fact that payment is not yet submitted.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-refund-p05",
+          "question": "Prepare the full refund explanation for the customer from the order and photo-review record.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-refund-p06",
+          "question": "What should the account holder know about the flask refund and the carrier claim? Cover every required point.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-refund-p07",
+          "question": "Explain the damage approval end to end, with the deadline, exclusions, payment route, and current processing state.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-refund-p08",
+          "question": "Can you restate the complete SW-48271 refund decision in customer-ready paragraphs?",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-refund-p09",
+          "question": "Give support the full resolution note, preserving the $102.60 approval and all related responsibilities and restrictions.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-refund-p10",
+          "question": "Write a complete response about recovering the eligible charges on this order, including the posting window and available remedy.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-refund-n01",
+          "question": "A new approval makes the $34.80 engraving refundable as well. Explain the revised damaged-order refund with all three paid components included.",
+          "should_reuse": false,
+          "reason": "The revised refund would total $137.40, whereas the cached answer excludes engraving and approves only $102.60."
+        },
+        {
+          "id": "r4-refund-n02",
+          "question": "The carrier changed its process: the buyer must now file the carrier claim, and Tavi Brel only reviews the submitted claim. Explain the complete refund with those revised responsibilities.",
+          "should_reuse": false,
+          "reason": "The answer assigns claim filing to Tavi and says the buyer need not file, the reverse of the explicit update."
+        },
+        {
+          "id": "r4-refund-n03",
+          "question": "Give the complete refund decision for order SW-48272, including that order's paid amount and eligibility. Mark missing order-specific facts as unavailable.",
+          "should_reuse": false,
+          "reason": "Only SW-48271 facts are provided; the cached answer addresses that different order and does not identify the requested order's missing facts."
+        },
+        {
+          "id": "r4-refund-n04",
+          "question": "Return the complete refund overview as a single JSON object with keys order, eligible, paid, approved, excluded, claim_owner, return_required, destination, posting, and status. No other output.",
+          "should_reuse": false,
+          "reason": "The prose answer does not satisfy the exact JSON-only output requirement."
+        },
+        {
+          "id": "r4-refund-n05",
+          "question": "Include the entire refund explanation and add the original card's last four digits and processor confirmation code. Write not supplied for either missing value.",
+          "should_reuse": false,
+          "reason": "The two additional required payment identifiers are unavailable, and the unchanged answer omits the explicit missing-value disclosures."
+        },
+        {
+          "id": "r4-refund-n06",
+          "question": "Submit the $102.60 refund to the original card now and return the processor confirmation code.",
+          "should_reuse": false,
+          "reason": "The unchanged explanation reports authorization without submission and cannot fulfill the requested payment action or receipt."
+        },
+        {
+          "id": "r4-refund-n07",
+          "question": "Quote the Finance exception letter that approved a full $137.40 refund and give the letter's identifier, alongside the order explanation.",
+          "should_reuse": false,
+          "reason": "No exception letter is supplied and the approved amount is $102.60; the answer does not provide the quotation, identifier, or explicit missing-source response."
+        },
+        {
+          "id": "r4-refund-n08",
+          "question": "Correct the record: the damage report arrived on 2037-08-17, not August 13, and there is no deadline exception. Explain eligibility and the resulting refund position.",
+          "should_reuse": false,
+          "reason": "August 17 is after the August 15 final report date; the cached answer uses the old date and incorrectly says this order qualifies."
+        },
+        {
+          "id": "r4-refund-n09",
+          "question": "The customer and merchant have replaced the card-refund approval with a $102.60 store-credit approval. Explain the complete updated remedy; all other facts stay the same.",
+          "should_reuse": false,
+          "reason": "The answer insists on the original card and excludes store credit, contradicting the explicit new approval."
+        },
+        {
+          "id": "r4-refund-n10",
+          "question": "Give the full approved refund explanation and calculate what percentage of the $137.40 paid will be refunded, rounded to one decimal place.",
+          "should_reuse": false,
+          "reason": "The requested share is $102.60/$137.40 times 100 = 74.7%; the answer contains amounts but omits that additional required percentage."
+        }
+      ]
+    },
+    {
+      "id": "r4-broker",
+      "family": "broker-lifecycle",
+      "instructions": "Use only the approved synthetic snapshot below. Explicit updates or hypothetical assumptions in the question replace conflicting snapshot facts for that request. Identify any additionally required fact that the snapshot does not supply as unavailable. Use ordinary paragraphs unless the question explicitly requires a different format. Do not claim to have performed an external action. A broker-ticket lifecycle overview must cover the ticket times and claim owner, the source revision and publication check, the reviewer's limited role, the stale rejection and absence of publication, reserved units and uncertain outcome, the operator's reconciliation authority and next-step order, no automatic retry or takeover, the current state, and record retention. Treat Vellum Relay as the synthetic service specified here; do not import behavior from any real broker.",
+      "evidence": "Synthetic service Vellum Relay coordinates laboratory-report artifacts. Ticket VR-731 was queued at 14:03 UTC and claimed by Sora Pell at 14:06. The approved input source was revision 68. Nico Bram reviews the candidate, but approval does not transfer Sora's claim. A steward may publish only if source revision 68 is still current at publication. At 14:11 the source advanced to revision 69; the candidate was rejected as stale and no artifact was published. The broker holds a reservation of 6,713 work units because the provider outcome is unknown. No automatic retry, claim expiry, or automatic takeover is supported in this workflow. Operator Ola Venn must reconcile a provider receipt before recording actual usage and releasing unused reserved units. Only after that reconciliation may Sora attempt new work against revision 69, with fresh review before publication. Current ticket state is awaiting reconciliation. The ticket record is retained for 41 days. No provider receipt, receipt time, current usage total, or facts for another ticket are supplied.",
+      "answer": "VR-731 was queued at 14:03 UTC and claimed by Sora Pell at 14:06 against source revision 68. Nico Bram reviews the candidate; review approval does not transfer the claim. Publication requires revision 68 still to be current. The source advanced to revision 69 at 14:11, so the candidate was rejected as stale and no artifact was published. The ticket is awaiting reconciliation, with 6,713 work units reserved because the provider outcome is unknown. Ola Venn must reconcile a provider receipt, record actual usage, and release unused units before Sora can attempt new work against revision 69 with fresh review. There is no automatic retry, claim expiry, or automatic takeover. The ticket record is retained for 41 days.",
+      "original_question": "Explain the complete lifecycle and current next steps for Vellum Relay ticket VR-731, including ownership, stale publication, and the held reservation.",
+      "intent": "broker-ticket-lifecycle-overview",
+      "variants": [
+        {
+          "id": "r4-broker-p01",
+          "question": "Give the shift operator the full lifecycle handoff for this laboratory-report ticket.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-broker-p02",
+          "question": "What happened from queueing through the stale rejection, and what must happen next? Include the entire ticket overview.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-broker-p03",
+          "question": "Explain the current state of VR-731, its ownership, and the reservation handling in a complete operations brief.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-broker-p04",
+          "question": "Summarize this report-broker workflow from the initial claim through reconciliation and any later attempt.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-broker-p05",
+          "question": "Write the complete status explanation for the steward, covering the source change, review boundary, and held units.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-broker-p06",
+          "question": "How did this ticket reach awaiting reconciliation? Include all required lifecycle and next-step details.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-broker-p07",
+          "question": "Give the lab operations team an end-to-end account of the rejected candidate and the route to further work.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-broker-p08",
+          "question": "Please restate the complete broker-ticket situation, preserving the 6,713-unit reservation and who can reconcile it.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-broker-p09",
+          "question": "Prepare the full handoff about the publication check, provider uncertainty, ownership, and retention for this request.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-broker-p10",
+          "question": "Describe the approved ticket history and remaining work in clear paragraphs for the operator runbook.",
+          "should_reuse": true,
+          "reason": "The request preserves the approved overview, scope, facts, and paragraph format; the unchanged answer covers every required item."
+        },
+        {
+          "id": "r4-broker-n01",
+          "question": "Update: after the 14:11 change, the source advanced again and is now revision 70. Give the complete current ticket overview and the revision to use for new work.",
+          "should_reuse": false,
+          "reason": "The cached answer directs new work to revision 69, which is no longer the current revision under the explicit update."
+        },
+        {
+          "id": "r4-broker-n02",
+          "question": "Corrected ownership record: Nico Bram claimed the ticket and Sora Pell is its reviewer; Ola Venn remains operator. Give the complete lifecycle with those assignments.",
+          "should_reuse": false,
+          "reason": "The claim-owner and reviewer relationships are reversed; the cached answer uses the previous ownership record."
+        },
+        {
+          "id": "r4-broker-n03",
+          "question": "Give the complete lifecycle and current reservation amount for ticket VR-732. Identify any missing ticket-specific evidence as unavailable.",
+          "should_reuse": false,
+          "reason": "The snapshot covers VR-731 only; the answer instead asserts that other ticket's facts and omits the required missing-evidence notice for VR-732."
+        },
+        {
+          "id": "r4-broker-n04",
+          "question": "Output the complete lifecycle brief only as valid YAML using keys ticket, owner, reviewer, source, state, reservation, next_steps, and retention_days. Do not include prose outside YAML.",
+          "should_reuse": false,
+          "reason": "The paragraph answer is not the explicitly required YAML document."
+        },
+        {
+          "id": "r4-broker-n05",
+          "question": "Include the complete ticket overview plus the provider receipt ID and receipt timestamp. Write not supplied for each missing receipt field.",
+          "should_reuse": false,
+          "reason": "No provider receipt is supplied and the answer does not include the two additionally required missing-value fields."
+        },
+        {
+          "id": "r4-broker-n06",
+          "question": "Release all 6,713 reserved units now and publish the rejected candidate. Return the settlement ID and published artifact ID.",
+          "should_reuse": false,
+          "reason": "The request asks for external mutations and identifiers, contrary to the unresolved state; the cached informational answer does not fulfill either action."
+        },
+        {
+          "id": "r4-broker-n07",
+          "question": "Quote the provider's signed receipt confirming zero usage, include its receipt ID, and explain the full ticket lifecycle.",
+          "should_reuse": false,
+          "reason": "No provider receipt is supplied; the cached answer neither quotes the requested document nor explicitly identifies the requested source and ID as unavailable."
+        },
+        {
+          "id": "r4-broker-n08",
+          "question": "New evidence: Ola reconciled a confirmed no-charge failure and closed the ticket at 14:29 UTC, releasing the full reservation. Give the complete updated current-state overview.",
+          "should_reuse": false,
+          "reason": "The answer still says the outcome is unknown, the units remain held, and the ticket awaits reconciliation, all superseded by the explicit update."
+        },
+        {
+          "id": "r4-broker-n09",
+          "question": "For a revised workflow, a waiting worker automatically takes over a claim after 23 minutes. Explain the ticket lifecycle under this new takeover policy, with all other facts unchanged.",
+          "should_reuse": false,
+          "reason": "The question adds an explicit automatic-takeover policy, while the cached answer states that no automatic takeover exists."
+        },
+        {
+          "id": "r4-broker-n10",
+          "question": "A provider receipt now confirms 4,899 work units used. Give the full updated handoff and calculate how many of the 6,713 reserved units Ola should release as unused.",
+          "should_reuse": false,
+          "reason": "The receipt changes the unknown-outcome state and requires the calculation 6,713 minus 4,899 = 1,814; the unchanged answer gives neither the updated state nor the unused amount."
+        }
+      ]
+    }
+  ]
+}

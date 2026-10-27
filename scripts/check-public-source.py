@@ -96,7 +96,10 @@ def public_email(address, metadata=False):
     if address.endswith(b"@users.noreply.github.com") or address == b"noreply@github.com":
         return True
     if not metadata:
-        return address == b"git@github.com" or address.rsplit(b"@", 1)[-1] in {
+        domain = address.rsplit(b"@", 1)[-1]
+        # .example is reserved for documentation, including synthetic business
+        # fixtures. This does not permit it as an author/committer identity.
+        return address == b"git@github.com" or domain.endswith(b".example") or domain in {
             b"example.com", b"example.net", b"example.org",
         }
     return False

@@ -86,6 +86,29 @@ Local resource pressure can skip this optional reuse path and continue normal
 fresh generation. The main generation path still needs its own resource
 admission policy; the reuse gate does not throttle all model work.
 
+The observation's `resource_admission` explains an actual probe: stale or
+unavailable sample, memory pressure, insufficient memory, CPU stall, load, or
+`ready`. It includes measured available bytes when known. It does not expose
+command output or local paths. An exact hit makes no optional probe, so it has
+no new resource sample. A percentage of free memory alone does not override
+the operating system's pressure warning.
+
+## Don't spend more checking than answering
+
+A verifier reads the evidence and old answer before making a decision. For a
+short question, that can cost more tokens than generating fresh. Measure the
+whole path, including embeddings, misses and failed checks.
+
+When your application already has a reviewed list of equivalent questions,
+[approved question forms](approved-questions.md) avoid that check entirely.
+They prepare a normal exact request. Unknown sentences are not added to the list
+by a similarity score or another model.
+
+Shared verifier experiments are available only in the explicit diagnostic
+command described below. They do not serve application answers or replace the
+existing standalone verifier. A shorter verdict failed scope and grounding
+checks during qualification; reducing token counts was not enough to release it.
+
 ## How a request is resolved
 
 1. Read the exact task state first. A valid original answer skips embedding and
@@ -103,11 +126,12 @@ admission policy; the reuse gate does not throttle all model work.
    known bounded original usage and unexpired reuse window. Old shadow entries
    without question provenance cannot serve answers.
 5. Compare explicit protected terms: quantities, dates, code identifiers, URLs,
-   quoted text, negation, symbolic operators and quantity units. Guard version 2
-   separates ordinary capitalization and constraint wording from these symbols;
-   natural-language conditions still require the verifier. Rerun current
-   deterministic answer checks. Conservative guards can reject a harmless
-   paraphrase, such as an unmatched lexical negation.
+   quoted text, negation, symbolic operators and quantity units. The existing
+   conservative guard also rejects a different extraction order. These checks
+   cannot establish who does what or which amount belongs to whom; the verifier
+   still needs the complete request and evidence. Rerun current deterministic
+   answer checks. A harmless paraphrase can be rejected, including one with an
+   unmatched lexical negation.
 6. Ask the local verifier whether the unchanged cached answer satisfies the
    current question and evidence. A strict verdict must say `accept` and affirm
    `same_intent`, `same_facts`, `same_constraints` and `answer_supported`.
@@ -116,6 +140,11 @@ admission policy; the reuse gate does not throttle all model work.
    before returning the answer. A known miss, guard failure, rejection or
    abstention can proceed to normal bounded local generation. Unconfirmed source,
    verifier or publication outcomes stop the invocation without automatic retry.
+
+An unconfirmed verifier leaves the target uncertain even if the target itself
+never generated. Selecting a different candidate on a later call cannot bypass
+that claim. Known complete malformed verdicts abstain and retain their usage;
+they never authorize reuse.
 
 The durable reference is an alias of one original generated answer. Replaying it
 requires the same verifier policy and a fresh source validation. It inherits the
@@ -207,6 +236,16 @@ questlock semantic evaluate --live \
   --embedding-model all-minilm --verifier-model qwen3.5:4b \
   --ollama-url http://127.0.0.1:11434 --timeout 20m
 ```
+
+Use `--batch-size 2` to evaluate the typed shared verifier on compatible pairs
+within each source case. Retrieval and protected terms still run for every
+question. Grouping uses suite order and compatibility, never the expected label;
+a singleton tail is withheld. The JSON retains all pairs and accounts shared
+model work once in `batch_verification_work`. It is a verifier diagnostic, not
+a default-serving or fresh-answer benchmark. Here, `served` means the checker
+would approve the supplied fixture answer; no application answer is published.
+[Retained qualification results](reuse-efficiency-validation-v0.16.0.md) include
+false acceptances and the policies withheld from serving.
 
 The first command uses scripted providers. The second uses supplied source
 answers, real local embeddings and durable verifier inference; it generates no

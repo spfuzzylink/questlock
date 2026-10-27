@@ -1,0 +1,15 @@
+{
+  "read_only": true,
+  "revision": "password-help-1",
+  "intent": "explain-password-reset",
+  "bindings": {
+    "account_type": "customer",
+    "email_access": "available"
+  },
+  "canonical_question": "Explain the password reset steps for this account.",
+  "forms": [
+    "Explain the password reset steps for this account.",
+    "How do I reset the password for this account?",
+    "Show me the password reset steps for this account."
+  ]
+}

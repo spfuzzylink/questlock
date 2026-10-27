@@ -13,6 +13,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/spfuzzylink/questlock/internal/validityeval"
 	"github.com/spfuzzylink/questlock/semantic"
 )
 
@@ -292,5 +293,58 @@ func TestSemanticEvaluationRequiresCompleteDurableBoundedVerifierEvidence(t *tes
 				t.Fatal("unconfirmed verifier accepted")
 			}
 		})
+	}
+}
+
+type semanticEvalFakeBatchVerifier struct {
+	batches [][]semantic.ValidityRequest
+	unknown bool
+}
+
+func (v *semanticEvalFakeBatchVerifier) VerifyBatch(_ context.Context, requests []semantic.ValidityRequest) (validityeval.BatchVerificationResult, error) {
+	v.batches = append(v.batches, append([]semantic.ValidityRequest(nil), requests...))
+	in, out := int64(11), int64(9)
+	result := validityeval.BatchVerificationResult{Work: semantic.ValidityResult{GenerationCalled: true, Complete: true, Durable: true, InputTokens: &in, OutputTokens: &out, ReceiptKey: "batch-receipt"}}
+	if v.unknown {
+		result.Work.InputTokens = nil
+		result.Work.OutputTokens = nil
+		result.Work.Complete = false
+		return result, fmt.Errorf("lost stream")
+	}
+	for range requests {
+		zero := int64(0)
+		result.Decisions = append(result.Decisions, semantic.ValidityResult{Verdict: "accept", SameIntent: true, SameFacts: true, SameConstraints: true, AnswerSupported: true, Complete: true, Durable: true, SharedWork: true, Reused: true, InputTokens: &zero, OutputTokens: &zero, ReceiptKey: result.Work.ReceiptKey})
+	}
+	return result, nil
+}
+
+func TestSemanticEvaluationBatchAccountsParentOnceAndRetainsSingletonAndUnknown(t *testing.T) {
+	for _, unknown := range []bool{false, true} {
+		suite := semanticEvalTestSuite()
+		suite.Cases[0].Variants[1].Question = "Where would I find the handbook?"
+		third := suite.Cases[0].Variants[0]
+		third.ID = "third"
+		third.Question = "Where should I look for the handbook?"
+		suite.Cases[0].Variants = append(suite.Cases[0].Variants, third)
+		report := semanticEvalReport{BatchSize: 2}
+		for _, variant := range suite.Cases[0].Variants {
+			report.Pairs = append(report.Pairs, semanticEvalPair{ID: variant.ID, ExpectedReuse: *variant.ShouldReuse, Status: "not_run", Abstained: true})
+		}
+		v := &semanticEvalFakeBatchVerifier{unknown: unknown}
+		semanticEvalRun(t.Context(), suite, &semanticEvalFakeEmbedder{}, v, semantic.ReuseConfig{VerifierMaxInputTokens: 100, VerifierMaxOutputTokens: 100}, 0.65, &report)
+		_, usage := semanticEvalSummarize(report.Pairs, report.SourceEmbeddings, report.BatchVerificationWork)
+		if _, serving := any(v).(semantic.Verifier); serving {
+			t.Fatal("pair diagnostic fixture unexpectedly implements serving verification")
+		}
+		if len(v.batches) != 1 || len(v.batches[0]) != 2 || report.Pairs[2].Status != "batch_required" || report.Pairs[2].VerificationAttempted || usage.VerifierGenerationCalls != 1 || usage.CachedVerifications != 0 {
+			t.Fatalf("batch lost population or double counted: %+v", report)
+		}
+		if unknown {
+			if usage.VerifierUnknownUsageCalls != 1 || report.Pairs[0].Served || report.Pairs[1].Served {
+				t.Fatalf("unknown shared work became free acceptance: %+v", report)
+			}
+		} else if usage.VerifierInputTokens != 11 || usage.VerifierOutputTokens != 9 || usage.VerifierKnownUsageCalls != 1 || !report.Pairs[0].Served || !report.Pairs[1].Served {
+			t.Fatalf("shared work not accounted once: %+v", usage)
+		}
 	}
 }

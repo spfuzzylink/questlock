@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/spfuzzylink/questlock/admission"
 	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/inference"
 	"github.com/spfuzzylink/questlock/semantic"
@@ -127,5 +128,64 @@ func TestSafeOutputRejectsRawTextInReuseLabelsAndReferences(t *testing.T) {
 	after, _ := json.Marshal(original)
 	if string(before) != string(after) {
 		t.Fatal("label redaction mutated original result")
+	}
+}
+
+func TestSafeOutputCopiesReuseAdmissionMeasurements(t *testing.T) {
+	for _, pressure := range []admission.Pressure{admission.Normal, admission.High, admission.Critical} {
+		t.Run(string(pressure), func(t *testing.T) {
+			available := int64(0)
+			original := reuseResultWithUnselectedResponse()
+			original.SemanticReuse.ResourceAdmission = &delegation.ReuseResourceAdmission{Reason: "memory_pressure", MemoryPressure: pressure, AvailableMemoryBytes: &available}
+			output := safeOutput(original, nil)
+			got := output.SemanticReuse.ResourceAdmission
+			if got == original.SemanticReuse.ResourceAdmission || got.AvailableMemoryBytes == original.SemanticReuse.ResourceAdmission.AvailableMemoryBytes || !reflect.DeepEqual(got, original.SemanticReuse.ResourceAdmission) {
+				t.Fatalf("resource measurements were lost or share mutable state: %+v", got)
+			}
+			got.Reason, got.MemoryPressure, *got.AvailableMemoryBytes = "ready", admission.Normal, 99
+			if original.SemanticReuse.ResourceAdmission.Reason != "memory_pressure" || original.SemanticReuse.ResourceAdmission.MemoryPressure != pressure || available != 0 {
+				t.Fatal("safe resource output mutated the executor's measurements")
+			}
+		})
+	}
+}
+
+func TestSafeOutputSanitizesReuseAdmissionDiagnostics(t *testing.T) {
+	for _, reason := range []string{"sample_unavailable", "sample_invalid", "sample_expired", "memory_pressure", "insufficient_memory", "cpu_stall", "load", "ready", "PRIVATE_REASON_SECRET"} {
+		t.Run(reason, func(t *testing.T) {
+			negative := int64(-1)
+			original := reuseResultWithUnselectedResponse()
+			original.SemanticReuse.ResourceAdmission = &delegation.ReuseResourceAdmission{Reason: reason, MemoryPressure: "PRIVATE_PRESSURE_SECRET", AvailableMemoryBytes: &negative}
+			before, _ := json.Marshal(original)
+			output := safeOutput(original, nil)
+			got := output.SemanticReuse.ResourceAdmission
+			wantReason := reason
+			if strings.Contains(reason, "SECRET") {
+				wantReason = "sample_unavailable"
+			}
+			if got == nil || got.Reason != wantReason || got.MemoryPressure != "" || got.AvailableMemoryBytes != nil {
+				t.Fatalf("invalid resource diagnostics crossed output boundary: %+v", got)
+			}
+			encoded, err := json.Marshal(got)
+			if err != nil || strings.Contains(string(encoded), "SECRET") || !strings.Contains(string(encoded), `"available_memory_bytes":null`) {
+				t.Fatalf("raw resource text leaked or unknown availability became zero: %s %v", encoded, err)
+			}
+			after, _ := json.Marshal(original)
+			if string(before) != string(after) {
+				t.Fatal("resource redaction mutated original evidence")
+			}
+		})
+	}
+}
+
+func TestSafeOutputLeavesAbsentResourceAdmissionAbsent(t *testing.T) {
+	original := reuseResultWithUnselectedResponse()
+	output := safeOutput(original, nil)
+	if output.SemanticReuse.ResourceAdmission != nil {
+		t.Fatal("no actual resource probe invented a diagnostic")
+	}
+	encoded, err := json.Marshal(output.SemanticReuse)
+	if err != nil || strings.Contains(string(encoded), "resource_admission") {
+		t.Fatalf("absent resource probe was serialized: %s %v", encoded, err)
 	}
 }

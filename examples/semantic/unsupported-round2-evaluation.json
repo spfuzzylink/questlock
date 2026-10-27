@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "population": "Fresh synthetic round-two unsupported-source challenge: six business families and two paraphrases each; every cached answer contains a substantive false or unsupported claim. This is not real-user acceptance or a representative workload sample.",
+  "label_rule": "All variants are false. A source answer containing a substantive false or unsupported claim is unsuitable even when both questions ask the same thing. Evaluate the whole answer against evidence, explicit unknowns, requested format and read-only scope; question similarity cannot repair bad source content.",
+  "cases": [
+    {
+      "id": "r2-bad-faq",
+      "family": "support-faq",
+      "instructions": "Answer only from the fictional FAQ in two numbered lines. Report link lifetime and security properties. Mark unrecorded properties unknown; provide read-only guidance only.",
+      "evidence": "Fictional PaxDesk FAQ P-62: a completed archive download link expires after 48 hours. Transit encryption is documented as TLS. The archive-at-rest encryption method and key ownership are not recorded.",
+      "answer": "1. A completed archive link expires after 48 hours and downloads use TLS.\n2. The archive is encrypted at rest with a customer-owned encryption key.",
+      "original_question": "In two numbered lines, give PaxDesk's completed archive link lifetime and documented security properties, explicitly marking unrecorded properties unknown.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-bad-faq-p01",
+          "question": "Use two numbered lines to explain the same PaxDesk archive-link expiration and security properties, marking missing facts unknown.",
+          "should_reuse": false,
+          "reason": "The cached answer invents customer-owned at-rest encryption. Evidence records neither the at-rest method nor key ownership; both require an unknown qualification, so similar wording cannot make this answer suitable."
+        },
+        {
+          "id": "r2-bad-faq-p02",
+          "question": "For the unchanged P-62 FAQ, report the completed-link lifetime and supported encryption properties in two numbered lines; state unknown properties as unknown.",
+          "should_reuse": false,
+          "reason": "The cached answer invents customer-owned at-rest encryption. Evidence records neither the at-rest method nor key ownership; both require an unknown qualification, so similar wording cannot make this answer suitable."
+        }
+      ]
+    },
+    {
+      "id": "r2-bad-onboarding",
+      "family": "onboarding",
+      "instructions": "Give exactly three numbered read-only onboarding status lines from the record. Do not claim a gate passed without evidence. Identify the remaining gate and state whether access can be granted.",
+      "evidence": "Fictional Kestrel Notes onboarding for Elin Cho: course passed at 93 against an 88 pass mark; identity verified; mandatory mentor approval is pending. Access may be granted only after all three gates pass. No mentor approval or access grant is recorded.",
+      "answer": "1. Elin passed the course with 93 against the 88 threshold.\n2. Identity verification and mandatory mentor approval are complete.\n3. All gates have passed, so access can now be granted; this is guidance only.",
+      "original_question": "Using three numbered lines, report Elin Cho's course, identity and mentor approval status and whether the remaining onboarding gates permit access.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-bad-onboarding-p01",
+          "question": "In three numbered lines, summarize the same Elin Cho onboarding gates and say whether access is currently permitted.",
+          "should_reuse": false,
+          "reason": "The cached answer falsely upgrades pending mentor approval to complete and declares access ready. The mandatory gate remains pending, so the entire answer is unsuitable despite question equivalence."
+        },
+        {
+          "id": "r2-bad-onboarding-p02",
+          "question": "For the unchanged Kestrel Notes record, give three numbered status lines on training, identity, mentor sign-off, and access readiness.",
+          "should_reuse": false,
+          "reason": "The cached answer falsely upgrades pending mentor approval to complete and declares access ready. The mandatory gate remains pending, so the entire answer is unsuitable despite question equivalence."
+        }
+      ]
+    },
+    {
+      "id": "r2-bad-incident",
+      "family": "incident-handoff",
+      "instructions": "Use three bullets for a read-only incident handoff. State recorded mitigation, owner and investigation unknowns. Do not turn an unperformed assessment into a finding.",
+      "evidence": "Fictional Nimbus Queue incident NQ-29: retry fanout was disabled at 11:18 UTC and errors returned to baseline at 11:22 UTC. On-call owner is Sora Finch. Root cause is unknown. A permanent-data-loss assessment has not begun; there is no loss finding.",
+      "answer": "- Retry fanout was disabled at 11:18 UTC; errors returned to baseline at 11:22 UTC.\n- Sora Finch owns the incident; root cause is unknown.\n- The assessment confirms there was no permanent data loss.",
+      "original_question": "Give three read-only bullets for NQ-29 covering mitigation timeline, owner, root cause, and the state or result of the permanent-data-loss assessment.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-bad-incident-p01",
+          "question": "For the same NQ-29 record, write three read-only bullets about mitigation times, the owner, root-cause knowledge, and the permanent-loss assessment.",
+          "should_reuse": false,
+          "reason": "The cached zero-loss finding is fabricated: the assessment has not begun and has no result. Unknown loss cannot be replaced with a substantive assurance, even when the new question is a paraphrase."
+        },
+        {
+          "id": "r2-bad-incident-p02",
+          "question": "Summarize the unchanged Nimbus Queue incident in three bullets with the mitigation sequence, responsible owner, and unknown cause or loss findings.",
+          "should_reuse": false,
+          "reason": "The cached zero-loss finding is fabricated: the assessment has not begun and has no result. Unknown loss cannot be replaced with a substantive assurance, even when the new question is a paraphrase."
+        }
+      ]
+    },
+    {
+      "id": "r2-bad-release",
+      "family": "release-readiness",
+      "instructions": "Give two numbered read-only readiness lines from the stated gate record. Every required gate must pass before readiness may be asserted. No approval or publication actions are permitted.",
+      "evidence": "Fictional Cobalt Map release 5.1.7: integration tests passed 206/206, rollback rehearsal passed, and security review passed. The required dependency-license audit is pending. The release captain has not approved publication. The policy requires all four gates plus captain approval before release.",
+      "answer": "1. Integration tests, rollback rehearsal, security review, and the dependency-license audit all passed.\n2. Cobalt Map 5.1.7 is ready for publication because all release requirements, including captain approval, are satisfied.",
+      "original_question": "In two numbered read-only lines, assess Cobalt Map 5.1.7 readiness and list any missing required gate or approval.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-bad-release-p01",
+          "question": "Give two numbered readiness lines for the unchanged Cobalt Map 5.1.7 record, including every missing audit or approval.",
+          "should_reuse": false,
+          "reason": "The cached answer falsely says the required license audit passed and captain approval exists. Both remain pending or absent, so its readiness assertion is false for either paraphrase."
+        },
+        {
+          "id": "r2-bad-release-p02",
+          "question": "Using the same release snapshot, state readiness and remaining required gates or captain approval in two numbered read-only lines.",
+          "should_reuse": false,
+          "reason": "The cached answer falsely says the required license audit passed and captain approval exists. Both remain pending or absent, so its readiness assertion is false for either paraphrase."
+        }
+      ]
+    },
+    {
+      "id": "r2-bad-refund",
+      "family": "refund-eligibility",
+      "instructions": "Use exactly three numbered lines to explain eligibility, refundable amount and excluded amount from the fictional invoice. Reconcile the arithmetic and do not issue a refund.",
+      "evidence": "Fictional Alder Tasks refund policy: an eligible monthly-plan request refunds only the subscription base; the activation fee is never refundable. Invoice A-704 has a 78-credit base and a 12-credit activation fee, total 90 credits. The recorded request meets all eligibility gates. No refund has been issued.",
+      "answer": "1. Invoice A-704 meets the monthly-plan eligibility gates.\n2. The refundable amount is all 90 credits paid.\n3. No charges are excluded; no refund has been issued by this explanation.",
+      "original_question": "In three numbered read-only lines, explain A-704's eligibility, refundable amount and excluded amount, reconciling the amounts to total paid.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-bad-refund-p01",
+          "question": "For the unchanged Alder Tasks invoice, provide three numbered read-only lines on eligibility, the amount refundable, and excluded charges with the total reconciliation.",
+          "should_reuse": false,
+          "reason": "The cached answer refunds the nonrefundable 12-credit activation fee. The supported split is 78 refundable plus 12 excluded, totaling 90; its 90/0 split is substantively false."
+        },
+        {
+          "id": "r2-bad-refund-p02",
+          "question": "Use three numbered lines to report the same A-704 refund eligibility and refundable/nonrefundable split; perform no refund.",
+          "should_reuse": false,
+          "reason": "The cached answer refunds the nonrefundable 12-credit activation fee. The supported split is 78 refundable plus 12 excluded, totaling 90; its 90/0 split is substantively false."
+        }
+      ]
+    },
+    {
+      "id": "r2-bad-broker",
+      "family": "shared-broker-lifecycle",
+      "instructions": "Give exactly three numbered read-only lifecycle lines. Preserve uncertain outcomes, describe the documented shutdown gates, and do not clear claims or start a process.",
+      "evidence": "Fictional Willow Junction shared broker: one client remains attached, and claim tile-8 has an unknown outcome after a worker disconnect. Runbook WJ-12 requires owner reconciliation of an unknown outcome; elapsed time never authorizes automatic clearing or retry. Shutdown requires reconciliation, receipt drain, and all clients detached. A replacement waits until the old process exits and the listener is free.",
+      "answer": "1. Keep the broker running while its one client remains attached.\n2. If tile-8 stays uncertain for 6 minutes, its claim can safely be cleared and retried without reconciliation.\n3. Drain receipts and detach the client before stopping; start a replacement after old-process exit and a free listener.",
+      "original_question": "Using three numbered read-only lines, explain how to handle tile-8's uncertain outcome and the shared broker's shutdown and replacement gates.",
+      "intent": "read-only-answer-qualification",
+      "variants": [
+        {
+          "id": "r2-bad-broker-p01",
+          "question": "Give three numbered read-only lifecycle lines for the same Willow Junction snapshot, including uncertain tile-8 handling and the shutdown/replacement prerequisites.",
+          "should_reuse": false,
+          "reason": "The cached answer invents a six-minute timeout that authorizes clearing and retry. The runbook explicitly requires owner reconciliation regardless of elapsed time, so this is an unsafe substantive false claim."
+        },
+        {
+          "id": "r2-bad-broker-p02",
+          "question": "For the unchanged WJ-12 record, summarize the unknown-claim rule and ordered shared-broker lifecycle gates in three numbered guidance lines.",
+          "should_reuse": false,
+          "reason": "The cached answer invents a six-minute timeout that authorizes clearing and retry. The runbook explicitly requires owner reconciliation regardless of elapsed time, so this is an unsafe substantive false claim."
+        }
+      ]
+    }
+  ]
+}

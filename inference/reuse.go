@@ -13,6 +13,11 @@ import (
 	"github.com/spfuzzylink/questlock/protocol"
 )
 
+// ErrReuseUncertain identifies resolver work whose outcome or accounting is not
+// confirmed. The target stays uncertain even when its own Generate never ran:
+// changing a retrieved source must not admit another verification automatically.
+var ErrReuseUncertain = errors.New("reuse verification outcome is uncertain; inspect its receipt before retrying")
+
 // ReuseResolver is an explicitly authorized, bounded equivalence policy. Resolve
 // runs only after this runner owns the target claim and before target generation.
 // It must preserve uncertainty and accounting for any verification work it owns.

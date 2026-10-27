@@ -33,11 +33,15 @@ Outcome registration keeps auxiliary verifier inference in `VerificationWork`
 Controlled cohorts need v0.15+ workers and outcome readers; older strict readers
 cannot consume that new field. Embedding usage stays in the semantic observation.
 
-The same broker API supports Go agent clients on one or several machines; each
-process owns its local runtime and admission. This adds no distributed takeover,
-multi-writer database or physical multi-machine benchmark. See the
-[controlled contract and qualification limits](controlled-reuse.md) and
-[editable draw.io source](diagrams/controlled-reuse.drawio).
+An application can explicitly [approve several question forms](approved-questions.md)
+before constructing a normal request. The pure Go helper maps a listed form to
+its canonical question and binds the reviewed policy to a derived revision.
+Existing exact identity, runtime, scope, claims, budgets, checks and source expiry
+then apply. Unknown forms stay unchanged. This adds no resolver, alias chain,
+queue, broker state or learned equivalence rule.
+
+Unconfirmed standalone verification keeps its target uncertain. This fences
+later source reselection, even though the target's own model never ran.
 
 ## Semantic shadow observation
 

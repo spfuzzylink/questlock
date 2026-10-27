@@ -1,0 +1,818 @@
+{
+  "schema_version": 1,
+  "population": "Declared synthetic workload only: six independently authored fixed-answer cases spanning supportFAQ, onboarding, incident, release-readiness, refund, and brokerlifecycle. Each case has ten framing paraphrases that preserve facts, scope, and answer form, plus ten changed-request challenges. These correlated authored pairs do not establish general held-out representativeness or real-user acceptance.",
+  "label_rule": "should_reuse is true exactly when the unchanged cached answer fully and correctly satisfies the variant question under the stated instructions and evidence, including scope, language, output form, temporal qualification, uncertainty, and read-only action limits. A negative label means a materially different answer or action response is required; high topical similarity is insufficient. Labels and source answers were frozen before live validation and without inspecting verifier prompts, guard implementations, or prior corpora/results.",
+  "cases": [
+    {
+      "id": "ind-faq-r8n4",
+      "family": "supportFAQ",
+      "instructions": "Use only FAQ-R8N4. Explain the applicable policy accurately in short prose. Distinguish a first-human-response target from a guaranteed resolution time. Give read-only guidance; do not claim to have contacted support.",
+      "evidence": "Synthetic Nettlebridge support FAQ, revision FAQ-R8N4. The Beacon workspace plan has staffed support Monday 00:00 through Friday 23:59 UTC. Beacon administrators may open a support ticket through the authenticated portal or email help@nettlebridge.example; telephone support is not offered. The first human response target is four staffed hours, measured only inside that coverage window; this is not a resolution guarantee. For a service-wide outage, mark the ticket Critical and include the workspace ID, the UTC time the outage began, and an example failed request ID. Do not include secrets. Meadow workspaces instead have staffed support Monday through Friday 09:00-17:00 UTC and a first human response target of one business day. This FAQ gives no guaranteed resolution time and no escalation contact beyond the portal and email.",
+      "answer": "For a Beacon workspace, use the authenticated support portal or email help@nettlebridge.example; telephone support is unavailable. Staffed coverage runs from Monday 00:00 through Friday 23:59 UTC. For a service-wide outage, mark the ticket Critical and include the workspace ID, the outage's UTC start time, and an example failed request ID, without secrets. The target is a first human response within four staffed hours, counted only during that coverage window. It is not a guaranteed time to resolve the outage.",
+      "original_question": "Using FAQ-R8N4, explain to a Beacon workspace administrator how to get support for a service-wide outage, including coverage, allowed channels, first-human-response target, and what to include in the ticket. Use a short prose explanation.",
+      "bindings": {
+        "faq_revision": "FAQ-R8N4",
+        "product": "Nettlebridge"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-faq-r8n4-p01",
+          "question": "Using FAQ-R8N4, give a Beacon administrator a short prose guide to requesting help with a service-wide outage: support hours, contact routes, first-response target, and ticket details.",
+          "should_reuse": true,
+          "reason": "Same Beacon outage-support request, facts, required details, and prose form."
+        },
+        {
+          "id": "ind-faq-r8n4-p02",
+          "question": "A Beacon workspace has a service-wide outage. From FAQ-R8N4, briefly explain how its administrator should reach support, when staff are available, how soon the first human reply is targeted, and what the ticket needs.",
+          "should_reuse": true,
+          "reason": "Reframes the same administrator question without changing coverage or requested content."
+        },
+        {
+          "id": "ind-faq-r8n4-p03",
+          "question": "Please summarize the FAQ-R8N4 support process for a Beacon administrator facing a service-wide outage, covering channels, staffed coverage, first human response, and the information to submit, in short prose.",
+          "should_reuse": true,
+          "reason": "Summary framing preserves the complete source-answer scope."
+        },
+        {
+          "id": "ind-faq-r8n4-p04",
+          "question": "For a Beacon administrator dealing with a service-wide outage, what does FAQ-R8N4 say about contacting support, staffed hours, the first-human-response target, and ticket contents? Keep the explanation brief and in prose.",
+          "should_reuse": true,
+          "reason": "Question form changes while plan, incident scope, and presentation stay the same."
+        },
+        {
+          "id": "ind-faq-r8n4-p05",
+          "question": "I administer a Beacon workspace. Explain the FAQ-R8N4 route for reporting a service-wide outage, including when support is staffed, available channels, the response target, and details I should provide. A short prose answer is fine.",
+          "should_reuse": true,
+          "reason": "First-person framing preserves the same policy and constraints."
+        },
+        {
+          "id": "ind-faq-r8n4-p06",
+          "question": "Write a brief prose explanation of Beacon outage support under FAQ-R8N4 for a workspace administrator: how to contact the team, coverage times, first-human-response expectations, and what belongs in the ticket.",
+          "should_reuse": true,
+          "reason": "Requests the same explanation with reordered topics."
+        },
+        {
+          "id": "ind-faq-r8n4-p07",
+          "question": "Walk a Beacon workspace administrator through seeking support for a service-wide outage under FAQ-R8N4. In short prose, cover hours, contact channels, the first reply target, and required ticket information.",
+          "should_reuse": true,
+          "reason": "Walk-through wording requires no additional action or different answer."
+        },
+        {
+          "id": "ind-faq-r8n4-p08",
+          "question": "Based on FAQ-R8N4, how should Beacon administrators ask for help when their service is unavailable across the workspace? Briefly cover staffed coverage, contact methods, first human reply timing, and ticket details in prose.",
+          "should_reuse": true,
+          "reason": "Service unavailable across the workspace retains the stated service-wide outage scope."
+        },
+        {
+          "id": "ind-faq-r8n4-p09",
+          "question": "Give the FAQ-R8N4 support guidance a Beacon administrator needs during a service-wide outage. Include channels and coverage, the first-human-response target, and the details to supply, using a short prose explanation.",
+          "should_reuse": true,
+          "reason": "Audience-focused framing leaves all facts and output constraints intact."
+        },
+        {
+          "id": "ind-faq-r8n4-p10",
+          "question": "Explain briefly, in prose, the FAQ-R8N4 process for a Beacon workspace administrator reporting a service-wide outage, from support availability and contact routes to the first-human-response target and ticket information.",
+          "should_reuse": true,
+          "reason": "Equivalent end-to-end support explanation with the same plan and snapshot."
+        },
+        {
+          "id": "ind-faq-r8n4-n01",
+          "question": "Using FAQ-R8N4, explain to a Meadow workspace administrator how to get support for a service-wide outage, including coverage, allowed channels, first-human-response target, and ticket details. Use short prose.",
+          "should_reuse": false,
+          "reason": "Meadow has different staffed hours and a different response target, so the Beacon answer is wrong for this plan."
+        },
+        {
+          "id": "ind-faq-r8n4-n02",
+          "question": "Using FAQ-R8N4, give only the staffed support hours and first-human-response target for Beacon. Omit all contact routes and ticket instructions.",
+          "should_reuse": false,
+          "reason": "The requested two-fact-only scope excludes substantial content present in the cached answer."
+        },
+        {
+          "id": "ind-faq-r8n4-n03",
+          "question": "Using FAQ-R8N4, return Beacon outage-support guidance as one JSON object with keys coverage, channels, response_target, and ticket_fields. Output JSON only.",
+          "should_reuse": false,
+          "reason": "The cached prose does not satisfy the required JSON representation."
+        },
+        {
+          "id": "ind-faq-r8n4-n04",
+          "question": "For Beacon under FAQ-R8N4, name only the contact channel that is not offered. Do not list any available channel or any other policy detail.",
+          "should_reuse": false,
+          "reason": "The negative-channel-only answer must be telephone support; the cached broad guidance violates the explicit scope."
+        },
+        {
+          "id": "ind-faq-r8n4-n05",
+          "question": "Assume Beacon keeps every FAQ-R8N4 rule except that its first-human-response target becomes two staffed hours. Explain outage support under that hypothetical in short prose.",
+          "should_reuse": false,
+          "reason": "The hypothetical changes the response target; the cached four-hour statement would be false."
+        },
+        {
+          "id": "ind-faq-r8n4-n06",
+          "question": "According to FAQ-R8N4, what are the name and direct telephone number of the Beacon escalation manager for a service-wide outage? Explicitly state which requested contact details are absent.",
+          "should_reuse": false,
+          "reason": "The FAQ supplies neither an escalation manager name nor a direct number; the cached answer gives the standard channels without explicitly answering those missing details."
+        },
+        {
+          "id": "ind-faq-r8n4-n07",
+          "question": "Using FAQ-R8N4, open a Critical support ticket for Beacon workspace ws-nacre-47 and tell me its assigned ticket number.",
+          "should_reuse": false,
+          "reason": "An external ticket-creation action and resulting identifier cannot be completed by serving read-only policy guidance."
+        },
+        {
+          "id": "ind-faq-r8n4-n08",
+          "question": "Explain all differences between Meadow and Beacon support in FAQ-R8N4, including both schedules and both response targets, in short prose.",
+          "should_reuse": false,
+          "reason": "The broader comparison needs Meadow facts absent from the cached Beacon-only answer."
+        },
+        {
+          "id": "ind-faq-r8n4-n09",
+          "question": "Using FAQ-R8N4, explain Beacon outage support, including coverage, channels, response target, and ticket details, entirely in French.",
+          "should_reuse": false,
+          "reason": "The cached English explanation fails the requested output language."
+        },
+        {
+          "id": "ind-faq-r8n4-n10",
+          "question": "Under FAQ-R8N4, suppose the service-wide outage starts on Saturday and the administrator asks whether staffed support is open at that moment. Answer just yes or no.",
+          "should_reuse": false,
+          "reason": "The Saturday-specific closed answer must be no and the explicit yes/no form excludes the cached procedure."
+        }
+      ]
+    },
+    {
+      "id": "ind-onboard-qk6194",
+      "family": "onboarding",
+      "instructions": "Use only onboarding record PV-6194-QK. Give a brief prose handoff with the remaining steps and owners, the enablement prerequisite, and approved access. Do not invent completed work or grant access.",
+      "evidence": "Synthetic Pipit Vale onboarding record PV-6194-QK, frozen at 2027-04-12 12:00 UTC. Ren Ibara is joining as a contract data analyst. Manager approval is complete, the managed laptop has been issued, and an SSO account has been created but is disabled. Ren must complete the compliance training and upload the completion certificate; the record contains no uploaded certificate. Buddy Nomi Cole must verify the uploaded certificate and record training clearance. Identity administrator Maya Reeve may enable SSO only after that clearance is recorded. Maya must then assign the already-approved Cerulean workspace membership and vault-viewer role. The vault-viewer role is read-only. Production access and vault-editor access are not approved. No other onboarding step remains in this record. Tova Senn is a separate employee whose onboarding status is not recorded here.",
+      "answer": "Ren Ibara still needs to complete the compliance training and upload its completion certificate. Nomi Cole then needs to verify the certificate and record training clearance. Maya Reeve may enable Ren's currently disabled SSO account only after that clearance is recorded, then assign Cerulean workspace membership and the read-only vault-viewer role. Manager approval, laptop issuance, and account creation are already complete. Production access and vault-editor access are not approved.",
+      "original_question": "From PV-6194-QK, describe Ren Ibara's remaining onboarding steps and who owns them, when the account can be enabled, and the approved access scope. Use a brief prose handoff.",
+      "bindings": {
+        "record_revision": "PV-6194-QK",
+        "person": "Ren Ibara"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-onboard-qk6194-p01",
+          "question": "Using PV-6194-QK, give a brief prose handoff of what is left in Ren Ibara's onboarding, who handles each step, the condition for enabling SSO, and the access that is approved.",
+          "should_reuse": true,
+          "reason": "Same person, record, remaining-work scope, enablement rule, and prose handoff."
+        },
+        {
+          "id": "ind-onboard-qk6194-p02",
+          "question": "What must still happen for Ren Ibara under PV-6194-QK, who is responsible, when may SSO be enabled, and which access is permitted? Explain in a brief prose handoff.",
+          "should_reuse": true,
+          "reason": "Interrogative framing preserves all requested facts."
+        },
+        {
+          "id": "ind-onboard-qk6194-p03",
+          "question": "Summarize Ren Ibara's unfinished onboarding from PV-6194-QK in brief prose, including step owners, the account-enablement prerequisite, and approved permissions.",
+          "should_reuse": true,
+          "reason": "Same unfinished-work summary with the same prerequisites and access limits."
+        },
+        {
+          "id": "ind-onboard-qk6194-p04",
+          "question": "Prepare a short prose onboarding handoff for Ren Ibara from PV-6194-QK: remaining actions and owners, when SSO may be enabled, and authorized access.",
+          "should_reuse": true,
+          "reason": "Handoff wording does not request executing the actions."
+        },
+        {
+          "id": "ind-onboard-qk6194-p05",
+          "question": "For the colleague taking over Ren Ibara's onboarding, explain the remaining PV-6194-QK steps and owners, the SSO activation condition, and the approved access, briefly in prose.",
+          "should_reuse": true,
+          "reason": "Changes the recipient framing while preserving the factual task."
+        },
+        {
+          "id": "ind-onboard-qk6194-p06",
+          "question": "Based on PV-6194-QK, walk through what remains before Ren Ibara is onboarded, with the responsible people, account-enable condition, and allowed scope. Use brief prose.",
+          "should_reuse": true,
+          "reason": "Equivalent remaining-step explanation includes the same access constraints."
+        },
+        {
+          "id": "ind-onboard-qk6194-p07",
+          "question": "In a brief prose explanation, tell me what PV-6194-QK leaves outstanding for Ren Ibara, who owns the work, when the disabled account can be enabled, and what access is approved.",
+          "should_reuse": true,
+          "reason": "Same record and deliverable, using outstanding-work wording."
+        },
+        {
+          "id": "ind-onboard-qk6194-p08",
+          "question": "Please recap the PV-6194-QK onboarding handoff for Ren Ibara: unfinished steps, owners, account enablement prerequisite, and approved access. Keep it brief and in prose.",
+          "should_reuse": true,
+          "reason": "Recap framing retains all four requested dimensions."
+        },
+        {
+          "id": "ind-onboard-qk6194-p09",
+          "question": "Using the frozen PV-6194-QK record, explain Ren Ibara's next onboarding steps and owners, the gate for SSO enablement, and permitted access as a short prose handoff.",
+          "should_reuse": true,
+          "reason": "Next-step wording is bounded by the same frozen record and scope."
+        },
+        {
+          "id": "ind-onboard-qk6194-p10",
+          "question": "I need a brief prose handoff on Ren Ibara from PV-6194-QK. Cover what is still required, who does it, when SSO can be switched on, and the approved permissions.",
+          "should_reuse": true,
+          "reason": "First-person need preserves the exact informational request."
+        },
+        {
+          "id": "ind-onboard-qk6194-n01",
+          "question": "From PV-6194-QK, describe Tova Senn's remaining onboarding steps, owners, account-enablement prerequisite, and approved access in a brief prose handoff.",
+          "should_reuse": false,
+          "reason": "The changed person has no recorded status; Ren's facts cannot answer Tova's question."
+        },
+        {
+          "id": "ind-onboard-qk6194-n02",
+          "question": "From PV-6194-QK, name only the person who may enable Ren Ibara's SSO account. Omit all steps, prerequisites, and access details.",
+          "should_reuse": false,
+          "reason": "The answer must contain only Maya Reeve; the cached handoff violates the narrowed scope."
+        },
+        {
+          "id": "ind-onboard-qk6194-n03",
+          "question": "From PV-6194-QK, return Ren Ibara's remaining steps, owners, enablement prerequisite, and approved access as a CSV table with header step,owner,prerequisite,access. Output CSV only.",
+          "should_reuse": false,
+          "reason": "The cached prose does not meet the requested CSV format."
+        },
+        {
+          "id": "ind-onboard-qk6194-n04",
+          "question": "From PV-6194-QK, list only Ren Ibara's unapproved access types; omit approved access and onboarding steps.",
+          "should_reuse": false,
+          "reason": "The requested negative access list requires production and vault-editor access only."
+        },
+        {
+          "id": "ind-onboard-qk6194-n05",
+          "question": "Assume Ren Ibara has already uploaded a certificate and Nomi Cole has recorded training clearance, replacing those facts in PV-6194-QK. Describe only what remains and who owns it in brief prose.",
+          "should_reuse": false,
+          "reason": "The hypothetical removes Ren's and Nomi's unfinished work; the cached answer incorrectly says those steps remain."
+        },
+        {
+          "id": "ind-onboard-qk6194-n06",
+          "question": "From PV-6194-QK, what exact calendar date will Ren Ibara's SSO account be enabled? If the record does not set a date, say so.",
+          "should_reuse": false,
+          "reason": "The record sets a prerequisite but no enablement date; the source handoff does not directly answer that unknown-date request."
+        },
+        {
+          "id": "ind-onboard-qk6194-n07",
+          "question": "Enable Ren Ibara's SSO account now and assign vault-editor access, using PV-6194-QK. Confirm when both changes are complete.",
+          "should_reuse": false,
+          "reason": "This requests external mutations and unapproved access, neither of which a cached read-only handoff can complete."
+        },
+        {
+          "id": "ind-onboard-qk6194-n08",
+          "question": "From PV-6194-QK, describe every onboarding step already completed for Ren Ibara and exclude all pending steps and access recommendations.",
+          "should_reuse": false,
+          "reason": "Completed-work-only scope differs from the cached remaining-work handoff."
+        },
+        {
+          "id": "ind-onboard-qk6194-n09",
+          "question": "From PV-6194-QK, give Ren Ibara's onboarding handoff entirely in Spanish, covering remaining steps, owners, enablement, and approved access.",
+          "should_reuse": false,
+          "reason": "The cached English answer fails the output-language requirement."
+        },
+        {
+          "id": "ind-onboard-qk6194-n10",
+          "question": "For PV-6194-QK, suppose training clearance is explicitly denied because the certificate is invalid. Explain whether Maya may enable Ren Ibara's account and what newly reported problem blocks it.",
+          "should_reuse": false,
+          "reason": "A denied, invalid certificate adds a specific blocker absent from the original snapshot and cached answer."
+        }
+      ]
+    },
+    {
+      "id": "ind-incident-uv7351",
+      "family": "incident",
+      "instructions": "Use only incident snapshot IR-7351-UV. Give a concise prose status update. Preserve distinctions between observed recovery, incident closure, and an unconfirmed root-cause hypothesis. Do not claim to operate the service.",
+      "evidence": "Synthetic Orchid Ferry incident IR-7351-UV, status snapshot at 2027-06-18 19:36 UTC. An alert fired at 19:10 UTC. From 19:10 to 19:26 UTC, European users experienced delayed reads; writes were accepted and the snapshot reports no lost writes. At 19:18 UTC, the on-call team shifted read traffic to the standby pool. Read latency returned to its normal range at 19:26 UTC and the error rate returned to its normal range at 19:34 UTC. The incident remains open in Monitoring at 19:36 UTC. The next status checkpoint is 19:49 UTC; there is no status after 19:36 UTC in this snapshot. Queue saturation is a working hypothesis, not a confirmed root cause. Users do not need to take action. No rollback was performed.",
+      "answer": "At 19:36 UTC, Orchid Ferry incident IR-7351-UV remains open in Monitoring. European users had delayed reads from 19:10 to 19:26 UTC; writes were accepted and no lost writes are reported. The on-call team shifted read traffic to the standby pool at 19:18 UTC. Read latency returned to normal at 19:26 UTC and the error rate at 19:34 UTC. Queue saturation remains an unconfirmed root-cause hypothesis. The next status checkpoint is 19:49 UTC, and users do not need to take action.",
+      "original_question": "Using IR-7351-UV at 19:36 UTC, give a concise prose update on current incident status, user impact, mitigation and observed recovery, root-cause certainty, the next checkpoint, and whether users need to act.",
+      "bindings": {
+        "incident_snapshot": "IR-7351-UV",
+        "as_of_utc": "2027-06-18T19:36:00Z"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-incident-uv7351-p01",
+          "question": "From IR-7351-UV at 19:36 UTC, briefly update readers in prose on incident state, user impact, mitigation, recovery observations, root-cause certainty, the next checkpoint, and required user action.",
+          "should_reuse": true,
+          "reason": "Same snapshot and complete status-update scope."
+        },
+        {
+          "id": "ind-incident-uv7351-p02",
+          "question": "What is the Orchid Ferry incident picture in IR-7351-UV at 19:36 UTC? Give a concise prose account of status, impact, mitigation and recovery, root-cause certainty, the next update, and any user action.",
+          "should_reuse": true,
+          "reason": "Picture framing requests the same bounded incident account."
+        },
+        {
+          "id": "ind-incident-uv7351-p03",
+          "question": "Please summarize IR-7351-UV as of 19:36 UTC in concise prose: current state, affected users, mitigation and recovery, certainty about the cause, next checkpoint, and whether users should do anything.",
+          "should_reuse": true,
+          "reason": "Same as-of time, uncertainty, and action requirements."
+        },
+        {
+          "id": "ind-incident-uv7351-p04",
+          "question": "Write a concise prose incident update for IR-7351-UV at 19:36 UTC, covering the current status and impact, the mitigation and recovery seen, cause certainty, the next checkpoint, and user-action needs.",
+          "should_reuse": true,
+          "reason": "Equivalent update request with reordered phrasing."
+        },
+        {
+          "id": "ind-incident-uv7351-p05",
+          "question": "For a reader catching up on IR-7351-UV at 19:36 UTC, explain the incident status, impact, mitigation and observed recovery, confidence in the cause, next checkpoint, and any needed user action in concise prose.",
+          "should_reuse": true,
+          "reason": "Audience framing adds no new factual or presentation requirement."
+        },
+        {
+          "id": "ind-incident-uv7351-p06",
+          "question": "Using the 19:36 UTC IR-7351-UV snapshot, give the current incident state, impact, mitigation and recovery observations, root-cause certainty, upcoming checkpoint, and user-action guidance as a short prose update.",
+          "should_reuse": true,
+          "reason": "Snapshot wording preserves the exact time and informational scope."
+        },
+        {
+          "id": "ind-incident-uv7351-p07",
+          "question": "Briefly describe, in prose, where IR-7351-UV stands at 19:36 UTC: user impact, mitigation and observed recovery, whether the cause is confirmed, next checkpoint, and what users need to do.",
+          "should_reuse": true,
+          "reason": "Where it stands framing preserves status plus every requested detail."
+        },
+        {
+          "id": "ind-incident-uv7351-p08",
+          "question": "I need a concise prose recap of IR-7351-UV at 19:36 UTC, including status, impact, mitigation, observed recovery, root-cause certainty, the next checkpoint, and any action for users.",
+          "should_reuse": true,
+          "reason": "Personal framing leaves the original incident-update task unchanged."
+        },
+        {
+          "id": "ind-incident-uv7351-p09",
+          "question": "Explain the IR-7351-UV status at 19:36 UTC for someone following the incident. Keep it concise and in prose, with impact, mitigation and recovery, cause certainty, the next checkpoint, and user-action guidance.",
+          "should_reuse": true,
+          "reason": "Same status explanation, snapshot, and output form."
+        },
+        {
+          "id": "ind-incident-uv7351-p10",
+          "question": "In concise prose, relay the IR-7351-UV snapshot at 19:36 UTC: current status, user impact, mitigation and recovery, how certain the root cause is, next checkpoint, and user-action requirements.",
+          "should_reuse": true,
+          "reason": "Relay framing retains all source-answer obligations."
+        },
+        {
+          "id": "ind-incident-uv7351-n01",
+          "question": "Using IR-7351-UV, give the confirmed incident status at 19:50 UTC, including whether it has closed. Say explicitly if that later status is unavailable.",
+          "should_reuse": false,
+          "reason": "The requested later status is absent; the cached 19:36 status cannot establish it."
+        },
+        {
+          "id": "ind-incident-uv7351-n02",
+          "question": "Using IR-7351-UV at 19:36 UTC, give only the next status checkpoint time, with no other words.",
+          "should_reuse": false,
+          "reason": "The answer must be just 19:49 UTC; the cached full update violates the scope and format."
+        },
+        {
+          "id": "ind-incident-uv7351-n03",
+          "question": "Using IR-7351-UV at 19:36 UTC, return the status, impact, mitigation, recovery, cause certainty, next checkpoint, and user action as a JSON object. Output JSON only.",
+          "should_reuse": false,
+          "reason": "The cached prose does not satisfy the JSON-only format."
+        },
+        {
+          "id": "ind-incident-uv7351-n04",
+          "question": "At 19:36 UTC in IR-7351-UV, is the root cause confirmed? Answer exactly yes or no.",
+          "should_reuse": false,
+          "reason": "The answer must be no; the broad cached update fails the exact answer constraint."
+        },
+        {
+          "id": "ind-incident-uv7351-n05",
+          "question": "Assume the standby traffic shift in IR-7351-UV failed and read latency is still elevated at 19:36 UTC. Give a concise prose status update under those hypothetical facts.",
+          "should_reuse": false,
+          "reason": "The hypothetical contradicts the cached observed-recovery claim and needs a different update."
+        },
+        {
+          "id": "ind-incident-uv7351-n06",
+          "question": "Using IR-7351-UV, identify the exact software defect that caused the incident and the change that introduced it. Explicitly state whether the snapshot establishes either requested fact.",
+          "should_reuse": false,
+          "reason": "Neither a confirmed defect nor an introducing change is recorded; the cached update does not address whether an introducing change is established."
+        },
+        {
+          "id": "ind-incident-uv7351-n07",
+          "question": "For IR-7351-UV, shift read traffic back to the primary pool now and confirm that the operation succeeded.",
+          "should_reuse": false,
+          "reason": "An operational traffic-change action cannot be satisfied by the cached informational update."
+        },
+        {
+          "id": "ind-incident-uv7351-n08",
+          "question": "Using IR-7351-UV, produce a chronological timeline containing every recorded event and time, including the initial alert and the snapshot time.",
+          "should_reuse": false,
+          "reason": "The broader complete-timeline request needs the 19:10 alert and explicit event structure missing from the cached status update."
+        },
+        {
+          "id": "ind-incident-uv7351-n09",
+          "question": "Using IR-7351-UV at 19:36 UTC, give the incident update entirely in German, including status, impact, mitigation, recovery, cause certainty, next checkpoint, and user action.",
+          "should_reuse": false,
+          "reason": "The cached English answer fails the required language."
+        },
+        {
+          "id": "ind-incident-uv7351-n10",
+          "question": "Using IR-7351-UV, explain which rollback was performed, and explicitly correct the premise if no rollback occurred.",
+          "should_reuse": false,
+          "reason": "No rollback occurred; the focused answer must correct that premise, which the cached update never addresses."
+        }
+      ]
+    },
+    {
+      "id": "ind-release-wt8642",
+      "family": "release-readiness",
+      "instructions": "Use only release record RC-MH-8642-WT. Give a brief prose production-readiness assessment with blockers, owners, and evidence required to clear them. Distinguish permitted staging work from permission to deploy to production. Do not approve or deploy a release.",
+      "evidence": "Synthetic Mica Harbor release record RC-MH-8642-WT for version 2.6.3, frozen at 2027-08-09 14:20 UTC. Unit tests have passed, the release signature has been verified, and the SBOM is complete. The staging smoke test has passed; further staging validation is permitted. Production deployment is on Hold. Two production gates remain: a migration rehearsal for tenant Cedar has not been run, and the peak-load test failed its latency limit. Inez Daro owns the migration gate and must attach a successful tenant Cedar rehearsal report with a demonstrated rollback. Remy Vale owns the load gate and must attach a passing peak-load test report meeting the latency limit. Release manager Sal Rook may record production signoff only after both gate reports are accepted. No production signoff is recorded. The record gives no predicted completion time and no numeric latency measurements.",
+      "answer": "Mica Harbor 2.6.3 is on Hold for production in RC-MH-8642-WT, with no production signoff recorded. Unit tests, signature verification, the SBOM, and staging smoke testing are complete, and further staging validation is permitted. Inez Daro must supply a successful tenant Cedar migration rehearsal report demonstrating rollback. Remy Vale must supply a passing peak-load test report that meets the latency limit. Sal Rook may record production signoff only after both reports are accepted; the release is not ready for production until those gates are cleared.",
+      "original_question": "Using RC-MH-8642-WT, assess whether Mica Harbor 2.6.3 is ready for production, what blocks it, who owns the remaining work, and what evidence is needed before signoff. Use brief prose.",
+      "bindings": {
+        "release_record": "RC-MH-8642-WT",
+        "release": "Mica Harbor 2.6.3"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-release-wt8642-p01",
+          "question": "From RC-MH-8642-WT, give a brief prose assessment of Mica Harbor 2.6.3 production readiness, its blockers and owners, and the evidence required before signoff.",
+          "should_reuse": true,
+          "reason": "Same release, record, readiness scope, and prose presentation."
+        },
+        {
+          "id": "ind-release-wt8642-p02",
+          "question": "Is Mica Harbor 2.6.3 ready to go to production under RC-MH-8642-WT? Explain briefly in prose what is blocking it, who must act, and which evidence signoff requires.",
+          "should_reuse": true,
+          "reason": "Question framing keeps the production target and complete blocker assessment."
+        },
+        {
+          "id": "ind-release-wt8642-p03",
+          "question": "Please summarize the production-readiness position for Mica Harbor 2.6.3 in RC-MH-8642-WT, including outstanding gates, responsible people, and the proof needed for signoff, in brief prose.",
+          "should_reuse": true,
+          "reason": "Outstanding-gate wording preserves the same required facts."
+        },
+        {
+          "id": "ind-release-wt8642-p04",
+          "question": "Write a short prose handoff on RC-MH-8642-WT: whether Mica Harbor 2.6.3 can enter production, remaining blockers, their owners, and evidence to clear them before signoff.",
+          "should_reuse": true,
+          "reason": "Handoff framing adds no action or new scope."
+        },
+        {
+          "id": "ind-release-wt8642-p05",
+          "question": "For someone deciding the next release steps, explain from RC-MH-8642-WT the production readiness of Mica Harbor 2.6.3, its blockers and owners, and required signoff evidence. Keep it brief and in prose.",
+          "should_reuse": true,
+          "reason": "Audience framing retains the original read-only production assessment."
+        },
+        {
+          "id": "ind-release-wt8642-p06",
+          "question": "Using the frozen RC-MH-8642-WT record, describe in brief prose where Mica Harbor 2.6.3 stands for production, what remains blocked, who owns each item, and the evidence needed to reach signoff.",
+          "should_reuse": true,
+          "reason": "Same frozen record and gate-clearing obligations."
+        },
+        {
+          "id": "ind-release-wt8642-p07",
+          "question": "Give me a brief prose release-readiness explanation for Mica Harbor 2.6.3 from RC-MH-8642-WT: production status, outstanding work and owners, and evidence required before signoff.",
+          "should_reuse": true,
+          "reason": "Equivalent explanation request with reordered topics."
+        },
+        {
+          "id": "ind-release-wt8642-p08",
+          "question": "Based on RC-MH-8642-WT, recap whether Mica Harbor 2.6.3 is production-ready and explain the blockers, people responsible, and reports required for signoff. Use short prose.",
+          "should_reuse": true,
+          "reason": "Recap phrasing preserves release identity and all required assessment points."
+        },
+        {
+          "id": "ind-release-wt8642-p09",
+          "question": "In brief prose, explain RC-MH-8642-WT to a release colleague: Mica Harbor 2.6.3 production readiness, blocking gates, owners, and evidence that must precede signoff.",
+          "should_reuse": true,
+          "reason": "Same substantive assessment and allowed prose format."
+        },
+        {
+          "id": "ind-release-wt8642-p10",
+          "question": "What does RC-MH-8642-WT mean for putting Mica Harbor 2.6.3 into production? Briefly cover readiness, blockers, who resolves them, and the evidence needed before signoff in prose.",
+          "should_reuse": true,
+          "reason": "Production-focused phrasing retains the original informational task."
+        },
+        {
+          "id": "ind-release-wt8642-n01",
+          "question": "Using RC-MH-8642-WT, is further staging validation for Mica Harbor 2.6.3 permitted? Answer only yes or no.",
+          "should_reuse": false,
+          "reason": "Staging validation is permitted; the cached production-hold assessment does not satisfy the focused yes/no question."
+        },
+        {
+          "id": "ind-release-wt8642-n02",
+          "question": "Using RC-MH-8642-WT, name only the owner of the peak-load gate. Give no status, other names, or explanation.",
+          "should_reuse": false,
+          "reason": "The correct scoped answer is Remy Vale alone, whereas the cached answer contains multiple owners and facts."
+        },
+        {
+          "id": "ind-release-wt8642-n03",
+          "question": "Using RC-MH-8642-WT, return Mica Harbor 2.6.3 production readiness and each blocker, owner, and required evidence as a Markdown table with one row per gate and no prose outside the table.",
+          "should_reuse": false,
+          "reason": "The cached prose does not meet the required table-only representation."
+        },
+        {
+          "id": "ind-release-wt8642-n04",
+          "question": "From RC-MH-8642-WT, list only the checks that have already passed or been completed, and omit every outstanding gate and signoff recommendation.",
+          "should_reuse": false,
+          "reason": "Completed-check-only scope excludes the cached blocker-heavy readiness assessment."
+        },
+        {
+          "id": "ind-release-wt8642-n05",
+          "question": "Assume RC-MH-8642-WT is updated so both gate reports are accepted and Sal Rook has recorded production signoff. Assess readiness under those hypothetical facts in brief prose.",
+          "should_reuse": false,
+          "reason": "The hypothetical clears both blockers and records signoff; the cached Hold/no-signoff statements become false."
+        },
+        {
+          "id": "ind-release-wt8642-n06",
+          "question": "Using RC-MH-8642-WT, state the exact measured peak-load latency and the numeric limit it exceeded. Identify any value missing from the record.",
+          "should_reuse": false,
+          "reason": "The record provides no numeric latency measurements or limit, requiring an explicit missing-values answer."
+        },
+        {
+          "id": "ind-release-wt8642-n07",
+          "question": "Approve Mica Harbor 2.6.3 for production in RC-MH-8642-WT and deploy it now. Confirm both actions when done.",
+          "should_reuse": false,
+          "reason": "Approval and deployment are external actions that the read-only cached assessment cannot complete."
+        },
+        {
+          "id": "ind-release-wt8642-n08",
+          "question": "Compare Mica Harbor 2.6.3 with version 2.6.2 using RC-MH-8642-WT, including readiness, blockers, and whether migration risk improved.",
+          "should_reuse": false,
+          "reason": "The added prior-version comparison is unsupported by this record and missing from the cached answer."
+        },
+        {
+          "id": "ind-release-wt8642-n09",
+          "question": "Using RC-MH-8642-WT, explain Mica Harbor 2.6.3 production readiness, blockers, owners, and signoff evidence entirely in Italian.",
+          "should_reuse": false,
+          "reason": "The cached English answer does not satisfy the required output language."
+        },
+        {
+          "id": "ind-release-wt8642-n10",
+          "question": "Using RC-MH-8642-WT, give the exact UTC time when Mica Harbor 2.6.3 will be cleared for production. Say if no completion time is predicted.",
+          "should_reuse": false,
+          "reason": "The snapshot predicts no completion time, so this focused unknown-time question requires a different answer."
+        }
+      ]
+    },
+    {
+      "id": "ind-refund-lp5786",
+      "family": "refund",
+      "instructions": "Use only return record MC-5786-LP and the policy stated in it. Explain eligibility as conditional on warehouse inspection, calculate the estimated refund in USD, and state method and processing time in short prose. Do not issue a refund or imply approval has happened.",
+      "evidence": "Synthetic Mallow Cart return record MC-5786-LP. Order MC-5786-LP is one Sable Lamp, delivered 2027-09-03. The customer requested return on 2027-09-23, twenty days after delivery, and reports the item is unopened. The policy allows returns requested within thirty days after delivery only if warehouse inspection confirms the item is unopened. An opened item is ineligible under this policy; no exception is recorded. The item price was USD 84, a USD 6 promotion reduced the item payment to USD 78, and outbound shipping was USD 9. Outbound shipping is nonrefundable. The prepaid return label costs USD 7 and is deducted from the item payment when calculating a refund. If inspection passes, the refund goes to the original card within five business days after the warehouse accepts the return. Inspection has not occurred, the warehouse has not accepted the return, and no refund has been approved or issued. The policy gives no expedited processing option.",
+      "answer": "The return for MC-5786-LP was requested twenty days after delivery, within the thirty-day window. It is eligible only if warehouse inspection confirms the Sable Lamp is unopened; that inspection and acceptance are still pending, so the refund is not yet approved or issued. The estimated refund is USD 71: the USD 84 item price minus the USD 6 promotion leaves USD 78 paid for the item, then the USD 7 return-label deduction leaves USD 71. The USD 9 outbound shipping is nonrefundable. If inspection passes and the warehouse accepts the return, the refund goes to the original card within five business days after acceptance.",
+      "original_question": "Using MC-5786-LP, explain the return's conditional eligibility, calculate the estimated refund and deductions in USD, and state the refund method and processing time. Use short prose.",
+      "bindings": {
+        "return_record": "MC-5786-LP",
+        "currency": "USD"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-refund-lp5786-p01",
+          "question": "From MC-5786-LP, briefly explain in prose whether the return qualifies conditionally, the estimated USD refund calculation and deductions, and the payment method and processing time.",
+          "should_reuse": true,
+          "reason": "Same order, conditional eligibility, calculation, method, and timing."
+        },
+        {
+          "id": "ind-refund-lp5786-p02",
+          "question": "What does MC-5786-LP imply for this return's eligibility pending inspection, expected refund amount and deductions in USD, refund destination, and processing time? Answer in short prose.",
+          "should_reuse": true,
+          "reason": "Question framing preserves all original facts and the inspection condition."
+        },
+        {
+          "id": "ind-refund-lp5786-p03",
+          "question": "Please summarize MC-5786-LP in short prose: conditional return eligibility, how the estimated USD refund is calculated, deductions, where it is refunded, and when.",
+          "should_reuse": true,
+          "reason": "Summary phrasing asks for the same conditional explanation and calculation."
+        },
+        {
+          "id": "ind-refund-lp5786-p04",
+          "question": "Explain the return outcome estimated from MC-5786-LP, including the eligibility condition, USD amount and deductions, refund method, and processing window. Keep it short and in prose.",
+          "should_reuse": true,
+          "reason": "Estimated-outcome wording preserves the pending approval and inspection qualification."
+        },
+        {
+          "id": "ind-refund-lp5786-p05",
+          "question": "For the customer reading MC-5786-LP, give a short prose explanation of conditional eligibility, the estimated refund math in USD, deductions, the refund method, and processing time.",
+          "should_reuse": true,
+          "reason": "Audience change retains the same information and constraints."
+        },
+        {
+          "id": "ind-refund-lp5786-p06",
+          "question": "Using the facts in MC-5786-LP, walk through eligibility subject to inspection, the estimated refund and deductions in USD, and the refund destination and timing in short prose.",
+          "should_reuse": true,
+          "reason": "Walk-through framing does not add an action or change a policy fact."
+        },
+        {
+          "id": "ind-refund-lp5786-p07",
+          "question": "Give me a brief prose recap of the MC-5786-LP return: its conditional eligibility, expected USD refund calculation with deductions, refund method, and processing time.",
+          "should_reuse": true,
+          "reason": "Recap asks for the same conditional order explanation."
+        },
+        {
+          "id": "ind-refund-lp5786-p08",
+          "question": "Based on MC-5786-LP, describe whether the return can qualify, show the estimated USD refund after deductions, and explain method and timing. Use a short prose explanation.",
+          "should_reuse": true,
+          "reason": "Equivalent qualify-and-estimate request with the same complete scope."
+        },
+        {
+          "id": "ind-refund-lp5786-p09",
+          "question": "In short prose, explain the MC-5786-LP return eligibility condition and estimated USD refund arithmetic, including deductions, plus where the refund goes and its processing time.",
+          "should_reuse": true,
+          "reason": "Reordered wording preserves all answer obligations."
+        },
+        {
+          "id": "ind-refund-lp5786-p10",
+          "question": "Help interpret MC-5786-LP by explaining conditional return eligibility, the estimated amount and deductions in USD, refund method, and processing window in short prose.",
+          "should_reuse": true,
+          "reason": "Interpretation framing leaves the underlying task unchanged."
+        },
+        {
+          "id": "ind-refund-lp5786-n01",
+          "question": "Assume the warehouse inspected MC-5786-LP and confirmed the Sable Lamp is opened. Explain eligibility and the refund amount under the recorded policy in short prose.",
+          "should_reuse": false,
+          "reason": "The hypothetical inspection makes the item ineligible, unlike the pending unopened-condition estimate."
+        },
+        {
+          "id": "ind-refund-lp5786-n02",
+          "question": "Using MC-5786-LP, return only the estimated refund amount as USD followed by the number, without any explanation or other detail.",
+          "should_reuse": false,
+          "reason": "The answer must be USD 71 only; the cached multi-sentence explanation violates the strict scope."
+        },
+        {
+          "id": "ind-refund-lp5786-n03",
+          "question": "Using MC-5786-LP, give conditional eligibility, estimated refund and deductions, method, and processing time as a JSON object. Output JSON only.",
+          "should_reuse": false,
+          "reason": "The cached prose does not satisfy the required JSON format."
+        },
+        {
+          "id": "ind-refund-lp5786-n04",
+          "question": "Using MC-5786-LP, list only the charge that is not refundable and its USD amount. Omit every refundable amount and all other policy details.",
+          "should_reuse": false,
+          "reason": "The focused answer must name outbound shipping, USD 9; the cached full calculation exceeds the explicit scope."
+        },
+        {
+          "id": "ind-refund-lp5786-n05",
+          "question": "Suppose MC-5786-LP keeps all recorded facts except that the return-label fee is waived. Explain conditional eligibility, recalculate the estimated refund, and state method and timing in short prose.",
+          "should_reuse": false,
+          "reason": "Waiving the USD 7 fee changes the estimate to USD 78, so the cached USD 71 calculation is wrong."
+        },
+        {
+          "id": "ind-refund-lp5786-n06",
+          "question": "Using MC-5786-LP, give the exact calendar date when the refund will arrive on the original card. If that date cannot be established, explicitly state that no exact arrival date is established and identify the missing prerequisite.",
+          "should_reuse": false,
+          "reason": "No warehouse acceptance date exists, so this exact-date question needs an explicit unavailable-date statement and missing prerequisite rather than the cached estimated processing window."
+        },
+        {
+          "id": "ind-refund-lp5786-n07",
+          "question": "Issue the MC-5786-LP refund of USD 71 to the original card now and confirm the processor transaction ID.",
+          "should_reuse": false,
+          "reason": "A refund action and processor identifier cannot be completed by serving a read-only estimate."
+        },
+        {
+          "id": "ind-refund-lp5786-n08",
+          "question": "Using MC-5786-LP, calculate the total originally charged including outbound shipping, and give only that total with a brief arithmetic expression.",
+          "should_reuse": false,
+          "reason": "This asks for USD 87 originally charged, a different calculation from the cached USD 71 refund."
+        },
+        {
+          "id": "ind-refund-lp5786-n09",
+          "question": "Using MC-5786-LP, explain conditional eligibility, estimated USD refund and deductions, method, and processing time entirely in Portuguese.",
+          "should_reuse": false,
+          "reason": "The cached English answer fails the required language."
+        },
+        {
+          "id": "ind-refund-lp5786-n10",
+          "question": "Assume the MC-5786-LP return request was made forty days after delivery rather than twenty. Explain eligibility under the same thirty-day policy in short prose.",
+          "should_reuse": false,
+          "reason": "The changed request age is outside the eligibility window, making the original within-window assessment false."
+        }
+      ]
+    },
+    {
+      "id": "ind-broker-dz9463",
+      "family": "brokerlifecycle",
+      "instructions": "Use only synthetic broker snapshot PG-9463-DZ. Explain the read-only lifecycle state, reuse eligibility, allowed success transition, and uncertain-outcome behavior in brief prose. Do not claim to mutate broker state. The snapshot defines the fictional broker policy completely for this question.",
+      "evidence": "Synthetic Plover Gate broker snapshot PG-9463-DZ at 11:09 UTC. In scope pg-lumen, task TK-9463-DZ has a Pending claim owned by worker-rill since 11:05 UTC, with a recorded deadline of 11:15 UTC. There are no leases and no automatic takeover. Artifact brief has a visible complete version 4, but it is not reusable for this task while its claim is Pending; no completion receipt exists. A successful worker may submit checked publication using expected version 4. On success the broker atomically publishes artifact version 5, creates the completion receipt, and moves the task to Done. A failed checked publication leaves version 4 and the Pending claim unchanged. Deadline expiry or an unknown worker outcome also leaves the claim Pending for operator reconciliation; it does not authorize a fresh generation or clear the claim. This snapshot records no actual checked-publication attempt and no later result. Members of pg-lumen share read and write authority within that scope; the record states no per-task access controls.",
+      "answer": "At 11:09 UTC, TK-9463-DZ in pg-lumen is Pending under worker-rill, with a recorded deadline of 11:15 UTC and no completion receipt. The complete visible artifact brief version 4 is not reusable for this task while the claim is Pending. A successful checked publication with expected version 4 would atomically publish version 5, create the completion receipt, and move the task to Done. A failed publication leaves version 4 and the Pending claim unchanged. Deadline expiry or an unknown outcome also keeps the claim Pending for operator reconciliation; neither clears it, permits automatic takeover, nor authorizes fresh generation.",
+      "original_question": "Using PG-9463-DZ at 11:09 UTC, explain the task's lifecycle state, whether the visible artifact is reusable for this task, the legitimate success transition, and what failure, deadline expiry, or an unknown outcome does. Use brief prose.",
+      "bindings": {
+        "broker_snapshot": "PG-9463-DZ",
+        "scope": "pg-lumen",
+        "task": "TK-9463-DZ"
+      },
+      "intent": "read-only-explanation",
+      "variants": [
+        {
+          "id": "ind-broker-dz9463-p01",
+          "question": "From PG-9463-DZ at 11:09 UTC, give a brief prose explanation of TK-9463-DZ's state, reuse eligibility for the visible artifact, the allowed success transition, and failure, expiry, or unknown-outcome behavior.",
+          "should_reuse": true,
+          "reason": "Same snapshot, task, reuse question, transitions, and prose format."
+        },
+        {
+          "id": "ind-broker-dz9463-p02",
+          "question": "What does PG-9463-DZ at 11:09 UTC say about the task state and visible artifact reuse, a successful transition, and the result of failure, deadline expiry, or an unknown outcome? Explain briefly in prose.",
+          "should_reuse": true,
+          "reason": "Question framing retains all lifecycle conditions."
+        },
+        {
+          "id": "ind-broker-dz9463-p03",
+          "question": "Please summarize the task lifecycle in PG-9463-DZ at 11:09 UTC in brief prose, including current state, artifact reuse, legitimate success, and behavior after failure, expiry, or an unknown result.",
+          "should_reuse": true,
+          "reason": "Summary framing preserves the original operational explanation scope."
+        },
+        {
+          "id": "ind-broker-dz9463-p04",
+          "question": "Write a short prose operational handoff from PG-9463-DZ at 11:09 UTC: task state, whether its visible artifact can be reused, the proper success transition, and what failure, expiry, or uncertainty means.",
+          "should_reuse": true,
+          "reason": "Handoff wording requests only the same read-only facts."
+        },
+        {
+          "id": "ind-broker-dz9463-p05",
+          "question": "For a reader following TK-9463-DZ, explain PG-9463-DZ at 11:09 UTC: present state, visible artifact reuse, permitted success transition, and failure, deadline-expiry, or unknown-outcome behavior. Use brief prose.",
+          "should_reuse": true,
+          "reason": "Audience reframing leaves the fixed snapshot and constraints intact."
+        },
+        {
+          "id": "ind-broker-dz9463-p06",
+          "question": "Using the 11:09 UTC PG-9463-DZ snapshot, walk through the task status, visible artifact reuse eligibility, normal success transition, and what happens on failure, deadline expiry, or an unknown outcome in brief prose.",
+          "should_reuse": true,
+          "reason": "Walk-through framing preserves the same factual lifecycle branches."
+        },
+        {
+          "id": "ind-broker-dz9463-p07",
+          "question": "Give me a brief prose recap of PG-9463-DZ at 11:09 UTC, covering current task state, artifact reuse for this task, the successful publication transition, and failure, expiry, or unknown outcomes.",
+          "should_reuse": true,
+          "reason": "Recap wording retains the task-specific reuse condition and transitions."
+        },
+        {
+          "id": "ind-broker-dz9463-p08",
+          "question": "Based on PG-9463-DZ at 11:09 UTC, describe where the task stands, whether its visible artifact is reusable, how success legitimately changes it, and what failure, expiry, or uncertainty leaves behind. Keep it brief and in prose.",
+          "should_reuse": true,
+          "reason": "Equivalent current-state and transition explanation."
+        },
+        {
+          "id": "ind-broker-dz9463-p09",
+          "question": "In brief prose, explain the PG-9463-DZ task state at 11:09 UTC, reuse eligibility of the visible artifact, valid success path, and the effects of failure, deadline expiry, and an unknown result.",
+          "should_reuse": true,
+          "reason": "Reordered phrasing preserves every original answer requirement."
+        },
+        {
+          "id": "ind-broker-dz9463-p10",
+          "question": "Help interpret PG-9463-DZ at 11:09 UTC: explain the task lifecycle state, visible artifact reuse for that task, legitimate success transition, and failure, expiry, or unknown-outcome behavior in short prose.",
+          "should_reuse": true,
+          "reason": "Interpretation framing changes no fact, scope, or output constraint."
+        },
+        {
+          "id": "ind-broker-dz9463-n01",
+          "question": "Assume PG-9463-DZ now records a successful checked publication: artifact brief version 5, a completion receipt, and task TK-9463-DZ Done. Explain the current state and reuse eligibility under those hypothetical facts.",
+          "should_reuse": false,
+          "reason": "The hypothetical replaces Pending/version 4/no receipt with a completed publication, so the cached current-state statements are false."
+        },
+        {
+          "id": "ind-broker-dz9463-n02",
+          "question": "Using PG-9463-DZ at 11:09 UTC, name only the worker that owns the Pending claim, with no other words.",
+          "should_reuse": false,
+          "reason": "The answer must be worker-rill alone; the cached lifecycle narrative violates the scope."
+        },
+        {
+          "id": "ind-broker-dz9463-n03",
+          "question": "Using PG-9463-DZ at 11:09 UTC, return current state, artifact reuse eligibility, success transition, and failure/expiry/unknown behavior as a JSON object. Output JSON only.",
+          "should_reuse": false,
+          "reason": "The cached prose does not satisfy the required JSON-only form."
+        },
+        {
+          "id": "ind-broker-dz9463-n04",
+          "question": "Under PG-9463-DZ, does deadline expiry automatically clear TK-9463-DZ's Pending claim? Answer exactly yes or no.",
+          "should_reuse": false,
+          "reason": "The exact answer must be no; the broad cached narrative fails the strict format."
+        },
+        {
+          "id": "ind-broker-dz9463-n05",
+          "question": "Suppose Plover Gate changes the PG-9463-DZ policy so deadline expiry automatically clears the claim and allows a new generation. Explain the expiry behavior under that hypothetical.",
+          "should_reuse": false,
+          "reason": "The hypothetical reverses the recorded expiry policy; the cached no-clear/no-generation statement would be wrong."
+        },
+        {
+          "id": "ind-broker-dz9463-n06",
+          "question": "Using PG-9463-DZ, explain the exact format and validation rules for a completion receipt key. Explicitly identify which requested specification details the snapshot leaves unknown.",
+          "should_reuse": false,
+          "reason": "The snapshot does not specify receipt-key format or validation rules; the cached lifecycle narrative cannot supply or identify those missing specification details."
+        },
+        {
+          "id": "ind-broker-dz9463-n07",
+          "question": "Clear the Pending claim for TK-9463-DZ in pg-lumen now and start a new generation. Confirm both actions using PG-9463-DZ.",
+          "should_reuse": false,
+          "reason": "These are mutations forbidden by the stated Pending policy; a cached explanation cannot execute or confirm them."
+        },
+        {
+          "id": "ind-broker-dz9463-n08",
+          "question": "Using PG-9463-DZ, explain the scope members' read and write authority and whether per-task access controls are stated. Do not discuss lifecycle transitions.",
+          "should_reuse": false,
+          "reason": "The changed scope asks for access-control facts absent from the cached lifecycle answer and excludes its content."
+        },
+        {
+          "id": "ind-broker-dz9463-n09",
+          "question": "Using PG-9463-DZ at 11:09 UTC, explain state, artifact reuse, success, failure, expiry, and unknown outcomes entirely in Japanese.",
+          "should_reuse": false,
+          "reason": "The cached English answer fails the required output language."
+        },
+        {
+          "id": "ind-broker-dz9463-n10",
+          "question": "Using PG-9463-DZ, tell me the actual result of the checked-publication attempt and the version it published. If no attempt is recorded, state that explicitly.",
+          "should_reuse": false,
+          "reason": "The snapshot records no actual attempt; a hypothetical success transition is not an answer about an actual result."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3424 @@
+{
+  "schema": 1,
+  "meaning": "Historical local diagnostics including every retained pilot, error and rejected policy. No application answer-serving or general semantic-accuracy claim. Only explicit approved forms are a new serving feature.",
+  "models": {
+    "verifier": "qwen3.5:4b",
+    "verifier_digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+    "embedding": "all-minilm:latest",
+    "embedding_digest": "1b226e2802dbb772b5fc32a58f103ca1804ef7501331012de126ab22f67475ef"
+  },
+  "physical_hosts": 1,
+  "provider_api_charge_usd": 0,
+  "paid_fallback_enabled": false,
+  "corpus_exposure": "Rounds1-3 became development/regression evidence. Round4 was independently authored from schema only and unseen before the factorized-pair policy freeze; metadata-only intent-label repair happened before live calls. Synthetic, correlated cases do not establish production precision.",
+  "runs": [
+    {
+      "name": "pilot",
+      "file": "docs/benchmarks/reuse-efficiency/runs/pilot.json",
+      "sha256": "a1a1a6bfabccc2a18b751f635fdce99cab6c75aa3c4f62e4c1f71437e83f0ad8",
+      "fixture": "docs/benchmarks/reuse-efficiency/development-pilot.json",
+      "fixture_sha256": "ee5f9a4a1a0b87ca5f51dfccaba63ed30d3f630d854cee4fdd8c5b074daafc45",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "support-faq": {
+          "positive": 1,
+          "negative": 1,
+          "tp": 0,
+          "fp": 0,
+          "tn": 1,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "internal-onboarding": {
+          "positive": 1,
+          "negative": 1,
+          "tp": 0,
+          "fp": 0,
+          "tn": 1,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "incident-brief": {
+          "positive": 1,
+          "negative": 1,
+          "tp": 1,
+          "fp": 0,
+          "tn": 1,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0.20654931437723745,
+            1
+          ]
+        },
+        "release-readiness": {
+          "positive": 1,
+          "negative": 1,
+          "tp": 0,
+          "fp": 0,
+          "tn": 1,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "refund-eligibility": {
+          "positive": 1,
+          "negative": 1,
+          "tp": 1,
+          "fp": 0,
+          "tn": 1,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0.20654931437723745,
+            1
+          ]
+        },
+        "shared-broker-lifecycle": {
+          "positive": 1,
+          "negative": 1,
+          "tp": 1,
+          "fp": 0,
+          "tn": 1,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0.20654931437723745,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "baseline-v15-independent",
+      "file": "docs/benchmarks/reuse-efficiency/runs/baseline-v15-independent.json",
+      "sha256": "43541322b13dd827f91110f5d5c7d021ae808f7b658c4bd7f0ba3cf53e8d754c",
+      "fixture": "examples/semantic/independent-evaluation.json",
+      "fixture_sha256": "36d9e0e1f6fef4a1985aa7632bdd99968384274792ca53a287b4540c584ab40a",
+      "disposition": "published-default baseline",
+      "per_case": {
+        "ind-faq-r8n4": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 9,
+          "fp": 0,
+          "tn": 10,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.9,
+          "coverage": 0.45,
+          "precision_wilson_95": [
+            0.7008549515804559,
+            1
+          ]
+        },
+        "ind-onboard-qk6194": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 4,
+          "fp": 0,
+          "tn": 10,
+          "fn": 6,
+          "precision": 1.0,
+          "recall": 0.4,
+          "coverage": 0.2,
+          "precision_wilson_95": [
+            0.5101091635454027,
+            1
+          ]
+        },
+        "ind-incident-uv7351": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 8,
+          "fp": 0,
+          "tn": 10,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "coverage": 0.4,
+          "precision_wilson_95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "ind-release-wt8642": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 7,
+          "fp": 0,
+          "tn": 10,
+          "fn": 3,
+          "precision": 1.0,
+          "recall": 0.7,
+          "coverage": 0.35,
+          "precision_wilson_95": [
+            0.6456695649333126,
+            1
+          ]
+        },
+        "ind-refund-lp5786": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 10,
+          "fp": 0,
+          "tn": 10,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0.7224672001371107,
+            0.9999999999999999
+          ]
+        },
+        "ind-broker-dz9463": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 7,
+          "fp": 0,
+          "tn": 10,
+          "fn": 3,
+          "precision": 1.0,
+          "recall": 0.7,
+          "coverage": 0.35,
+          "precision_wilson_95": [
+            0.6456695649333126,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "candidate-single-independent",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-single-independent.json",
+      "sha256": "a3d7e77e95efa1111e0d0fe16eadbfd7667d846861c6bd60d21e8b25971b92e3",
+      "fixture": "examples/semantic/independent-evaluation.json",
+      "fixture_sha256": "36d9e0e1f6fef4a1985aa7632bdd99968384274792ca53a287b4540c584ab40a",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-faq-r8n4": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 9,
+          "fp": 0,
+          "tn": 10,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.9,
+          "coverage": 0.45,
+          "precision_wilson_95": [
+            0.7008549515804559,
+            1
+          ]
+        },
+        "ind-onboard-qk6194": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 4,
+          "fp": 0,
+          "tn": 10,
+          "fn": 6,
+          "precision": 1.0,
+          "recall": 0.4,
+          "coverage": 0.2,
+          "precision_wilson_95": [
+            0.5101091635454027,
+            1
+          ]
+        },
+        "ind-incident-uv7351": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 8,
+          "fp": 0,
+          "tn": 10,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "coverage": 0.4,
+          "precision_wilson_95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "ind-release-wt8642": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 7,
+          "fp": 0,
+          "tn": 10,
+          "fn": 3,
+          "precision": 1.0,
+          "recall": 0.7,
+          "coverage": 0.35,
+          "precision_wilson_95": [
+            0.6456695649333126,
+            1
+          ]
+        },
+        "ind-refund-lp5786": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 10,
+          "fp": 0,
+          "tn": 10,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0.7224672001371107,
+            0.9999999999999999
+          ]
+        },
+        "ind-broker-dz9463": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 7,
+          "fp": 0,
+          "tn": 10,
+          "fn": 3,
+          "precision": 1.0,
+          "recall": 0.7,
+          "coverage": 0.35,
+          "precision_wilson_95": [
+            0.6456695649333126,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "baseline-v15-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/baseline-v15-unsupported.json",
+      "sha256": "7b082871a323ea6e6f6c9c3fe0018041f840f8bfa11cbf1f8fb72fbfe321d95e",
+      "fixture": "examples/semantic/unsupported-answer-evaluation.json",
+      "fixture_sha256": "1699cb7c7a6a4fea915abacb5e443808e608d52b5d843a7660aa37339e594def",
+      "disposition": "published-default baseline",
+      "per_case": {
+        "ind-unsupported-faq-hv2068": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-onboard-bx4389": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-incident-jr5926": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-release-cm8175": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-refund-sq3649": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-broker-nf6738": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-single-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-single-unsupported.json",
+      "sha256": "eefb6237d34ee4b0c7d472722c003ce7d7ba52fb0bc36d6c093235a8cf8b40cb",
+      "fixture": "examples/semantic/unsupported-answer-evaluation.json",
+      "fixture_sha256": "1699cb7c7a6a4fea915abacb5e443808e608d52b5d843a7660aa37339e594def",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-unsupported-faq-hv2068": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-onboard-bx4389": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-incident-jr5926": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-release-cm8175": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-refund-sq3649": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-broker-nf6738": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-batch-independent",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-batch-independent.json",
+      "sha256": "808a0af3c10a91ceae41c764d366f9b7059403fdb81fc82567f1839a65a6ee4a",
+      "fixture": "examples/semantic/independent-evaluation.json",
+      "fixture_sha256": "36d9e0e1f6fef4a1985aa7632bdd99968384274792ca53a287b4540c584ab40a",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-faq-r8n4": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 9,
+          "fp": 0,
+          "tn": 10,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.9,
+          "coverage": 0.45,
+          "precision_wilson_95": [
+            0.7008549515804559,
+            1
+          ]
+        },
+        "ind-onboard-qk6194": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 4,
+          "fp": 0,
+          "tn": 10,
+          "fn": 6,
+          "precision": 1.0,
+          "recall": 0.4,
+          "coverage": 0.2,
+          "precision_wilson_95": [
+            0.5101091635454027,
+            1
+          ]
+        },
+        "ind-incident-uv7351": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 8,
+          "fp": 0,
+          "tn": 10,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "coverage": 0.4,
+          "precision_wilson_95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "ind-release-wt8642": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-refund-lp5786": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-broker-dz9463": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-batch-v2-independent",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-batch-v2-independent.json",
+      "sha256": "ce2d1df7fdc46d3ac4bcd4cecf7146ffcf574cb90f5037e916a96e8d490bdcce",
+      "fixture": "examples/semantic/independent-evaluation.json",
+      "fixture_sha256": "36d9e0e1f6fef4a1985aa7632bdd99968384274792ca53a287b4540c584ab40a",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-faq-r8n4": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 9,
+          "fp": 0,
+          "tn": 10,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.9,
+          "coverage": 0.45,
+          "precision_wilson_95": [
+            0.7008549515804559,
+            1
+          ]
+        },
+        "ind-onboard-qk6194": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 4,
+          "fp": 2,
+          "tn": 8,
+          "fn": 6,
+          "precision": 0.6666666666666666,
+          "recall": 0.4,
+          "coverage": 0.3,
+          "precision_wilson_95": [
+            0.299993315138392,
+            0.9032285888942195
+          ]
+        },
+        "ind-incident-uv7351": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 8,
+          "fp": 0,
+          "tn": 10,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "coverage": 0.4,
+          "precision_wilson_95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "ind-release-wt8642": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 7,
+          "fp": 0,
+          "tn": 10,
+          "fn": 3,
+          "precision": 1.0,
+          "recall": 0.7,
+          "coverage": 0.35,
+          "precision_wilson_95": [
+            0.6456695649333126,
+            1
+          ]
+        },
+        "ind-refund-lp5786": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 2,
+          "fp": 0,
+          "tn": 10,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.2,
+          "coverage": 0.1,
+          "precision_wilson_95": [
+            0.34238022750665303,
+            1
+          ]
+        },
+        "ind-broker-dz9463": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-batch-v2-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-batch-v2-unsupported.json",
+      "sha256": "7c12e5931edd1fbf6eceb95aed56688e958240a1bd9296a1f641f64da5ef08b3",
+      "fixture": "examples/semantic/unsupported-answer-evaluation.json",
+      "fixture_sha256": "1699cb7c7a6a4fea915abacb5e443808e608d52b5d843a7660aa37339e594def",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-unsupported-faq-hv2068": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-onboard-bx4389": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-incident-jr5926": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-release-cm8175": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-refund-sq3649": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-broker-nf6738": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-batch-v2-pairs-independent",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-batch-v2-pairs-independent.json",
+      "sha256": "0ee2f95e77c7512e2b157400589ecf961b819c02f608f9799fe9ae2f9402ff9f",
+      "fixture": "examples/semantic/independent-evaluation.json",
+      "fixture_sha256": "36d9e0e1f6fef4a1985aa7632bdd99968384274792ca53a287b4540c584ab40a",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-faq-r8n4": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 9,
+          "fp": 0,
+          "tn": 10,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.9,
+          "coverage": 0.45,
+          "precision_wilson_95": [
+            0.7008549515804559,
+            1
+          ]
+        },
+        "ind-onboard-qk6194": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 4,
+          "fp": 0,
+          "tn": 10,
+          "fn": 6,
+          "precision": 1.0,
+          "recall": 0.4,
+          "coverage": 0.2,
+          "precision_wilson_95": [
+            0.5101091635454027,
+            1
+          ]
+        },
+        "ind-incident-uv7351": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 8,
+          "fp": 0,
+          "tn": 10,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "coverage": 0.4,
+          "precision_wilson_95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "ind-release-wt8642": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 6,
+          "fp": 0,
+          "tn": 10,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6,
+          "coverage": 0.3,
+          "precision_wilson_95": [
+            0.6096657120978346,
+            1
+          ]
+        },
+        "ind-refund-lp5786": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 10,
+          "fp": 0,
+          "tn": 10,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0.7224672001371107,
+            0.9999999999999999
+          ]
+        },
+        "ind-broker-dz9463": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 5,
+          "fp": 0,
+          "tn": 10,
+          "fn": 5,
+          "precision": 1.0,
+          "recall": 0.5,
+          "coverage": 0.25,
+          "precision_wilson_95": [
+            0.5655175352168251,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "baseline-v15-round2",
+      "file": "docs/benchmarks/reuse-efficiency/runs/baseline-v15-round2.json",
+      "sha256": "7eec96bfacec01337aad3fa609a1486cccd5daec32bf316af474db2d7d2548ae",
+      "fixture": "examples/semantic/independent-round2-evaluation.json",
+      "fixture_sha256": "519b5b7981f5ff79f3e2b5f380c5fb5ef8b6198284a5aaf22f31b87f31cd6a87",
+      "disposition": "published-default baseline",
+      "per_case": {
+        "r2-faq": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-onboarding": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-incident": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-release": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 1,
+          "fp": 0,
+          "tn": 10,
+          "fn": 9,
+          "precision": 1.0,
+          "recall": 0.1,
+          "coverage": 0.05,
+          "precision_wilson_95": [
+            0.20654931437723745,
+            1
+          ]
+        },
+        "r2-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-broker": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-batch-v2-round2",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-batch-v2-round2.json",
+      "sha256": "afa760e7020d9e6ce126cc5e67e520ed91c4d2e3c7b3f2c977d5f243769d98f2",
+      "fixture": "examples/semantic/independent-round2-evaluation.json",
+      "fixture_sha256": "519b5b7981f5ff79f3e2b5f380c5fb5ef8b6198284a5aaf22f31b87f31cd6a87",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r2-faq": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-onboarding": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-incident": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-release": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-broker": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "baseline-v15-round2-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/baseline-v15-round2-unsupported.json",
+      "sha256": "fca4aa69cfb4ee068bd531b8efa7469a3abecc19f808ddc1da408fd11c74513e",
+      "fixture": "examples/semantic/unsupported-round2-evaluation.json",
+      "fixture_sha256": "cad36fa26a2a49cda0817a9805572eecccbb824a18743f7e0cb6b9c305b79094",
+      "disposition": "published-default baseline",
+      "per_case": {
+        "r2-bad-faq": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-onboarding": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-incident": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-release": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-refund": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-broker": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-batch-v2-round2-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-batch-v2-round2-unsupported.json",
+      "sha256": "68bd1d82fee3e4a4a76a09afb139e095aeee3dd5ffebffe5857ac385f3425a0a",
+      "fixture": "examples/semantic/unsupported-round2-evaluation.json",
+      "fixture_sha256": "cad36fa26a2a49cda0817a9805572eecccbb824a18743f7e0cb6b9c305b79094",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r2-bad-faq": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-onboarding": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-incident": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-release": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-refund": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-broker": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "baseline-v15-round3-065",
+      "file": "docs/benchmarks/reuse-efficiency/runs/baseline-v15-round3-065.json",
+      "sha256": "d501e612ee1404dfdc061953b0c18503c12d6336ccf69839d071117b38ee3b3d",
+      "fixture": "examples/semantic/independent-round3-evaluation.json",
+      "fixture_sha256": "b496650e7986b4cf52bb1c3dbb1626c1e032862c80910644c769f490c2025128",
+      "disposition": "published-default baseline",
+      "per_case": {
+        "r3-digest": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-contractor": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-failover": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-package": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-seat-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-maintenance": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "baseline-v15-round3-040",
+      "file": "docs/benchmarks/reuse-efficiency/runs/baseline-v15-round3-040.json",
+      "sha256": "d71fba1fc0ee6d61cb58871264aae08271f4ce6fce4f4f08d447d11076898e27",
+      "fixture": "examples/semantic/independent-round3-evaluation.json",
+      "fixture_sha256": "b496650e7986b4cf52bb1c3dbb1626c1e032862c80910644c769f490c2025128",
+      "disposition": "published-default baseline",
+      "per_case": {
+        "r3-digest": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-contractor": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-failover": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-package": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-seat-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-maintenance": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "baseline-v15-round3-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/baseline-v15-round3-unsupported.json",
+      "sha256": "43121b4ff8e2d9f0a4edca5d24177f0cf655c6648ceb0e40e4bf34dcca212b53",
+      "fixture": "examples/semantic/unsupported-round3-evaluation.json",
+      "fixture_sha256": "7fbf8e5f18c5ec106096b5b9b67bcc13fe20c64bc9b6027e9b19a93ab1a3986d",
+      "disposition": "published-default baseline",
+      "per_case": {
+        "r3-bad-notices": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-review": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-ratio": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-cap": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-deadline": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-client-gate": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-pair-round3-065",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-pair-round3-065.json",
+      "sha256": "bc4a033142b0a80834317153715472866eb9eeb7f4534411ab06c2aba6df5b24",
+      "fixture": "examples/semantic/independent-round3-evaluation.json",
+      "fixture_sha256": "b496650e7986b4cf52bb1c3dbb1626c1e032862c80910644c769f490c2025128",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r3-digest": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-contractor": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-failover": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-package": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-seat-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 2,
+          "fp": 0,
+          "tn": 10,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.2,
+          "coverage": 0.1,
+          "precision_wilson_95": [
+            0.34238022750665303,
+            1
+          ]
+        },
+        "r3-maintenance": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 2,
+          "fp": 0,
+          "tn": 10,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.2,
+          "coverage": 0.1,
+          "precision_wilson_95": [
+            0.34238022750665303,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "candidate-pair-round3-040",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-pair-round3-040.json",
+      "sha256": "1f201c6ce2e48d89db71f712d106b0cd6ac85fdd25e464174b1ed0361340e36e",
+      "fixture": "examples/semantic/independent-round3-evaluation.json",
+      "fixture_sha256": "b496650e7986b4cf52bb1c3dbb1626c1e032862c80910644c769f490c2025128",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r3-digest": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-contractor": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-failover": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-package": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 3,
+          "fp": 1,
+          "tn": 9,
+          "fn": 7,
+          "precision": 0.75,
+          "recall": 0.3,
+          "coverage": 0.2,
+          "precision_wilson_95": [
+            0.30064184258240184,
+            0.9544127391902995
+          ]
+        },
+        "r3-seat-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 2,
+          "fp": 0,
+          "tn": 10,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.2,
+          "coverage": 0.1,
+          "precision_wilson_95": [
+            0.34238022750665303,
+            1
+          ]
+        },
+        "r3-maintenance": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 6,
+          "fp": 0,
+          "tn": 10,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6,
+          "coverage": 0.3,
+          "precision_wilson_95": [
+            0.6096657120978346,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "candidate-single-round3-040",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-single-round3-040.json",
+      "sha256": "67883f9223f7a528ee9a70b69fb29f5219294c9a2bac428aa1fb1930b0fa2f80",
+      "fixture": "examples/semantic/independent-round3-evaluation.json",
+      "fixture_sha256": "b496650e7986b4cf52bb1c3dbb1626c1e032862c80910644c769f490c2025128",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r3-digest": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-contractor": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-failover": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-package": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 3,
+          "fp": 1,
+          "tn": 9,
+          "fn": 7,
+          "precision": 0.75,
+          "recall": 0.3,
+          "coverage": 0.2,
+          "precision_wilson_95": [
+            0.30064184258240184,
+            0.9544127391902995
+          ]
+        },
+        "r3-seat-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 1,
+          "fp": 0,
+          "tn": 10,
+          "fn": 9,
+          "precision": 1.0,
+          "recall": 0.1,
+          "coverage": 0.05,
+          "precision_wilson_95": [
+            0.20654931437723745,
+            1
+          ]
+        },
+        "r3-maintenance": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 6,
+          "fp": 0,
+          "tn": 10,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6,
+          "coverage": 0.3,
+          "precision_wilson_95": [
+            0.6096657120978346,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "candidate-pair-round3-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-pair-round3-unsupported.json",
+      "sha256": "dc91d91b6758596f2222df2d72d6d9b20568883443df61227e69b7737b7d3871",
+      "fixture": "examples/semantic/unsupported-round3-evaluation.json",
+      "fixture_sha256": "7fbf8e5f18c5ec106096b5b9b67bcc13fe20c64bc9b6027e9b19a93ab1a3986d",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r3-bad-notices": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-review": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-ratio": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-cap": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-deadline": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-client-gate": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-single-round3-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-single-round3-unsupported.json",
+      "sha256": "156b2ea6ab140170fe69038f7885abb418257026372a3ff50c485c54369ec75d",
+      "fixture": "examples/semantic/unsupported-round3-evaluation.json",
+      "fixture_sha256": "7fbf8e5f18c5ec106096b5b9b67bcc13fe20c64bc9b6027e9b19a93ab1a3986d",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r3-bad-notices": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-review": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-ratio": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-cap": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-deadline": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-client-gate": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-pair-guard3-round1",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-pair-guard3-round1.json",
+      "sha256": "e174570d6f325336155e2e7ca81fcc9508138c55f1917260ae9d2b621e2a2063",
+      "fixture": "examples/semantic/independent-evaluation.json",
+      "fixture_sha256": "36d9e0e1f6fef4a1985aa7632bdd99968384274792ca53a287b4540c584ab40a",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-faq-r8n4": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 9,
+          "fp": 0,
+          "tn": 10,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.9,
+          "coverage": 0.45,
+          "precision_wilson_95": [
+            0.7008549515804559,
+            1
+          ]
+        },
+        "ind-onboard-qk6194": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 4,
+          "fp": 0,
+          "tn": 10,
+          "fn": 6,
+          "precision": 1.0,
+          "recall": 0.4,
+          "coverage": 0.2,
+          "precision_wilson_95": [
+            0.5101091635454027,
+            1
+          ]
+        },
+        "ind-incident-uv7351": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 9,
+          "fp": 0,
+          "tn": 10,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.9,
+          "coverage": 0.45,
+          "precision_wilson_95": [
+            0.7008549515804559,
+            1
+          ]
+        },
+        "ind-release-wt8642": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 8,
+          "fp": 0,
+          "tn": 10,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "coverage": 0.4,
+          "precision_wilson_95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "ind-refund-lp5786": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 10,
+          "fp": 0,
+          "tn": 10,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0.7224672001371107,
+            0.9999999999999999
+          ]
+        },
+        "ind-broker-dz9463": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 8,
+          "fp": 0,
+          "tn": 10,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "coverage": 0.4,
+          "precision_wilson_95": [
+            0.6755924351161198,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "candidate-single-guard3-round1",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-single-guard3-round1.json",
+      "sha256": "89e078e004e9ff62f3b6f7d406107e6422ee1e194585a76ec582b950c1f1f45c",
+      "fixture": "examples/semantic/independent-evaluation.json",
+      "fixture_sha256": "36d9e0e1f6fef4a1985aa7632bdd99968384274792ca53a287b4540c584ab40a",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-faq-r8n4": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 9,
+          "fp": 0,
+          "tn": 10,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.9,
+          "coverage": 0.45,
+          "precision_wilson_95": [
+            0.7008549515804559,
+            1
+          ]
+        },
+        "ind-onboard-qk6194": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 4,
+          "fp": 0,
+          "tn": 10,
+          "fn": 6,
+          "precision": 1.0,
+          "recall": 0.4,
+          "coverage": 0.2,
+          "precision_wilson_95": [
+            0.5101091635454027,
+            1
+          ]
+        },
+        "ind-incident-uv7351": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 9,
+          "fp": 0,
+          "tn": 10,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.9,
+          "coverage": 0.45,
+          "precision_wilson_95": [
+            0.7008549515804559,
+            1
+          ]
+        },
+        "ind-release-wt8642": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 9,
+          "fp": 1,
+          "tn": 9,
+          "fn": 1,
+          "precision": 0.9,
+          "recall": 0.9,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0.5958499732047615,
+            0.9821237869049271
+          ]
+        },
+        "ind-refund-lp5786": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 10,
+          "fp": 0,
+          "tn": 10,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0.7224672001371107,
+            0.9999999999999999
+          ]
+        },
+        "ind-broker-dz9463": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 8,
+          "fp": 0,
+          "tn": 10,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "coverage": 0.4,
+          "precision_wilson_95": [
+            0.6755924351161198,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "candidate-pair-guard3-round2",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-pair-guard3-round2.json",
+      "sha256": "739cbfe9bbb97cc3efac338a31f73844d8bc45aa50ab785d4189c61593f185b1",
+      "fixture": "examples/semantic/independent-round2-evaluation.json",
+      "fixture_sha256": "519b5b7981f5ff79f3e2b5f380c5fb5ef8b6198284a5aaf22f31b87f31cd6a87",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r2-faq": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-onboarding": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-incident": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-release": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 2,
+          "fp": 0,
+          "tn": 10,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.2,
+          "coverage": 0.1,
+          "precision_wilson_95": [
+            0.34238022750665303,
+            1
+          ]
+        },
+        "r2-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-broker": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-single-guard3-round2",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-single-guard3-round2.json",
+      "sha256": "a934c28c874875ecd9e654c6dc1acbb7a3530b7d2731c529d6a8a36f9e45db97",
+      "fixture": "examples/semantic/independent-round2-evaluation.json",
+      "fixture_sha256": "519b5b7981f5ff79f3e2b5f380c5fb5ef8b6198284a5aaf22f31b87f31cd6a87",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r2-faq": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-onboarding": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-incident": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-release": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 2,
+          "fp": 0,
+          "tn": 10,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.2,
+          "coverage": 0.1,
+          "precision_wilson_95": [
+            0.34238022750665303,
+            1
+          ]
+        },
+        "r2-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-broker": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-pair-guard3-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-pair-guard3-unsupported.json",
+      "sha256": "e0be2c149e2ea2f96b2be67145548d7fa7564834bbb3a5c9b92fe188432992d1",
+      "fixture": "examples/semantic/unsupported-answer-evaluation.json",
+      "fixture_sha256": "1699cb7c7a6a4fea915abacb5e443808e608d52b5d843a7660aa37339e594def",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-unsupported-faq-hv2068": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-onboard-bx4389": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-incident-jr5926": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 2,
+          "tn": 0,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "coverage": 1.0,
+          "precision_wilson_95": [
+            0,
+            0.6576197724933469
+          ]
+        },
+        "ind-unsupported-release-cm8175": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-refund-sq3649": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-broker-nf6738": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "candidate-single-guard3-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/candidate-single-guard3-unsupported.json",
+      "sha256": "7d0453057c8cb5b63013ae013ca7c006dd6dcdf3a0d998881f5822bafc490016",
+      "fixture": "examples/semantic/unsupported-answer-evaluation.json",
+      "fixture_sha256": "1699cb7c7a6a4fea915abacb5e443808e608d52b5d843a7660aa37339e594def",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-unsupported-faq-hv2068": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-onboard-bx4389": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-incident-jr5926": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-release-cm8175": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-refund-sq3649": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-broker-nf6738": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "pair-v4-round1",
+      "file": "docs/benchmarks/reuse-efficiency/runs/pair-v4-round1.json",
+      "sha256": "d03e6a3c48116afb2b2a5355b77d22feb1bf68330195228b68886e30f8ad8fd6",
+      "fixture": "examples/semantic/independent-evaluation.json",
+      "fixture_sha256": "36d9e0e1f6fef4a1985aa7632bdd99968384274792ca53a287b4540c584ab40a",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-faq-r8n4": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 8,
+          "fp": 0,
+          "tn": 10,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "coverage": 0.4,
+          "precision_wilson_95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "ind-onboard-qk6194": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 4,
+          "fp": 1,
+          "tn": 9,
+          "fn": 6,
+          "precision": 0.8,
+          "recall": 0.4,
+          "coverage": 0.25,
+          "precision_wilson_95": [
+            0.37553462976252533,
+            0.9637758913675698
+          ]
+        },
+        "ind-incident-uv7351": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 8,
+          "fp": 0,
+          "tn": 10,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.8,
+          "coverage": 0.4,
+          "precision_wilson_95": [
+            0.6755924351161198,
+            1
+          ]
+        },
+        "ind-release-wt8642": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 6,
+          "fp": 0,
+          "tn": 10,
+          "fn": 4,
+          "precision": 1.0,
+          "recall": 0.6,
+          "coverage": 0.3,
+          "precision_wilson_95": [
+            0.6096657120978346,
+            1
+          ]
+        },
+        "ind-refund-lp5786": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 10,
+          "fp": 0,
+          "tn": 10,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0.7224672001371107,
+            0.9999999999999999
+          ]
+        },
+        "ind-broker-dz9463": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 7,
+          "fp": 0,
+          "tn": 10,
+          "fn": 3,
+          "precision": 1.0,
+          "recall": 0.7,
+          "coverage": 0.35,
+          "precision_wilson_95": [
+            0.6456695649333126,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "pair-v4-round2",
+      "file": "docs/benchmarks/reuse-efficiency/runs/pair-v4-round2.json",
+      "sha256": "946fa4c66faf5c89b34ae33ef5660a69fa3e7f86f772c8a0fb30a21fac9e366e",
+      "fixture": "examples/semantic/independent-round2-evaluation.json",
+      "fixture_sha256": "519b5b7981f5ff79f3e2b5f380c5fb5ef8b6198284a5aaf22f31b87f31cd6a87",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r2-faq": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-onboarding": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-incident": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-release": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-broker": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "pair-v4-round3",
+      "file": "docs/benchmarks/reuse-efficiency/runs/pair-v4-round3.json",
+      "sha256": "29dd8515a15d73fdd4873b53ea55403ff282c6aebe4c18ba178fcded7c05162a",
+      "fixture": "examples/semantic/independent-round3-evaluation.json",
+      "fixture_sha256": "b496650e7986b4cf52bb1c3dbb1626c1e032862c80910644c769f490c2025128",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r3-digest": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-contractor": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-failover": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-package": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 3,
+          "fp": 0,
+          "tn": 10,
+          "fn": 7,
+          "precision": 1.0,
+          "recall": 0.3,
+          "coverage": 0.15,
+          "precision_wilson_95": [
+            0.4385029682449546,
+            1
+          ]
+        },
+        "r3-seat-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 2,
+          "fp": 0,
+          "tn": 10,
+          "fn": 8,
+          "precision": 1.0,
+          "recall": 0.2,
+          "coverage": 0.1,
+          "precision_wilson_95": [
+            0.34238022750665303,
+            1
+          ]
+        },
+        "r3-maintenance": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 4,
+          "fp": 0,
+          "tn": 10,
+          "fn": 6,
+          "precision": 1.0,
+          "recall": 0.4,
+          "coverage": 0.2,
+          "precision_wilson_95": [
+            0.5101091635454027,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "pair-v4-unsupported1",
+      "file": "docs/benchmarks/reuse-efficiency/runs/pair-v4-unsupported1.json",
+      "sha256": "56e210790907b5a4c6c6019bf374bec77ce51c3e1024b07429b875f6a0c57392",
+      "fixture": "examples/semantic/unsupported-answer-evaluation.json",
+      "fixture_sha256": "1699cb7c7a6a4fea915abacb5e443808e608d52b5d843a7660aa37339e594def",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "ind-unsupported-faq-hv2068": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 1,
+          "tn": 1,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0,
+            0.7934506856227626
+          ]
+        },
+        "ind-unsupported-onboard-bx4389": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-incident-jr5926": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-release-cm8175": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "ind-unsupported-refund-sq3649": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 1,
+          "tn": 1,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0,
+            0.7934506856227626
+          ]
+        },
+        "ind-unsupported-broker-nf6738": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "pair-v4-unsupported2",
+      "file": "docs/benchmarks/reuse-efficiency/runs/pair-v4-unsupported2.json",
+      "sha256": "1985d0244bb614a68d93c787d4141049e7ec2357853cb61a2f436e84fafd5ded",
+      "fixture": "examples/semantic/unsupported-round2-evaluation.json",
+      "fixture_sha256": "cad36fa26a2a49cda0817a9805572eecccbb824a18743f7e0cb6b9c305b79094",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r2-bad-faq": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-onboarding": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-incident": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-release": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-refund": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r2-bad-broker": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "pair-v4-unsupported3",
+      "file": "docs/benchmarks/reuse-efficiency/runs/pair-v4-unsupported3.json",
+      "sha256": "64f6790e4220f13fdcc559e4683b6f948a701682c43f6787bf15577013a2c542",
+      "fixture": "examples/semantic/unsupported-round3-evaluation.json",
+      "fixture_sha256": "7fbf8e5f18c5ec106096b5b9b67bcc13fe20c64bc9b6027e9b19a93ab1a3986d",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r3-bad-notices": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-review": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-ratio": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-cap": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r3-bad-deadline": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 1,
+          "tn": 1,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0,
+            0.7934506856227626
+          ]
+        },
+        "r3-bad-client-gate": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "baseline-v15-round4-065",
+      "file": "docs/benchmarks/reuse-efficiency/runs/baseline-v15-round4-065.json",
+      "sha256": "27f7dd2d839a0fb4d01c6cf7a1f594b69f3fc26a8e08bac8277f7eff999c2f08",
+      "fixture": "examples/semantic/independent-round4-evaluation.json",
+      "fixture_sha256": "4137899993b1ea6eb9650babe865b83cc564147dae4b32a166c48f7fae52cb3a",
+      "disposition": "published-default baseline",
+      "per_case": {
+        "r4-support": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-onboarding": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-incident": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-release": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-broker": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "pair-v4-round4-065",
+      "file": "docs/benchmarks/reuse-efficiency/runs/pair-v4-round4-065.json",
+      "sha256": "caa738fd29c1811b46f6aa9cebdd27626c2970b53bac45615d6f16590f7f6d25",
+      "fixture": "examples/semantic/independent-round4-evaluation.json",
+      "fixture_sha256": "4137899993b1ea6eb9650babe865b83cc564147dae4b32a166c48f7fae52cb3a",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r4-support": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-onboarding": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-incident": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-release": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-broker": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "baseline-v15-round4-040",
+      "file": "docs/benchmarks/reuse-efficiency/runs/baseline-v15-round4-040.json",
+      "sha256": "5d07c8f3eaf9e6b9079145764dd64781c9404754b735bf8796eeb0a9e453fb46",
+      "fixture": "examples/semantic/independent-round4-evaluation.json",
+      "fixture_sha256": "4137899993b1ea6eb9650babe865b83cc564147dae4b32a166c48f7fae52cb3a",
+      "disposition": "published-default baseline",
+      "per_case": {
+        "r4-support": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-onboarding": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-incident": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-release": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 1,
+          "fp": 0,
+          "tn": 10,
+          "fn": 9,
+          "precision": 1.0,
+          "recall": 0.1,
+          "coverage": 0.05,
+          "precision_wilson_95": [
+            0.20654931437723745,
+            1
+          ]
+        },
+        "r4-broker": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 1,
+          "fp": 0,
+          "tn": 10,
+          "fn": 9,
+          "precision": 1.0,
+          "recall": 0.1,
+          "coverage": 0.05,
+          "precision_wilson_95": [
+            0.20654931437723745,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "pair-v4-round4-040",
+      "file": "docs/benchmarks/reuse-efficiency/runs/pair-v4-round4-040.json",
+      "sha256": "4d26f70f7425dbbc4a43efd4e6db8e80b002a438f09377e4c48b8a931d617b3a",
+      "fixture": "examples/semantic/independent-round4-evaluation.json",
+      "fixture_sha256": "4137899993b1ea6eb9650babe865b83cc564147dae4b32a166c48f7fae52cb3a",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r4-support": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-onboarding": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 5,
+          "fp": 0,
+          "tn": 10,
+          "fn": 5,
+          "precision": 1.0,
+          "recall": 0.5,
+          "coverage": 0.25,
+          "precision_wilson_95": [
+            0.5655175352168251,
+            1
+          ]
+        },
+        "r4-incident": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-release": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-refund": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-broker": {
+          "positive": 10,
+          "negative": 10,
+          "tp": 0,
+          "fp": 0,
+          "tn": 10,
+          "fn": 10,
+          "precision": null,
+          "recall": 0.0,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "baseline-v15-round4-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/baseline-v15-round4-unsupported.json",
+      "sha256": "47144f468a6fbac3fe3840cbdcaf0f00a06e36c887e5dff4b710f12a0a63c9fe",
+      "fixture": "examples/semantic/unsupported-round4-evaluation.json",
+      "fixture_sha256": "37b519c2e7927c8afa2fec38a60da44fbe4a7d1509b4591a30704a573260b195",
+      "disposition": "published-default baseline",
+      "per_case": {
+        "r4-unsupported-support": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-unsupported-onboarding": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-unsupported-incident": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-unsupported-release": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-unsupported-refund": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-unsupported-broker": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    },
+    {
+      "name": "pair-v4-round4-unsupported",
+      "file": "docs/benchmarks/reuse-efficiency/runs/pair-v4-round4-unsupported.json",
+      "sha256": "7156dea270b2358f6d461775b76f36f659efdb428b38ad3788b111b640afb8bf",
+      "fixture": "examples/semantic/unsupported-round4-evaluation.json",
+      "fixture_sha256": "37b519c2e7927c8afa2fec38a60da44fbe4a7d1509b4591a30704a573260b195",
+      "disposition": "withheld experimental policy; diagnostic only",
+      "per_case": {
+        "r4-unsupported-support": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-unsupported-onboarding": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 1,
+          "tn": 1,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0,
+            0.7934506856227626
+          ]
+        },
+        "r4-unsupported-incident": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 1,
+          "tn": 1,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": null,
+          "coverage": 0.5,
+          "precision_wilson_95": [
+            0,
+            0.7934506856227626
+          ]
+        },
+        "r4-unsupported-release": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-unsupported-refund": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        },
+        "r4-unsupported-broker": {
+          "positive": 0,
+          "negative": 2,
+          "tp": 0,
+          "fp": 0,
+          "tn": 2,
+          "fn": 0,
+          "precision": null,
+          "recall": null,
+          "coverage": 0.0,
+          "precision_wilson_95": null
+        }
+      }
+    }
+  ]
+}

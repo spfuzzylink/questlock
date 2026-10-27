@@ -88,6 +88,7 @@ Read-only by default, with no imported provider credentials or paid fallback.
 | Repeated writing with changing facts | Combines an approved reference with today's evidence, checks length and keeps a reviewed answer index. |
 | Evidence about related questions | Observes possible semantic matches after fresh checked generation, without serving a candidate or avoiding generation. |
 | A related question whose answer is still valid | Opt-in controlled reuse checks source provenance, current constraints and a local verifier before serving the saved text. |
+| Different wording your app already treats as the same request | An explicit, versioned list maps approved questions to one exact task. No embedding or verifier call. |
 
 [Put a local agent team to work on your own machines](docs/use-cases.md#a-local-agent-team-using-the-machines-you-already-have).
 
@@ -101,6 +102,29 @@ Hosted OpenAI, Claude and OpenRouter calls use their own billing. Only tasks
 routed through Questlock get these controls. This does **not** make the surrounding
 Codex/Claude chat free or remove subscription limits. Measure savings against a
 matched task baseline, with failed attempts and human rework included.
+
+## Different words. Still the same answer?
+
+If your app already knows that “How do I reset my password?” and “Show me the
+password reset steps” ask for the same thing, it shouldn't need another model
+to work that out every time.
+
+Give **Questlock** a small, reviewed list of equivalent questions. The Go helper
+maps an exact listed wording to one canonical question and a versioned request.
+The first request runs normally. Later approved forms use the existing exact
+result while its facts, runtime and expiry still match. No embedding or verifier
+call is needed for that repeat.
+
+The list is your application's contract. **Questlock** doesn't guess which new
+sentences belong in it. A question about losing email access, a different account
+or a changed policy needs its own facts and request. Unknown wording stays
+unchanged; your normal configured workflow decides what happens next.
+
+For open-ended paraphrases, [controlled reuse](docs/controlled-reuse.md) remains
+experimental. Verification can cost more than a fresh answer, and a verifier can
+miss a change in scope. Keep failed cases in your benchmark too.
+
+[Go example, configuration and limits](docs/approved-questions.md).
 
 ## Use it with what you already run
 

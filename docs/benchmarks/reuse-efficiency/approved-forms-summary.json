@@ -1,0 +1,217 @@
+{
+  "schema": 1,
+  "dataset_sha256": "721934b894e2e8b0bf4c3f5a757acf0c6b2552c973562aa3f00d9a7f46786de4",
+  "raw_file": "docs/benchmarks/reuse-efficiency/approved-forms-live.jsonl",
+  "raw_sha256": "31fae20352048ef001554c29ebc3df3fb63afc3edc5f4ccc2abda67454beb6c5",
+  "provider_api_charge_usd": 0,
+  "paid_fallback_enabled": false,
+  "physical_hosts": 1,
+  "per_case": {
+    "support": {
+      "seed": {
+        "calls": 1,
+        "quality_passed": 1,
+        "generation_calls": 1,
+        "input_tokens": 317,
+        "output_tokens": 27,
+        "withheld": 0
+      },
+      "replay": {
+        "calls": 2,
+        "quality_passed": 2,
+        "generation_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "withheld": 0
+      },
+      "baseline": {
+        "calls": 2,
+        "quality_passed": 2,
+        "generation_calls": 2,
+        "input_tokens": 632,
+        "output_tokens": 54,
+        "withheld": 0
+      }
+    },
+    "onboarding": {
+      "seed": {
+        "calls": 1,
+        "quality_passed": 1,
+        "generation_calls": 1,
+        "input_tokens": 296,
+        "output_tokens": 30,
+        "withheld": 0
+      },
+      "replay": {
+        "calls": 2,
+        "quality_passed": 2,
+        "generation_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "withheld": 0
+      },
+      "baseline": {
+        "calls": 2,
+        "quality_passed": 2,
+        "generation_calls": 2,
+        "input_tokens": 596,
+        "output_tokens": 60,
+        "withheld": 0
+      }
+    },
+    "incident": {
+      "seed": {
+        "calls": 1,
+        "quality_passed": 1,
+        "generation_calls": 1,
+        "input_tokens": 302,
+        "output_tokens": 26,
+        "withheld": 0
+      },
+      "replay": {
+        "calls": 2,
+        "quality_passed": 2,
+        "generation_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "withheld": 0
+      },
+      "baseline": {
+        "calls": 2,
+        "quality_passed": 2,
+        "generation_calls": 2,
+        "input_tokens": 612,
+        "output_tokens": 52,
+        "withheld": 0
+      }
+    },
+    "release": {
+      "seed": {
+        "calls": 1,
+        "quality_passed": 1,
+        "generation_calls": 1,
+        "input_tokens": 303,
+        "output_tokens": 28,
+        "withheld": 0
+      },
+      "replay": {
+        "calls": 2,
+        "quality_passed": 2,
+        "generation_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "withheld": 0
+      },
+      "baseline": {
+        "calls": 2,
+        "quality_passed": 1,
+        "generation_calls": 2,
+        "input_tokens": 610,
+        "output_tokens": 58,
+        "withheld": 0
+      }
+    },
+    "refund": {
+      "seed": {
+        "calls": 1,
+        "quality_passed": 0,
+        "generation_calls": 1,
+        "input_tokens": 350,
+        "output_tokens": 38,
+        "withheld": 0
+      },
+      "replay": {
+        "calls": 0,
+        "quality_passed": 0,
+        "generation_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "withheld": 2
+      },
+      "baseline": {
+        "calls": 2,
+        "quality_passed": 0,
+        "generation_calls": 2,
+        "input_tokens": 705,
+        "output_tokens": 76,
+        "withheld": 0
+      }
+    },
+    "broker": {
+      "seed": {
+        "calls": 1,
+        "quality_passed": 1,
+        "generation_calls": 1,
+        "input_tokens": 337,
+        "output_tokens": 36,
+        "withheld": 0
+      },
+      "replay": {
+        "calls": 2,
+        "quality_passed": 2,
+        "generation_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "withheld": 0
+      },
+      "baseline": {
+        "calls": 2,
+        "quality_passed": 2,
+        "generation_calls": 2,
+        "input_tokens": 678,
+        "output_tokens": 72,
+        "withheld": 0
+      }
+    }
+  },
+  "totals": {
+    "baseline": {
+      "calls": 12,
+      "generation_calls": 12,
+      "quality_passed": 9,
+      "withheld": 0,
+      "input_tokens": 3833,
+      "output_tokens": 372,
+      "usage_unknown": false
+    },
+    "replay": {
+      "calls": 10,
+      "generation_calls": 0,
+      "quality_passed": 10,
+      "withheld": 2,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "usage_unknown": false
+    },
+    "seed": {
+      "calls": 6,
+      "generation_calls": 6,
+      "quality_passed": 5,
+      "withheld": 0,
+      "input_tokens": 1905,
+      "output_tokens": 185,
+      "usage_unknown": false
+    }
+  },
+  "completed_without_errors": false,
+  "interpretation": "Five of six canonical sources passed. Ten approved repeats passed at zero new generation/embedding/verifier tokens; two refund repeats were withheld after arithmetic failure. Nine of twelve fresh baselines passed. Never call this a twelve-of-twelve quality or savings win.",
+  "matched_comparison": {
+    "rule": "Post-run subset with one passing seed, two passing repeats and both passing fresh baselines. All omitted cases and costs retained above; no semantic precision/general workload claim.",
+    "cases": [
+      "support",
+      "onboarding",
+      "incident",
+      "broker"
+    ],
+    "target_tasks": 8,
+    "fresh_generation_tokens": 2756,
+    "replay_generation_tokens": 0,
+    "seed_generation_tokens": 1371,
+    "seed_plus_replay_reduction": 0.5025399129172714
+  },
+  "factual_failures": {
+    "refund": "Seed and both baselines returned refundable_cents1200; required3*2700-1500=6600. Whole-object check failed and two repeats were withheld.",
+    "release": "One baseline returned release value \"version 2.8.1\" rather than the required exact identifier \"2.8.1\"; whole-object check failed."
+  },
+  "review": "Automated declared JSON checks; independent release-controller factual/accounting review approved against the raw data hash; no human acceptance/effort asserted."
+}

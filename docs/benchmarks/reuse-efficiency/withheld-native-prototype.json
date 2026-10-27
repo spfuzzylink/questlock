@@ -1,0 +1,1024 @@
+{
+  "schema": 1,
+  "disposition": "Unreleased and withheld pair-serving prototype. Not evidence of net savings at equal quality.",
+  "source_manifest_sha256": "e989d8e74318f4a6ac3e5788fc5a1259584bd6ca73682952d31b16ebc949f826",
+  "batch_report_sha256": "923b436c36691ec5705326cade8ec6465f6fa72e4c791c91ae017fd2fc0ae711",
+  "review": {
+    "schema": 1,
+    "manifest_sha256": "e989d8e74318f4a6ac3e5788fc5a1259584bd6ca73682952d31b16ebc949f826",
+    "automated_review": true,
+    "human_acceptance": false,
+    "basis": "Primary agent and independent release-controller evidence-grounded review of exact preparation packet; conservative intersection of assessments. Check arithmetic, roles, timing, scope, requested format and unsupported assertions. This is an automated review, not human acceptance or a measured human-effort cost. All 18 answers retained; no regeneration to repair failures.",
+    "cases": [
+      {
+        "case_id": "ind-faq-r8n4",
+        "source_passed": true,
+        "baselines_passed": [
+          true,
+          true
+        ],
+        "notes": "Source and both baselines preserve coverage, channels, first-human-response versus resolution guarantee, and ticket requirements."
+      },
+      {
+        "case_id": "ind-onboard-qk6194",
+        "source_passed": true,
+        "baselines_passed": [
+          false,
+          true
+        ],
+        "notes": "Source preserves Ren training/certificate, Nomi verification/clearance, then Maya enablement and approved scope. Baseline0 wrongly assigns verification/clearance to Maya; baseline1 preserves the roles and sequence."
+      },
+      {
+        "case_id": "ind-incident-uv7351",
+        "source_passed": true,
+        "baselines_passed": [
+          false,
+          false
+        ],
+        "notes": "Source preserves open incident, recovery timestamps, hypothesis, checkpoint and no user action. Baseline0 incorrectly says latency is currently elevated. Baseline1 says writes were unaffected throughout, broader than the evidence of accepted writes and no lost writes."
+      },
+      {
+        "case_id": "ind-release-wt8642",
+        "source_passed": true,
+        "baselines_passed": [
+          false,
+          false
+        ],
+        "notes": "Source preserves production Hold, gate owners/evidence, conditional signoff, and allowed staging. Baseline0 labels an unrun rehearsal a failure, omits allowed staging and violates prose format. Baseline1 assigns gate-report acceptance authority to Sal not stated in the record; missing measurements in this record do not establish no measurements anywhere."
+      },
+      {
+        "case_id": "ind-refund-lp5786",
+        "source_passed": false,
+        "baselines_passed": [
+          false,
+          false
+        ],
+        "notes": "All three state USD71 but explain 78 minus 9 minus 7, which is62 and deducts nonrefundable outbound shipping twice. Correct refund is84 minus6 minus7=71 or78 minus7=71. The source is withheld despite completed format checks."
+      },
+      {
+        "case_id": "ind-broker-dz9463",
+        "source_passed": true,
+        "baselines_passed": [
+          false,
+          false
+        ],
+        "notes": "Source preserves pending owner, version/receipt/Done transition, and uncertainty. Baseline0 invents unowned claim despite worker-rill ownership. Baseline1 invents claim release on success, absent from the fully defining fictional policy."
+      }
+    ]
+  },
+  "source_and_baselines": [
+    {
+      "case_id": "ind-faq-r8n4",
+      "family": "supportFAQ",
+      "omission": null,
+      "source_indexed": true,
+      "source": {
+        "instructions": "Use only FAQ-R8N4. Explain the applicable policy accurately in short prose. Distinguish a first-human-response target from a guaranteed resolution time. Give read-only guidance; do not claim to have contacted support.",
+        "question": "Using FAQ-R8N4, explain to a Beacon workspace administrator how to get support for a service-wide outage, including coverage, allowed channels, first-human-response target, and what to include in the ticket. Use a short prose explanation.",
+        "context": [
+          {
+            "id": "approved-evidence",
+            "text": "Synthetic Nettlebridge support FAQ, revision FAQ-R8N4. The Beacon workspace plan has staffed support Monday 00:00 through Friday 23:59 UTC. Beacon administrators may open a support ticket through the authenticated portal or email help@nettlebridge.example; telephone support is not offered. The first human response target is four staffed hours, measured only inside that coverage window; this is not a resolution guarantee. For a service-wide outage, mark the ticket Critical and include the workspace ID, the UTC time the outage began, and an example failed request ID. Do not include secrets. Meadow workspaces instead have staffed support Monday through Friday 09:00-17:00 UTC and a first human response target of one business day. This FAQ gives no guaranteed resolution time and no escalation contact beyond the portal and email.",
+            "required": true,
+            "stable": true
+          }
+        ],
+        "status": "completed",
+        "text": "Beacon administrators can request staffed support via the authenticated portal or by emailing help@nettlebridge.example; telephone support is unavailable. Coverage runs Monday through Friday from 00:00 to 23:59 UTC, with a first human response target of four staffed hours within that window. This timeframe does not guarantee full resolution. For service-wide outages, you must mark the ticket Critical and provide the workspace ID, the exact UTC time the outage began, and an example failed request ID. Do not include secrets in your submission.",
+        "error": null
+      },
+      "baselines": [
+        {
+          "instructions": "Use only FAQ-R8N4. Explain the applicable policy accurately in short prose. Distinguish a first-human-response target from a guaranteed resolution time. Give read-only guidance; do not claim to have contacted support.",
+          "question": "Using FAQ-R8N4, give a Beacon administrator a short prose guide to requesting help with a service-wide outage: support hours, contact routes, first-response target, and ticket details.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Nettlebridge support FAQ, revision FAQ-R8N4. The Beacon workspace plan has staffed support Monday 00:00 through Friday 23:59 UTC. Beacon administrators may open a support ticket through the authenticated portal or email help@nettlebridge.example; telephone support is not offered. The first human response target is four staffed hours, measured only inside that coverage window; this is not a resolution guarantee. For a service-wide outage, mark the ticket Critical and include the workspace ID, the UTC time the outage began, and an example failed request ID. Do not include secrets. Meadow workspaces instead have staffed support Monday through Friday 09:00-17:00 UTC and a first human response target of one business day. This FAQ gives no guaranteed resolution time and no escalation contact beyond the portal and email.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "Beacon administrators should submit a support ticket via the authenticated portal or email help@nettlebridge.example, as telephone support is unavailable. Staffed assistance is available Monday through Friday from 00:00 to 23:59 UTC. For service-wide outages, mark the ticket Critical and include the workspace ID, the exact UTC time the outage began, and an example failed request ID. The first human response target is four staffed hours within the coverage window; this timeframe does not guarantee a full resolution. This FAQ provides no guaranteed resolution time or additional escalation contacts beyond the portal and email channels.",
+          "error": null
+        },
+        {
+          "instructions": "Use only FAQ-R8N4. Explain the applicable policy accurately in short prose. Distinguish a first-human-response target from a guaranteed resolution time. Give read-only guidance; do not claim to have contacted support.",
+          "question": "A Beacon workspace has a service-wide outage. From FAQ-R8N4, briefly explain how its administrator should reach support, when staff are available, how soon the first human reply is targeted, and what the ticket needs.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Nettlebridge support FAQ, revision FAQ-R8N4. The Beacon workspace plan has staffed support Monday 00:00 through Friday 23:59 UTC. Beacon administrators may open a support ticket through the authenticated portal or email help@nettlebridge.example; telephone support is not offered. The first human response target is four staffed hours, measured only inside that coverage window; this is not a resolution guarantee. For a service-wide outage, mark the ticket Critical and include the workspace ID, the UTC time the outage began, and an example failed request ID. Do not include secrets. Meadow workspaces instead have staffed support Monday through Friday 09:00-17:00 UTC and a first human response target of one business day. This FAQ gives no guaranteed resolution time and no escalation contact beyond the portal and email.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "Beacon administrators should submit a ticket via the authenticated portal or email help@nettlebridge.example; telephone support is unavailable. Staffed support operates Monday through Friday from 00:00 to 23:59 UTC. The first human response target is four staffed hours, measured strictly within this coverage window and does not guarantee resolution. For a service-wide outage, the ticket must be marked Critical and include the workspace ID, the UTC time the outage began, and an example failed request ID.",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "ind-onboard-qk6194",
+      "family": "onboarding",
+      "omission": null,
+      "source_indexed": true,
+      "source": {
+        "instructions": "Use only onboarding record PV-6194-QK. Give a brief prose handoff with the remaining steps and owners, the enablement prerequisite, and approved access. Do not invent completed work or grant access.",
+        "question": "From PV-6194-QK, describe Ren Ibara's remaining onboarding steps and who owns them, when the account can be enabled, and the approved access scope. Use a brief prose handoff.",
+        "context": [
+          {
+            "id": "approved-evidence",
+            "text": "Synthetic Pipit Vale onboarding record PV-6194-QK, frozen at 2027-04-12 12:00 UTC. Ren Ibara is joining as a contract data analyst. Manager approval is complete, the managed laptop has been issued, and an SSO account has been created but is disabled. Ren must complete the compliance training and upload the completion certificate; the record contains no uploaded certificate. Buddy Nomi Cole must verify the uploaded certificate and record training clearance. Identity administrator Maya Reeve may enable SSO only after that clearance is recorded. Maya must then assign the already-approved Cerulean workspace membership and vault-viewer role. The vault-viewer role is read-only. Production access and vault-editor access are not approved. No other onboarding step remains in this record. Tova Senn is a separate employee whose onboarding status is not recorded here.",
+            "required": true,
+            "stable": true
+          }
+        ],
+        "status": "completed",
+        "text": "Ren Ibara's remaining onboarding step is to complete compliance training and upload the completion certificate to record PV-6194-QK; this action is owned by Ren. Once the certificate is uploaded, Buddy Nomi Cole must verify it and formally record the training clearance. Only after that verification is recorded can Identity Administrator Maya Reeve enable Ren's SSO account. Upon enabling the account, Maya will assign the pre-approved Cerulean workspace membership and vault-viewer role. The approved access scope is read-only for the vault; production access and vault-editor permissions are not granted. No other onboarding steps remain in this record.",
+        "error": null
+      },
+      "baselines": [
+        {
+          "instructions": "Use only onboarding record PV-6194-QK. Give a brief prose handoff with the remaining steps and owners, the enablement prerequisite, and approved access. Do not invent completed work or grant access.",
+          "question": "Summarize Ren Ibara's unfinished onboarding from PV-6194-QK in brief prose, including step owners, the account-enablement prerequisite, and approved permissions.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Pipit Vale onboarding record PV-6194-QK, frozen at 2027-04-12 12:00 UTC. Ren Ibara is joining as a contract data analyst. Manager approval is complete, the managed laptop has been issued, and an SSO account has been created but is disabled. Ren must complete the compliance training and upload the completion certificate; the record contains no uploaded certificate. Buddy Nomi Cole must verify the uploaded certificate and record training clearance. Identity administrator Maya Reeve may enable SSO only after that clearance is recorded. Maya must then assign the already-approved Cerulean workspace membership and vault-viewer role. The vault-viewer role is read-only. Production access and vault-editor access are not approved. No other onboarding step remains in this record. Tova Senn is a separate employee whose onboarding status is not recorded here.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "Ren Ibara's onboarding process is currently paused at the compliance training stage; while manager approval is complete and a managed laptop has been issued, Ren must upload the completion certificate for their SSO account to be enabled by Identity Administrator Maya Reeve. Once Maya verifies the certificate and records the clearance, she will assign the pre-approved Cerulean workspace membership and vault-viewer role. Please note that access remains restricted to read-only permissions via the vault-viewer role; production access and vault-editor privileges are not approved. No further onboarding steps exist within this record.",
+          "error": null
+        },
+        {
+          "instructions": "Use only onboarding record PV-6194-QK. Give a brief prose handoff with the remaining steps and owners, the enablement prerequisite, and approved access. Do not invent completed work or grant access.",
+          "question": "Based on PV-6194-QK, walk through what remains before Ren Ibara is onboarded, with the responsible people, account-enable condition, and allowed scope. Use brief prose.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Pipit Vale onboarding record PV-6194-QK, frozen at 2027-04-12 12:00 UTC. Ren Ibara is joining as a contract data analyst. Manager approval is complete, the managed laptop has been issued, and an SSO account has been created but is disabled. Ren must complete the compliance training and upload the completion certificate; the record contains no uploaded certificate. Buddy Nomi Cole must verify the uploaded certificate and record training clearance. Identity administrator Maya Reeve may enable SSO only after that clearance is recorded. Maya must then assign the already-approved Cerulean workspace membership and vault-viewer role. The vault-viewer role is read-only. Production access and vault-editor access are not approved. No other onboarding step remains in this record. Tova Senn is a separate employee whose onboarding status is not recorded here.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "The remaining onboarding steps for Ren Ibara are sequential and strictly gated by compliance verification. First, **Ren Ibara** must complete the mandatory compliance training and upload the completion certificate to the record, as the current state shows no certificate has been uploaded yet. Once this is done, **Buddy Nomi Cole** is responsible for verifying the uploaded certificate and formally recording the training clearance. Only after Buddy's verification is recorded can **Identity Administrator Maya Reeve** proceed; she must then enable Ren's SSO account, which is currently disabled. Following SSO activation, Maya will assign the pre-approved **Cerulean workspace membership** and **vault-viewer role**. It is important to note that production access and vault-editor access are not approved for this record. No further onboarding steps exist in PV-6194-QK; Tova Senn's status remains unrelated to this process.",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "ind-incident-uv7351",
+      "family": "incident",
+      "omission": null,
+      "source_indexed": true,
+      "source": {
+        "instructions": "Use only incident snapshot IR-7351-UV. Give a concise prose status update. Preserve distinctions between observed recovery, incident closure, and an unconfirmed root-cause hypothesis. Do not claim to operate the service.",
+        "question": "Using IR-7351-UV at 19:36 UTC, give a concise prose update on current incident status, user impact, mitigation and observed recovery, root-cause certainty, the next checkpoint, and whether users need to act.",
+        "context": [
+          {
+            "id": "approved-evidence",
+            "text": "Synthetic Orchid Ferry incident IR-7351-UV, status snapshot at 2027-06-18 19:36 UTC. An alert fired at 19:10 UTC. From 19:10 to 19:26 UTC, European users experienced delayed reads; writes were accepted and the snapshot reports no lost writes. At 19:18 UTC, the on-call team shifted read traffic to the standby pool. Read latency returned to its normal range at 19:26 UTC and the error rate returned to its normal range at 19:34 UTC. The incident remains open in Monitoring at 19:36 UTC. The next status checkpoint is 19:49 UTC; there is no status after 19:36 UTC in this snapshot. Queue saturation is a working hypothesis, not a confirmed root cause. Users do not need to take action. No rollback was performed.",
+            "required": true,
+            "stable": true
+          }
+        ],
+        "status": "completed",
+        "text": "At 19:36 UTC, the Synthetic Orchid Ferry incident remains open following an alert at 19:10 UTC. European users experienced delayed reads between 19:10 and 19:26 UTC; however, writes were accepted with no data loss reported. Mitigation was achieved by shifting read traffic to the standby pool at 19:18 UTC, resulting in normal latency by 19:26 UTC and a return to baseline error rates by 19:34 UTC. While queue saturation is a working hypothesis for the root cause, it remains unconfirmed. The next status checkpoint is scheduled for 19:49 UTC. No user action is required.",
+        "error": null
+      },
+      "baselines": [
+        {
+          "instructions": "Use only incident snapshot IR-7351-UV. Give a concise prose status update. Preserve distinctions between observed recovery, incident closure, and an unconfirmed root-cause hypothesis. Do not claim to operate the service.",
+          "question": "From IR-7351-UV at 19:36 UTC, briefly update readers in prose on incident state, user impact, mitigation, recovery observations, root-cause certainty, the next checkpoint, and required user action.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Orchid Ferry incident IR-7351-UV, status snapshot at 2027-06-18 19:36 UTC. An alert fired at 19:10 UTC. From 19:10 to 19:26 UTC, European users experienced delayed reads; writes were accepted and the snapshot reports no lost writes. At 19:18 UTC, the on-call team shifted read traffic to the standby pool. Read latency returned to its normal range at 19:26 UTC and the error rate returned to its normal range at 19:34 UTC. The incident remains open in Monitoring at 19:36 UTC. The next status checkpoint is 19:49 UTC; there is no status after 19:36 UTC in this snapshot. Queue saturation is a working hypothesis, not a confirmed root cause. Users do not need to take action. No rollback was performed.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "The Synthetic Orchid Ferry service is currently experiencing a read performance degradation affecting European users, with latency elevated since 19:10 UTC; however, writes remain fully operational with no data loss reported. Mitigation was executed at 19:18 UTC by shifting read traffic to the standby pool, resulting in normal latency and error rates returning to baseline by 19:26 UTC and 19:34 UTC respectively. While queue saturation remains a working hypothesis for the root cause, it has not been confirmed; no rollback was performed. The incident status is open as of 19:36 UTC, with the next checkpoint scheduled for 19:49 UTC. No action is required from users.",
+          "error": null
+        },
+        {
+          "instructions": "Use only incident snapshot IR-7351-UV. Give a concise prose status update. Preserve distinctions between observed recovery, incident closure, and an unconfirmed root-cause hypothesis. Do not claim to operate the service.",
+          "question": "Please summarize IR-7351-UV as of 19:36 UTC in concise prose: current state, affected users, mitigation and recovery, certainty about the cause, next checkpoint, and whether users should do anything.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Orchid Ferry incident IR-7351-UV, status snapshot at 2027-06-18 19:36 UTC. An alert fired at 19:10 UTC. From 19:10 to 19:26 UTC, European users experienced delayed reads; writes were accepted and the snapshot reports no lost writes. At 19:18 UTC, the on-call team shifted read traffic to the standby pool. Read latency returned to its normal range at 19:26 UTC and the error rate returned to its normal range at 19:34 UTC. The incident remains open in Monitoring at 19:36 UTC. The next status checkpoint is 19:49 UTC; there is no status after 19:36 UTC in this snapshot. Queue saturation is a working hypothesis, not a confirmed root cause. Users do not need to take action. No rollback was performed.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "As of 19:36 UTC, the Synthetic Orchid Ferry incident (IR-7351-UV) remains open in Monitoring following a read latency spike affecting European users between 19:10 and 19:26 UTC. Mitigation was achieved when the on-call team shifted read traffic to the standby pool at 19:18 UTC, restoring normal latency by 19:26 UTC and error rates by 19:34 UTC; writes were unaffected throughout, and no rollback occurred. While queue saturation is a working hypothesis for the root cause, it remains unconfirmed. The next status checkpoint is scheduled for 19:49 UTC. No action is required from users.",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "ind-release-wt8642",
+      "family": "release-readiness",
+      "omission": null,
+      "source_indexed": true,
+      "source": {
+        "instructions": "Use only release record RC-MH-8642-WT. Give a brief prose production-readiness assessment with blockers, owners, and evidence required to clear them. Distinguish permitted staging work from permission to deploy to production. Do not approve or deploy a release.",
+        "question": "Using RC-MH-8642-WT, assess whether Mica Harbor 2.6.3 is ready for production, what blocks it, who owns the remaining work, and what evidence is needed before signoff. Use brief prose.",
+        "context": [
+          {
+            "id": "approved-evidence",
+            "text": "Synthetic Mica Harbor release record RC-MH-8642-WT for version 2.6.3, frozen at 2027-08-09 14:20 UTC. Unit tests have passed, the release signature has been verified, and the SBOM is complete. The staging smoke test has passed; further staging validation is permitted. Production deployment is on Hold. Two production gates remain: a migration rehearsal for tenant Cedar has not been run, and the peak-load test failed its latency limit. Inez Daro owns the migration gate and must attach a successful tenant Cedar rehearsal report with a demonstrated rollback. Remy Vale owns the load gate and must attach a passing peak-load test report meeting the latency limit. Release manager Sal Rook may record production signoff only after both gate reports are accepted. No production signoff is recorded. The record gives no predicted completion time and no numeric latency measurements.",
+            "required": true,
+            "stable": true
+          }
+        ],
+        "status": "completed",
+        "text": "Mica Harbor 2.6.3 is not currently ready for production deployment; while unit tests passed, the release signature is verified, and the SBOM is complete with staging smoke tests successful, two critical production gates remain open. The migration rehearsal gate for tenant Cedar is blocked by Inez Daro, who must provide a successful tenant Cedar rehearsal report demonstrating a functional rollback before this block is cleared. Additionally, the peak-load test gate is blocked by Remy Vale, who must attach a passing peak-load test report meeting the required latency limit; currently, this test has failed and no completion time is predicted. Release manager Sal Rook cannot record production signoff until both gate reports are accepted. Permitted staging work continues as further validation is allowed, but permission to deploy to production remains strictly on hold pending these evidentiary requirements.",
+        "error": null
+      },
+      "baselines": [
+        {
+          "instructions": "Use only release record RC-MH-8642-WT. Give a brief prose production-readiness assessment with blockers, owners, and evidence required to clear them. Distinguish permitted staging work from permission to deploy to production. Do not approve or deploy a release.",
+          "question": "From RC-MH-8642-WT, give a brief prose assessment of Mica Harbor 2.6.3 production readiness, its blockers and owners, and the evidence required before signoff.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Mica Harbor release record RC-MH-8642-WT for version 2.6.3, frozen at 2027-08-09 14:20 UTC. Unit tests have passed, the release signature has been verified, and the SBOM is complete. The staging smoke test has passed; further staging validation is permitted. Production deployment is on Hold. Two production gates remain: a migration rehearsal for tenant Cedar has not been run, and the peak-load test failed its latency limit. Inez Daro owns the migration gate and must attach a successful tenant Cedar rehearsal report with a demonstrated rollback. Remy Vale owns the load gate and must attach a passing peak-load test report meeting the latency limit. Release manager Sal Rook may record production signoff only after both gate reports are accepted. No production signoff is recorded. The record gives no predicted completion time and no numeric latency measurements.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "**Production Readiness Assessment: Mica Harbor 2.6.3 (RC-MH-8642-WT)**\n\nThe release of Mica Harbor version 2.6.3 is currently **not production-ready**. While foundational quality gates have been met\u2014including passing unit tests, a verified release signature, and a complete SBOM\u2014the deployment to production remains on hold due to two critical operational blockers.\n\n**Blockers and Owners:**\n1.  **Migration Rehearsal Failure**: The mandatory migration rehearsal for tenant Cedar has not yet been executed. This gate is owned by **Inez Daro**.\n2.  **Peak-Load Latency Violation**: The peak-load test failed to meet the required latency limits, indicating performance instability under load. This gate is owned by **Remy Vale**.\n\n**Evidence Required for Signoff:**\nTo clear these blockers and proceed toward production signoff, the following evidence must be submitted:\n*   A successful tenant Cedar migration rehearsal report from **Inez Daro**, explicitly demonstrating a verified rollback capability.\n*   A passing peak-load test report from **Remy Vale** confirming that latency limits are now met.\n\nOnly after both gate reports are accepted can Release Manager **Sal Rook** record the final production signoff. No deployment or signoff is permitted until these artifacts are provided.",
+          "error": null
+        },
+        {
+          "instructions": "Use only release record RC-MH-8642-WT. Give a brief prose production-readiness assessment with blockers, owners, and evidence required to clear them. Distinguish permitted staging work from permission to deploy to production. Do not approve or deploy a release.",
+          "question": "Write a short prose handoff on RC-MH-8642-WT: whether Mica Harbor 2.6.3 can enter production, remaining blockers, their owners, and evidence to clear them before signoff.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Mica Harbor release record RC-MH-8642-WT for version 2.6.3, frozen at 2027-08-09 14:20 UTC. Unit tests have passed, the release signature has been verified, and the SBOM is complete. The staging smoke test has passed; further staging validation is permitted. Production deployment is on Hold. Two production gates remain: a migration rehearsal for tenant Cedar has not been run, and the peak-load test failed its latency limit. Inez Daro owns the migration gate and must attach a successful tenant Cedar rehearsal report with a demonstrated rollback. Remy Vale owns the load gate and must attach a passing peak-load test report meeting the latency limit. Release manager Sal Rook may record production signoff only after both gate reports are accepted. No production signoff is recorded. The record gives no predicted completion time and no numeric latency measurements.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "Based on the release record **RC-MH-8642-WT** for version 2.6.3, Mica Harbor cannot currently enter production. While unit tests have passed, the signature is verified, and the SBOM is complete, the staging smoke test success does not override the two critical production gates that remain in a \"Hold\" state.\n\nThe primary blocker preventing deployment is the **migration rehearsal** for tenant Cedar, which has not yet been executed. This gate is owned by **Inez Daro**, who must provide a successful tenant Cedar rehearsal report explicitly demonstrating a functional rollback capability before this issue can be cleared. The second blocker is the **peak-load test failure**, where the release did not meet its latency limit; this gate is owned by **Remy Vale** and requires a passing peak-load test report that proves compliance with the defined latency thresholds.\n\nRegarding work permissions, **permitted staging work** (such as further validation or additional testing) remains active for the team, as the record explicitly allows \"further staging validation.\" However, there is **no permission to deploy to production** until both gate reports are accepted by Release Manager Sal Rook. No predicted completion time is available in the record, and no numeric latency measurements have been recorded yet. Production signoff remains unrecorded.",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "ind-refund-lp5786",
+      "family": "refund",
+      "omission": null,
+      "source_indexed": true,
+      "source": {
+        "instructions": "Use only return record MC-5786-LP and the policy stated in it. Explain eligibility as conditional on warehouse inspection, calculate the estimated refund in USD, and state method and processing time in short prose. Do not issue a refund or imply approval has happened.",
+        "question": "Using MC-5786-LP, explain the return's conditional eligibility, calculate the estimated refund and deductions in USD, and state the refund method and processing time. Use short prose.",
+        "context": [
+          {
+            "id": "approved-evidence",
+            "text": "Synthetic Mallow Cart return record MC-5786-LP. Order MC-5786-LP is one Sable Lamp, delivered 2027-09-03. The customer requested return on 2027-09-23, twenty days after delivery, and reports the item is unopened. The policy allows returns requested within thirty days after delivery only if warehouse inspection confirms the item is unopened. An opened item is ineligible under this policy; no exception is recorded. The item price was USD 84, a USD 6 promotion reduced the item payment to USD 78, and outbound shipping was USD 9. Outbound shipping is nonrefundable. The prepaid return label costs USD 7 and is deducted from the item payment when calculating a refund. If inspection passes, the refund goes to the original card within five business days after the warehouse accepts the return. Inspection has not occurred, the warehouse has not accepted the return, and no refund has been approved or issued. The policy gives no expedited processing option.",
+            "required": true,
+            "stable": true
+          }
+        ],
+        "status": "completed",
+        "text": "Return eligibility for order MC-5786-LP is conditional upon a successful warehouse inspection confirming the item remains unopened; an opened item would be ineligible under current policy. If the inspection passes, the estimated refund is USD 71, calculated by subtracting the nonrefundable outbound shipping of USD 9 and the prepaid return label cost of USD 7 from the net payment amount of USD 78. The refund will be processed via the original card within five business days after the warehouse accepts the return, with no expedited options available.",
+        "error": null
+      },
+      "baselines": [
+        {
+          "instructions": "Use only return record MC-5786-LP and the policy stated in it. Explain eligibility as conditional on warehouse inspection, calculate the estimated refund in USD, and state method and processing time in short prose. Do not issue a refund or imply approval has happened.",
+          "question": "From MC-5786-LP, briefly explain in prose whether the return qualifies conditionally, the estimated USD refund calculation and deductions, and the payment method and processing time.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Mallow Cart return record MC-5786-LP. Order MC-5786-LP is one Sable Lamp, delivered 2027-09-03. The customer requested return on 2027-09-23, twenty days after delivery, and reports the item is unopened. The policy allows returns requested within thirty days after delivery only if warehouse inspection confirms the item is unopened. An opened item is ineligible under this policy; no exception is recorded. The item price was USD 84, a USD 6 promotion reduced the item payment to USD 78, and outbound shipping was USD 9. Outbound shipping is nonrefundable. The prepaid return label costs USD 7 and is deducted from the item payment when calculating a refund. If inspection passes, the refund goes to the original card within five business days after the warehouse accepts the return. Inspection has not occurred, the warehouse has not accepted the return, and no refund has been approved or issued. The policy gives no expedited processing option.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "Return eligibility for order MC-5786-LP is conditional upon a successful warehouse inspection confirming the item remains unopened; currently, no refund has been approved as inspection has not occurred. If the item passes inspection, the estimated refund would be USD 71, calculated by taking the original payment of USD 78 and subtracting the nonrefundable outbound shipping fee of USD 9 and the prepaid return label cost of USD 7. The refund would be issued to the original card used for payment within five business days after the warehouse accepts the return, with no expedited processing option available.",
+          "error": null
+        },
+        {
+          "instructions": "Use only return record MC-5786-LP and the policy stated in it. Explain eligibility as conditional on warehouse inspection, calculate the estimated refund in USD, and state method and processing time in short prose. Do not issue a refund or imply approval has happened.",
+          "question": "What does MC-5786-LP imply for this return's eligibility pending inspection, expected refund amount and deductions in USD, refund destination, and processing time? Answer in short prose.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Mallow Cart return record MC-5786-LP. Order MC-5786-LP is one Sable Lamp, delivered 2027-09-03. The customer requested return on 2027-09-23, twenty days after delivery, and reports the item is unopened. The policy allows returns requested within thirty days after delivery only if warehouse inspection confirms the item is unopened. An opened item is ineligible under this policy; no exception is recorded. The item price was USD 84, a USD 6 promotion reduced the item payment to USD 78, and outbound shipping was USD 9. Outbound shipping is nonrefundable. The prepaid return label costs USD 7 and is deducted from the item payment when calculating a refund. If inspection passes, the refund goes to the original card within five business days after the warehouse accepts the return. Inspection has not occurred, the warehouse has not accepted the return, and no refund has been approved or issued. The policy gives no expedited processing option.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "Eligibility for the return of order MC-5786-LP is conditional upon a successful warehouse inspection confirming the item remains unopened; an opened item would be ineligible under current policy. If approved, the estimated refund amount is USD 71, calculated by subtracting the nonrefundable outbound shipping (USD 9) and prepaid return label cost (USD 7) from the net item payment of USD 78. The refund will be issued to the original card used for purchase, with processing occurring within five business days after the warehouse accepts the return. No refund has been issued or approved pending inspection results.",
+          "error": null
+        }
+      ]
+    },
+    {
+      "case_id": "ind-broker-dz9463",
+      "family": "brokerlifecycle",
+      "omission": null,
+      "source_indexed": true,
+      "source": {
+        "instructions": "Use only synthetic broker snapshot PG-9463-DZ. Explain the read-only lifecycle state, reuse eligibility, allowed success transition, and uncertain-outcome behavior in brief prose. Do not claim to mutate broker state. The snapshot defines the fictional broker policy completely for this question.",
+        "question": "Using PG-9463-DZ at 11:09 UTC, explain the task's lifecycle state, whether the visible artifact is reusable for this task, the legitimate success transition, and what failure, deadline expiry, or an unknown outcome does. Use brief prose.",
+        "context": [
+          {
+            "id": "approved-evidence",
+            "text": "Synthetic Plover Gate broker snapshot PG-9463-DZ at 11:09 UTC. In scope pg-lumen, task TK-9463-DZ has a Pending claim owned by worker-rill since 11:05 UTC, with a recorded deadline of 11:15 UTC. There are no leases and no automatic takeover. Artifact brief has a visible complete version 4, but it is not reusable for this task while its claim is Pending; no completion receipt exists. A successful worker may submit checked publication using expected version 4. On success the broker atomically publishes artifact version 5, creates the completion receipt, and moves the task to Done. A failed checked publication leaves version 4 and the Pending claim unchanged. Deadline expiry or an unknown worker outcome also leaves the claim Pending for operator reconciliation; it does not authorize a fresh generation or clear the claim. This snapshot records no actual checked-publication attempt and no later result. Members of pg-lumen share read and write authority within that scope; the record states no per-task access controls.",
+            "required": true,
+            "stable": true
+          }
+        ],
+        "status": "completed",
+        "text": "Based on snapshot PG-9463-DZ at 11:09 UTC, the task **TK-9463-DZ** resides in a **Pending** state, owned by worker-rill with a deadline of 11:15 UTC. The visible artifact (version 4) is **not reusable** for this specific task because its claim remains Pending; only a successful completion can unlock future reuse. The legitimate success transition occurs when a worker submits a checked publication using expected version 4, causing the broker to atomically publish artifact version 5, create a completion receipt, and move the task to **Done**. Conversely, any failed publication leaves the artifact at version 4 and the claim in Pending without change. Similarly, deadline expiry or an unknown worker outcome also results in the claim remaining **Pending** for operator reconciliation; these events do not authorize fresh generation or clear the claim.",
+        "error": null
+      },
+      "baselines": [
+        {
+          "instructions": "Use only synthetic broker snapshot PG-9463-DZ. Explain the read-only lifecycle state, reuse eligibility, allowed success transition, and uncertain-outcome behavior in brief prose. Do not claim to mutate broker state. The snapshot defines the fictional broker policy completely for this question.",
+          "question": "What does PG-9463-DZ at 11:09 UTC say about the task state and visible artifact reuse, a successful transition, and the result of failure, deadline expiry, or an unknown outcome? Explain briefly in prose.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Plover Gate broker snapshot PG-9463-DZ at 11:09 UTC. In scope pg-lumen, task TK-9463-DZ has a Pending claim owned by worker-rill since 11:05 UTC, with a recorded deadline of 11:15 UTC. There are no leases and no automatic takeover. Artifact brief has a visible complete version 4, but it is not reusable for this task while its claim is Pending; no completion receipt exists. A successful worker may submit checked publication using expected version 4. On success the broker atomically publishes artifact version 5, creates the completion receipt, and moves the task to Done. A failed checked publication leaves version 4 and the Pending claim unchanged. Deadline expiry or an unknown worker outcome also leaves the claim Pending for operator reconciliation; it does not authorize a fresh generation or clear the claim. This snapshot records no actual checked-publication attempt and no later result. Members of pg-lumen share read and write authority within that scope; the record states no per-task access controls.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "Under snapshot PG-9463-DZ, the task TK-9463-DZ resides in a **Pending** state with no active leases, meaning it remains available for operator reconciliation but is not currently owned by any worker. The visible artifact (version 4) exists but is **not reusable** for this specific task because its claim is Pending; only a successful completion can unlock future reuse. A **successful transition** occurs atomically when a worker submits a checked publication of version 4, resulting in the broker publishing artifact version 5, creating a completion receipt, and moving the task to **Done**. Conversely, any **failure**, **deadline expiry**, or **unknown outcome** leaves the claim stuck in **Pending** with version 4 unchanged; these events do not authorize fresh generation or clear the claim, requiring manual operator intervention rather than automatic state progression.",
+          "error": null
+        },
+        {
+          "instructions": "Use only synthetic broker snapshot PG-9463-DZ. Explain the read-only lifecycle state, reuse eligibility, allowed success transition, and uncertain-outcome behavior in brief prose. Do not claim to mutate broker state. The snapshot defines the fictional broker policy completely for this question.",
+          "question": "Please summarize the task lifecycle in PG-9463-DZ at 11:09 UTC in brief prose, including current state, artifact reuse, legitimate success, and behavior after failure, expiry, or an unknown result.",
+          "context": [
+            {
+              "id": "approved-evidence",
+              "text": "Synthetic Plover Gate broker snapshot PG-9463-DZ at 11:09 UTC. In scope pg-lumen, task TK-9463-DZ has a Pending claim owned by worker-rill since 11:05 UTC, with a recorded deadline of 11:15 UTC. There are no leases and no automatic takeover. Artifact brief has a visible complete version 4, but it is not reusable for this task while its claim is Pending; no completion receipt exists. A successful worker may submit checked publication using expected version 4. On success the broker atomically publishes artifact version 5, creates the completion receipt, and moves the task to Done. A failed checked publication leaves version 4 and the Pending claim unchanged. Deadline expiry or an unknown worker outcome also leaves the claim Pending for operator reconciliation; it does not authorize a fresh generation or clear the claim. This snapshot records no actual checked-publication attempt and no later result. Members of pg-lumen share read and write authority within that scope; the record states no per-task access controls.",
+              "required": true,
+              "stable": true
+            }
+          ],
+          "status": "completed",
+          "text": "At 11:09 UTC, the synthetic broker snapshot PG-9463-DZ places task TK-9463-DZ in a **Pending** state, held by worker-rill with a recorded deadline of 11:15 UTC. The current artifact (version 4) is **not reusable** for this specific task because its claim remains Pending; only a successful completion can unlock future reuse. A legitimate success requires a checked publication using expected version 4, which triggers an atomic transition to **Done**: the broker publishes artifact version 5, generates a completion receipt, and releases the claim. Conversely, any failed publication leaves the artifact at version 4 and the claim in **Pending** without modification. Similarly, if the deadline expires or the worker outcome is unknown, the state remains **Pending** for operator reconciliation; no fresh generation or automatic clearing occurs, preserving the original claim until resolved.",
+          "error": null
+        }
+      ]
+    }
+  ],
+  "candidate_review_packet": {
+    "manifest_sha256": "e989d8e74318f4a6ac3e5788fc5a1259584bd6ca73682952d31b16ebc949f826",
+    "batch_sha256": "923b436c36691ec5705326cade8ec6465f6fa72e4c791c91ae017fd2fc0ae711",
+    "families": [
+      {
+        "case_id": "ind-faq-r8n4",
+        "omission": null,
+        "deliveries": [
+          {
+            "index": 0,
+            "status": "completed",
+            "text_sha256": "6652824b1743c808d5d6de8da106b94f12788277a4d8a50c3f175b8eb62d68d3",
+            "equals_reviewed_source": false
+          },
+          {
+            "index": 1,
+            "status": "completed",
+            "text_sha256": "c57242ebdae467ed4aa2bfa8358373c0f08a2d12afd7760de8692ce0011f23aa",
+            "equals_reviewed_source": true
+          }
+        ],
+        "fresh_replacements": [
+          {
+            "question": "Using FAQ-R8N4, give a Beacon administrator a short prose guide to requesting help with a service-wide outage: support hours, contact routes, first-response target, and ticket details.",
+            "text": "Beacon administrators should submit a support ticket via the authenticated portal or email help@nettlebridge.example, as telephone support is unavailable. Staffed assistance is available Monday through Friday from 00:00 to 23:59 UTC. For service-wide outages, mark the ticket Critical and include the workspace ID, the exact UTC time the outage began, and an example failed request ID. The first human response target is four staffed hours within the coverage window; this timeframe does not guarantee a full resolution. This FAQ provides no guaranteed resolution time or additional escalation contacts beyond the portal and email channels.",
+            "status": "completed"
+          }
+        ],
+        "exact_replay_statuses": [
+          "completed",
+          "completed"
+        ]
+      },
+      {
+        "case_id": "ind-onboard-qk6194",
+        "omission": null,
+        "deliveries": [
+          {
+            "index": 0,
+            "status": "completed",
+            "text_sha256": "62db756cf79c261a5b584424883e0fab58abfc75f7487abd4c99d8101ee44a77",
+            "equals_reviewed_source": true
+          },
+          {
+            "index": 1,
+            "status": "completed",
+            "text_sha256": "62db756cf79c261a5b584424883e0fab58abfc75f7487abd4c99d8101ee44a77",
+            "equals_reviewed_source": true
+          }
+        ],
+        "fresh_replacements": [],
+        "exact_replay_statuses": [
+          "completed",
+          "completed",
+          "completed"
+        ]
+      },
+      {
+        "case_id": "ind-incident-uv7351",
+        "omission": null,
+        "deliveries": [
+          {
+            "index": 0,
+            "status": "completed",
+            "text_sha256": "96c2293e5b6df94c8b6a6c3cb02be79f7adfe6b43d1cb1bec78a429439474571",
+            "equals_reviewed_source": true
+          },
+          {
+            "index": 1,
+            "status": "completed",
+            "text_sha256": "96c2293e5b6df94c8b6a6c3cb02be79f7adfe6b43d1cb1bec78a429439474571",
+            "equals_reviewed_source": true
+          }
+        ],
+        "fresh_replacements": [],
+        "exact_replay_statuses": [
+          "completed",
+          "completed",
+          "completed"
+        ]
+      },
+      {
+        "case_id": "ind-release-wt8642",
+        "omission": null,
+        "deliveries": [
+          {
+            "index": 0,
+            "status": "completed",
+            "text_sha256": "e29095331617c898b1b9cc390a1025a8707eab10d3c279a5c00cdf6ad647e23d",
+            "equals_reviewed_source": true
+          },
+          {
+            "index": 1,
+            "status": "completed",
+            "text_sha256": "e29095331617c898b1b9cc390a1025a8707eab10d3c279a5c00cdf6ad647e23d",
+            "equals_reviewed_source": true
+          }
+        ],
+        "fresh_replacements": [],
+        "exact_replay_statuses": [
+          "completed",
+          "completed",
+          "completed"
+        ]
+      },
+      {
+        "case_id": "ind-refund-lp5786",
+        "omission": "source_not_passed_by_explicit_automated_review",
+        "deliveries": [],
+        "fresh_replacements": [],
+        "exact_replay_statuses": []
+      },
+      {
+        "case_id": "ind-broker-dz9463",
+        "omission": null,
+        "deliveries": [
+          {
+            "index": 0,
+            "status": "completed",
+            "text_sha256": "fba89368731132b0ed177c7a4fe9204734e2fe063c51c937bc7772ba396d0f53",
+            "equals_reviewed_source": true
+          },
+          {
+            "index": 1,
+            "status": "completed",
+            "text_sha256": "fba89368731132b0ed177c7a4fe9204734e2fe063c51c937bc7772ba396d0f53",
+            "equals_reviewed_source": true
+          }
+        ],
+        "fresh_replacements": [],
+        "exact_replay_statuses": [
+          "completed",
+          "completed",
+          "completed"
+        ]
+      }
+    ]
+  },
+  "costs": {
+    "seed_generation": {
+      "generation_calls": 6,
+      "input_tokens": 2034,
+      "output_tokens": 854,
+      "calls_with_unknown_usage": 0
+    },
+    "baseline_generation": {
+      "generation_calls": 12,
+      "input_tokens": 4008,
+      "output_tokens": 1983,
+      "calls_with_unknown_usage": 0
+    },
+    "candidate_generation_including_shared_verifier": {
+      "generation_calls": 6,
+      "input_tokens": 5180,
+      "output_tokens": 329,
+      "calls_with_unknown_usage": 0
+    },
+    "candidate_generation_including_seed_and_shared_verifier": {
+      "generation_calls": 12,
+      "input_tokens": 7214,
+      "output_tokens": 1183,
+      "calls_with_unknown_usage": 0
+    },
+    "exact_replay_generation": {
+      "generation_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "calls_with_unknown_usage": 0
+    },
+    "prepare_embedding_work_separate_token_units": {
+      "calls": 25,
+      "known_input_tokens": 1249,
+      "calls_with_unknown_tokens": 0
+    },
+    "batch_embedding_work_separate_token_units": {
+      "calls": 10,
+      "known_input_tokens": 482,
+      "calls_with_unknown_tokens": 0
+    }
+  },
+  "families": [
+    {
+      "case_id": "ind-faq-r8n4",
+      "family": "supportFAQ",
+      "omission": null,
+      "delivered": 2,
+      "completed_deliveries": 2,
+      "exact_replays": 2,
+      "shared_verification_calls": 1,
+      "fresh_replacements": 1
+    },
+    {
+      "case_id": "ind-onboard-qk6194",
+      "family": "onboarding",
+      "omission": null,
+      "delivered": 2,
+      "completed_deliveries": 2,
+      "exact_replays": 3,
+      "shared_verification_calls": 1,
+      "fresh_replacements": 0
+    },
+    {
+      "case_id": "ind-incident-uv7351",
+      "family": "incident",
+      "omission": null,
+      "delivered": 2,
+      "completed_deliveries": 2,
+      "exact_replays": 3,
+      "shared_verification_calls": 1,
+      "fresh_replacements": 0
+    },
+    {
+      "case_id": "ind-release-wt8642",
+      "family": "release-readiness",
+      "omission": null,
+      "delivered": 2,
+      "completed_deliveries": 2,
+      "exact_replays": 3,
+      "shared_verification_calls": 1,
+      "fresh_replacements": 0
+    },
+    {
+      "case_id": "ind-refund-lp5786",
+      "family": "refund",
+      "omission": "source_not_passed_by_explicit_automated_review",
+      "delivered": 0,
+      "completed_deliveries": 0,
+      "exact_replays": 0,
+      "shared_verification_calls": 0,
+      "fresh_replacements": 0
+    },
+    {
+      "case_id": "ind-broker-dz9463",
+      "family": "brokerlifecycle",
+      "omission": null,
+      "delivered": 2,
+      "completed_deliveries": 2,
+      "exact_replays": 3,
+      "shared_verification_calls": 1,
+      "fresh_replacements": 0
+    }
+  ],
+  "provider_api_charge_usd": 0,
+  "paid_fallback_enabled": false,
+  "limits": [
+    "Synthetic selected cohort, not independent production data.",
+    "Only five of six sources passed separate automated factual review; refund source withheld.",
+    "Only three of twelve fresh baselines passed strict factual/format review.",
+    "Ten candidate deliveries and twelve baseline deliveries are not equal completion populations.",
+    "Six seed generations are a real setup cost.",
+    "Fourteen subsequent exact replays made zero generation calls; no inference timing is assigned to them.",
+    "Review was automated; no human acceptance, human effort or total business cost is asserted."
+  ],
+  "model_work": [
+    {
+      "role": "seed",
+      "case_id": "ind-faq-r8n4",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 308,
+      "output_tokens": 112,
+      "reused": false,
+      "fingerprint": "29b76e134d996418f077989fe6300ab84eb9712441a9eed5e55a32d5f659ec33"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-faq-r8n4",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 298,
+      "output_tokens": 124,
+      "reused": false,
+      "fingerprint": "745bbccf1890f0504cae37941e5b07c2af138dfe02b8a62bedd7cbf59e389b52"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-faq-r8n4",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 305,
+      "output_tokens": 103,
+      "reused": false,
+      "fingerprint": "1e1da7d9097780ab68525ecd04902e70dd152cbd06d63fd72c5ce077cb7e3cb9"
+    },
+    {
+      "role": "seed",
+      "case_id": "ind-onboard-qk6194",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 314,
+      "output_tokens": 128,
+      "reused": false,
+      "fingerprint": "7927fd254b23edf7dde81ea3561117f1c8e96ef3ee9820fdcba27b602f17a77f"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-onboard-qk6194",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 307,
+      "output_tokens": 114,
+      "reused": false,
+      "fingerprint": "eb7350ed82cd741f9cfcb75f3ffa6c2459b0164b4391999f8f5cdd75d4c50820"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-onboard-qk6194",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 310,
+      "output_tokens": 182,
+      "reused": false,
+      "fingerprint": "752681cb6bdf9045a667a80816e239376ac7ae2bb380f79a58f139b7f6735d7e"
+    },
+    {
+      "role": "seed",
+      "case_id": "ind-incident-uv7351",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 343,
+      "output_tokens": 148,
+      "reused": false,
+      "fingerprint": "2b231da0fb5d8fe21298c84d1569d833466bd4f40398a4931c5e622e5429d4ae"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-incident-uv7351",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 340,
+      "output_tokens": 149,
+      "reused": false,
+      "fingerprint": "52c5b790eec86ad688e107ae441802bb31f64a84c0e29f4d819fc69ef23cd594"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-incident-uv7351",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 339,
+      "output_tokens": 151,
+      "reused": false,
+      "fingerprint": "89bb6896eef1b70af6d9471dade2226ba578d1602ccc493bc203a2e4a74e67ca"
+    },
+    {
+      "role": "seed",
+      "case_id": "ind-release-wt8642",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 337,
+      "output_tokens": 168,
+      "reused": false,
+      "fingerprint": "f0c798d032e7ec04d50847bf1f882e2d237b5b7d4da85c3107d2c1062a05c47d"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-release-wt8642",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 329,
+      "output_tokens": 278,
+      "reused": false,
+      "fingerprint": "515fe104cd37a281d681dd2246983a6edc49d4ade9395ceb4217b67358c95995"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-release-wt8642",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 333,
+      "output_tokens": 268,
+      "reused": false,
+      "fingerprint": "9d39a33b5eb5b24f0245daccdbd57458bfbcf30173f697e29931b85230b808b7"
+    },
+    {
+      "role": "seed",
+      "case_id": "ind-refund-lp5786",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 355,
+      "output_tokens": 112,
+      "reused": false,
+      "fingerprint": "0896435703b97e336562ef0e9539363a526e8c1a07c35b295c9c781598ae0ac7"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-refund-lp5786",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 353,
+      "output_tokens": 122,
+      "reused": false,
+      "fingerprint": "649de949fc9578dc54d598aabb7559d6f774781914ee9d5370ab972d9c9bf6e7"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-refund-lp5786",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 355,
+      "output_tokens": 127,
+      "reused": false,
+      "fingerprint": "0229e69c4a519e63dc4af2d382b28a895107f3b90158e92ea202efb191f91f44"
+    },
+    {
+      "role": "seed",
+      "case_id": "ind-broker-dz9463",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 377,
+      "output_tokens": 186,
+      "reused": false,
+      "fingerprint": "91eff789a2d867267005f635d605d868a0c96bc2bd091a8e947a52c5dc2fc25a"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-broker-dz9463",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 371,
+      "output_tokens": 177,
+      "reused": false,
+      "fingerprint": "5f3bb9e900476db95037cccebe3c1ccc971d3577baf9e795018f2054f11a942a"
+    },
+    {
+      "role": "baseline",
+      "case_id": "ind-broker-dz9463",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 368,
+      "output_tokens": 188,
+      "reused": false,
+      "fingerprint": "493cbe05d424ff0728928871793596507ab6b66340c8c66551b2cb35cff186a8"
+    },
+    {
+      "role": "candidate_shared_verifier",
+      "case_id": "ind-faq-r8n4",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 896,
+      "output_tokens": 41,
+      "reused": false,
+      "fingerprint": "inference/v1/jobs/523b95e537aca31998f1a12b1333853525315190003a702fe455530ec29d8f05"
+    },
+    {
+      "role": "candidate_fresh",
+      "case_id": "ind-faq-r8n4",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 298,
+      "output_tokens": 124,
+      "reused": false,
+      "fingerprint": "bb800a3004823182586d34ba894b5329eae05d9213a85b38636e6964aa587b6e"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-faq-r8n4",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "29b76e134d996418f077989fe6300ab84eb9712441a9eed5e55a32d5f659ec33"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-faq-r8n4",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "ba13f32dc323e757d2de6ea9594d04474838036cc0b9c50b7c95ab0e6ce4d7e8"
+    },
+    {
+      "role": "candidate_shared_verifier",
+      "case_id": "ind-onboard-qk6194",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 915,
+      "output_tokens": 41,
+      "reused": false,
+      "fingerprint": "inference/v1/jobs/7dc8d566bbb148f46af60eca36a72d901b402d73eb086d6d4001d3cd62b5f0f8"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-onboard-qk6194",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "7927fd254b23edf7dde81ea3561117f1c8e96ef3ee9820fdcba27b602f17a77f"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-onboard-qk6194",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "32d1cc5cf0c0a8996c6f4988017d96d3dd369b6e22a9f64ec6695c912e3c0177"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-onboard-qk6194",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "7483971c669d0bafe764a5086467cbb0d76a959c26142fc2c7bc7dbc3e7e71f8"
+    },
+    {
+      "role": "candidate_shared_verifier",
+      "case_id": "ind-incident-uv7351",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 1003,
+      "output_tokens": 41,
+      "reused": false,
+      "fingerprint": "inference/v1/jobs/9e06d6555adf5bb74021002c11280bc20f942297f7b17b980a7b19ea0caf06e8"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-incident-uv7351",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "2b231da0fb5d8fe21298c84d1569d833466bd4f40398a4931c5e622e5429d4ae"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-incident-uv7351",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "f3bcd89f9c4938abcea3603fb376a899a0ccbdedc8ed8439b291ca2176687bdc"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-incident-uv7351",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "c077c2b861246b86f6688a23173e7f598d4703d46dadcc2e6f49bcf25d65866a"
+    },
+    {
+      "role": "candidate_shared_verifier",
+      "case_id": "ind-release-wt8642",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 999,
+      "output_tokens": 41,
+      "reused": false,
+      "fingerprint": "inference/v1/jobs/52e037983df1cb06ba5b56ff5ca329938d98e09462b4355314ac040f1df1e4aa"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-release-wt8642",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "f0c798d032e7ec04d50847bf1f882e2d237b5b7d4da85c3107d2c1062a05c47d"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-release-wt8642",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "c3752bf5d04db8b5b890e9d9bf15ba51c84883bca81bdf55dda5ad7d51debf6b"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-release-wt8642",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "e0ff7cdef86a8a787d322a31a85a27b46420a4cd0f10958748ee12279ad407f2"
+    },
+    {
+      "role": "candidate_shared_verifier",
+      "case_id": "ind-broker-dz9463",
+      "generation_called": true,
+      "usage_known": true,
+      "input_tokens": 1069,
+      "output_tokens": 41,
+      "reused": false,
+      "fingerprint": "inference/v1/jobs/16beb0175e533ee09be64fa0a6dd24098bbf1851ee059ca8772c1ac31d128f91"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-broker-dz9463",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "91eff789a2d867267005f635d605d868a0c96bc2bd091a8e947a52c5dc2fc25a"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-broker-dz9463",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "e12af4c9332e31a0430c2a63de5f2739b6c4b41d4de090b2764627854461fbda"
+    },
+    {
+      "role": "exact",
+      "case_id": "ind-broker-dz9463",
+      "generation_called": false,
+      "usage_known": false,
+      "input_tokens": null,
+      "output_tokens": null,
+      "reused": true,
+      "fingerprint": "fd2ea9cff338da3bc8da4b0b29b8d9b7aae60d937984adc684f481ed9c61e0ce"
+    }
+  ]
+}

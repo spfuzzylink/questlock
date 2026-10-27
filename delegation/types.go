@@ -74,9 +74,10 @@ type Result struct {
 // changes a checked answer or authorizes another model call. Record is returned
 // on failure so the exact metadata can be reconciled without regenerating text.
 type OutcomeTracking struct {
-	Status  string            `json:"status"` // recorded or failed
-	RunID   string            `json:"run_id"`
-	Task    outcomes.Task     `json:"task"`
-	Receipt *outcomes.Receipt `json:"receipt,omitempty"`
-	Record  *outcomes.Run     `json:"record,omitempty"`
+	Status        string            `json:"status"` // recorded or failed
+	ErrorCategory string            `json:"error_category,omitempty"`
+	RunID         string            `json:"run_id"`
+	Task          outcomes.Task     `json:"task"`
+	Receipt       *outcomes.Receipt `json:"receipt,omitempty"`
+	Record        *outcomes.Run     `json:"record,omitempty"`
 }
