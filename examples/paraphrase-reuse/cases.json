@@ -1,0 +1,276 @@
+{
+  "schema": 1,
+  "revision": "semantic-business-measurement-1",
+  "cases": [
+    {
+      "id": "support",
+      "instructions": "Use only the supplied fictional business record and policy. Return exactly one JSON object with the requested primitive fields and no commentary. Copy identifiers, role names and action codes exactly. Calculate requested counts or amounts from the record. Report recorded state and approved next action without performing it.",
+      "context": [
+        {
+          "id": "support-approved-record",
+          "text": "Support record support-notes-1: account ACCT-64 belongs to Mira. The email address is verified. The previous recovery link was consumed. A replacement link has not been sent. Policy: for verified email with a consumed link, the approved next help action code is send_recovery_link; this is advice for an operator and does not say the action occurred. Standard support response target is 6 hours. In the requested output, already_completed describes whether this next action has already happened.",
+          "stable": true,
+          "required": true
+        }
+      ],
+      "output_types": {
+        "account_id": "string",
+        "next_action": "string",
+        "already_completed": "boolean",
+        "response_hours": "integer"
+      },
+      "checks": [
+        {
+          "id": "valid-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "record-and-policy",
+          "kind": "json_equals",
+          "expected": {
+            "account_id": "ACCT-64",
+            "next_action": "send_recovery_link",
+            "already_completed": false,
+            "response_hours": 6
+          }
+        }
+      ],
+      "original_question": "Report the approved recovery-help state for ACCT-64: account_id, next_action, already_completed and response_hours.",
+      "paraphrases": [
+        "For ACCT-64, give account_id, next_action, already_completed and response_hours from the recovery-help record.",
+        "Summarize ACCT-64 recovery help using account_id, next_action, already_completed and response_hours."
+      ],
+      "intent": "report-recovery-help",
+      "bindings": {
+        "account": "ACCT-64",
+        "record": "support-notes-1"
+      }
+    },
+    {
+      "id": "onboarding",
+      "instructions": "Use only the supplied fictional business record and policy. Return exactly one JSON object with the requested primitive fields and no commentary. Copy identifiers, role names and action codes exactly. Calculate requested counts or amounts from the record. Report recorded state and approved next action without performing it.",
+      "context": [
+        {
+          "id": "onboarding-approved-record",
+          "text": "Onboarding record onboarding-notes-1: employee EMP-28 has four required steps. Orientation is complete. The NDA is signed. MFA enrollment is complete. Laptop delivery is pending, owned by Workplace IT. No other steps are required. Policy: ready is true only when every required step is complete; next_owner is the owner of the outstanding step.",
+          "stable": true,
+          "required": true
+        }
+      ],
+      "output_types": {
+        "employee_id": "string",
+        "completed_count": "integer",
+        "remaining_count": "integer",
+        "next_owner": "string",
+        "ready": "boolean"
+      },
+      "checks": [
+        {
+          "id": "valid-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "record-and-policy",
+          "kind": "json_equals",
+          "expected": {
+            "employee_id": "EMP-28",
+            "completed_count": 3,
+            "remaining_count": 1,
+            "next_owner": "Workplace IT",
+            "ready": false
+          }
+        }
+      ],
+      "original_question": "Report EMP-28 onboarding as employee_id, completed_count, remaining_count, next_owner and ready.",
+      "paraphrases": [
+        "Give employee_id, completed_count, remaining_count, next_owner and ready for the EMP-28 onboarding checklist.",
+        "Summarize the EMP-28 checklist with employee_id, completed_count, remaining_count, next_owner and ready."
+      ],
+      "intent": "report-onboarding-checklist",
+      "bindings": {
+        "employee": "EMP-28",
+        "record": "onboarding-notes-1"
+      }
+    },
+    {
+      "id": "incident",
+      "instructions": "Use only the supplied fictional business record and policy. Return exactly one JSON object with the requested primitive fields and no commentary. Copy identifiers, role names and action codes exactly. Calculate requested counts or amounts from the record. Report recorded state and approved next action without performing it.",
+      "context": [
+        {
+          "id": "incident-approved-record",
+          "text": "Incident record incident-notes-1: incident INC-84 began at 04:10 UTC and was resolved at 04:37 UTC on the same day. Noor is the incident analyst. Ellis is the resolution approver. The customer update is drafted but has not been sent. resolution_minutes is elapsed whole minutes between the recorded start and resolution times. message_sent describes the customer update, not the internal incident acknowledgement.",
+          "stable": true,
+          "required": true
+        }
+      ],
+      "output_types": {
+        "incident_id": "string",
+        "resolution_minutes": "integer",
+        "approver": "string",
+        "message_sent": "boolean"
+      },
+      "checks": [
+        {
+          "id": "valid-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "record-and-policy",
+          "kind": "json_equals",
+          "expected": {
+            "incident_id": "INC-84",
+            "resolution_minutes": 27,
+            "approver": "Ellis",
+            "message_sent": false
+          }
+        }
+      ],
+      "original_question": "Report INC-84 with incident_id, resolution_minutes, approver and message_sent.",
+      "paraphrases": [
+        "Give incident_id, resolution_minutes, approver and message_sent from the INC-84 resolution record.",
+        "Summarize the recorded INC-84 resolution using incident_id, resolution_minutes, approver and message_sent."
+      ],
+      "intent": "report-incident-resolution",
+      "bindings": {
+        "incident": "INC-84",
+        "record": "incident-notes-1"
+      }
+    },
+    {
+      "id": "release",
+      "instructions": "Use only the supplied fictional business record and policy. Return exactly one JSON object with the requested primitive fields and no commentary. Copy identifiers, role names and action codes exactly. Calculate requested counts or amounts from the record. Report recorded state and approved next action without performing it.",
+      "context": [
+        {
+          "id": "release-approved-record",
+          "text": "Release record release-notes-1: version 2.8.1 has four mandatory production gates: unit_checks, race_checks, artifact_signature and production_canary. unit_checks passed, race_checks passed and artifact_signature passed. production_canary is pending. An internal preview was published. Policy: internal preview publication is not a production gate; production qualification requires all four mandatory gates to pass. pending_gate uses the recorded gate code.",
+          "stable": true,
+          "required": true
+        }
+      ],
+      "output_types": {
+        "release": "string",
+        "completed_gates": "integer",
+        "pending_gate": "string",
+        "production_qualified": "boolean"
+      },
+      "checks": [
+        {
+          "id": "valid-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "record-and-policy",
+          "kind": "json_equals",
+          "expected": {
+            "release": "2.8.1",
+            "completed_gates": 3,
+            "pending_gate": "production_canary",
+            "production_qualified": false
+          }
+        }
+      ],
+      "original_question": "Report release 2.8.1 as release, completed_gates, pending_gate and production_qualified.",
+      "paraphrases": [
+        "Give release, completed_gates, pending_gate and production_qualified for version 2.8.1.",
+        "Summarize version 2.8.1 production readiness using release, completed_gates, pending_gate and production_qualified."
+      ],
+      "intent": "report-production-readiness",
+      "bindings": {
+        "release": "2.8.1",
+        "record": "release-notes-1"
+      }
+    },
+    {
+      "id": "refund",
+      "instructions": "Use only the supplied fictional business record and policy. Return exactly one JSON object with the requested primitive fields and no commentary. Copy identifiers, role names and action codes exactly. Calculate requested counts or amounts from the record. Report recorded state and approved next action without performing it.",
+      "context": [
+        {
+          "id": "refund-approved-record",
+          "text": "Refund record refund-notes-1: order ORD-402 contains three unopened items at 2700 cents each. Delivery occurred 17 days ago. An earlier merchandise refund of 1500 cents has already been issued. Shipping cost was 600 cents. Policy: unopened merchandise returned within 30 days qualifies for its merchandise price minus earlier merchandise refunds. Shipping is nonrefundable. Any remaining refund above 5000 cents needs approval. Ravi is the approval owner; Lena is the requester. This review does not issue a refund.",
+          "stable": true,
+          "required": true
+        }
+      ],
+      "output_types": {
+        "order_id": "string",
+        "refundable_cents": "integer",
+        "shipping_refundable": "boolean",
+        "approval_owner": "string",
+        "approval_required": "boolean"
+      },
+      "checks": [
+        {
+          "id": "valid-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "record-and-policy",
+          "kind": "json_equals",
+          "expected": {
+            "order_id": "ORD-402",
+            "refundable_cents": 6600,
+            "shipping_refundable": false,
+            "approval_owner": "Ravi",
+            "approval_required": true
+          }
+        }
+      ],
+      "original_question": "Report ORD-402 using order_id, refundable_cents, shipping_refundable, approval_owner and approval_required.",
+      "paraphrases": [
+        "Give order_id, refundable_cents, shipping_refundable, approval_owner and approval_required for ORD-402.",
+        "Summarize the ORD-402 refund review with order_id, refundable_cents, shipping_refundable, approval_owner and approval_required."
+      ],
+      "intent": "report-refundable-balance",
+      "bindings": {
+        "order": "ORD-402",
+        "record": "refund-notes-1"
+      }
+    },
+    {
+      "id": "broker",
+      "instructions": "Use only the supplied fictional business record and policy. Return exactly one JSON object with the requested primitive fields and no commentary. Copy identifiers, role names and action codes exactly. Calculate requested counts or amounts from the record. Report recorded state and approved next action without performing it.",
+      "context": [
+        {
+          "id": "broker-approved-record",
+          "text": "Broker record broker-notes-1 is fictional: scope scope-demo-8 has a source job whose recorded state is uncertain. Its token reservation holds 900 input tokens and 120 output tokens; neither component has been released or settled. The journal viewer is a worker. The recovery operator role is scope_owner. Policy: uncertain jobs must not be automatically retried or given a new revision to escape the claim; an operator must inspect the receipt first. held_total_tokens is the sum of the two held components. Report this state without changing broker data.",
+          "stable": true,
+          "required": true
+        }
+      ],
+      "output_types": {
+        "scope_id": "string",
+        "source_state": "string",
+        "automatic_retry_allowed": "boolean",
+        "held_total_tokens": "integer",
+        "operator_role": "string"
+      },
+      "checks": [
+        {
+          "id": "valid-json",
+          "kind": "json_valid"
+        },
+        {
+          "id": "record-and-policy",
+          "kind": "json_equals",
+          "expected": {
+            "scope_id": "scope-demo-8",
+            "source_state": "uncertain",
+            "automatic_retry_allowed": false,
+            "held_total_tokens": 1020,
+            "operator_role": "scope_owner"
+          }
+        }
+      ],
+      "original_question": "Report scope-demo-8 with scope_id, source_state, automatic_retry_allowed, held_total_tokens and operator_role.",
+      "paraphrases": [
+        "Give scope_id, source_state, automatic_retry_allowed, held_total_tokens and operator_role for scope-demo-8.",
+        "Summarize scope-demo-8 work status using scope_id, source_state, automatic_retry_allowed, held_total_tokens and operator_role."
+      ],
+      "intent": "report-uncertain-work",
+      "bindings": {
+        "scope": "scope-demo-8",
+        "record": "broker-notes-1"
+      }
+    }
+  ]
+}

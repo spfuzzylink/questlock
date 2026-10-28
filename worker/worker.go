@@ -298,7 +298,7 @@ func safeOutput(result delegation.Result, err error) toolOutput {
 			resolution := *original
 			resolution.Response = inference.Response{}
 			resolution.PolicyID = safeDigest(resolution.PolicyID)
-			resolution.VerificationKey = safeJobReference(resolution.VerificationKey)
+			resolution.VerificationKey = safeVerificationReference(resolution.VerificationKey)
 			resolution.Source.Key = safeJobReference(resolution.Source.Key)
 			resolution.Source.SHA256 = safeDigest(resolution.Source.SHA256)
 			resolution.Source.OutputSHA256 = safeDigest(resolution.Source.OutputSHA256)
@@ -391,9 +391,21 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 		default:
 			verdict.Verdict = "unknown"
 		}
-		verdict.ReceiptKey = safeJobReference(verdict.ReceiptKey)
+		verdict.ReceiptKey = safeVerificationReference(verdict.ReceiptKey)
 		verdict.OutputSHA256 = safeDigest(verdict.OutputSHA256)
 		verdict.InputTokens, verdict.OutputTokens = copyCount(verdict.InputTokens), copyCount(verdict.OutputTokens)
+		verdict.Work = nil
+		if len(original.Verifications[i].Work) <= 2 {
+			for _, w := range original.Verifications[i].Work {
+				if w.Stage != "source" && w.Stage != "equivalence" {
+					continue
+				}
+				w.ReceiptKey = safeJobReference(w.ReceiptKey)
+				w.OutputSHA256 = safeDigest(w.OutputSHA256)
+				w.InputTokens, w.OutputTokens = copyCount(w.InputTokens), copyCount(w.OutputTokens)
+				verdict.Work = append(verdict.Work, w)
+			}
+		}
 		observation.Verifications[i] = verdict
 	}
 	observation.Rejections = []string{}
@@ -462,3 +474,11 @@ func resultContent(output toolOutput) *mcp.CallToolResult {
 type writerWithoutClose struct{ io.Writer }
 
 func (writerWithoutClose) Close() error { return nil }
+
+func safeVerificationReference(value string) string {
+	const prefix = "semantic/v1/decisions/"
+	if strings.HasPrefix(value, prefix) && safeDigest(strings.TrimPrefix(value, prefix)) != "" {
+		return value
+	}
+	return safeJobReference(value)
+}

@@ -129,6 +129,14 @@ func workerCommandBroker(args []string, input io.ReadCloser, output, diagnostics
 			return collectedRunner{inner: &preparedRunner{runner: inference.Runner{Broker: broker, Provider: provider}, setupStart: started, setupEnd: ended}, checks: request.Checks, records: target}, nil
 		}
 		reuse := &delegation.ControlledReuser{Broker: broker, Index: broker, EmbedderFactory: shadow.EmbedderFactory, Resources: admission.SystemSource(), VerifierFactory: func(ctx context.Context, c semantic.ReuseConfig) (semantic.Verifier, error) {
+			if c.VerifierPolicy == "factorized-v1" {
+				v, err := delegation.NewFactorizedVerifier(ctx, broker, *ollamaURL, c)
+				if err != nil {
+					return nil, err
+				}
+				v.DailyTokenBudget = request.Policy.Local.Spec.DailyTokenBudget
+				return v, nil
+			}
 			v, err := delegation.NewLocalVerifier(ctx, broker, *ollamaURL, c)
 			if err != nil {
 				return nil, err
