@@ -95,6 +95,11 @@ the operating system's pressure warning.
 
 ## Don't spend more checking than answering
 
+The experimental [two-stage policy](factorized-reuse.md) can reuse a grounded,
+complete source-answer certificate while checking each new wording separately.
+It needs no question list. It keeps the full approved background and has different
+guard behavior; opt in explicitly and measure its entire cost before serving it.
+
 A verifier reads the evidence and old answer before making a decision. For a
 short question, that can cost more tokens than generating fresh. Measure the
 whole path, including embeddings, misses and failed checks.

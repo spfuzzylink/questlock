@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -142,6 +143,10 @@ type semanticEvalReport struct {
 	LabelRule                 string                        `json:"label_rule"`
 	EmbeddingModel            string                        `json:"embedding_model"`
 	VerifierModel             string                        `json:"verifier_model"`
+	VerifierPolicy            string                        `json:"verifier_policy,omitempty"`
+	VerifierMaxInputTokens    int64                         `json:"verifier_max_input_tokens,omitempty"`
+	VerifierMaxOutputTokens   int64                         `json:"verifier_max_output_tokens,omitempty"`
+	VerifierTimeoutMS         int                           `json:"verifier_timeout_ms,omitempty"`
 	VerifierIdentity          string                        `json:"verifier_identity,omitempty"`
 	MinSimilarity             float64                       `json:"min_similarity"`
 	RetrievalThresholdMeaning string                        `json:"retrieval_threshold_meaning"`
@@ -186,6 +191,10 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	base := f.String("ollama-url", "http://127.0.0.1:11434", "literal-loopback Ollama HTTP origin")
 	embeddingModel := f.String("embedding-model", "all-minilm", "installed local embedding model")
 	verifierModel := f.String("verifier-model", "qwen3.5:4b", "installed local validity-verifier model")
+	verifierInput := f.Int64("verifier-max-input-tokens", 0, "total verifier input reservation cap; zero selects the policy default")
+	verifierOutput := f.Int64("verifier-max-output-tokens", 0, "total verifier output cap; zero selects the policy default")
+	verifierTimeout := f.Int("verifier-timeout-ms", 0, "total verifier invocation timeout; zero selects the policy default")
+	verifierPolicy := f.String("verifier-policy", "", "empty for published standalone; factorized-v1 for source certification plus equivalence")
 	threshold := f.Float64("min-similarity", 0.9, "retrieval cosine cutoff; not validity confidence")
 	batchSize := f.Int("batch-size", 1, "1 for standalone validity; 2 for compatible validity pairs")
 	timeout := f.Duration("timeout", 20*time.Minute, "positive total evaluation bound, at most 60m")
@@ -200,10 +209,11 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	}
 	report.EmbeddingModel, report.VerifierModel = *embeddingModel, *verifierModel
 	report.BatchSize = *batchSize
+	report.VerifierPolicy = *verifierPolicy
 	if !math.IsNaN(*threshold) && !math.IsInf(*threshold, 0) {
 		report.MinSimilarity = *threshold
 	}
-	if f.NArg() != 0 || !*live || *suitePath == "" || *batchSize < 1 || *batchSize > 2 || *timeout <= 0 || *timeout > 60*time.Minute || math.IsNaN(*threshold) || math.IsInf(*threshold, 0) || *threshold < 0 || *threshold > 1 {
+	if (*verifierPolicy != "" && *verifierPolicy != "factorized-v1") || (*verifierPolicy != "" && *batchSize != 1) || f.NArg() != 0 || !*live || *suitePath == "" || *batchSize < 1 || *batchSize > 2 || *timeout <= 0 || *timeout > 60*time.Minute || math.IsNaN(*threshold) || math.IsInf(*threshold, 0) || *threshold < 0 || *threshold > 1 {
 		return fail("explicit_live_suite_and_bounded_flags_required")
 	}
 	suite, raw, err := loadSemanticEvalSuite(*suitePath)
@@ -225,10 +235,11 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	defer stop()
 	ctx, cancel := context.WithTimeout(ctx, *timeout)
 	defer cancel()
-	config, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "controlled-evaluation", Domain: "synthetic-challenge", EvidenceRevision: report.SourceSHA256, EmbeddingModel: *embeddingModel, MinSimilarity: *threshold, MaxInputBytes: semantic.MaxInputBytes}, ReadOnly: true, Intent: "answer-validity-evaluation", VerifierModel: *verifierModel})
+	config, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "controlled-evaluation", Domain: "synthetic-challenge", EvidenceRevision: report.SourceSHA256, EmbeddingModel: *embeddingModel, MinSimilarity: *threshold, MaxInputBytes: semantic.MaxInputBytes}, ReadOnly: true, Intent: "answer-validity-evaluation", VerifierModel: *verifierModel, VerifierPolicy: *verifierPolicy, VerifierMaxInputTokens: *verifierInput, VerifierMaxOutputTokens: *verifierOutput, VerifierTimeoutMS: *verifierTimeout})
 	if err != nil {
 		return fail("invalid_local_model_policy")
 	}
+	report.VerifierMaxInputTokens, report.VerifierMaxOutputTokens, report.VerifierTimeoutMS = config.VerifierMaxInputTokens, config.VerifierMaxOutputTokens, config.VerifierTimeoutMS
 	// The embedder validates the literal-loopback origin before discovery. It
 	// never pulls weights, follows redirects, or uses environment proxies.
 	embedder, err := semantic.NewOllamaEmbedderContext(ctx, *base, *embeddingModel, config.MaxInputBytes)
@@ -247,6 +258,8 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	}
 	if *batchSize == 2 {
 		verifier, err = validityeval.NewPairVerifier(ctx, broker, *base, config)
+	} else if *verifierPolicy == "factorized-v1" {
+		verifier, err = delegation.NewFactorizedVerifier(ctx, broker, *base, config)
 	} else {
 		verifier, err = delegation.NewLocalVerifier(ctx, broker, *base, config)
 	}
@@ -395,7 +408,7 @@ func semanticEvalRun(ctx context.Context, suite semanticEvalSuite, embedder sema
 			embedding, err := embedder.Embed(ctx, variant.Question)
 			row.EmbeddingMS = float64(time.Since(started)) / float64(time.Millisecond)
 			row.EmbeddingInputTokens, row.EmbeddingModelID = embedding.InputTokens, embedding.ModelID
-			row.GuardCodes = semantic.CheckProtectedTerms(c.OriginalQuestion, variant.Question)
+			row.GuardCodes = semantic.CheckReuseProtectedTerms(c.OriginalQuestion, variant.Question, config.VerifierPolicy)
 			if row.GuardCodes == nil {
 				row.GuardCodes = []string{}
 			}
@@ -428,6 +441,9 @@ func semanticEvalRun(ctx context.Context, suite semanticEvalSuite, embedder sema
 							bindings = map[string]string{}
 						}
 						request := semantic.ValidityRequest{OriginalQuestion: c.OriginalQuestion, Question: variant.Question, Instructions: c.Instructions, Context: c.Evidence, CachedAnswer: c.Answer, Bindings: bindings, Intent: intent}
+						if config.VerifierPolicy == "factorized-v1" {
+							request.Source = semanticEvalValiditySource(request)
+						}
 						if report.BatchSize > 1 {
 							batchRequests = append(batchRequests, request)
 							batchRows = append(batchRows, index-1)
@@ -520,6 +536,9 @@ func semanticEvalRunBatches(ctx context.Context, verifier any, config semantic.R
 }
 
 func semanticEvalVerified(result semantic.ValidityResult, config semantic.ReuseConfig) bool {
+	if semantic.ValidateVerifierWork(result, config) != nil {
+		return false
+	}
 	if !result.Complete || !result.Durable || result.ReceiptKey == "" || result.InputTokens == nil || result.OutputTokens == nil || *result.InputTokens < 0 || *result.OutputTokens < 0 || *result.InputTokens > config.VerifierMaxInputTokens || *result.OutputTokens > config.VerifierMaxOutputTokens {
 		return false
 	}
@@ -539,7 +558,14 @@ func semanticEvalContextCategory(ctx context.Context) string {
 func semanticEvalSummarize(pairs []semanticEvalPair, sources []semanticEvalSourceEmbedding, shared ...[]semantic.ValidityResult) (semanticEvalTotals, semanticEvalUsage) {
 	totals := semanticEvalTotals{Total: len(pairs)}
 	usage := semanticEvalUsage{}
-	countVerification := func(result semantic.ValidityResult) {
+	var countVerification func(semantic.ValidityResult)
+	countVerification = func(result semantic.ValidityResult) {
+		if len(result.Work) > 0 {
+			for _, w := range result.Work {
+				countVerification(semantic.ValidityResult{GenerationCalled: w.GenerationCalled, Reused: w.Reused, InputTokens: w.InputTokens, OutputTokens: w.OutputTokens})
+			}
+			return
+		}
 		if result.SharedWork {
 			return
 		}
@@ -649,4 +675,14 @@ func semanticEvalWilson95(successes, total int) (*float64, *float64) {
 	half := z * math.Sqrt(p*(1-p)/n+z*z/(4*n*n)) / denominator
 	lower, upper := math.Max(0, center-half), math.Min(1, center+half)
 	return &lower, &upper
+}
+
+// A diagnostic binds synthetic fixed source data without pretending it was generated.
+func semanticEvalValiditySource(r semantic.ValidityRequest) *semantic.ValiditySource {
+	r.Question = ""
+	raw, _ := json.Marshal(r)
+	h := sha256.Sum256(raw)
+	output := sha256.Sum256([]byte(r.CachedAnswer))
+	digest := hex.EncodeToString(h[:])
+	return &semantic.ValiditySource{Key: "inference/v1/jobs/" + digest, Version: 1, SHA256: digest, OutputSHA256: hex.EncodeToString(output[:]), RequestFingerprint: digest}
 }

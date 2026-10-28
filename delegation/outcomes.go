@@ -23,8 +23,12 @@ func NewOutcomeRunID() (string, error) {
 
 func RecordOutcome(ctx context.Context, broker inference.Broker, request Request, result *Result, runID string) {
 	task := outcomes.Task{ID: request.Spec.Task, Revision: request.Spec.Revision}
+	if result.SemanticReuse != nil && !validOutcomeVerificationWork(result.SemanticReuse.Verifications) {
+		result.OutcomeTracking = &OutcomeTracking{Status: "failed", RunID: runID, Task: task, ErrorCategory: "verification_work_unconfirmed"}
+		return
+	}
 	if result.SemanticReuse != nil {
-		for _, verification := range result.SemanticReuse.Verifications {
+		for _, verification := range outcomeVerifications(result.SemanticReuse.Verifications) {
 			if verification.SharedWork {
 				result.OutcomeTracking = &OutcomeTracking{Status: "failed", RunID: runID, Task: task, ErrorCategory: "shared_work_requires_batch_accounting"}
 				return
@@ -46,6 +50,10 @@ func RecordOutcome(ctx context.Context, broker inference.Broker, request Request
 
 func OutcomeRecord(request Request, result Result, runID string) outcomes.Run {
 	record := outcomes.Run{ID: runID, RequestDigest: result.RequestSHA256, Status: result.Status, Attempts: []outcomes.Attempt{}}
+	if result.SemanticReuse != nil && !validOutcomeVerificationWork(result.SemanticReuse.Verifications) {
+		record.VerificationWork = []outcomes.Attempt{{TierID: "reuse-verifier-unconfirmed", CostBasis: "verification_work_unconfirmed"}}
+		return record
+	}
 	for _, attempt := range result.Attempts {
 		answer := attempt.Result
 		item := outcomes.Attempt{TierID: attempt.TierID, Fingerprint: answer.Fingerprint, OutputSHA256: attempt.OutputSHA256,
@@ -92,7 +100,7 @@ func OutcomeRecord(request Request, result Result, runID string) outcomes.Run {
 		record.Attempts = append(record.Attempts, item)
 	}
 	if result.SemanticReuse != nil {
-		for i, verification := range result.SemanticReuse.Verifications {
+		for i, verification := range outcomeVerifications(result.SemanticReuse.Verifications) {
 			if verification.SharedWork {
 				// Even a cancellation before a receipt is available must fail
 				// registration through this per-member helper.

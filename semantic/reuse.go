@@ -35,6 +35,7 @@ type ReuseConfig struct {
 	ReadOnly                bool   `json:"read_only"`
 	Intent                  string `json:"intent"`
 	VerifierModel           string `json:"verifier_model"`
+	VerifierPolicy          string `json:"verifier_policy,omitempty"`
 	VerifierMaxInputTokens  int64  `json:"verifier_max_input_tokens,omitempty"`
 	VerifierMaxOutputTokens int64  `json:"verifier_max_output_tokens,omitempty"`
 	VerifierTimeoutMS       int    `json:"verifier_timeout_ms,omitempty"`
@@ -51,6 +52,9 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	if !validLabel(c.Intent, 128) || !validOllamaModel(c.VerifierModel) {
 		return ReuseConfig{}, errors.New("semantic reuse requires a bounded intent and installed local verifier model name")
 	}
+	if c.VerifierPolicy != "" && c.VerifierPolicy != "factorized-v1" {
+		return ReuseConfig{}, errors.New("unsupported semantic verifier policy")
+	}
 	base := c.Config
 	base.Mode = "shadow"
 	if base.TimeoutMS == 0 {
@@ -66,6 +70,9 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	c.Config = base
 	if c.VerifierMaxInputTokens == 0 {
 		c.VerifierMaxInputTokens = DefaultVerifierMaxInputTokens
+		if c.VerifierPolicy == "factorized-v1" {
+			c.VerifierMaxInputTokens *= 2
+		}
 	}
 	if c.VerifierMaxOutputTokens == 0 {
 		c.VerifierMaxOutputTokens = DefaultVerifierMaxOutputTokens
@@ -76,6 +83,9 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	if c.VerifierMaxInputTokens < 1 || c.VerifierMaxInputTokens > MaxVerifierInputTokens || c.VerifierMaxOutputTokens < 16 || c.VerifierMaxOutputTokens > MaxVerifierOutputTokens || c.VerifierTimeoutMS < 1 || c.VerifierTimeoutMS > MaxVerifierTimeoutMS {
 		return ReuseConfig{}, errors.New("semantic verifier limits exceed supported bounds")
 	}
+	if c.VerifierPolicy == "factorized-v1" && (c.VerifierMaxInputTokens < 2 || c.VerifierMaxOutputTokens < 32) {
+		return ReuseConfig{}, errors.New("factorized verifier requires bounded capacity for both stages")
+	}
 	if c.WaitForCandidateMS < 0 || c.WaitForCandidateMS > MaxWaitForCandidateMS {
 		return ReuseConfig{}, errors.New("semantic candidate wait must be 0..30000 milliseconds")
 	}
@@ -84,7 +94,29 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 
 // ValidityRequest supplies both questions and the evidence against which the
 // unchanged cached answer must be assessed. Treat its strings as task data.
+type ValiditySource struct {
+	Key                string `json:"key"`
+	Version            int64  `json:"version"`
+	SHA256             string `json:"sha256"`
+	OutputSHA256       string `json:"output_sha256"`
+	RequestFingerprint string `json:"request_fingerprint"`
+}
+
+// VerificationWork records one durable model job. Reused jobs carry zero current usage.
+type VerificationWork struct {
+	Stage            string `json:"stage"`
+	GenerationCalled bool   `json:"generation_called"`
+	Complete         bool   `json:"complete"`
+	Durable          bool   `json:"durable"`
+	InputTokens      *int64 `json:"input_tokens"`
+	OutputTokens     *int64 `json:"output_tokens"`
+	Reused           bool   `json:"reused"`
+	ReceiptKey       string `json:"receipt_key,omitempty"`
+	OutputSHA256     string `json:"output_sha256,omitempty"`
+}
+
 type ValidityRequest struct {
+	Source           *ValiditySource   `json:"source,omitempty"`
 	OriginalQuestion string            `json:"original_question"`
 	Question         string            `json:"question"`
 	Instructions     string            `json:"instructions"`
@@ -97,17 +129,18 @@ type ValidityRequest struct {
 // ValidityResult separates the verdict from execution evidence supplied by the
 // trusted adapter. Missing usage is unknown; it is never inferred as zero.
 type ValidityResult struct {
-	GenerationCalled bool   `json:"generation_called"`
-	Complete         bool   `json:"complete"`
-	Durable          bool   `json:"durable"`
-	Verdict          string `json:"verdict"`
-	SameIntent       bool   `json:"same_intent"`
-	SameFacts        bool   `json:"same_facts"`
-	SameConstraints  bool   `json:"same_constraints"`
-	AnswerSupported  bool   `json:"answer_supported"`
-	InputTokens      *int64 `json:"input_tokens"`
-	OutputTokens     *int64 `json:"output_tokens"`
-	Reused           bool   `json:"reused"`
+	Work             []VerificationWork `json:"work,omitempty"`
+	GenerationCalled bool               `json:"generation_called"`
+	Complete         bool               `json:"complete"`
+	Durable          bool               `json:"durable"`
+	Verdict          string             `json:"verdict"`
+	SameIntent       bool               `json:"same_intent"`
+	SameFacts        bool               `json:"same_facts"`
+	SameConstraints  bool               `json:"same_constraints"`
+	AnswerSupported  bool               `json:"answer_supported"`
+	InputTokens      *int64             `json:"input_tokens"`
+	OutputTokens     *int64             `json:"output_tokens"`
+	Reused           bool               `json:"reused"`
 	// SharedWork identifies a zero-incremental-usage decision whose model work
 	// is accounted once by its batch's separate work record and shared receipt.
 	SharedWork   bool    `json:"shared_work,omitempty"`
@@ -238,6 +271,28 @@ func CheckProtectedTerms(original, current string) []string {
 		}
 	}
 	return reasons
+}
+
+// CheckReuseProtectedTerms keeps the published guard for the published policy.
+// The factorized policy rejects conflicting explicit literals, while leaving
+// omissions and natural-language meaning to its mandatory full-context verifier.
+// Passing this guard never authorizes reuse. The factorized verifier version
+// binds this guard contract as well as its model prompts.
+func CheckReuseProtectedTerms(original, current, policy string) []string {
+	if policy == "" {
+		return CheckProtectedTerms(original, current)
+	}
+	if policy != "factorized-v1" || !validGuardText(original) || !validGuardText(current) {
+		return []string{"invalid_protected_text"}
+	}
+	_, aOK := quotedTerms(original)
+	_, bOK := quotedTerms(current)
+	if !aOK || !bOK {
+		return []string{"invalid_protected_quotes"}
+	}
+	// Natural-language equivalence, including literal roles and quantities,
+	// is decided by the mandatory contextual verifier, never this syntax gate.
+	return nil
 }
 
 type termSnapshot struct {

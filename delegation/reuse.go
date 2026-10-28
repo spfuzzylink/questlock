@@ -316,7 +316,7 @@ func (r *controlledResolver) candidate(ctx context.Context, candidate semantic.C
 		obs.Rejections = append(obs.Rejections, "source_not_eligible")
 		return nil, false, nil
 	}
-	guards := semantic.CheckProtectedTerms(proof.Question, r.request.Spec.Input)
+	guards := semantic.CheckReuseProtectedTerms(proof.Question, r.request.Spec.Input, r.config.VerifierPolicy)
 	if len(guards) > 0 {
 		obs.Rejections = append(obs.Rejections, guards...)
 		return nil, false, nil
@@ -329,7 +329,11 @@ func (r *controlledResolver) candidate(ctx context.Context, candidate semantic.C
 	for _, c := range r.request.Spec.Context {
 		contextText += c.ID + "\n" + c.Text + "\n"
 	}
-	verdict, err := r.verifier.Verify(ctx, semantic.ValidityRequest{OriginalQuestion: proof.Question, Question: r.request.Spec.Input, Instructions: r.request.Spec.Instructions, Context: contextText, CachedAnswer: source.Response.Text, Bindings: r.config.Bindings, Intent: r.config.Intent})
+	validity := semantic.ValidityRequest{OriginalQuestion: proof.Question, Question: r.request.Spec.Input, Instructions: r.request.Spec.Instructions, Context: contextText, CachedAnswer: source.Response.Text, Bindings: r.config.Bindings, Intent: r.config.Intent}
+	if r.config.VerifierPolicy == "factorized-v1" {
+		validity.Source = &semantic.ValiditySource{Key: proof.Source.Key, Version: proof.Source.Version, SHA256: proof.Source.SHA256, OutputSHA256: proof.Source.OutputSHA256, RequestFingerprint: proof.Source.RequestFingerprint}
+	}
+	verdict, err := r.verifier.Verify(ctx, validity)
 	obs.Verifications = append(obs.Verifications, verdict)
 	if err != nil {
 		obs.Status = "verification_failed"
@@ -338,6 +342,10 @@ func (r *controlledResolver) candidate(ctx context.Context, candidate semantic.C
 	if verdict.SharedWork {
 		obs.Status = "verification_unconfirmed"
 		return nil, false, errors.Join(inference.ErrReuseUncertain, errors.New("shared diagnostic verification is unavailable for answer reuse"))
+	}
+	if semantic.ValidateVerifierWork(verdict, r.config) != nil {
+		obs.Status = "verification_unconfirmed"
+		return nil, false, errors.Join(inference.ErrReuseUncertain, errors.New("controlled verification work is not confirmed"))
 	}
 	if !verdict.Complete || !verdict.Durable || verdict.InputTokens == nil || verdict.OutputTokens == nil || *verdict.InputTokens < 0 || *verdict.OutputTokens < 0 || *verdict.InputTokens > r.config.VerifierMaxInputTokens || *verdict.OutputTokens > r.config.VerifierMaxOutputTokens || verdict.ReceiptKey == "" {
 		obs.Status = "verification_unconfirmed"

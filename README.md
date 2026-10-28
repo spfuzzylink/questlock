@@ -121,8 +121,10 @@ or a changed policy needs its own facts and request. Unknown wording stays
 unchanged; your normal configured workflow decides what happens next.
 
 For open-ended paraphrases, [controlled reuse](docs/controlled-reuse.md) remains
-experimental. Verification can cost more than a fresh answer, and a verifier can
-miss a change in scope. Keep failed cases in your benchmark too.
+experimental. A [two-stage verifier candidate](docs/factorized-reuse.md) needs no
+question list, but it failed qualification: known false acceptances and missed
+paraphrases remain. It is not ready for production reuse. Verification can also
+cost more than a fresh answer. Keep failed cases in your benchmark too.
 
 [Go example, configuration and limits](docs/approved-questions.md).
 

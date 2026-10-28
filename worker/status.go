@@ -41,10 +41,11 @@ type StatusPolicy struct {
 }
 
 type StatusSchemas struct {
-	Delegation          []string `json:"delegation"`
-	Revision            []int    `json:"revision"`
-	SemanticShadowModes []string `json:"semantic_shadow_modes,omitempty"`
-	SemanticReuseModes  []string `json:"semantic_reuse_modes,omitempty"`
+	Delegation                            []string `json:"delegation"`
+	Revision                              []int    `json:"revision"`
+	SemanticShadowModes                   []string `json:"semantic_shadow_modes,omitempty"`
+	SemanticReuseModes                    []string `json:"semantic_reuse_modes,omitempty"`
+	SemanticReuseOptionalVerifierPolicies []string `json:"semantic_reuse_optional_verifier_policies,omitempty"`
 }
 
 type StatusChecks struct {
@@ -108,7 +109,7 @@ func (w *worker) callStatus(ctx context.Context, req *mcp.CallToolRequest) (*mcp
 	status := Status{
 		Schema: 1, RuntimeVersion: version, RequestRoot: w.declaredWorkspace,
 		Profile: profile, Policy: StatusPolicy{AllowPaid: w.options.AllowPaid, PaidRequiresExplicitRequestBudgets: true},
-		RequestSchemas: StatusSchemas{Delegation: []string{"unversioned"}, Revision: []int{}, SemanticShadowModes: []string{"shadow"}, SemanticReuseModes: []string{"controlled"}},
+		RequestSchemas: StatusSchemas{Delegation: []string{"unversioned"}, Revision: []int{}, SemanticShadowModes: []string{"shadow"}, SemanticReuseModes: []string{"controlled"}, SemanticReuseOptionalVerifierPolicies: []string{"factorized-v1"}},
 		Checks:         StatusChecks{Schema: evaluation.Schema, Kinds: evaluation.SupportedCheckKinds()},
 		Tools:          []string{ToolName}, WorkflowConfigs: map[string]string{"writing": "writing-workflow.json"},
 		Readiness: StatusReadiness{Worker: "ready", RequestRoot: "opened", Broker: "not_checked", Providers: "not_checked"},
