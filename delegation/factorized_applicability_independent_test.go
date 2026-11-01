@@ -96,7 +96,7 @@ func TestIndependentApplicabilityReceivesExactAnswerAndPreservesExactFirst(t *te
 		if err := json.Unmarshal([]byte(strings.TrimPrefix(p.requests[len(p.requests)-1].Input, "\n\nTask:\n")), &fields); err != nil {
 			t.Fatal(err)
 		}
-		for key, expected := range map[string]string{"cached_answer": answer, "question": question, "instructions": f.request.Spec.Instructions} {
+		for key, expected := range map[string]string{"cached_answer": answer, "original_question": originalQuestion, "question": question, "instructions": f.request.Spec.Instructions} {
 			var actual string
 			if json.Unmarshal(fields[key], &actual) != nil || actual != expected {
 				t.Fatalf("applicability lost exact %s: %s", key, fields[key])

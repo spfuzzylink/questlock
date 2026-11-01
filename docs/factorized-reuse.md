@@ -21,12 +21,15 @@ are not. A prose answer does not become JSON just because the facts match.
 
 No question list is required. Both checks keep the full approved background;
 a context hash or a generated summary cannot replace it. The second check sees
-the full saved answer, including its keys, values and layout. That costs input
+the original question and full saved answer, including its keys, values and layout. That costs input
 tokens, but a coarse label such as “JSON object” cannot tell us whether the keys
 match. The source check can be cached; net savings still need measurement.
 The receipt stage named `equivalence` records this applicability check. Intent
 labels still partition work and bind its identity; they are omitted from the
 model input so a source label cannot define what the new question means.
+The verifier uses native system/user separation rather than wrapping its data
+record in another serialized request. All evidence and decoder-schema bytes
+still count against preflight and runtime limits.
 
 This is still an experimental verifier. Qualify it on your own work before
 serving its results. A valid JSON verdict or high embedding similarity does not

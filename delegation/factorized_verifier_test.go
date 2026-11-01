@@ -31,7 +31,7 @@ type factorizedTestProvider struct {
 func (*factorizedTestProvider) Identity() string { return "factorized-offline-fixture-v1" }
 
 func (*factorizedTestProvider) stage(request inference.Request) string {
-	if strings.Contains(request.Input, `"original_question"`) {
+	if !strings.Contains(request.Input, `"question"`) {
 		return "source"
 	}
 	return "equivalence"

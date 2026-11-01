@@ -30,7 +30,7 @@ func (p *independentFactorizedProvider) Generate(_ context.Context, request infe
 	if err := json.Unmarshal([]byte(strings.TrimPrefix(request.Input, "\n\nTask:\n")), &fields); err != nil {
 		return inference.Response{}, err
 	}
-	if fields["original_question"] != nil {
+	if fields["question"] == nil {
 		if p.failSource {
 			return inference.Response{}, errors.New("offline unknown source outcome")
 		}
@@ -133,7 +133,7 @@ func TestIndependentFactorizedServingCarriesCompleteEvidenceAndExpiresWithSource
 		if json.Unmarshal(fields["context"], &evidence) != nil || json.Unmarshal(fields["instructions"], &instructions) != nil || !strings.Contains(evidence, f.request.Spec.Context[0].Text) || instructions != f.request.Spec.Instructions || fields["bindings"] == nil {
 			t.Fatalf("stage %d lost complete approved context: %s", i, request.Input)
 		}
-		if fields["cached_answer"] == nil || i == 0 && (fields["original_question"] == nil || fields["question"] != nil) || i == 1 && (fields["original_question"] != nil || fields["question"] == nil) {
+		if fields["cached_answer"] == nil || i == 0 && (fields["original_question"] == nil || fields["question"] != nil) || i == 1 && (fields["original_question"] == nil || fields["question"] == nil) {
 			t.Fatalf("stage %d did not preserve certificate/pair separation: %s", i, request.Input)
 		}
 	}
