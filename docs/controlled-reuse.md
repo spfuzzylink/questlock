@@ -257,6 +257,15 @@ answers, real local embeddings and durable verifier inference; it generates no
 fresh answer baseline and measures no answer-generation saving. A completed
 report means execution finished, not that the population met a quality target.
 
+For a diagnostic you want to inspect later, add `--state-dir /absolute/new/path`.
+Use a new path below a private directory you own. The diagnostic keeps its
+`state.db` and `worker.token` there, including pending claims and reservations.
+It refuses existing directories; this flag does not resume or retry a run.
+Without the flag, temporary state is removed only after a fully known completed
+run and successful report delivery. Failures or unknown usage keep it, with the
+private path printed to diagnostics. Keep that directory out of Git and preserve
+it for inspection. Starting another run does not resolve an uncertain call.
+
 Choose a labeled question population before evaluating it. A false acceptance
 means a cached answer was served although it did not satisfy the current
 request. Report precision among served answers, recall among eligible answers,

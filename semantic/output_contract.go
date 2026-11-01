@@ -12,7 +12,7 @@ import (
 
 // OutputContractGuardVersion identifies rejection-only checks for explicit
 // presentation requests. Passing them never establishes meaning or correctness.
-const OutputContractGuardVersion = 1
+const OutputContractGuardVersion = 2
 
 var (
 	explicitFormat = regexp.MustCompile(`(?i)\b(?:return|respond|output|provide|give|format)\b[^.!?;\n]{0,160}?\b(?:as|in|using)\s+(?:(?:exactly|only|just|a|an|the)\s+){0,4}(?:(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+)[-\s]+(?:(?:columns?|fields?)[-\s]+)?)?[` + "`\"" + `]?(json(?:\s+(?:object|array))?|csv|tsv|markdown\s+table)\b`)
@@ -30,6 +30,15 @@ var (
 	suffixColumns  = regexp.MustCompile(`(?i)^\s+(?:fields?|columns?)\b`)
 	formatLink     = regexp.MustCompile(`(?i)\b(?:as|in|using)\s+`)
 	tableSeparator = regexp.MustCompile(`^:?-{3,}:?$`)
+	proseWithLink  = regexp.MustCompile(`(?i)\b(?:return|respond|answer|reply|write|provide|give|output|explain|summarize|summarise|describe|format)\b[^.!?;\n]{0,160}?\b(as|in|using)\s+(?:(?:a|an|the|one|single|plain|short|concise|brief|ordinary|normal|simple|only|just|regular)\s+){0,5}(prose|paragraphs?)\b`)
+	proseDirect    = regexp.MustCompile(`(?i)\b(?:return|respond|answer|reply|write|provide|give|output|use)\s+(?:(?:me|your|a|an|the|only|just|one|single|plain|short|concise|brief|ordinary|normal|simple|regular)\s+){0,6}(prose|paragraphs?)\b`)
+	proseSubject   = regexp.MustCompile(`(?i)\b(?:answer|response|reply|output|summary)\s+(?:must|should|needs?\s+to|has\s+to)\s+be\s+(?:(?:a|an|the|one|single|plain|short|concise|brief|ordinary|normal|simple)\s+){0,5}(prose|paragraphs?)\b`)
+	noJSONClause   = regexp.MustCompile(`(?i)(?:^|[.!?;\n,])\s*(?:please\s+)?((?:no|without)\s+(?:any\s+)?json)\b`)
+	noJSONDirected = regexp.MustCompile(`(?i)\b(?:return|respond|answer|reply|write|provide|give|output|explain|summarize|summarise|describe|compose|render|draft)\b[^.!?;\n]{0,160}?\b((?:without|no)\s+(?:any\s+)?json)\b`)
+	noJSONNegated  = regexp.MustCompile(`(?i)\b(?:do\s+not|don't|don’t|never)\s+(?:return|use|output|write|provide|give|compose|render|draft|respond(?:\s+with|\s+in)?|answer(?:\s+with|\s+in)?)\s+(?:any\s+)?(json)\b`)
+	htmlTable      = regexp.MustCompile(`(?is)^<table(?:\s[^>]*)?>.*</table>\s*$`)
+	noJSONAbout    = regexp.MustCompile(`(?i)\b(?:why|whether|about|meaning\s+of|phrase)\b`)
+	proseReference = regexp.MustCompile(`(?i)^\s+(?:[0-9]+\b|ids?\b|identifiers?\b|numbers?\b|counts?\b|lengths?\b|boundaries\b|segmentation\b)`)
 )
 
 // CheckReuseAnswerContract rejects a saved answer that demonstrably violates a
@@ -41,6 +50,13 @@ func CheckReuseAnswerContract(question, answer string) []string {
 		return []string{"invalid_output_contract_text"}
 	}
 	text := strings.TrimSpace(answer)
+	prose, noJSON := requestedProseContract(question)
+	if noJSON && structuredJSONAnswer(text) {
+		return []string{"output_no_json_contract_mismatch"}
+	}
+	if prose && (structuredJSONAnswer(text) || structuredTableAnswer(text)) {
+		return []string{"output_prose_contract_mismatch"}
+	}
 	for _, pattern := range []*regexp.Regexp{onlyNumeric, numericOnly} {
 		for _, match := range pattern.FindAllStringSubmatchIndex(question, -1) {
 			if quotedRequest(question, match[0]) {
@@ -127,21 +143,92 @@ func outputClauseEnd(question string, end int) int {
 // Ignore request verbs quoted as source text; quoting a format name inside a
 // real request remains supported. Apostrophes in ordinary words are not quotes.
 func quotedRequest(question string, position int) bool {
-	var quote byte
-	for i := 0; i < position; i++ {
-		if question[i] == '\\' {
-			i++
-			continue
-		}
-		if quote != 0 {
-			if question[i] == quote {
-				quote = 0
-			}
-		} else if question[i] == '"' || question[i] == '`' {
-			quote = question[i]
+	if position < 0 || position >= len(question) {
+		return false
+	}
+	return contractQuoteMask(question)[position]
+}
+
+func requestedProseContract(question string) (prose, noJSON bool) {
+	quoted := contractQuoteMask(question)
+	scan := contractScanText(question, quoted)
+	for _, m := range proseWithLink.FindAllStringSubmatchIndex(scan, -1) {
+		if contractDirectiveAt(question, quoted, m[0]) && !quoted[m[2]] && !proseReference.MatchString(question[m[1]:]) && !languageMeta.MatchString(question[m[0]:m[2]]) && !languageIndirect.MatchString(question[m[0]:m[2]]) {
+			prose = true
 		}
 	}
-	return quote != 0
+	for _, pattern := range []*regexp.Regexp{proseDirect, proseSubject} {
+		for _, m := range pattern.FindAllStringSubmatchIndex(scan, -1) {
+			if contractDirectiveAt(question, quoted, m[0]) && !proseReference.MatchString(question[m[1]:]) {
+				prose = true
+			}
+		}
+	}
+	for _, pattern := range []*regexp.Regexp{noJSONClause, noJSONDirected, noJSONNegated} {
+		for _, m := range pattern.FindAllStringSubmatchIndex(scan, -1) {
+			start := m[0]
+			if pattern == noJSONClause {
+				start = m[2]
+			}
+			if pattern == noJSONDirected && strings.HasPrefix(strings.ToLower(question[m[2]:m[3]]), "no ") && noJSONAbout.MatchString(question[m[0]:m[2]]) {
+				continue
+			}
+			if contractDirectiveAt(question, quoted, start) && !quoted[m[2]] && !languageMeta.MatchString(question[m[0]:m[2]]) && !languageIndirect.MatchString(question[m[0]:m[2]]) {
+				noJSON = true
+			}
+		}
+	}
+	return prose, noJSON
+}
+
+// Recognize actual structured syntax. These checks do not decide whether prose
+// is well written or complete, infer a source language, or rewrite the answer.
+func structuredJSONAnswer(text string) bool {
+	text = unfencedAnswer(text)
+	return len(text) > 0 && (text[0] == '{' || text[0] == '[') && json.Valid([]byte(text))
+}
+func unfencedAnswer(text string) string {
+	text = strings.TrimSpace(text)
+	if strings.HasPrefix(text, "```") && strings.HasSuffix(text, "```") {
+		if newline := strings.IndexByte(text, '\n'); newline >= 0 && newline < len(text)-3 {
+			return strings.TrimSpace(text[newline+1 : len(text)-3])
+		}
+	}
+	return text
+}
+func structuredTableAnswer(text string) bool {
+	text = unfencedAnswer(text)
+	if markdownAnswer(text, -1) || htmlTable.MatchString(text) {
+		return true
+	}
+	for _, delimiter := range []rune{',', '\t'} {
+		r := csv.NewReader(strings.NewReader(text))
+		r.Comma = delimiter
+		rows, width := 0, 0
+		for rows < 1025 {
+			fields, err := r.Read()
+			if err == io.EOF {
+				if rows >= 2 && width >= 2 {
+					return true
+				}
+				break
+			}
+			if err != nil {
+				break
+			}
+			if rows == 0 {
+				width = len(fields)
+			}
+			if len(fields) != width || width < 2 {
+				break
+			}
+			rows++
+		}
+		if rows >= 1025 && width >= 2 {
+			return true
+		}
+	}
+	return false
 }
 
 func requestedColumns(question string) int {

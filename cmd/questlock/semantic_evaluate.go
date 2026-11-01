@@ -27,6 +27,7 @@ import (
 	"github.com/spfuzzylink/questlock/internal/validityeval"
 	"github.com/spfuzzylink/questlock/protocol"
 	"github.com/spfuzzylink/questlock/semantic"
+	"golang.org/x/sys/unix"
 )
 
 const (
@@ -130,47 +131,50 @@ type semanticEvalUsage struct {
 }
 
 type semanticEvalReport struct {
-	BatchSize                  int                           `json:"batch_size,omitempty"`
-	BatchVerificationWork      []semantic.ValidityResult     `json:"batch_verification_work,omitempty"`
-	Schema                     int                           `json:"schema"`
-	ProtectedTermsVersion      int                           `json:"protected_terms_version"`
-	OutputContractGuardVersion int                           `json:"output_contract_guard_version,omitempty"`
-	Mode                       string                        `json:"mode"`
-	Status                     string                        `json:"status"`
-	SourceSHA256               string                        `json:"source_sha256"`
-	FrozenCorpusSHA256         string                        `json:"frozen_corpus_sha256"`
-	MatchesFrozenCorpus        bool                          `json:"matches_frozen_corpus"`
-	Population                 string                        `json:"population"`
-	LabelRule                  string                        `json:"label_rule"`
-	EmbeddingModel             string                        `json:"embedding_model"`
-	VerifierModel              string                        `json:"verifier_model"`
-	VerifierPolicy             string                        `json:"verifier_policy,omitempty"`
-	VerifierSourceThink        bool                          `json:"verifier_source_think"`
-	VerifierMaxInputTokens     int64                         `json:"verifier_max_input_tokens,omitempty"`
-	VerifierMaxOutputTokens    int64                         `json:"verifier_max_output_tokens,omitempty"`
-	VerifierTimeoutMS          int                           `json:"verifier_timeout_ms,omitempty"`
-	VerifierIdentity           string                        `json:"verifier_identity,omitempty"`
-	MinSimilarity              float64                       `json:"min_similarity"`
-	RetrievalThresholdMeaning  string                        `json:"retrieval_threshold_meaning"`
-	QualityTargetMeaning       string                        `json:"quality_target_meaning"`
-	MetricMeaning              string                        `json:"metric_meaning"`
-	ModelCallBasis             string                        `json:"model_call_basis"`
-	SourceAnswers              string                        `json:"source_answers"`
-	AnswerGenerationCalls      int                           `json:"answer_generation_calls"`
-	SavingsMeasured            bool                          `json:"savings_measured"`
-	PhysicalHosts              int                           `json:"physical_hosts"`
-	ProviderAPIChargeUSD       int                           `json:"provider_api_charge_usd"`
-	PaidFallbackEnabled        bool                          `json:"paid_fallback_enabled"`
-	Errors                     []string                      `json:"errors"`
-	SourceEmbeddings           []semanticEvalSourceEmbedding `json:"source_embeddings"`
-	Pairs                      []semanticEvalPair            `json:"pairs"`
-	Totals                     semanticEvalTotals            `json:"totals"`
-	Usage                      semanticEvalUsage             `json:"usage"`
-	TotalMS                    float64                       `json:"total_ms"`
+	BatchSize                    int                           `json:"batch_size,omitempty"`
+	BatchVerificationWork        []semantic.ValidityResult     `json:"batch_verification_work,omitempty"`
+	Schema                       int                           `json:"schema"`
+	ProtectedTermsVersion        int                           `json:"protected_terms_version"`
+	OutputContractGuardVersion   int                           `json:"output_contract_guard_version,omitempty"`
+	LanguageContractGuardVersion int                           `json:"language_contract_guard_version,omitempty"`
+	Mode                         string                        `json:"mode"`
+	Status                       string                        `json:"status"`
+	SourceSHA256                 string                        `json:"source_sha256"`
+	FrozenCorpusSHA256           string                        `json:"frozen_corpus_sha256"`
+	MatchesFrozenCorpus          bool                          `json:"matches_frozen_corpus"`
+	Population                   string                        `json:"population"`
+	LabelRule                    string                        `json:"label_rule"`
+	EmbeddingModel               string                        `json:"embedding_model"`
+	VerifierModel                string                        `json:"verifier_model"`
+	VerifierPolicy               string                        `json:"verifier_policy,omitempty"`
+	VerifierSourceThink          bool                          `json:"verifier_source_think"`
+	VerifierMaxInputTokens       int64                         `json:"verifier_max_input_tokens,omitempty"`
+	VerifierMaxOutputTokens      int64                         `json:"verifier_max_output_tokens,omitempty"`
+	VerifierTimeoutMS            int                           `json:"verifier_timeout_ms,omitempty"`
+	VerifierIdentity             string                        `json:"verifier_identity,omitempty"`
+	MinSimilarity                float64                       `json:"min_similarity"`
+	RetrievalThresholdMeaning    string                        `json:"retrieval_threshold_meaning"`
+	QualityTargetMeaning         string                        `json:"quality_target_meaning"`
+	MetricMeaning                string                        `json:"metric_meaning"`
+	ModelCallBasis               string                        `json:"model_call_basis"`
+	SourceAnswers                string                        `json:"source_answers"`
+	AnswerGenerationCalls        int                           `json:"answer_generation_calls"`
+	SavingsMeasured              bool                          `json:"savings_measured"`
+	PhysicalHosts                int                           `json:"physical_hosts"`
+	ProviderAPIChargeUSD         int                           `json:"provider_api_charge_usd"`
+	PaidFallbackEnabled          bool                          `json:"paid_fallback_enabled"`
+	StateRetained                bool                          `json:"state_retained"`
+	Errors                       []string                      `json:"errors"`
+	SourceEmbeddings             []semanticEvalSourceEmbedding `json:"source_embeddings"`
+	Pairs                        []semanticEvalPair            `json:"pairs"`
+	Totals                       semanticEvalTotals            `json:"totals"`
+	Usage                        semanticEvalUsage             `json:"usage"`
+	TotalMS                      float64                       `json:"total_ms"`
 }
 
 func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runErr error) {
 	started := time.Now()
+	var state *semanticEvalState
 	report := semanticEvalReport{Schema: 1, ProtectedTermsVersion: semantic.ProtectedTermsVersion, Mode: "local_semantic_validity_diagnostic", Status: "partial_failed", FrozenCorpusSHA256: semanticEvalFrozenSHA256, PhysicalHosts: 1, SourceAnswers: "fixed_labelled_fixtures", RetrievalThresholdMeaning: "Cosine retrieval cutoff only; it is not a validity confidence or quality estimate.", QualityTargetMeaning: "The requested 90–98% target is not a universal guarantee. Metrics and Wilson intervals describe this declared sample only; corpus selection and dependence limit generalization.", MetricMeaning: "TP/FP/TN/FN classify served versus withheld for every labelled pair, including abstentions. Accuracy counts correct serve/withhold decisions; coverage is served/total. Errors, unknowns and unattempted pairs remain visible. Precision is null when nothing is served.", ModelCallBasis: "Logical embedding Embed calls plus verifier Generate calls reported by the inference runner; metadata reads and token-count preflight requests are excluded. Verification attempts, cached verifications and unknown usage are separate.", Errors: []string{}, SourceEmbeddings: []semanticEvalSourceEmbedding{}, Pairs: []semanticEvalPair{}}
 	defer func() {
 		report.TotalMS = float64(time.Since(started)) / float64(time.Millisecond)
@@ -178,8 +182,31 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 		if runErr == nil {
 			report.Status = "completed"
 		}
+		knownComplete := runErr == nil && report.Totals.Unattempted == 0 && report.Totals.Errors == 0 && report.Usage.VerifierUnknownUsageCalls == 0 && report.Usage.EmbeddingUnknownUsageCalls == 0
+		if state != nil {
+			if err := state.close(); err != nil {
+				runErr = errors.Join(runErr, errors.New("semantic evaluation state close unconfirmed"))
+				knownComplete = false
+				report.Status = "partial_failed"
+				report.Errors = append(report.Errors, "state_close_failed")
+			}
+			report.StateRetained = state.explicit || !knownComplete
+		}
 		if err := writeModelJSON(output, report); err != nil {
 			runErr = errors.Join(runErr, err)
+			knownComplete = false // Never remove state when report delivery failed.
+		}
+		if state != nil {
+			retained := state.explicit || !knownComplete
+			if !retained {
+				if err := state.discard(); err != nil {
+					retained = true
+					runErr = errors.Join(runErr, errors.New("semantic evaluation state removal unconfirmed"))
+				}
+			}
+			if retained {
+				_, _ = fmt.Fprintf(diagnostics, "Private evaluation state retained at %q. Inspect its state.db and worker.token; do not rerun or change a revision to escape an uncertain claim.\n", state.dir)
+			}
 		}
 	}()
 	fail := func(category string) error {
@@ -201,8 +228,9 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	threshold := f.Float64("min-similarity", 0.9, "retrieval cosine cutoff; not validity confidence")
 	batchSize := f.Int("batch-size", 1, "1 for standalone validity; 2 for compatible validity pairs")
 	timeout := f.Duration("timeout", 20*time.Minute, "positive total evaluation bound, at most 60m")
+	stateDir := f.String("state-dir", "", "new absolute private state directory; explicit state is retained, failed temporary state is also retained")
 	f.Usage = func() {
-		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--batch-size 1|2] [--verifier-policy factorized-v1 --verifier-source-think] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving.")
+		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--state-dir NEW_PRIVATE_PATH] [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--batch-size 1|2] [--verifier-policy factorized-v1 --verifier-source-think] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving.")
 	}
 	if err := f.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
@@ -216,6 +244,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	report.VerifierSourceThink = *verifierSourceThink
 	if *verifierPolicy == "factorized-v1" {
 		report.OutputContractGuardVersion = semantic.OutputContractGuardVersion
+		report.LanguageContractGuardVersion = semantic.LanguageContractGuardVersion
 	}
 	if !math.IsNaN(*threshold) && !math.IsInf(*threshold, 0) {
 		report.MinSimilarity = *threshold
@@ -247,6 +276,13 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 		return fail("invalid_local_model_policy")
 	}
 	report.VerifierMaxInputTokens, report.VerifierMaxOutputTokens, report.VerifierTimeoutMS = config.VerifierMaxInputTokens, config.VerifierMaxOutputTokens, config.VerifierTimeoutMS
+	// Validate and create state before any provider metadata or inference. Existing
+	// paths are never reused: a retained uncertain job needs operator inspection.
+	state, err = newSemanticEvalBroker(ctx, *stateDir)
+	if err != nil {
+		return fail("evaluation_state_setup_failed")
+	}
+	broker := state.broker
 	// The embedder validates the literal-loopback origin before discovery. It
 	// never pulls weights, follows redirects, or uses environment proxies.
 	embedder, err := semantic.NewOllamaEmbedderContext(ctx, *base, *embeddingModel, config.MaxInputBytes)
@@ -254,11 +290,6 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 		return fail("embedding_setup_failed")
 	}
 	defer embedder.Close()
-	broker, closeBroker, err := newSemanticEvalBroker(ctx)
-	if err != nil {
-		return fail("temporary_broker_failed")
-	}
-	defer closeBroker()
 	var verifier interface {
 		Identity() string
 		Close()
@@ -354,31 +385,124 @@ func semanticEvalLabel(value string) bool {
 	return true
 }
 
-func newSemanticEvalBroker(ctx context.Context) (inference.Broker, func(), error) {
-	dir, err := os.MkdirTemp("", "questlock-semantic-evaluation-")
+// Evaluation state is disposable only after a fully known completed run. Closing
+// network/database handles must never implicitly delete pending job ownership.
+type semanticEvalState struct {
+	broker   inference.Broker
+	dir      string
+	explicit bool
+	info     os.FileInfo
+	store    *store.Store
+	server   *httptest.Server
+	closed   bool
+}
+
+func newSemanticEvalBroker(ctx context.Context, requested string) (*semanticEvalState, error) {
+	dir, info, err := semanticEvalNewStateDirectory(requested)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	remove := func() { _ = os.RemoveAll(dir) }
+	state := &semanticEvalState{dir: dir, info: info, explicit: requested != ""}
 	s, err := store.Open(filepath.Join(dir, "state.db"))
 	if err != nil {
-		remove()
-		return nil, nil, err
+		return state, err
 	}
-	closeStore := func() { _ = s.Close(); remove() }
+	state.store = s
 	token, err := s.CreateToken(ctx, "semantic-evaluator", "semantic-evaluation")
 	if err != nil {
-		closeStore()
-		return nil, nil, err
+		return state, err
 	}
-	server := httptest.NewServer(httpapi.New(s))
-	closeAll := func() { server.Close(); closeStore() }
-	broker, err := client.New(server.URL, token)
+	f, err := os.OpenFile(filepath.Join(dir, "worker.token"), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
 	if err != nil {
-		closeAll()
-		return nil, nil, err
+		return state, errors.New("cannot persist private evaluation credential")
 	}
-	return broker, closeAll, nil
+	_, writeErr := io.WriteString(f, token+"\n")
+	syncErr, closeErr := f.Sync(), f.Close()
+	if writeErr != nil || syncErr != nil || closeErr != nil {
+		return state, errors.New("private evaluation credential write unconfirmed")
+	}
+	state.server = httptest.NewServer(httpapi.New(s))
+	state.broker, err = client.New(state.server.URL, token)
+	return state, err
+}
+
+func (s *semanticEvalState) close() error {
+	if s == nil || s.closed {
+		return nil
+	}
+	s.closed = true
+	if s.server != nil {
+		s.server.Close()
+	}
+	if s.store != nil {
+		return s.store.Close()
+	}
+	return nil
+}
+
+func (s *semanticEvalState) discard() error {
+	if s.explicit || !s.closed {
+		return errors.New("evaluation state is not disposable")
+	}
+	current, err := os.Lstat(s.dir)
+	if err != nil || !current.IsDir() || !os.SameFile(current, s.info) {
+		return errors.New("evaluation state directory changed")
+	}
+	return os.RemoveAll(s.dir)
+}
+
+func semanticEvalNewStateDirectory(requested string) (string, os.FileInfo, error) {
+	invalid := errors.New("evaluation state requires a new absolute directory below an owned non-writable-by-others parent, without symlinks")
+	var dir string
+	if requested == "" {
+		var err error
+		dir, err = os.MkdirTemp("", "questlock-semantic-evaluation-")
+		if err != nil {
+			return "", nil, invalid
+		}
+	} else {
+		if !filepath.IsAbs(requested) || filepath.Clean(requested) != requested || requested == string(filepath.Separator) {
+			return "", nil, invalid
+		}
+		// Walk directory descriptors rather than resolving symlinks. Creation is
+		// exclusive under the inspected parent; no existing database is opened.
+		fd, err := unix.Open("/", unix.O_RDONLY|unix.O_DIRECTORY|unix.O_CLOEXEC, 0)
+		if err != nil {
+			return "", nil, invalid
+		}
+		defer func() { unix.Close(fd) }()
+		parts := strings.Split(strings.TrimPrefix(requested, "/"), "/")
+		for _, part := range parts[:len(parts)-1] {
+			next, err := unix.Openat(fd, part, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
+			if err != nil {
+				return "", nil, invalid
+			}
+			var ancestor unix.Stat_t
+			if unix.Fstat(next, &ancestor) != nil || ancestor.Uid != 0 && ancestor.Uid != uint32(os.Getuid()) || ancestor.Mode&0022 != 0 && ancestor.Mode&unix.S_ISVTX == 0 {
+				unix.Close(next)
+				return "", nil, invalid
+			}
+			unix.Close(fd)
+			fd = next
+		}
+		var parent unix.Stat_t
+		if unix.Fstat(fd, &parent) != nil || parent.Uid != uint32(os.Getuid()) || parent.Mode&0022 != 0 {
+			return "", nil, invalid
+		}
+		if err := unix.Mkdirat(fd, parts[len(parts)-1], 0700); err != nil {
+			return "", nil, invalid
+		}
+		dir = requested
+	}
+	info, err := os.Lstat(dir)
+	if err != nil || !info.IsDir() || info.Mode().Perm()&0077 != 0 {
+		return "", nil, invalid
+	}
+	stat, ok := info.Sys().(*syscall.Stat_t)
+	if !ok || stat.Uid != uint32(os.Getuid()) {
+		return "", nil, invalid
+	}
+	return dir, info, nil
 }
 
 func semanticEvalRun(ctx context.Context, suite semanticEvalSuite, embedder semantic.Embedder, verifier any, config semantic.ReuseConfig, threshold float64, report *semanticEvalReport) {
@@ -418,6 +542,7 @@ func semanticEvalRun(ctx context.Context, suite semanticEvalSuite, embedder sema
 			row.GuardCodes = semantic.CheckReuseProtectedTerms(c.OriginalQuestion, variant.Question, config.VerifierPolicy)
 			if config.VerifierPolicy == "factorized-v1" {
 				row.GuardCodes = append(row.GuardCodes, semantic.CheckReuseAnswerContract(variant.Question, c.Answer)...)
+				row.GuardCodes = append(row.GuardCodes, semantic.CheckReuseLanguageContract(c.OriginalQuestion, c.Instructions, variant.Question)...)
 			}
 			if row.GuardCodes == nil {
 				row.GuardCodes = []string{}

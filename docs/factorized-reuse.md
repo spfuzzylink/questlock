@@ -90,6 +90,15 @@ inference outcome stops the target without automatic retry or paid fallback. A c
 rejection or `unknown` verdict with confirmed usage is a known abstention; the
 approved workflow may continue to fresh bounded local generation.
 
+Some installed models need a reasoning budget to check a saved answer properly.
+Set `verifier_source_think: true` to allow reasoning in the source check only.
+This opt-in defaults to a shared 4,096-token output allowance and a 120-second
+deadline; each stage gets half the token allowance. Smaller explicit caps still
+apply. The question comparison does not enable reasoning. Count the source's
+reasoning tokens too: hiding its reasoning text does not make that work free.
+Without this setting, the existing smaller limits stay unchanged. A larger
+budget is an option to test, not evidence of better answers or lower cost.
+
 ## What gets reused
 
 The source certificate binds the original job version, content and output hashes,
@@ -106,13 +115,20 @@ adds no action replay, source promotion, weight training or automatic cancellati
 of another agent.
 
 The default verifier retains its conservative literal guards. This policy adds
-rejection-only checks for recognized numeric-only, JSON, CSV/TSV and Markdown
-table requests. It checks the actual saved representation, not a format label,
+rejection-only checks for recognized numeric-only, JSON, CSV/TSV, Markdown
+table, prose and no-JSON requests. It checks the actual saved representation, not a format label,
 and never converts an answer. Unrecognized wording still needs the local
 verifier; these checks cannot establish facts, complete coverage or meaning.
 They can conservatively withhold an otherwise usable answer. Changed numbers,
 identifiers, roles and conditions remain the contextual verifier’s job. Keep
 independent hard negatives in the workload.
+
+Explicit language changes get a separate check. An English response cannot be
+reused unchanged when the new request asks for Spanish. The screen recognizes
+English, Spanish and French directives and shared instruction defaults; other
+explicit languages or conflicting directives withhold reuse. It does not detect
+the actual answer's language. Quoted examples are data, and passing this screen
+still leaves the full decision to the local verifier.
 
 There is also a rejection-only screen for statistical measures in saved answers.
 An answer saying “average latency below 250 ms” cannot borrow evidence that only
