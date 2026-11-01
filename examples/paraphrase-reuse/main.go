@@ -51,6 +51,7 @@ type row struct {
 	Error       string             `json:"error,omitempty"`
 	Result      *delegation.Result `json:"result,omitempty"`
 	ModelOutput string             `json:"model_output,omitempty"`
+	ElapsedMS   *float64           `json:"elapsed_ms,omitempty"`
 }
 
 func main() {
@@ -64,6 +65,7 @@ func run(args []string, out io.Writer) error {
 	f.SetOutput(out)
 	live := f.Bool("live", false, "explicit local generation, semantic reuse and exact replay")
 	baseline := f.Bool("fresh-baseline", false, "also run twelve fresh quality-matched requests")
+	repeatBaseline := f.Bool("fresh-repeat-baseline", false, "also measure twelve fresh repeat baselines; requires --fresh-baseline")
 	brokerURL := f.String("broker", "", "explicit literal-loopback broker origin")
 	ollamaURL := f.String("ollama", "", "explicit literal-loopback installed Ollama runtime")
 	model := f.String("model", "qwen3.5:9b", "explicit installed local answer model; no weight downloads")
@@ -71,11 +73,21 @@ func run(args []string, out io.Writer) error {
 	tokenPath := f.String("token-file", "", "absolute private scoped token file")
 	statePath := f.String("state", "", "new absolute private progress file")
 	outputPath := f.String("output", "", "new absolute private JSONL report")
+	reportPath := f.String("report", "", "offline summary of an absolute private measurement JSONL file")
 	if e := f.Parse(args); e != nil {
 		if errors.Is(e, flag.ErrHelp) {
 			return nil
 		}
 		return e
+	}
+	if *reportPath != "" {
+		if f.NArg() != 0 || *live || *baseline || *repeatBaseline || *brokerURL != "" || *ollamaURL != "" || *tokenPath != "" || *statePath != "" || *outputPath != "" {
+			return errors.New("--report must be used without live-run options")
+		}
+		return reportFile(*reportPath, out)
+	}
+	if *repeatBaseline && !*baseline {
+		return errors.New("--fresh-repeat-baseline requires --fresh-baseline")
 	}
 	if !*live {
 		fmt.Fprintln(out, "No model or file access. Review source, facts and checks, then supply --live and explicit local endpoints.")
@@ -121,7 +133,11 @@ func run(args []string, out io.Writer) error {
 	defer report.Close()
 	budget := &inference.TokenBudget{InputTokens: 524288, OutputTokens: 16384, TotalTokens: 540672}
 	h := sha256.Sum256(casesJSON)
-	if e = appendJSON(report, map[string]any{"schema": "questlock.paraphrase-measurement.v1", "cases_sha256": hex.EncodeToString(h[:]), "model": *model, "verifier_model": *verifierModel, "verifier_policy": "factorized-v1", "min_similarity": 0.25, "daily_budget": budget, "fresh_baseline": *baseline, "paid_fallback_enabled": false, "provider_api_charge_usd": 0}); e != nil {
+	header := map[string]any{"schema": "questlock.paraphrase-measurement.v1", "cases_sha256": hex.EncodeToString(h[:]), "model": *model, "verifier_model": *verifierModel, "verifier_policy": "factorized-v1", "min_similarity": 0.25, "daily_budget": budget, "fresh_baseline": *baseline, "paid_fallback_enabled": false, "provider_api_charge_usd": 0}
+	if *repeatBaseline {
+		header["fresh_repeat_baseline"] = true
+	}
+	if e = appendJSON(report, header); e != nil {
 		return e
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
@@ -146,26 +162,19 @@ func run(args []string, out io.Writer) error {
 	for _, c := range set.Cases {
 		sourceOK := false
 		fingerprints := [2]string{}
-		for step := 0; step < 7; step++ {
-			phase, input := "seed", c.OriginalQuestion
-			if step > 0 && step < 3 {
-				phase, input = "paraphrase", c.Paraphrases[step-1]
-			}
-			if step >= 3 && step < 5 {
-				phase, input = "exact", c.Paraphrases[step-3]
-			}
-			if step >= 5 {
-				if !*baseline {
-					break
-				}
-				phase, input = "baseline", c.Paraphrases[step-5]
-			}
-			request := requestFor(set.Revision, c, input, budget)
+		steps := 5
+		if *baseline {
+			steps = 7
+		}
+		if *repeatBaseline {
+			steps = 9
+		}
+		for step := 0; step < steps; step++ {
+			phase, request := measurementStep(set.Revision, c, step, budget)
+			input := request.Spec.Input
 			request.Policy.Local.Spec.Model = *model
-			request.SemanticReuse.VerifierModel = *verifierModel
-			if phase == "baseline" {
-				request.SemanticReuse = nil
-				request.Spec.Task = fmt.Sprintf("semantic-baseline-%s-%d", c.ID, step-5)
+			if request.SemanticReuse != nil {
+				request.SemanticReuse.VerifierModel = *verifierModel
 			}
 			r := row{CaseID: c.ID, Phase: phase, Input: input}
 			if (phase == "paraphrase" || phase == "exact") && !sourceOK {
@@ -182,9 +191,12 @@ func run(args []string, out io.Writer) error {
 			if idErr != nil {
 				return errors.New("outcome identity unavailable; generation was not started")
 			}
+			started := time.Now()
 			result, runErr := router.Run(ctx, request)
 			r.Result = &result
 			delegation.RecordOutcome(ctx, broker, request, &result, id)
+			elapsed := float64(time.Since(started)) / float64(time.Millisecond)
+			r.ElapsedMS = &elapsed
 			if runErr != nil {
 				r.Error = runErr.Error()
 				failed = true
@@ -224,7 +236,7 @@ func run(args []string, out io.Writer) error {
 						failed = true
 					}
 				}
-				if (phase == "seed" || phase == "baseline") && runErr == nil && !fresh {
+				if (phase == "seed" || phase == "baseline" || phase == "baseline_repeat") && runErr == nil && !fresh {
 					r.Error = "fresh_scope_required"
 					failed = true
 				}
@@ -250,6 +262,27 @@ func run(args []string, out io.Writer) error {
 		return errors.New("known failures retained; do not select only successful cases")
 	}
 	return nil
+}
+func measurementStep(revision string, c businessCase, step int, budget *inference.TokenBudget) (string, delegation.Request) {
+	phase, input := "seed", c.OriginalQuestion
+	if step > 0 && step < 3 {
+		phase, input = "paraphrase", c.Paraphrases[step-1]
+	}
+	if step >= 3 && step < 5 {
+		phase, input = "exact", c.Paraphrases[step-3]
+	}
+	if step >= 5 {
+		phase, input = "baseline", c.Paraphrases[(step-5)%2]
+	}
+	if step >= 7 {
+		phase = "baseline_repeat"
+	}
+	r := requestFor(revision, c, input, budget)
+	if step >= 5 {
+		r.SemanticReuse = nil
+		r.Spec.Task = fmt.Sprintf("semantic-baseline-%s-%d", c.ID, step-5)
+	}
+	return phase, r
 }
 func requestFor(revision string, c businessCase, input string, budget *inference.TokenBudget) delegation.Request {
 	zero, timeout, think, temp := int64(0), int64(90), false, float64(0)

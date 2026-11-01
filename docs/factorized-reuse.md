@@ -5,7 +5,9 @@ paraphrases and incorrectly accepted two of 72 changed requests in a 144-pair
 regression run. It withheld all 12 deliberately unsupported source answers in a
 separate check. These are development results, not fresh blind qualification.
 The false acceptances involved a changed refund price basis and a new fee-refund
-condition. The revised answer-aware candidate still needs fresh qualification.
+condition. A later 144-pair native-prompt run reused 69/72 eligible requests
+and falsely accepted two output-format changes (CSV and numeric-only). It did
+not pass the safety gate. The revised candidate still needs fresh qualification.
 Keep it out of production; the published policy is unchanged.
 
 Someone asks the same thing in different words. We want the saved answer back,
@@ -79,10 +81,14 @@ stages. Pending and uncertain claims retain their existing fences. This option
 adds no action replay, source promotion, weight training or automatic cancellation
 of another agent.
 
-The default verifier retains its conservative literal guards. This policy uses
-text-syntax guards and requires the contextual verifier to detect changed numbers,
-identifiers, roles, conditions and output requirements. That makes independent
-hard-negative tests essential; a spelling comparison cannot make this decision.
+The default verifier retains its conservative literal guards. This policy adds
+rejection-only checks for recognized numeric-only, JSON, CSV/TSV and Markdown
+table requests. It checks the actual saved representation, not a format label,
+and never converts an answer. Unrecognized wording still needs the local
+verifier; these checks cannot establish facts, complete coverage or meaning.
+They can conservatively withhold an otherwise usable answer. Changed numbers,
+identifiers, roles and conditions remain the contextual verifier’s job. Keep
+independent hard negatives in the workload.
 
 ## Measure the whole attempt
 

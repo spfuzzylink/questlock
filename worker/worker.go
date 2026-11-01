@@ -411,7 +411,8 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 	observation.Rejections = []string{}
 	for _, code := range original.Rejections {
 		switch code {
-		case "missing_provenance", "source_not_eligible", "current_checks_failed", "verifier_rejected_or_abstained", "invalid_protected_text", "invalid_protected_quotes", "protected_numbers_changed", "protected_identifiers_changed", "protected_urls_changed", "protected_quotes_changed", "protected_negations_changed", "protected_operators_changed", "protected_units_changed":
+		case "missing_provenance", "source_not_eligible", "current_checks_failed", "verifier_rejected_or_abstained", "invalid_protected_text", "invalid_protected_quotes", "protected_numbers_changed", "protected_identifiers_changed", "protected_urls_changed", "protected_quotes_changed", "protected_negations_changed", "protected_operators_changed", "protected_units_changed",
+			"invalid_output_contract_text", "output_contract_conflict", "output_numeric_contract_mismatch", "output_json_contract_mismatch", "output_csv_contract_mismatch", "output_tsv_contract_mismatch", "output_table_contract_mismatch":
 			observation.Rejections = append(observation.Rejections, code)
 		}
 	}

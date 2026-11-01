@@ -130,41 +130,42 @@ type semanticEvalUsage struct {
 }
 
 type semanticEvalReport struct {
-	BatchSize                 int                           `json:"batch_size,omitempty"`
-	BatchVerificationWork     []semantic.ValidityResult     `json:"batch_verification_work,omitempty"`
-	Schema                    int                           `json:"schema"`
-	ProtectedTermsVersion     int                           `json:"protected_terms_version"`
-	Mode                      string                        `json:"mode"`
-	Status                    string                        `json:"status"`
-	SourceSHA256              string                        `json:"source_sha256"`
-	FrozenCorpusSHA256        string                        `json:"frozen_corpus_sha256"`
-	MatchesFrozenCorpus       bool                          `json:"matches_frozen_corpus"`
-	Population                string                        `json:"population"`
-	LabelRule                 string                        `json:"label_rule"`
-	EmbeddingModel            string                        `json:"embedding_model"`
-	VerifierModel             string                        `json:"verifier_model"`
-	VerifierPolicy            string                        `json:"verifier_policy,omitempty"`
-	VerifierMaxInputTokens    int64                         `json:"verifier_max_input_tokens,omitempty"`
-	VerifierMaxOutputTokens   int64                         `json:"verifier_max_output_tokens,omitempty"`
-	VerifierTimeoutMS         int                           `json:"verifier_timeout_ms,omitempty"`
-	VerifierIdentity          string                        `json:"verifier_identity,omitempty"`
-	MinSimilarity             float64                       `json:"min_similarity"`
-	RetrievalThresholdMeaning string                        `json:"retrieval_threshold_meaning"`
-	QualityTargetMeaning      string                        `json:"quality_target_meaning"`
-	MetricMeaning             string                        `json:"metric_meaning"`
-	ModelCallBasis            string                        `json:"model_call_basis"`
-	SourceAnswers             string                        `json:"source_answers"`
-	AnswerGenerationCalls     int                           `json:"answer_generation_calls"`
-	SavingsMeasured           bool                          `json:"savings_measured"`
-	PhysicalHosts             int                           `json:"physical_hosts"`
-	ProviderAPIChargeUSD      int                           `json:"provider_api_charge_usd"`
-	PaidFallbackEnabled       bool                          `json:"paid_fallback_enabled"`
-	Errors                    []string                      `json:"errors"`
-	SourceEmbeddings          []semanticEvalSourceEmbedding `json:"source_embeddings"`
-	Pairs                     []semanticEvalPair            `json:"pairs"`
-	Totals                    semanticEvalTotals            `json:"totals"`
-	Usage                     semanticEvalUsage             `json:"usage"`
-	TotalMS                   float64                       `json:"total_ms"`
+	BatchSize                  int                           `json:"batch_size,omitempty"`
+	BatchVerificationWork      []semantic.ValidityResult     `json:"batch_verification_work,omitempty"`
+	Schema                     int                           `json:"schema"`
+	ProtectedTermsVersion      int                           `json:"protected_terms_version"`
+	OutputContractGuardVersion int                           `json:"output_contract_guard_version,omitempty"`
+	Mode                       string                        `json:"mode"`
+	Status                     string                        `json:"status"`
+	SourceSHA256               string                        `json:"source_sha256"`
+	FrozenCorpusSHA256         string                        `json:"frozen_corpus_sha256"`
+	MatchesFrozenCorpus        bool                          `json:"matches_frozen_corpus"`
+	Population                 string                        `json:"population"`
+	LabelRule                  string                        `json:"label_rule"`
+	EmbeddingModel             string                        `json:"embedding_model"`
+	VerifierModel              string                        `json:"verifier_model"`
+	VerifierPolicy             string                        `json:"verifier_policy,omitempty"`
+	VerifierMaxInputTokens     int64                         `json:"verifier_max_input_tokens,omitempty"`
+	VerifierMaxOutputTokens    int64                         `json:"verifier_max_output_tokens,omitempty"`
+	VerifierTimeoutMS          int                           `json:"verifier_timeout_ms,omitempty"`
+	VerifierIdentity           string                        `json:"verifier_identity,omitempty"`
+	MinSimilarity              float64                       `json:"min_similarity"`
+	RetrievalThresholdMeaning  string                        `json:"retrieval_threshold_meaning"`
+	QualityTargetMeaning       string                        `json:"quality_target_meaning"`
+	MetricMeaning              string                        `json:"metric_meaning"`
+	ModelCallBasis             string                        `json:"model_call_basis"`
+	SourceAnswers              string                        `json:"source_answers"`
+	AnswerGenerationCalls      int                           `json:"answer_generation_calls"`
+	SavingsMeasured            bool                          `json:"savings_measured"`
+	PhysicalHosts              int                           `json:"physical_hosts"`
+	ProviderAPIChargeUSD       int                           `json:"provider_api_charge_usd"`
+	PaidFallbackEnabled        bool                          `json:"paid_fallback_enabled"`
+	Errors                     []string                      `json:"errors"`
+	SourceEmbeddings           []semanticEvalSourceEmbedding `json:"source_embeddings"`
+	Pairs                      []semanticEvalPair            `json:"pairs"`
+	Totals                     semanticEvalTotals            `json:"totals"`
+	Usage                      semanticEvalUsage             `json:"usage"`
+	TotalMS                    float64                       `json:"total_ms"`
 }
 
 func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runErr error) {
@@ -210,6 +211,9 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	report.EmbeddingModel, report.VerifierModel = *embeddingModel, *verifierModel
 	report.BatchSize = *batchSize
 	report.VerifierPolicy = *verifierPolicy
+	if *verifierPolicy == "factorized-v1" {
+		report.OutputContractGuardVersion = semantic.OutputContractGuardVersion
+	}
 	if !math.IsNaN(*threshold) && !math.IsInf(*threshold, 0) {
 		report.MinSimilarity = *threshold
 	}
@@ -409,6 +413,9 @@ func semanticEvalRun(ctx context.Context, suite semanticEvalSuite, embedder sema
 			row.EmbeddingMS = float64(time.Since(started)) / float64(time.Millisecond)
 			row.EmbeddingInputTokens, row.EmbeddingModelID = embedding.InputTokens, embedding.ModelID
 			row.GuardCodes = semantic.CheckReuseProtectedTerms(c.OriginalQuestion, variant.Question, config.VerifierPolicy)
+			if config.VerifierPolicy == "factorized-v1" {
+				row.GuardCodes = append(row.GuardCodes, semantic.CheckReuseAnswerContract(variant.Question, c.Answer)...)
+			}
 			if row.GuardCodes == nil {
 				row.GuardCodes = []string{}
 			}

@@ -317,6 +317,9 @@ func (r *controlledResolver) candidate(ctx context.Context, candidate semantic.C
 		return nil, false, nil
 	}
 	guards := semantic.CheckReuseProtectedTerms(proof.Question, r.request.Spec.Input, r.config.VerifierPolicy)
+	if r.config.VerifierPolicy == "factorized-v1" {
+		guards = append(guards, semantic.CheckReuseAnswerContract(r.request.Spec.Input, source.Response.Text)...)
+	}
 	if len(guards) > 0 {
 		obs.Rejections = append(obs.Rejections, guards...)
 		return nil, false, nil
