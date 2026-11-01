@@ -274,8 +274,8 @@ func CheckProtectedTerms(original, current string) []string {
 }
 
 // CheckReuseProtectedTerms keeps the published guard for the published policy.
-// The factorized policy rejects conflicting explicit literals, while leaving
-// omissions and natural-language meaning to its mandatory full-context verifier.
+// The factorized policy validates text and quote syntax only; literal changes,
+// omissions and meaning are left to its mandatory full-context verifier.
 // Passing this guard never authorizes reuse. The factorized verifier version
 // binds this guard contract as well as its model prompts.
 func CheckReuseProtectedTerms(original, current, policy string) []string {

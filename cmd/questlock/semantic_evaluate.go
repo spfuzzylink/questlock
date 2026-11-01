@@ -194,7 +194,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	verifierInput := f.Int64("verifier-max-input-tokens", 0, "total verifier input reservation cap; zero selects the policy default")
 	verifierOutput := f.Int64("verifier-max-output-tokens", 0, "total verifier output cap; zero selects the policy default")
 	verifierTimeout := f.Int("verifier-timeout-ms", 0, "total verifier invocation timeout; zero selects the policy default")
-	verifierPolicy := f.String("verifier-policy", "", "empty for published standalone; factorized-v1 for source certification plus equivalence")
+	verifierPolicy := f.String("verifier-policy", "", "empty for published standalone; factorized-v1 for source certification plus answer applicability")
 	threshold := f.Float64("min-similarity", 0.9, "retrieval cosine cutoff; not validity confidence")
 	batchSize := f.Int("batch-size", 1, "1 for standalone validity; 2 for compatible validity pairs")
 	timeout := f.Duration("timeout", 20*time.Minute, "positive total evaluation bound, at most 60m")

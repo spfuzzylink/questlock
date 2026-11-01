@@ -30,7 +30,7 @@ func (p *independentFactorizedProvider) Generate(_ context.Context, request infe
 	if err := json.Unmarshal([]byte(strings.TrimPrefix(request.Input, "\n\nTask:\n")), &fields); err != nil {
 		return inference.Response{}, err
 	}
-	if fields["cached_answer"] != nil {
+	if fields["original_question"] != nil {
 		if p.failSource {
 			return inference.Response{}, errors.New("offline unknown source outcome")
 		}
@@ -90,7 +90,7 @@ func independentFactorizedSetup(t *testing.T) *independentFactorizedFixture {
 	t.Helper()
 	f := &independentFactorizedFixture{broker: testBroker(t), now: time.Now().UTC()}
 	f.target = &fixtureProvider{identity: "independent-target", response: knownResult(`{"ship":false}`).Response}
-	f.stages = &independentFactorizedProvider{identity: "independent-verifier-runtime", support: `{"verdict":"accept","supported":true,"complete":true}`, pair: `{"verdict":"accept","original_covers_current":true,"current_covers_original":true,"same_output_contract":true}`}
+	f.stages = &independentFactorizedProvider{identity: "independent-verifier-runtime", support: `{"verdict":"accept","supported":true,"complete":true}`, pair: `{"verdict":"accept","answer_covers_current":true,"unchanged_facts":true,"same_output_contract":true}`}
 	c := controlledTestConfig()
 	c.VerifierPolicy = "factorized-v1"
 	f.verifier = &FactorizedVerifier{runner: &inference.Runner{Broker: f.broker, Provider: f.stages, Now: func() time.Time { return f.now }}, config: c, identity: reuseHash("independent-factorized-policy")}
@@ -130,10 +130,10 @@ func TestIndependentFactorizedServingCarriesCompleteEvidenceAndExpiresWithSource
 			t.Fatal(err)
 		}
 		var evidence, instructions string
-		if json.Unmarshal(fields["context"], &evidence) != nil || json.Unmarshal(fields["instructions"], &instructions) != nil || !strings.Contains(evidence, f.request.Spec.Context[0].Text) || instructions != f.request.Spec.Instructions || fields["original_question"] == nil || fields["bindings"] == nil {
+		if json.Unmarshal(fields["context"], &evidence) != nil || json.Unmarshal(fields["instructions"], &instructions) != nil || !strings.Contains(evidence, f.request.Spec.Context[0].Text) || instructions != f.request.Spec.Instructions || fields["bindings"] == nil {
 			t.Fatalf("stage %d lost complete approved context: %s", i, request.Input)
 		}
-		if i == 0 && (fields["cached_answer"] == nil || fields["question"] != nil) || i == 1 && (fields["cached_answer"] != nil || fields["question"] == nil) {
+		if fields["cached_answer"] == nil || i == 0 && (fields["original_question"] == nil || fields["question"] != nil) || i == 1 && (fields["original_question"] != nil || fields["question"] == nil) {
 			t.Fatalf("stage %d did not preserve certificate/pair separation: %s", i, request.Input)
 		}
 	}
@@ -153,7 +153,7 @@ func TestIndependentFactorizedServingCarriesCompleteEvidenceAndExpiresWithSource
 	}
 }
 
-func TestIndependentFactorizedGuardOmissionsStillRequireBidirectionalDecision(t *testing.T) {
+func TestIndependentFactorizedGuardOmissionsStillRequireApplicabilityDecision(t *testing.T) {
 	for name, questions := range map[string][2]string{
 		"role reversal":    {"Which reviewer must the operator notify?", "Which operator must the reviewer notify?"},
 		"time scope":       {"Which checks remain for the preview?", "Which checks completed for the preview?"},
@@ -165,7 +165,7 @@ func TestIndependentFactorizedGuardOmissionsStillRequireBidirectionalDecision(t 
 				t.Fatalf("fixture should reach the mandatory verifier: %v", reasons)
 			}
 			f := independentFactorizedSetup(t)
-			f.stages.pair = `{"verdict":"reject","original_covers_current":false,"current_covers_original":false,"same_output_contract":false}`
+			f.stages.pair = `{"verdict":"reject","answer_covers_current":false,"unchanged_facts":false,"same_output_contract":false}`
 			f.request.Spec.Input = questions[0]
 			f.seed(t)
 			f.request.Spec.Input = questions[1]

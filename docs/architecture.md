@@ -44,8 +44,8 @@ Unconfirmed standalone verification keeps its target uncertain. This fences
 later source reselection, even though the target's own model never ran.
 
 The optional experimental [two-stage verifier](factorized-reuse.md) pins a
-source-answer certificate, then checks bidirectional question equivalence and
-the unchanged output contract under the full background. Stage receipts retain
+source-answer certificate, then checks the actual unchanged answer against the
+new request and its output contract under the full background. Stage receipts retain
 their own usage; an immutable combined receipt binds the decision to both stages,
 the source and the request. Source expiry and target ownership still apply.
 
@@ -55,7 +55,7 @@ flowchart LR
     E -->|Yes| R[Return checked result; no model work]
     E -->|No; own target claim| S[Retrieve and validate original source]
     S --> C[Certify source support and completeness; certificate can be reused]
-    C --> P[Compare both questions and output contract with full background]
+    C --> P[Check exact answer against new request and full background]
     P --> V[Revalidate source and publish durable answer reference]
     P -->|Known rejection| F[Normal bounded fresh generation]
     C -->|Known rejection| F

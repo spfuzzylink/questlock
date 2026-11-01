@@ -15,7 +15,7 @@ import (
 )
 
 const factorizedTestSupport = `{"verdict":"accept","supported":true,"complete":true}`
-const factorizedTestPair = `{"verdict":"accept","original_covers_current":true,"current_covers_original":true,"same_output_contract":true}`
+const factorizedTestPair = `{"verdict":"accept","answer_covers_current":true,"unchanged_facts":true,"same_output_contract":true}`
 
 type factorizedTestProvider struct {
 	mu            sync.Mutex
@@ -31,7 +31,7 @@ type factorizedTestProvider struct {
 func (*factorizedTestProvider) Identity() string { return "factorized-offline-fixture-v1" }
 
 func (*factorizedTestProvider) stage(request inference.Request) string {
-	if strings.Contains(request.Input, `"cached_answer"`) {
+	if strings.Contains(request.Input, `"original_question"`) {
 		return "source"
 	}
 	return "equivalence"
@@ -96,7 +96,7 @@ func factorizedTestVerifier(t *testing.T, broker inference.Broker) (*FactorizedV
 }
 
 func TestFactorizedDecisionStrictPrimitiveContract(t *testing.T) {
-	for _, schema := range []struct{ left, right string }{{"supported", "complete"}, {"original_covers_current", "current_covers_original"}} {
+	for _, schema := range []struct{ left, right string }{{"supported", "complete"}, {"answer_covers_current", "unchanged_facts"}} {
 		valid := `{"verdict":"accept","` + schema.left + `":true,"` + schema.right + `":true}`
 		parsed, err := parseFactorizedDecision([]byte(valid), schema.left, schema.right)
 		if err != nil || !parsed.accepted() {
@@ -146,8 +146,8 @@ func TestFactorizedCertificateAndPairReuseHaveSeparateUsage(t *testing.T) {
 		if provider.stage(request) == "source" && strings.Contains(request.Input, `"question"`) {
 			t.Fatal("new question leaked into reusable source certificate")
 		}
-		if provider.stage(request) == "equivalence" && strings.Contains(request.Input, `"cached_answer"`) {
-			t.Fatal("pair reread cached answer")
+		if provider.stage(request) == "equivalence" && !strings.Contains(request.Input, `"cached_answer"`) {
+			t.Fatal("applicability check omitted actual answer")
 		}
 		if request.MaxOutputTokens != v.config.VerifierMaxOutputTokens/2 {
 			t.Fatal("stage output cap was not a fixed half")
@@ -227,8 +227,8 @@ func TestFactorizedKnownAbstentionsRetainUsageAndSkipUnneededPair(t *testing.T) 
 		{"complete but unsupported", `{"verdict":"accept","supported":false,"complete":true}`, factorizedTestPair, 1, "unknown"},
 		{"source malformed", `{"verdict":"accept","supported":true,"complete":true,"complete":true}`, factorizedTestPair, 1, "unknown"},
 		{"pair malformed", factorizedTestSupport, `{"verdict":"accept"}`, 2, "unknown"},
-		{"one-way coverage", factorizedTestSupport, `{"verdict":"accept","original_covers_current":true,"current_covers_original":false,"same_output_contract":false}`, 2, "unknown"},
-		{"pair reject", factorizedTestSupport, `{"verdict":"reject","original_covers_current":false,"current_covers_original":false,"same_output_contract":false}`, 2, "reject"},
+		{"one-way coverage", factorizedTestSupport, `{"verdict":"accept","answer_covers_current":true,"unchanged_facts":false,"same_output_contract":false}`, 2, "unknown"},
+		{"pair reject", factorizedTestSupport, `{"verdict":"reject","answer_covers_current":false,"unchanged_facts":false,"same_output_contract":false}`, 2, "reject"},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			v, provider := factorizedTestVerifier(t, nil)

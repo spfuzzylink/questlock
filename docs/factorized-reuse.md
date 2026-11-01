@@ -1,29 +1,30 @@
 # Check the answer once. Check each new question separately.
 
-**Release gate: not qualified.** The current candidate reused 37 of 72 eligible
+**Release gate: not qualified.** The previous question-only candidate reused 37 of 72 eligible
 paraphrases and incorrectly accepted two of 72 changed requests in a 144-pair
 regression run. It withheld all 12 deliberately unsupported source answers in a
 separate check. These are development results, not fresh blind qualification.
 The false acceptances involved a changed refund price basis and a new fee-refund
-condition. Keep this candidate out of production; the published policy is unchanged.
+condition. The revised answer-aware candidate still needs fresh qualification.
+Keep it out of production; the published policy is unchanged.
 
 Someone asks the same thing in different words. We want the saved answer back,
 without quietly borrowing an answer to a different question.
 
 The experimental `factorized-v1` policy splits that decision into two local
 checks. First, a source check reads the original question, evidence and saved
-answer. It must confirm that the answer is supported **and complete**. Then a
-question check compares the original and new requests under the same evidence.
-It requires equivalent meaning in both directions and the same output contract.
-A prose answer does not become a JSON response just because the facts match.
+answer. It must confirm that the answer is supported **and complete**. Then an
+applicability check reads that exact answer, the new request and the same evidence.
+It asks whether the unchanged answer actually satisfies the request. Different
+wording, or a narrower question, can be fine; changed facts or missing detail
+are not. A prose answer does not become JSON just because the facts match.
 
 No question list is required. Both checks keep the full approved background;
-a context hash or a generated summary cannot replace it. The second check omits
-the answer itself and receives a coarse format category: JSON object, array,
-scalar or non-JSON text. That category contains no keys, nested schema, language
-or text layout and cannot prove output compatibility. Omitting the answer can
-reduce repeated verifier input after the source check is cached; net savings
-still need measurement.
+a context hash or a generated summary cannot replace it. The second check sees
+the full saved answer, including its keys, values and layout. That costs input
+tokens, but a coarse label such as “JSON object” cannot tell us whether the keys
+match. The source check can be cached; net savings still need measurement.
+The receipt stage named `equivalence` records this applicability check.
 
 This is still an experimental verifier. Qualify it on your own work before
 serving its results. A valid JSON verdict or high embedding similarity does not
@@ -53,15 +54,18 @@ Older workers must reject unsupported settings rather than silently ignoring the
 The two stages each get half the declared input and output allowance, under one
 verifier deadline. Their actual usage and durable receipts appear separately in
 `verification.work`. Outcome accounting flattens those stages into verifier work;
-the combined decision receipt is not another inference call. An unknown or
-unconfirmed stage stops the target without automatic retry or paid fallback.
+the combined decision receipt is not another inference call. An unconfirmed
+inference outcome stops the target without automatic retry or paid fallback. A complete
+rejection or `unknown` verdict with confirmed usage is a known abstention; the
+approved workflow may continue to fresh bounded local generation.
 
 ## What gets reused
 
 The source certificate binds the original job version, content and output hashes,
 original request, approved evidence, verifier policy and installed runtime.
 Its task result can be reused for up to one hour. Reading it does not extend that
-window. Each question decision also binds its source certificate and both requests.
+window. Each question decision also binds its source certificate, the exact answer and
+current request.
 The final answer alias still inherits the original answer's expiry, even when the
 certificate remains available longer.
 
@@ -88,3 +92,15 @@ sources, two new wordings per source, exact repeats and optional fresh baselines
 Those examples exercise the integration; they do not establish general language
 accuracy. Freeze a separate population before evaluation, test changed facts and
 constraints, and report precision, recall and coverage by use case.
+
+## Where FreeToken fits
+
+[FreeToken](https://github.com/FlashML-org/FreeToken) serves open-weight models
+on local hardware. Its [current installation requirements](https://github.com/FlashML-org/FreeToken/blob/main/docs/install.md)
+are Linux x86-64 with an NVIDIA GPU; this is not an Apple Silicon backend.
+Its [OpenAI and Anthropic APIs](https://github.com/FlashML-org/FreeToken/blob/main/docs/quickstart.md)
+make it worth assessing as a separate provider. This verifier currently uses
+Ollama. API compatibility alone does not validate token preflight, bounded output,
+usage accounting, runtime identity or uncertain-call recovery. We have not added
+a FreeToken adapter or measured its speed or reuse quality. A faster runtime
+still needs the same answer-validity tests.
