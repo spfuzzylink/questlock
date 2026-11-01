@@ -22,7 +22,7 @@ TARGETS = ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64")
 PUBLIC_FILES = (
     "docs/factorized-reuse.md",
     "examples/paraphrase-reuse/main.go", "examples/paraphrase-reuse/helpers.go",
-    "examples/paraphrase-reuse/report.go",
+    "examples/paraphrase-reuse/report.go", "examples/paraphrase-reuse/resource-policy.json",
     "examples/paraphrase-reuse/cases.json", "examples/paraphrase-reuse/README.md",
     "docs/benchmarks/reuse-efficiency/approved-forms-live.jsonl",
     "docs/benchmarks/reuse-efficiency/approved-forms-summary.json",

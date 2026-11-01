@@ -273,6 +273,7 @@ func (w *worker) loadBytes(path string) ([]byte, error) {
 
 func safeOutput(result delegation.Result, err error) toolOutput {
 	// Copy before stripping: callers may reuse their durable result in memory.
+	resourceDeferred := len(result.Attempts) == 1 && inference.PreClaimDeferred(result.Attempts[0].Result, err)
 	diagnostic := inference.BudgetDiagnosticFromError(err)
 	if diagnostic == nil {
 		diagnostic = safeBudgetDiagnostic(result.BudgetDiagnostic)
@@ -288,6 +289,14 @@ func safeOutput(result delegation.Result, err error) toolOutput {
 	}
 	result.Attempts = append([]delegation.Attempt{}, result.Attempts...)
 	for i := range result.Attempts {
+		switch result.Attempts[i].ErrorCategory {
+		case "", "runner_initialization_failed", "unconfirmed_complete_outcome", "canceled", "deadline_exceeded", "pending_or_uncertain", "incomplete", "budget_exceeded", "run_failed", "resource_deferred", "resource_policy_invalid":
+		default:
+			result.Attempts[i].ErrorCategory = "run_failed"
+		}
+		if result.Attempts[i].ErrorCategory == "resource_deferred" && !resourceDeferred {
+			result.Attempts[i].ErrorCategory = "run_failed"
+		}
 		// Upstream response identifiers/model/stop labels are not needed to
 		// account for attempts, and could carry arbitrary provider text.
 		result.Attempts[i].Result.Response = inference.Response{}
@@ -313,6 +322,10 @@ func safeOutput(result delegation.Result, err error) toolOutput {
 		output.Response, output.SelectedTier = nil, ""
 		output.ErrorCategory = "stopped"
 		switch {
+		case resourceDeferred:
+			output.Status, output.ErrorCategory = "stopped", "resource_deferred"
+		case errors.Is(err, delegation.ErrResourceAdmissionConfig):
+			output.Status, output.ErrorCategory = "stopped", "resource_policy_invalid"
 		case errors.Is(err, context.Canceled):
 			output.Status, output.ErrorCategory = "stopped", "canceled"
 		case errors.Is(err, context.DeadlineExceeded):
@@ -352,7 +365,7 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 		observation.Mode = "controlled"
 	}
 	switch observation.Status {
-	case "not_called", "wait_canceled", "verifier_unavailable", "busy", "resource_pressure", "embedding_unavailable", "embedding_failed", "search_failed", "miss_or_rejected", "provenance_unavailable", "invalid_provenance", "source_unavailable", "verification_failed", "verification_unconfirmed", "source_changed", "verified_candidate", "reused", "skipped_exact", "index_source_unavailable", "index_plan_invalid", "index_provenance_conflict", "index_provenance_unavailable", "index_provenance_unconfirmed", "index_failed":
+	case "not_called", "wait_canceled", "verifier_unavailable", "busy", "resource_pressure", "resource_deferred", "embedding_unavailable", "embedding_failed", "search_failed", "miss_or_rejected", "provenance_unavailable", "invalid_provenance", "source_unavailable", "verification_failed", "verification_unconfirmed", "source_changed", "verified_candidate", "reused", "skipped_exact", "index_source_unavailable", "index_plan_invalid", "index_provenance_conflict", "index_provenance_unavailable", "index_provenance_unconfirmed", "index_failed":
 	default:
 		observation.Status = "unavailable"
 	}
@@ -361,7 +374,7 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 	if original.ResourceAdmission != nil {
 		diagnostic := *original.ResourceAdmission
 		switch diagnostic.Reason {
-		case "sample_unavailable", "sample_invalid", "sample_expired", "memory_pressure", "insufficient_memory", "cpu_stall", "load", "ready":
+		case "sample_unavailable", "sample_invalid", "sample_expired", "memory_pressure", "insufficient_memory", "cpu_stall", "memory_stall", "load", "busy", "ready":
 		default:
 			diagnostic.Reason = "sample_unavailable"
 		}
@@ -369,6 +382,25 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 		case admission.Normal, admission.High, admission.Critical:
 		default:
 			diagnostic.MemoryPressure = ""
+		}
+		switch diagnostic.Outcome {
+		case "", "admitted", "deferred":
+		default:
+			diagnostic.Outcome = ""
+		}
+		switch diagnostic.DeferredReason {
+		case "", "busy", "queue_full", "queue_wait_expired", "admission_wait_expired", "resource_not_ready":
+		default:
+			diagnostic.DeferredReason = ""
+		}
+		if !(diagnostic.WaitMS >= 0 && diagnostic.WaitMS <= 24*60*60*1000) {
+			diagnostic.WaitMS = 0
+		}
+		if !(diagnostic.QueueWaitMS >= 0 && diagnostic.QueueWaitMS <= 24*60*60*1000) {
+			diagnostic.QueueWaitMS = 0
+		}
+		if diagnostic.Samples < 0 || diagnostic.Samples > 10000000 {
+			diagnostic.Samples = 0
 		}
 		diagnostic.AvailableMemoryBytes = copyCount(diagnostic.AvailableMemoryBytes)
 		if diagnostic.AvailableMemoryBytes != nil && *diagnostic.AvailableMemoryBytes < 0 {
@@ -402,7 +434,15 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 				}
 				w.ReceiptKey = safeJobReference(w.ReceiptKey)
 				w.OutputSHA256 = safeDigest(w.OutputSHA256)
+				// Declared model names stay in the caller's configuration; like
+				// Response.Model, a string supplied by an executor is not a second
+				// provider-text channel. Opaque runtime hashes retain attribution.
+				w.Model = ""
+				w.RuntimeIdentity = safeDigest(w.RuntimeIdentity)
 				w.InputTokens, w.OutputTokens = copyCount(w.InputTokens), copyCount(w.OutputTokens)
+				if w.AdmissionDeferred && (w.GenerationCalled || w.Reused || w.Complete || w.Durable || w.ReceiptKey != "" || w.OutputSHA256 != "" || w.InputTokens == nil || w.OutputTokens == nil || *w.InputTokens != 0 || *w.OutputTokens != 0) {
+					w.AdmissionDeferred = false
+				}
 				verdict.Work = append(verdict.Work, w)
 			}
 		}

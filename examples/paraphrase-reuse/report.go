@@ -11,26 +11,32 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/inference"
 	"github.com/spfuzzylink/questlock/semantic"
 )
 
 type measurementHeader struct {
-	Schema                  string                `json:"schema"`
-	CasesSHA256             string                `json:"cases_sha256"`
-	Model                   string                `json:"model"`
-	VerifierModel           string                `json:"verifier_model"`
-	VerifierPolicy          string                `json:"verifier_policy"`
-	VerifierSourceThink     bool                  `json:"verifier_source_think,omitempty"`
-	VerifierMaxOutputTokens int64                 `json:"verifier_max_output_tokens,omitempty"`
-	VerifierTimeoutMS       int                   `json:"verifier_timeout_ms,omitempty"`
-	SemanticTimeoutMS       int                   `json:"semantic_timeout_ms,omitempty"`
-	MinSimilarity           float64               `json:"min_similarity"`
-	DailyBudget             inference.TokenBudget `json:"daily_budget"`
-	FreshBaseline           bool                  `json:"fresh_baseline"`
-	FreshRepeatBaseline     bool                  `json:"fresh_repeat_baseline,omitempty"`
-	PaidFallback            bool                  `json:"paid_fallback_enabled"`
-	ProviderCharge          float64               `json:"provider_api_charge_usd"`
+	Schema                       string                           `json:"schema"`
+	CasesSHA256                  string                           `json:"cases_sha256"`
+	Model                        string                           `json:"model"`
+	VerifierModel                string                           `json:"verifier_model"`
+	VerifierPairModel            string                           `json:"verifier_pair_model,omitempty"`
+	VerifierMaxInputTokens       int64                            `json:"verifier_max_input_tokens,omitempty"`
+	VerifierSourceMaxInputTokens int64                            `json:"verifier_source_max_input_tokens,omitempty"`
+	VerifierPairMaxInputTokens   int64                            `json:"verifier_pair_max_input_tokens,omitempty"`
+	VerifierPolicy               string                           `json:"verifier_policy"`
+	VerifierSourceThink          bool                             `json:"verifier_source_think,omitempty"`
+	VerifierMaxOutputTokens      int64                            `json:"verifier_max_output_tokens,omitempty"`
+	VerifierTimeoutMS            int                              `json:"verifier_timeout_ms,omitempty"`
+	SemanticTimeoutMS            int                              `json:"semantic_timeout_ms,omitempty"`
+	MinSimilarity                float64                          `json:"min_similarity"`
+	DailyBudget                  inference.TokenBudget            `json:"daily_budget"`
+	FreshBaseline                bool                             `json:"fresh_baseline"`
+	FreshRepeatBaseline          bool                             `json:"fresh_repeat_baseline,omitempty"`
+	PaidFallback                 bool                             `json:"paid_fallback_enabled"`
+	ProviderCharge               float64                          `json:"provider_api_charge_usd"`
+	ResourcePolicy               *delegation.ReuseAdmissionPolicy `json:"resource_policy,omitempty"`
 }
 type usageSummary struct {
 	Calls       int   `json:"generation_calls"`
@@ -40,27 +46,31 @@ type usageSummary struct {
 	ZeroCurrent int   `json:"zero_current_usage_records"`
 }
 type phaseSummary struct {
-	Expected             int          `json:"expected_rows"`
-	Rows                 int          `json:"rows"`
-	Missing              int          `json:"missing_rows"`
-	Passed               int          `json:"quality_and_phase_passed"`
-	QualityPassed        int          `json:"output_checks_passed"`
-	Failed               int          `json:"failed"`
-	Withheld             int          `json:"withheld"`
-	Recorded             int          `json:"outcome_recorded"`
-	Unconfirmed          int          `json:"outcome_unconfirmed"`
-	ExactWork            int          `json:"exact_work_failures"`
-	Generation           usageSummary `json:"answer_generation"`
-	Verification         usageSummary `json:"verification"`
-	EmbeddingWorkRecords int          `json:"embedding_work_records"`
-	EmbeddingTokens      int64        `json:"known_embedding_input_tokens"`
-	EmbeddingUnknown     int          `json:"unknown_embedding_usage"`
-	AttemptMS            float64      `json:"known_attempt_elapsed_ms"`
-	UnknownAttemptMS     int          `json:"unknown_attempt_elapsed_records"`
-	VerificationMS       float64      `json:"reported_verification_ms"`
-	EmbeddingMS          float64      `json:"reported_embedding_ms"`
-	EndToEndMS           float64      `json:"known_end_to_end_ms"`
-	UnknownEndToEndMS    int          `json:"unknown_end_to_end_records"`
+	Expected             int                      `json:"expected_rows"`
+	Rows                 int                      `json:"rows"`
+	Missing              int                      `json:"missing_rows"`
+	Passed               int                      `json:"quality_and_phase_passed"`
+	QualityPassed        int                      `json:"output_checks_passed"`
+	Failed               int                      `json:"failed"`
+	ResourceDeferred     int                      `json:"resource_deferred"`
+	Withheld             int                      `json:"withheld"`
+	Recorded             int                      `json:"outcome_recorded"`
+	Unconfirmed          int                      `json:"outcome_unconfirmed"`
+	ExactWork            int                      `json:"exact_work_failures"`
+	Generation           usageSummary             `json:"answer_generation"`
+	Verification         usageSummary             `json:"verification"`
+	VerificationByModel  map[string]*usageSummary `json:"verification_by_model,omitempty"`
+	VerificationRuntimes map[string]string        `json:"verification_runtime_identities,omitempty"`
+	MixedModelUsage      bool                     `json:"mixed_model_usage,omitempty"`
+	EmbeddingWorkRecords int                      `json:"embedding_work_records"`
+	EmbeddingTokens      int64                    `json:"known_embedding_input_tokens"`
+	EmbeddingUnknown     int                      `json:"unknown_embedding_usage"`
+	AttemptMS            float64                  `json:"known_attempt_elapsed_ms"`
+	UnknownAttemptMS     int                      `json:"unknown_attempt_elapsed_records"`
+	VerificationMS       float64                  `json:"reported_verification_ms"`
+	EmbeddingMS          float64                  `json:"reported_embedding_ms"`
+	EndToEndMS           float64                  `json:"known_end_to_end_ms"`
+	UnknownEndToEndMS    int                      `json:"unknown_end_to_end_records"`
 }
 type attemptReport struct {
 	Schema                string                   `json:"schema"`
@@ -111,6 +121,15 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 	if !validMeasurementVerifierHeader(scanner.Bytes(), header) {
 		return report, bad
 	}
+	if header.ResourcePolicy != nil {
+		policy, err := delegation.NormalizeReuseAdmissionPolicy(*header.ResourcePolicy)
+		if err != nil || policy != *header.ResourcePolicy {
+			return report, bad
+		}
+	}
+	if header.VerifierPairModel != "" && header.VerifierPairModel != header.VerifierModel {
+		report.Comparison += " Source and applicability tokenizers differ: verifier aggregate counts are reservation-accounting sums only; use the per-model buckets, calls and elapsed time, not a normalized token-saving percentage."
+	}
 	var set caseSet
 	if json.Unmarshal(casesJSON, &set) != nil {
 		return report, bad
@@ -141,6 +160,8 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 	}
 	seen, runIDs := map[string]bool{}, map[string]bool{}
 	receipts := map[string]receiptAttribution{}
+	modelReceipts := map[string]receiptAttribution{}
+	modelRuntimes := map[string]string{}
 	rows := map[string]row{}
 	for line := 2; scanner.Scan(); line++ {
 		if line > 56 || report.FinalMarker {
@@ -196,6 +217,30 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 		c := checks[r.CaseID]
 		if result.Status != "completed" && result.Status != "quality_failed" && result.Status != "stopped" {
 			return report, bad
+		}
+		deferred := len(result.Attempts) == 1 && result.Attempts[0].ErrorCategory == "resource_deferred"
+		if deferred {
+			if header.ResourcePolicy == nil || result.Status != "stopped" || r.Error == "" || result.Response != nil || r.ModelOutput != "" {
+				return report, bad
+			}
+			a := result.Attempts[0]
+			m := a.Result.Measurement
+			obs := result.SemanticReuse
+			if !inference.PreClaimDeferred(a.Result, inference.ErrAdmissionDeferred) || a.ErrorCategory != "resource_deferred" || a.QualityPassed || a.Result.Durable || a.Result.Reused || a.Result.Response.Complete || a.Result.Response.Text != "" || a.Result.Fingerprint != "" || m == nil || m.Outcome != "deferred" || m.GenerationCalled || m.KnownGenerationUsage || m.GenerationUsage != nil {
+				return report, bad
+			}
+			if obs == nil {
+				if r.Phase != "baseline" && r.Phase != "baseline_repeat" {
+					return report, bad
+				}
+			} else if obs.Status != "resource_deferred" || obs.ResourceAdmission == nil || obs.ResourceAdmission.Outcome != "deferred" || len(obs.Verifications) != 0 || obs.EmbeddingInputTokens != nil || obs.EmbeddingMS != 0 || obs.Searches != 0 || obs.Indexed || obs.GenerationAvoided || obs.Source != nil {
+				return report, bad
+			}
+			for _, check := range a.Checks {
+				if check.Passed || check.Status != "not_evaluated" {
+					return report, bad
+				}
+			}
 		}
 		passed := r.Error == "" && result.Status == "completed" && len(result.Attempts) == 1
 		qualityPassed := len(result.Attempts) == 1
@@ -277,6 +322,9 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 		}
 		verified := false
 		if obs := result.SemanticReuse; obs != nil {
+			if obs.Status == "resource_deferred" && !deferred {
+				return report, bad
+			}
 			if r.Phase == "paraphrase" && obs.Status != "reused" {
 				passed = false
 			}
@@ -286,7 +334,7 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 			p.EmbeddingMS += obs.EmbeddingMS
 			embedding := obs.EmbeddingInputTokens != nil || obs.EmbeddingMS != 0 || obs.Searches > 0
 			switch obs.Status {
-			case "not_called", "skipped_exact", "busy", "resource_pressure", "verifier_unavailable", "embedding_unavailable":
+			case "not_called", "skipped_exact", "busy", "resource_pressure", "resource_deferred", "verifier_unavailable", "embedding_unavailable":
 			case "reused":
 				// An exact semantic alias retains its "reused" status without
 				// running retrieval. Novel semantic hits still require embedding
@@ -326,12 +374,55 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 				if len(v.Work) > 2 || v.SharedWork {
 					return report, bad
 				}
+				pairModel := header.VerifierPairModel
+				if pairModel == "" {
+					pairModel = header.VerifierModel
+				}
+				if v.MixedModelUsage != (len(v.Work) == 2 && pairModel != header.VerifierModel) {
+					return report, bad
+				}
+				p.MixedModelUsage = p.MixedModelUsage || v.MixedModelUsage
 				for i, w := range v.Work {
 					stage := "source"
 					if i == 1 {
 						stage = "equivalence"
 					}
 					if w.Stage != stage || (w.InputTokens == nil) != (w.OutputTokens == nil) || w.ReceiptKey != "" && !strings.HasPrefix(w.ReceiptKey, "inference/v1/jobs/") || w.Complete && w.Durable && !w.GenerationCalled && !w.Reused {
+						return report, bad
+					}
+					attributed := header.VerifierPairModel != "" || header.VerifierPairMaxInputTokens != 0 || header.VerifierSourceMaxInputTokens != 0
+					totalCap := header.VerifierMaxInputTokens
+					if totalCap == 0 {
+						totalCap = 16384
+					}
+					model, inputCap := header.VerifierModel, totalCap/2
+					if header.VerifierSourceMaxInputTokens != 0 {
+						inputCap = header.VerifierSourceMaxInputTokens
+					}
+					if i == 1 {
+						model, inputCap = pairModel, totalCap/2
+						if header.VerifierPairMaxInputTokens != 0 {
+							inputCap = header.VerifierPairMaxInputTokens
+						}
+					}
+					if attributed {
+						runtime, err := hex.DecodeString(w.RuntimeIdentity)
+						if w.Model != model || err != nil || len(runtime) != 32 || strings.ToLower(w.RuntimeIdentity) != w.RuntimeIdentity {
+							return report, bad
+						}
+						if prior := modelRuntimes[model]; prior != "" && prior != w.RuntimeIdentity {
+							return report, bad
+						}
+						for other, identity := range modelRuntimes {
+							if other != model && identity == w.RuntimeIdentity {
+								return report, bad
+							}
+						}
+						modelRuntimes[model] = w.RuntimeIdentity
+					} else if w.Model != "" || w.RuntimeIdentity != "" {
+						return report, bad
+					}
+					if w.InputTokens != nil && (*w.InputTokens < 0 || *w.InputTokens > inputCap) {
 						return report, bad
 					}
 					var usage *inference.Usage
@@ -344,6 +435,18 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 					}
 					if addUsage(&p.Verification, receipts, strings.TrimPrefix(w.ReceiptKey, "inference/v1/jobs/"), owner, w.GenerationCalled, w.Reused, usage) != nil {
 						return report, bad
+					}
+					if attributed {
+						if p.VerificationByModel == nil {
+							p.VerificationByModel, p.VerificationRuntimes = map[string]*usageSummary{}, map[string]string{}
+						}
+						if p.VerificationByModel[model] == nil {
+							p.VerificationByModel[model] = &usageSummary{}
+						}
+						p.VerificationRuntimes[model] = w.RuntimeIdentity
+						if addUsage(p.VerificationByModel[model], modelReceipts, strings.TrimPrefix(w.ReceiptKey, "inference/v1/jobs/"), owner, w.GenerationCalled, w.Reused, usage) != nil {
+							return report, bad
+						}
 					}
 					passed = passed && w.Complete && w.Durable
 				}
@@ -364,7 +467,9 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 		if qualityPassed {
 			p.QualityPassed++
 		}
-		if passed {
+		if deferred {
+			p.ResourceDeferred++
+		} else if passed {
 			p.Passed++
 		} else {
 			p.Failed++
@@ -431,10 +536,27 @@ func validMeasurementVerifierHeader(raw []byte, h measurementHeader) bool {
 		return false
 	}
 	for key := range fields {
-		for _, canonical := range []string{"verifier_source_think", "verifier_max_output_tokens", "verifier_timeout_ms", "semantic_timeout_ms"} {
+		for _, canonical := range []string{"verifier_source_think", "verifier_max_output_tokens", "verifier_timeout_ms", "semantic_timeout_ms", "resource_policy", "verifier_pair_model", "verifier_pair_max_input_tokens", "verifier_max_input_tokens", "verifier_source_max_input_tokens"} {
 			if strings.EqualFold(key, canonical) && key != canonical {
 				return false
 			}
+		}
+	}
+	if _, present := fields["resource_policy"]; present && h.ResourcePolicy == nil {
+		return false
+	}
+	if _, present := fields["verifier_pair_model"]; present && h.VerifierPairModel == "" {
+		return false
+	}
+	if _, present := fields["verifier_pair_max_input_tokens"]; present && h.VerifierPairMaxInputTokens < 1 {
+		return false
+	}
+	for _, item := range []struct {
+		key   string
+		value int64
+	}{{"verifier_max_input_tokens", h.VerifierMaxInputTokens}, {"verifier_source_max_input_tokens", h.VerifierSourceMaxInputTokens}} {
+		if _, present := fields[item.key]; present && item.value < 1 {
+			return false
 		}
 	}
 	output := int64(128)
@@ -458,6 +580,15 @@ func validMeasurementVerifierHeader(raw []byte, h measurementHeader) bool {
 		timeout = h.VerifierTimeoutMS
 	}
 	config, err := measurementVerifierConfig(h.VerifierModel, h.VerifierSourceThink, output, timeout, h.MinSimilarity)
+	if err != nil {
+		return false
+	}
+	config.VerifierPairModel, config.VerifierPairMaxInputTokens = h.VerifierPairModel, h.VerifierPairMaxInputTokens
+	if h.VerifierMaxInputTokens != 0 {
+		config.VerifierMaxInputTokens = h.VerifierMaxInputTokens
+	}
+	config.VerifierSourceMaxInputTokens = h.VerifierSourceMaxInputTokens
+	config, err = semantic.NormalizeReuseConfig(config)
 	if err != nil {
 		return false
 	}

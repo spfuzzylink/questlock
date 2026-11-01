@@ -304,6 +304,9 @@ Older strict readers cannot read a run containing the new `verification_work`
 field. Upgrade those participants before recording controlled verification work;
 ordinary requests omit the field when there is no verifier work.
 
+Optional factorized stage model/runtime and pre-claim deferral work fields require
+v0.17+ for every reader and writer when those fields are recorded.
+
 Measure net savings against matched fresh local runs, including embedding,
 verifier, setup and publication overhead, failures and human rework. For a short
 answer, validation can take more work than generating it again. A local run can

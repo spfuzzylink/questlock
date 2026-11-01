@@ -3,9 +3,15 @@
 Six fictional records: support, onboarding, incident handoff, release readiness,
 refund arithmetic and an uncertain broker job. No provider API keys or paid fallback.
 You need installed `qwen3.5:9b` and `all-minilm` Ollama weights and a scoped broker.
-The example never downloads weights.
+The example never downloads weights. The current experimental verifier is not
+qualified; see the [development gate](../../docs/factorized-reuse.md).
 
 `--model` and `--verifier-model` select other explicitly installed local weights.
+Optional `--verifier-pair-model`, `--verifier-max-input-tokens`,
+`--verifier-source-max-input-tokens` and `--verifier-pair-max-input-tokens` declare
+stage models and complete-input limits. `--resource-policy PATH` uses the same
+operator admission limits for reuse and fresh baselines; configure it before the
+run. The included `resource-policy.json` is an example, not a hardware guarantee.
 The fresh baseline always uses the same answer model as its source. Keep every
 runtime trial, including failures; selecting a model is development work, not a
 fresh independent qualification.
@@ -61,7 +67,9 @@ The existing input file and its immediate parent must be private. It accepts at
 most 8 MiB, 1 MiB per line and 56 lines, checks the frozen six-case identity,
 and rejects malformed, duplicate or missing required fields, duplicate rows and
 conflicting receipt attribution. It emits no questions, answers, context, raw
-errors, model names or credentials. The default help path still reads no files.
+errors or credentials. Explicit stage attribution includes the declared model
+names and runtime hashes, with separately metered usage for different tokenizers.
+The default help path still reads no files.
 
 Every phase retains its observed, failed, withheld and missing row counts, output
 check results, recorded/unconfirmed outcome coverage and known usage subtotals.
@@ -81,8 +89,9 @@ recorded outcomes. `compared_requests_per_arm` is zero until every condition pas
 `whole_cohort_comparison_eligibility` additionally requires twelve successful fresh
 repeat baselines, enabling an observed 24-versus-24 comparison: paraphrases plus
 exact repeats versus both fresh baseline phases. Older logs remain readable but
-cannot qualify for that whole-cohort comparison. Source cold work remains a
-separate common cost. The report never extrapolates twelve fresh calls to
+cannot qualify for that whole-cohort comparison. Source generation and extra
+indexing/registration work remain visible; indexing and embedding are reuse
+overhead, not common fresh-generation cost. The report never extrapolates twelve fresh calls to
 twenty-four, combines different tokenizer units into a savings figure, infers an
 invoice or estimates net savings.
 

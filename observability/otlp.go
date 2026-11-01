@@ -109,7 +109,7 @@ func (l *Langfuse) envelope(e Execution, r Receipt) otlpEnvelope {
 		attrs = append(attrs, floatAttribute(metadataPrefix+"avoided_cost_usd", *e.AvoidedCostUSD))
 		attrs = append(attrs, stringAttribute(metadataPrefix+"avoided_cost_source", costSource(e.Provider, *e.AvoidedCostUSD)))
 	}
-	for _, name := range []string{"provider_setup", "runtime_identity", "plan", "lookup", "admission", "preflight", "reservation", "generation", "publication", "settlement", "recovery"} {
+	for _, name := range []string{"provider_setup", "runtime_identity", "plan", "lookup", "resource_admission", "admission", "reuse_resolution", "preflight", "reservation", "generation", "publication", "settlement", "recovery"} {
 		if ms, ok := e.PhaseMS[name]; ok {
 			attrs = append(attrs, floatAttribute(metadataPrefix+"phase_"+name+"_ms", ms))
 		}
@@ -196,6 +196,8 @@ func span(traceID, spanID, parentID, name string, kind int, start, end time.Time
 	level := "ERROR"
 	if outcome == Complete || outcome == Reused {
 		status, level = 1, "DEFAULT"
+	} else if outcome == Deferred {
+		status, level = 0, "WARNING"
 	} else if outcome == Pending || outcome == BudgetBlocked || outcome == Incomplete {
 		level = "WARNING"
 	}

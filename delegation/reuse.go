@@ -27,8 +27,16 @@ type ControlledReuser struct {
 	EmbedderFactory func(context.Context, semantic.Config) (semantic.Embedder, error)
 	VerifierFactory func(context.Context, semantic.ReuseConfig) (semantic.Verifier, error)
 	Resources       admission.Source
+	// AdmissionPolicy is an optional process-local backpressure policy. Set it
+	// before sharing this reuser; changing limits requires a new reuser. It is
+	// independent of semantic/exact task identity. Nil preserves legacy skips.
+	AdmissionPolicy *ReuseAdmissionPolicy
 	once            sync.Once
 	gate            chan struct{}
+	admissionOnce   sync.Once
+	admissionConfig ReuseAdmissionPolicy
+	admissionSlots  chan struct{}
+	admissionQueue  chan struct{}
 }
 
 type ReuseObservation struct {
@@ -56,6 +64,11 @@ type ReuseResourceAdmission struct {
 	Reason               string             `json:"reason"`
 	MemoryPressure       admission.Pressure `json:"memory_pressure,omitempty"`
 	AvailableMemoryBytes *int64             `json:"available_memory_bytes"`
+	Outcome              string             `json:"outcome,omitempty"`
+	WaitMS               float64            `json:"wait_ms,omitempty"`
+	QueueWaitMS          float64            `json:"queue_wait_ms,omitempty"`
+	Samples              int                `json:"samples,omitempty"`
+	DeferredReason       string             `json:"deferred_reason,omitempty"`
 }
 
 func reuseResourceAdmission(s admission.Snapshot, err error, now time.Time) *ReuseResourceAdmission {
@@ -103,17 +116,19 @@ type reuseRunner interface {
 }
 
 type controlledResolver struct {
-	owner       *ControlledReuser
-	parent      context.Context
-	request     Request
-	tier        Tier
-	runner      reuseRunner
-	config      semantic.ReuseConfig
-	observation *ReuseObservation
-	verifier    semantic.Verifier
-	initialized bool
-	initErr     error
-	embedding   *semantic.Embedding
+	owner           *ControlledReuser
+	parent          context.Context
+	request         Request
+	tier            Tier
+	runner          reuseRunner
+	config          semantic.ReuseConfig
+	observation     *ReuseObservation
+	verifier        semantic.Verifier
+	initialized     bool
+	initErr         error
+	embedding       *semantic.Embedding
+	admissionPolicy *ReuseAdmissionPolicy
+	admitted        bool
 }
 
 func (r *controlledResolver) close() {
@@ -155,7 +170,15 @@ func (o *ControlledReuser) resolver(ctx context.Context, request Request, tier T
 	if err != nil {
 		return nil, err
 	}
-	return &controlledResolver{owner: o, parent: ctx, request: request, tier: tier, runner: r, config: c, observation: &ReuseObservation{Mode: "controlled", Status: "not_called", Partition: partition, Verifications: []semantic.ValidityResult{}, Rejections: []string{}}}, nil
+	resolved := &controlledResolver{owner: o, parent: ctx, request: request, tier: tier, runner: r, config: c, observation: &ReuseObservation{Mode: "controlled", Status: "not_called", Partition: partition, Verifications: []semantic.ValidityResult{}, Rejections: []string{}}}
+	if o.AdmissionPolicy != nil {
+		if _, ok := r.(admissionReuseRunner); !ok {
+			return nil, ErrResourceAdmissionConfig
+		}
+		copy := *o.AdmissionPolicy
+		resolved.admissionPolicy = &copy
+	}
+	return resolved, nil
 }
 
 func (r *controlledResolver) Identity() string {
@@ -189,15 +212,19 @@ func (r *controlledResolver) Resolve(ctx context.Context, spec inference.Spec) (
 	obs := r.observation
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(r.config.TimeoutMS)*time.Millisecond)
 	defer cancel()
-	o.once.Do(func() { o.gate = make(chan struct{}, 1) })
-	select {
-	case o.gate <- struct{}{}:
-		defer func() { <-o.gate }()
-	default:
-		obs.Status = "busy"
-		return nil, nil
+	if r.admissionPolicy == nil {
+		o.once.Do(func() { o.gate = make(chan struct{}, 1) })
+		select {
+		case o.gate <- struct{}{}:
+			defer func() { <-o.gate }()
+		default:
+			obs.Status = "busy"
+			return nil, nil
+		}
+	} else if !r.admitted {
+		return nil, inference.ErrAdmissionDeferred
 	}
-	if o.Resources != nil {
+	if r.admissionPolicy == nil && o.Resources != nil {
 		s, err := o.Resources.Sample(ctx)
 		obs.ResourceAdmission = reuseResourceAdmission(s, err, time.Now())
 		if obs.ResourceAdmission.Reason != "ready" {

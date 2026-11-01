@@ -55,16 +55,16 @@ func (r Runner) now() time.Time {
 }
 
 func (r Runner) Run(ctx context.Context, s Spec) (result Result, runErr error) {
-	return r.run(ctx, s, nil)
+	return r.run(ctx, s, nil, nil)
 }
 
 // RunWithResolver preserves exact reuse and claim ownership, then consults the
 // explicit resolver before any target token count, reservation or generation.
 func (r Runner) RunWithResolver(ctx context.Context, s Spec, resolver ReuseResolver) (Result, error) {
-	return r.run(ctx, s, resolver)
+	return r.run(ctx, s, resolver, nil)
 }
 
-func (r Runner) run(ctx context.Context, s Spec, resolver ReuseResolver) (result Result, runErr error) {
+func (r Runner) run(ctx context.Context, s Spec, resolver ReuseResolver, admit AdmissionFunc) (result Result, runErr error) {
 	started := time.Now()
 	measurement := &Measurement{StartedAt: started.UTC(), PhaseMS: make(map[string]float64)}
 	defer func() {
@@ -190,6 +190,26 @@ func (r Runner) run(ctx context.Context, s Spec, resolver ReuseResolver) (result
 		return Result{}, err
 	}
 
+	// A runtime admission wait owns no durable claim or budget. Exact results
+	// and pending/uncertain fences above take precedence, and the later CAS
+	// still prevents a deferred worker from replacing another worker's claim.
+	if admit != nil {
+		phase = time.Now()
+		release, admissionErr := admit(ctx, s)
+		measurement.PhaseMS["resource_admission"] = milliseconds(time.Since(phase))
+		if release != nil {
+			defer release()
+		}
+		if admissionErr != nil {
+			if errors.Is(admissionErr, ErrAdmissionDeferred) {
+				measurement.Outcome = "deferred"
+			}
+			return Result{}, admissionErr
+		}
+		if ctx.Err() != nil {
+			return Result{}, ctx.Err()
+		}
+	}
 	claimID, err := operationID()
 	if err != nil {
 		return Result{}, err

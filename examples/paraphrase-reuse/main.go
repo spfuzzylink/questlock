@@ -70,10 +70,15 @@ func run(args []string, out io.Writer) error {
 	ollamaURL := f.String("ollama", "", "explicit literal-loopback installed Ollama runtime")
 	model := f.String("model", "qwen3.5:9b", "explicit installed local answer model; no weight downloads")
 	verifierModel := f.String("verifier-model", "qwen3.5:9b", "explicit installed local verifier model")
+	verifierPairModel := f.String("verifier-pair-model", "", "optional installed applicability model; empty uses the source verifier model")
+	verifierInput := f.Int64("verifier-max-input-tokens", 16384, "total verifier input reservation cap")
+	verifierSourceInput := f.Int64("verifier-source-max-input-tokens", 0, "optional source input cap, at most half the total verifier input cap")
+	verifierPairInput := f.Int64("verifier-pair-max-input-tokens", 0, "optional applicability input cap, at most half the total verifier input cap")
 	verifierSourceThink := f.Bool("verifier-source-think", false, "explicit bounded source reasoning; applicability remains non-thinking")
 	verifierOutput := f.Int64("verifier-max-output-tokens", 128, "total verifier output cap; source reasoning without this flag selects its policy default")
 	verifierTimeout := f.Int("verifier-timeout-ms", 60000, "total verifier invocation deadline, still bounded by the caller and resolver")
 	minSimilarity := f.Float64("min-similarity", 0.25, "retrieval cutoff in 0..1; zero selects the semantic policy default")
+	resourcePolicyPath := f.String("resource-policy", "", "optional runtime-only JSON admission policy; bounded wait before any fresh claim")
 	tokenPath := f.String("token-file", "", "absolute private scoped token file")
 	statePath := f.String("state", "", "new absolute private progress file")
 	outputPath := f.String("output", "", "new absolute private JSONL report")
@@ -91,12 +96,12 @@ func run(args []string, out io.Writer) error {
 			outputExplicit, verifierOptionsExplicit = true, true
 		case "verifier-timeout-ms":
 			timeoutExplicit, verifierOptionsExplicit = true, true
-		case "verifier-source-think", "min-similarity":
+		case "verifier-source-think", "min-similarity", "verifier-pair-model", "verifier-pair-max-input-tokens", "verifier-max-input-tokens", "verifier-source-max-input-tokens":
 			verifierOptionsExplicit = true
 		}
 	})
 	if *reportPath != "" {
-		if f.NArg() != 0 || *live || *baseline || *repeatBaseline || *brokerURL != "" || *ollamaURL != "" || *tokenPath != "" || *statePath != "" || *outputPath != "" || verifierOptionsExplicit {
+		if f.NArg() != 0 || *live || *baseline || *repeatBaseline || *brokerURL != "" || *ollamaURL != "" || *tokenPath != "" || *statePath != "" || *outputPath != "" || *resourcePolicyPath != "" || verifierOptionsExplicit {
 			return errors.New("--report must be used without live-run options")
 		}
 		return reportFile(*reportPath, out)
@@ -123,6 +128,30 @@ func run(args []string, out io.Writer) error {
 	verifierConfig, e := measurementVerifierConfig(*verifierModel, *verifierSourceThink, outputLimit, timeoutLimit, *minSimilarity)
 	if e != nil {
 		return e
+	}
+	if *verifierInput < 1 || *verifierSourceInput < 0 {
+		return errors.New("invalid bounded semantic verifier options")
+	}
+	verifierConfig.VerifierMaxInputTokens = *verifierInput
+	verifierConfig.VerifierSourceMaxInputTokens = *verifierSourceInput
+	verifierConfig.VerifierPairModel = *verifierPairModel
+	verifierConfig.VerifierPairMaxInputTokens = *verifierPairInput
+	verifierConfig, e = semantic.NormalizeReuseConfig(verifierConfig)
+	if e != nil {
+		return e
+	}
+	var resourcePolicy *delegation.ReuseAdmissionPolicy
+	if *resourcePolicyPath != "" {
+		file, err := os.Open(*resourcePolicyPath)
+		if err != nil {
+			return delegation.ErrResourceAdmissionConfig
+		}
+		policy, err := delegation.LoadReuseAdmissionPolicy(file)
+		file.Close()
+		if err != nil {
+			return err
+		}
+		resourcePolicy = &policy
 	}
 	var set caseSet
 	d := json.NewDecoder(bytes.NewReader(casesJSON))
@@ -161,6 +190,21 @@ func run(args []string, out io.Writer) error {
 	budget := &inference.TokenBudget{InputTokens: 524288, OutputTokens: 16384, TotalTokens: 540672}
 	h := sha256.Sum256(casesJSON)
 	header := map[string]any{"schema": "questlock.paraphrase-measurement.v1", "cases_sha256": hex.EncodeToString(h[:]), "model": *model, "verifier_model": *verifierModel, "verifier_policy": "factorized-v1", "min_similarity": verifierConfig.MinSimilarity, "daily_budget": budget, "fresh_baseline": *baseline, "paid_fallback_enabled": false, "provider_api_charge_usd": 0}
+	if verifierConfig.VerifierMaxInputTokens != 16384 {
+		header["verifier_max_input_tokens"] = verifierConfig.VerifierMaxInputTokens
+	}
+	if verifierConfig.VerifierSourceMaxInputTokens != 0 {
+		header["verifier_source_max_input_tokens"] = verifierConfig.VerifierSourceMaxInputTokens
+	}
+	if verifierConfig.VerifierPairModel != "" {
+		header["verifier_pair_model"] = verifierConfig.VerifierPairModel
+	}
+	if verifierConfig.VerifierPairMaxInputTokens != 0 {
+		header["verifier_pair_max_input_tokens"] = verifierConfig.VerifierPairMaxInputTokens
+	}
+	if resourcePolicy != nil {
+		header["resource_policy"] = resourcePolicy
+	}
 	if verifierConfig.VerifierSourceThink {
 		header["verifier_source_think"] = true
 		header["semantic_timeout_ms"] = verifierConfig.TimeoutMS
@@ -194,7 +238,18 @@ func run(args []string, out io.Writer) error {
 		}
 		return v, e
 	}}
-	router := delegation.Router{Factory: func(delegation.Tier) (delegation.Runner, error) { return runner, nil }, Reuse: reuse, AllowPaid: false}
+	reuse.AdmissionPolicy = resourcePolicy
+	// Plain baseline calls use the same runtime policy. Controlled calls use the
+	// promoted resolver method and its outer gate, so admission is never nested.
+	var measuredRunner delegation.Runner = runner
+	if resourcePolicy != nil {
+		admit, err := delegation.NewResourceAdmission(*resourcePolicy, reuse.Resources)
+		if err != nil {
+			return err
+		}
+		measuredRunner = &admittedMeasurementRunner{Runner: runner, admit: admit}
+	}
+	router := delegation.Router{Factory: func(delegation.Tier) (delegation.Runner, error) { return measuredRunner, nil }, Reuse: reuse, AllowPaid: false}
 	failed := false
 	for _, c := range set.Cases {
 		sourceOK := false
@@ -212,6 +267,10 @@ func run(args []string, out io.Writer) error {
 			request.Policy.Local.Spec.Model = *model
 			if request.SemanticReuse != nil {
 				request.SemanticReuse.VerifierModel = *verifierModel
+				request.SemanticReuse.VerifierMaxInputTokens = verifierConfig.VerifierMaxInputTokens
+				request.SemanticReuse.VerifierSourceMaxInputTokens = verifierConfig.VerifierSourceMaxInputTokens
+				request.SemanticReuse.VerifierPairModel = verifierConfig.VerifierPairModel
+				request.SemanticReuse.VerifierPairMaxInputTokens = verifierConfig.VerifierPairMaxInputTokens
 				request.SemanticReuse.VerifierSourceThink = verifierConfig.VerifierSourceThink
 				request.SemanticReuse.VerifierMaxOutputTokens = verifierConfig.VerifierMaxOutputTokens
 				request.SemanticReuse.VerifierTimeoutMS = verifierConfig.VerifierTimeoutMS
@@ -234,13 +293,18 @@ func run(args []string, out io.Writer) error {
 			}
 			started := time.Now()
 			result, runErr := router.Run(ctx, request)
+			deferred := len(result.Attempts) == 1 && inference.PreClaimDeferred(result.Attempts[0].Result, runErr)
 			r.Result = &result
 			delegation.RecordOutcome(ctx, broker, request, &result, id)
 			elapsed := float64(time.Since(started)) / float64(time.Millisecond)
 			r.ElapsedMS = &elapsed
 			if runErr != nil {
-				r.Error = runErr.Error()
-				failed = true
+				if deferred {
+					r.Error = "resource_deferred"
+				} else {
+					r.Error = runErr.Error()
+					failed = true
+				}
 			}
 			if result.OutcomeTracking == nil || result.OutcomeTracking.Status != "recorded" {
 				r.Error = "outcome_accounting_unconfirmed"
@@ -264,14 +328,14 @@ func run(args []string, out io.Writer) error {
 						failed = true
 					}
 				}
-				if phase == "paraphrase" {
+				if phase == "paraphrase" && !deferred {
 					fingerprints[step-1] = a.Fingerprint
 					if !a.Reused || a.ReuseKind != "semantic" || a.ThisRunUsage != (inference.Usage{}) {
 						r.Error = "semantic_reuse_miss_or_fresh_generation"
 						failed = true
 					}
 				}
-				if phase == "exact" {
+				if phase == "exact" && !deferred {
 					if !a.Reused || a.Fingerprint != fingerprints[step-3] || a.ThisRunUsage != (inference.Usage{}) || a.Measurement == nil || a.Measurement.GenerationCalled || result.SemanticReuse != nil && (len(result.SemanticReuse.Verifications) != 0 || result.SemanticReuse.EmbeddingInputTokens != nil) {
 						r.Error = "exact_replay_performed_new_work"
 						failed = true
@@ -290,6 +354,9 @@ func run(args []string, out io.Writer) error {
 			}
 			if e = appendJSON(state, map[string]any{"case_id": c.ID, "phase": phase, "status": result.Status, "error": r.Error}); e != nil {
 				return e
+			}
+			if deferred {
+				return errors.New("resource capacity deferred before a fresh claim; partial measurement retained without a quality verdict or generation retry")
 			}
 			if runErr != nil && !errors.Is(runErr, delegation.ErrQualityFailed) || r.Error == "outcome_accounting_unconfirmed" {
 				return errors.New("unconfirmed work stopped the run; inspect receipts without retrying generation")
@@ -339,4 +406,14 @@ func requestFor(revision string, c businessCase, input string, budget *inference
 	zero, timeout, think, temp := int64(0), int64(90), false, float64(0)
 	reuse := &semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: c.ID, Domain: "synthetic-business-measurement", EvidenceRevision: revision, EmbeddingModel: "all-minilm", MinSimilarity: 0.25, Bindings: c.Bindings}, ReadOnly: true, Intent: c.Intent, VerifierModel: "qwen3.5:9b", VerifierPolicy: "factorized-v1", VerifierMaxInputTokens: 16384, VerifierMaxOutputTokens: 128, VerifierTimeoutMS: 60000}
 	return delegation.Request{TrackOutcome: true, Spec: inference.Spec{Task: "semantic-source-" + c.ID, Revision: revision + "-" + c.ID, Instructions: c.Instructions, Input: input, Context: c.Context}, Policy: delegation.Policy{Local: delegation.Tier{ID: "local", Spec: inference.Spec{Provider: "ollama", Model: "qwen3.5:9b", MaxContextBytes: 16 << 10, MaxInputTokens: 8192, MaxOutputTokens: 256, ReuseForSeconds: 3600, DailyTokenBudget: budget, Ollama: &inference.OllamaOptions{Format: "json", Think: &think, Temperature: &temp, KeepAliveSeconds: &zero, GenerationTimeoutSeconds: &timeout, OutputTypes: c.OutputTypes}}}}, Checks: c.Checks, SemanticReuse: reuse}
+}
+
+// Run overrides only the plain answer path; resolver methods remain promoted.
+type admittedMeasurementRunner struct {
+	*inference.Runner
+	admit inference.AdmissionFunc
+}
+
+func (r *admittedMeasurementRunner) Run(ctx context.Context, spec inference.Spec) (inference.Result, error) {
+	return r.Runner.RunWithAdmission(ctx, spec, r.admit)
 }

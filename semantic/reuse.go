@@ -35,15 +35,18 @@ const (
 // the same flat JSON names as shadow configuration.
 type ReuseConfig struct {
 	Config
-	ReadOnly                bool   `json:"read_only"`
-	Intent                  string `json:"intent"`
-	VerifierModel           string `json:"verifier_model"`
-	VerifierPolicy          string `json:"verifier_policy,omitempty"`
-	VerifierSourceThink     bool   `json:"verifier_source_think,omitempty"`
-	VerifierMaxInputTokens  int64  `json:"verifier_max_input_tokens,omitempty"`
-	VerifierMaxOutputTokens int64  `json:"verifier_max_output_tokens,omitempty"`
-	VerifierTimeoutMS       int    `json:"verifier_timeout_ms,omitempty"`
-	WaitForCandidateMS      int    `json:"wait_for_candidate_ms,omitempty"`
+	ReadOnly                     bool   `json:"read_only"`
+	Intent                       string `json:"intent"`
+	VerifierModel                string `json:"verifier_model"`
+	VerifierSourceMaxInputTokens int64  `json:"verifier_source_max_input_tokens,omitempty"`
+	VerifierPairModel            string `json:"verifier_pair_model,omitempty"`
+	VerifierPairMaxInputTokens   int64  `json:"verifier_pair_max_input_tokens,omitempty"`
+	VerifierPolicy               string `json:"verifier_policy,omitempty"`
+	VerifierSourceThink          bool   `json:"verifier_source_think,omitempty"`
+	VerifierMaxInputTokens       int64  `json:"verifier_max_input_tokens,omitempty"`
+	VerifierMaxOutputTokens      int64  `json:"verifier_max_output_tokens,omitempty"`
+	VerifierTimeoutMS            int    `json:"verifier_timeout_ms,omitempty"`
+	WaitForCandidateMS           int    `json:"wait_for_candidate_ms,omitempty"`
 }
 
 // NormalizeReuseConfig preserves the shadow configuration contract while
@@ -58,6 +61,12 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	}
 	if c.VerifierPolicy != "" && c.VerifierPolicy != "factorized-v1" {
 		return ReuseConfig{}, errors.New("unsupported semantic verifier policy")
+	}
+	if (c.VerifierSourceMaxInputTokens != 0 || c.VerifierPairModel != "" || c.VerifierPairMaxInputTokens != 0) && c.VerifierPolicy != "factorized-v1" {
+		return ReuseConfig{}, errors.New("source/pair input caps or a separate pair model require the factorized verifier policy")
+	}
+	if c.VerifierPairModel != "" && !validOllamaModel(c.VerifierPairModel) {
+		return ReuseConfig{}, errors.New("pair verifier requires an installed local model name")
 	}
 	if c.VerifierSourceThink && c.VerifierPolicy != "factorized-v1" {
 		return ReuseConfig{}, errors.New("source thinking requires the factorized verifier policy")
@@ -107,6 +116,12 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	if c.VerifierPolicy == "factorized-v1" && (c.VerifierMaxInputTokens < 2 || c.VerifierMaxOutputTokens < 32) {
 		return ReuseConfig{}, errors.New("factorized verifier requires bounded capacity for both stages")
 	}
+	if c.VerifierSourceMaxInputTokens < 0 || c.VerifierSourceMaxInputTokens > c.VerifierMaxInputTokens/2 {
+		return ReuseConfig{}, errors.New("source verifier input cap must be positive and no greater than half the total verifier input cap, or zero for the existing half")
+	}
+	if c.VerifierPairMaxInputTokens < 0 || c.VerifierPairMaxInputTokens > c.VerifierMaxInputTokens/2 {
+		return ReuseConfig{}, errors.New("pair verifier input cap must be positive and no greater than half the total verifier input cap, or zero for the existing half")
+	}
 	if c.WaitForCandidateMS < 0 || c.WaitForCandidateMS > MaxWaitForCandidateMS {
 		return ReuseConfig{}, errors.New("semantic candidate wait must be 0..30000 milliseconds")
 	}
@@ -125,15 +140,20 @@ type ValiditySource struct {
 
 // VerificationWork records one durable model job. Reused jobs carry zero current usage.
 type VerificationWork struct {
-	Stage            string `json:"stage"`
-	GenerationCalled bool   `json:"generation_called"`
-	Complete         bool   `json:"complete"`
-	Durable          bool   `json:"durable"`
-	InputTokens      *int64 `json:"input_tokens"`
-	OutputTokens     *int64 `json:"output_tokens"`
-	Reused           bool   `json:"reused"`
-	ReceiptKey       string `json:"receipt_key,omitempty"`
-	OutputSHA256     string `json:"output_sha256,omitempty"`
+	Stage string `json:"stage"`
+	// AdmissionDeferred is adapter proof of a pre-claim resource deferral,
+	// not a completed verdict or a cached model job.
+	AdmissionDeferred bool   `json:"admission_deferred,omitempty"`
+	Model             string `json:"model,omitempty"`
+	RuntimeIdentity   string `json:"runtime_identity,omitempty"`
+	GenerationCalled  bool   `json:"generation_called"`
+	Complete          bool   `json:"complete"`
+	Durable           bool   `json:"durable"`
+	InputTokens       *int64 `json:"input_tokens"`
+	OutputTokens      *int64 `json:"output_tokens"`
+	Reused            bool   `json:"reused"`
+	ReceiptKey        string `json:"receipt_key,omitempty"`
+	OutputSHA256      string `json:"output_sha256,omitempty"`
 }
 
 type ValidityRequest struct {
@@ -150,18 +170,21 @@ type ValidityRequest struct {
 // ValidityResult separates the verdict from execution evidence supplied by the
 // trusted adapter. Missing usage is unknown; it is never inferred as zero.
 type ValidityResult struct {
-	Work             []VerificationWork `json:"work,omitempty"`
-	GenerationCalled bool               `json:"generation_called"`
-	Complete         bool               `json:"complete"`
-	Durable          bool               `json:"durable"`
-	Verdict          string             `json:"verdict"`
-	SameIntent       bool               `json:"same_intent"`
-	SameFacts        bool               `json:"same_facts"`
-	SameConstraints  bool               `json:"same_constraints"`
-	AnswerSupported  bool               `json:"answer_supported"`
-	InputTokens      *int64             `json:"input_tokens"`
-	OutputTokens     *int64             `json:"output_tokens"`
-	Reused           bool               `json:"reused"`
+	Work []VerificationWork `json:"work,omitempty"`
+	// MixedModelUsage marks sums of separately metered model token units. These
+	// scalars are reservation accounting, not tokenizer-equivalent work or cost.
+	MixedModelUsage  bool   `json:"mixed_model_usage,omitempty"`
+	GenerationCalled bool   `json:"generation_called"`
+	Complete         bool   `json:"complete"`
+	Durable          bool   `json:"durable"`
+	Verdict          string `json:"verdict"`
+	SameIntent       bool   `json:"same_intent"`
+	SameFacts        bool   `json:"same_facts"`
+	SameConstraints  bool   `json:"same_constraints"`
+	AnswerSupported  bool   `json:"answer_supported"`
+	InputTokens      *int64 `json:"input_tokens"`
+	OutputTokens     *int64 `json:"output_tokens"`
+	Reused           bool   `json:"reused"`
 	// SharedWork identifies a zero-incremental-usage decision whose model work
 	// is accounted once by its batch's separate work record and shared receipt.
 	SharedWork   bool    `json:"shared_work,omitempty"`

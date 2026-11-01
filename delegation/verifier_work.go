@@ -52,6 +52,16 @@ func validOutcomeVerificationWork(values []semantic.ValidityResult) bool {
 			if w.GenerationCalled && w.Reused {
 				return false
 			}
+			if w.AdmissionDeferred {
+				if i != len(v.Work)-1 || v.Complete || v.Durable || v.Reused || v.Accepted() || w.GenerationCalled || w.Reused || w.Complete || w.Durable || w.ReceiptKey != "" || w.OutputSHA256 != "" || w.InputTokens == nil || w.OutputTokens == nil || *w.InputTokens != 0 || *w.OutputTokens != 0 {
+					return false
+				}
+				for _, prior := range v.Work[:i] {
+					if !prior.Complete || !prior.Durable || prior.AdmissionDeferred || prior.InputTokens == nil || prior.OutputTokens == nil || prior.GenerationCalled == prior.Reused {
+						return false
+					}
+				}
+			}
 			if w.ReceiptKey == "" {
 				if w.GenerationCalled || w.Reused || w.Complete {
 					return false

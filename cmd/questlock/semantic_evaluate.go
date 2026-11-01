@@ -103,6 +103,13 @@ type semanticEvalTotals struct {
 	RetrievalMisses        int      `json:"retrieval_misses"`
 	GuardRejections        int      `json:"guard_rejections"`
 	UnknownVerdicts        int      `json:"unknown_verdicts"`
+	ResourceDeferred       int      `json:"resource_deferred,omitempty"`
+	Unscored               int      `json:"unscored,omitempty"`
+	UnscoredPositiveLabels int      `json:"unscored_positive_labels,omitempty"`
+	UnscoredNegativeLabels int      `json:"unscored_negative_labels,omitempty"`
+	DeferredPositiveLabels int      `json:"deferred_positive_labels,omitempty"`
+	DeferredNegativeLabels int      `json:"deferred_negative_labels,omitempty"`
+	ConfusionPairs         *int     `json:"confusion_pairs,omitempty"`
 	TP                     int      `json:"true_positives"`
 	FP                     int      `json:"false_positives"`
 	TN                     int      `json:"true_negatives"`
@@ -115,74 +122,95 @@ type semanticEvalTotals struct {
 	PrecisionWilson95Upper *float64 `json:"precision_wilson_95_upper"`
 }
 
+// Per-model counters keep tokenizer units separate. Aggregate verifier counters
+// remain the existing reservation-accounting sums, not equivalent token work.
+type semanticEvalModelUsage struct {
+	Model               string `json:"model"`
+	RuntimeIdentity     string `json:"runtime_identity"`
+	GenerationCalls     int    `json:"generation_calls"`
+	CachedVerifications int    `json:"cached_verifications"`
+	KnownUsageCalls     int    `json:"known_usage_calls"`
+	UnknownUsageCalls   int    `json:"unknown_usage_calls"`
+	InputTokens         int64  `json:"input_tokens"`
+	OutputTokens        int64  `json:"output_tokens"`
+}
+
 type semanticEvalUsage struct {
-	EmbeddingCalls             int   `json:"embedding_calls"`
-	EmbeddingKnownUsageCalls   int   `json:"embedding_known_usage_calls"`
-	EmbeddingUnknownUsageCalls int   `json:"embedding_unknown_usage_calls"`
-	EmbeddingInputTokens       int64 `json:"embedding_input_tokens"`
-	VerificationAttempts       int   `json:"verification_attempts"`
-	VerifierGenerationCalls    int   `json:"verifier_generation_calls"`
-	CachedVerifications        int   `json:"cached_verifications"`
-	VerifierKnownUsageCalls    int   `json:"verifier_known_usage_calls"`
-	VerifierUnknownUsageCalls  int   `json:"verifier_unknown_usage_calls"`
-	VerifierInputTokens        int64 `json:"verifier_input_tokens"`
-	VerifierOutputTokens       int64 `json:"verifier_output_tokens"`
-	LogicalModelCalls          int   `json:"logical_model_calls"`
+	VerifierModels             []semanticEvalModelUsage `json:"verifier_models,omitempty"`
+	MixedVerifierModelUsage    bool                     `json:"mixed_verifier_model_usage,omitempty"`
+	VerifierTokenAccounting    string                   `json:"verifier_token_accounting,omitempty"`
+	EmbeddingCalls             int                      `json:"embedding_calls"`
+	EmbeddingKnownUsageCalls   int                      `json:"embedding_known_usage_calls"`
+	EmbeddingUnknownUsageCalls int                      `json:"embedding_unknown_usage_calls"`
+	EmbeddingInputTokens       int64                    `json:"embedding_input_tokens"`
+	VerificationAttempts       int                      `json:"verification_attempts"`
+	VerifierGenerationCalls    int                      `json:"verifier_generation_calls"`
+	DeferredVerifierStages     int                      `json:"deferred_verifier_stages,omitempty"`
+	CachedVerifications        int                      `json:"cached_verifications"`
+	VerifierKnownUsageCalls    int                      `json:"verifier_known_usage_calls"`
+	VerifierUnknownUsageCalls  int                      `json:"verifier_unknown_usage_calls"`
+	VerifierInputTokens        int64                    `json:"verifier_input_tokens"`
+	VerifierOutputTokens       int64                    `json:"verifier_output_tokens"`
+	LogicalModelCalls          int                      `json:"logical_model_calls"`
 }
 
 type semanticEvalReport struct {
-	BatchSize                    int                           `json:"batch_size,omitempty"`
-	BatchVerificationWork        []semantic.ValidityResult     `json:"batch_verification_work,omitempty"`
-	Schema                       int                           `json:"schema"`
-	ProtectedTermsVersion        int                           `json:"protected_terms_version"`
-	OutputContractGuardVersion   int                           `json:"output_contract_guard_version,omitempty"`
-	LanguageContractGuardVersion int                           `json:"language_contract_guard_version,omitempty"`
-	Mode                         string                        `json:"mode"`
-	Status                       string                        `json:"status"`
-	SourceSHA256                 string                        `json:"source_sha256"`
-	FrozenCorpusSHA256           string                        `json:"frozen_corpus_sha256"`
-	MatchesFrozenCorpus          bool                          `json:"matches_frozen_corpus"`
-	Population                   string                        `json:"population"`
-	LabelRule                    string                        `json:"label_rule"`
-	EmbeddingModel               string                        `json:"embedding_model"`
-	VerifierModel                string                        `json:"verifier_model"`
-	VerifierPolicy               string                        `json:"verifier_policy,omitempty"`
-	VerifierSourceThink          bool                          `json:"verifier_source_think"`
-	VerifierMaxInputTokens       int64                         `json:"verifier_max_input_tokens,omitempty"`
-	VerifierMaxOutputTokens      int64                         `json:"verifier_max_output_tokens,omitempty"`
-	VerifierTimeoutMS            int                           `json:"verifier_timeout_ms,omitempty"`
-	VerifierIdentity             string                        `json:"verifier_identity,omitempty"`
-	MinSimilarity                float64                       `json:"min_similarity"`
-	RetrievalThresholdMeaning    string                        `json:"retrieval_threshold_meaning"`
-	QualityTargetMeaning         string                        `json:"quality_target_meaning"`
-	MetricMeaning                string                        `json:"metric_meaning"`
-	ModelCallBasis               string                        `json:"model_call_basis"`
-	SourceAnswers                string                        `json:"source_answers"`
-	AnswerGenerationCalls        int                           `json:"answer_generation_calls"`
-	SavingsMeasured              bool                          `json:"savings_measured"`
-	PhysicalHosts                int                           `json:"physical_hosts"`
-	ProviderAPIChargeUSD         int                           `json:"provider_api_charge_usd"`
-	PaidFallbackEnabled          bool                          `json:"paid_fallback_enabled"`
-	StateRetained                bool                          `json:"state_retained"`
-	Errors                       []string                      `json:"errors"`
-	SourceEmbeddings             []semanticEvalSourceEmbedding `json:"source_embeddings"`
-	Pairs                        []semanticEvalPair            `json:"pairs"`
-	Totals                       semanticEvalTotals            `json:"totals"`
-	Usage                        semanticEvalUsage             `json:"usage"`
-	TotalMS                      float64                       `json:"total_ms"`
+	BatchSize                    int                              `json:"batch_size,omitempty"`
+	BatchVerificationWork        []semantic.ValidityResult        `json:"batch_verification_work,omitempty"`
+	Schema                       int                              `json:"schema"`
+	ProtectedTermsVersion        int                              `json:"protected_terms_version"`
+	OutputContractGuardVersion   int                              `json:"output_contract_guard_version,omitempty"`
+	LanguageContractGuardVersion int                              `json:"language_contract_guard_version,omitempty"`
+	Mode                         string                           `json:"mode"`
+	Status                       string                           `json:"status"`
+	SourceSHA256                 string                           `json:"source_sha256"`
+	FrozenCorpusSHA256           string                           `json:"frozen_corpus_sha256"`
+	MatchesFrozenCorpus          bool                             `json:"matches_frozen_corpus"`
+	Population                   string                           `json:"population"`
+	LabelRule                    string                           `json:"label_rule"`
+	EmbeddingModel               string                           `json:"embedding_model"`
+	VerifierModel                string                           `json:"verifier_model"`
+	VerifierSourceMaxInputTokens int64                            `json:"verifier_source_max_input_tokens,omitempty"`
+	VerifierPairModel            string                           `json:"verifier_pair_model,omitempty"`
+	VerifierPairMaxInputTokens   int64                            `json:"verifier_pair_max_input_tokens,omitempty"`
+	VerifierPolicy               string                           `json:"verifier_policy,omitempty"`
+	VerifierSourceThink          bool                             `json:"verifier_source_think"`
+	VerifierMaxInputTokens       int64                            `json:"verifier_max_input_tokens,omitempty"`
+	VerifierMaxOutputTokens      int64                            `json:"verifier_max_output_tokens,omitempty"`
+	VerifierTimeoutMS            int                              `json:"verifier_timeout_ms,omitempty"`
+	VerifierIdentity             string                           `json:"verifier_identity,omitempty"`
+	ResourcePolicy               *delegation.ReuseAdmissionPolicy `json:"resource_policy,omitempty"`
+	MinSimilarity                float64                          `json:"min_similarity"`
+	RetrievalThresholdMeaning    string                           `json:"retrieval_threshold_meaning"`
+	QualityTargetMeaning         string                           `json:"quality_target_meaning"`
+	MetricMeaning                string                           `json:"metric_meaning"`
+	ModelCallBasis               string                           `json:"model_call_basis"`
+	SourceAnswers                string                           `json:"source_answers"`
+	AnswerGenerationCalls        int                              `json:"answer_generation_calls"`
+	SavingsMeasured              bool                             `json:"savings_measured"`
+	PhysicalHosts                int                              `json:"physical_hosts"`
+	ProviderAPIChargeUSD         int                              `json:"provider_api_charge_usd"`
+	PaidFallbackEnabled          bool                             `json:"paid_fallback_enabled"`
+	StateRetained                bool                             `json:"state_retained"`
+	Errors                       []string                         `json:"errors"`
+	SourceEmbeddings             []semanticEvalSourceEmbedding    `json:"source_embeddings"`
+	Pairs                        []semanticEvalPair               `json:"pairs"`
+	Totals                       semanticEvalTotals               `json:"totals"`
+	Usage                        semanticEvalUsage                `json:"usage"`
+	TotalMS                      float64                          `json:"total_ms"`
 }
 
 func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runErr error) {
 	started := time.Now()
 	var state *semanticEvalState
-	report := semanticEvalReport{Schema: 1, ProtectedTermsVersion: semantic.ProtectedTermsVersion, Mode: "local_semantic_validity_diagnostic", Status: "partial_failed", FrozenCorpusSHA256: semanticEvalFrozenSHA256, PhysicalHosts: 1, SourceAnswers: "fixed_labelled_fixtures", RetrievalThresholdMeaning: "Cosine retrieval cutoff only; it is not a validity confidence or quality estimate.", QualityTargetMeaning: "The requested 90–98% target is not a universal guarantee. Metrics and Wilson intervals describe this declared sample only; corpus selection and dependence limit generalization.", MetricMeaning: "TP/FP/TN/FN classify served versus withheld for every labelled pair, including abstentions. Accuracy counts correct serve/withhold decisions; coverage is served/total. Errors, unknowns and unattempted pairs remain visible. Precision is null when nothing is served.", ModelCallBasis: "Logical embedding Embed calls plus verifier Generate calls reported by the inference runner; metadata reads and token-count preflight requests are excluded. Verification attempts, cached verifications and unknown usage are separate.", Errors: []string{}, SourceEmbeddings: []semanticEvalSourceEmbedding{}, Pairs: []semanticEvalPair{}}
+	report := semanticEvalReport{Schema: 1, ProtectedTermsVersion: semantic.ProtectedTermsVersion, Mode: "local_semantic_validity_diagnostic", Status: "partial_failed", FrozenCorpusSHA256: semanticEvalFrozenSHA256, PhysicalHosts: 1, SourceAnswers: "fixed_labelled_fixtures", RetrievalThresholdMeaning: "Cosine retrieval cutoff only; it is not a validity confidence or quality estimate.", QualityTargetMeaning: "The requested 90–98% target is not a universal guarantee. Metrics and Wilson intervals describe this declared sample only; corpus selection and dependence limit generalization.", MetricMeaning: "TP/FP/TN/FN classify served results and known withholding decisions. Any served result is counted even when execution also failed, so unsafe false acceptances cannot disappear. Unserved execution errors, unattempted work and proven pre-claim resource deferrals remain in Total and label counts but are unscored. Accuracy and recall use the scored population; coverage is served/Total. Operational errors, unknowns and missing work remain visible and prevent full qualification. Precision is null when nothing is served. Proven pre-claim resource deferrals remain in the declared population and label counts but are excluded from TP/FP/TN/FN, recall and accuracy; confusion_pairs declares that denominator. Any deferred, missing or failed work prevents complete qualification.", ModelCallBasis: "Logical embedding Embed calls plus verifier Generate calls reported by the inference runner; metadata reads and token-count preflight requests are excluded. Verification attempts, cached verifications and unknown usage are separate.", Errors: []string{}, SourceEmbeddings: []semanticEvalSourceEmbedding{}, Pairs: []semanticEvalPair{}}
 	defer func() {
 		report.TotalMS = float64(time.Since(started)) / float64(time.Millisecond)
 		report.Totals, report.Usage = semanticEvalSummarize(report.Pairs, report.SourceEmbeddings, report.BatchVerificationWork)
 		if runErr == nil {
 			report.Status = "completed"
 		}
-		knownComplete := runErr == nil && report.Totals.Unattempted == 0 && report.Totals.Errors == 0 && report.Usage.VerifierUnknownUsageCalls == 0 && report.Usage.EmbeddingUnknownUsageCalls == 0
+		knownComplete := runErr == nil && report.Totals.Unattempted == 0 && report.Totals.Errors == 0 && report.Totals.ResourceDeferred == 0 && report.Totals.Unscored == 0 && report.Usage.VerifierUnknownUsageCalls == 0 && report.Usage.EmbeddingUnknownUsageCalls == 0
 		if state != nil {
 			if err := state.close(); err != nil {
 				runErr = errors.Join(runErr, errors.New("semantic evaluation state close unconfirmed"))
@@ -220,6 +248,9 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	base := f.String("ollama-url", "http://127.0.0.1:11434", "literal-loopback Ollama HTTP origin")
 	embeddingModel := f.String("embedding-model", "all-minilm", "installed local embedding model")
 	verifierModel := f.String("verifier-model", "qwen3.5:4b", "installed local validity-verifier model")
+	verifierSourceInput := f.Int64("verifier-source-max-input-tokens", 0, "optional source input cap, at most half the total verifier input cap; zero keeps the existing half")
+	verifierPairModel := f.String("verifier-pair-model", "", "optional installed factorized applicability model; empty uses verifier-model")
+	verifierPairInput := f.Int64("verifier-pair-max-input-tokens", 0, "optional applicability input cap; zero uses half total verifier input, positive values cannot exceed that half")
 	verifierInput := f.Int64("verifier-max-input-tokens", 0, "total verifier input reservation cap; zero selects the policy default")
 	verifierOutput := f.Int64("verifier-max-output-tokens", 0, "total verifier output cap; zero selects the policy default")
 	verifierTimeout := f.Int("verifier-timeout-ms", 0, "total verifier invocation timeout; zero selects the policy default")
@@ -228,9 +259,10 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	threshold := f.Float64("min-similarity", 0.9, "retrieval cosine cutoff; not validity confidence")
 	batchSize := f.Int("batch-size", 1, "1 for standalone validity; 2 for compatible validity pairs")
 	timeout := f.Duration("timeout", 20*time.Minute, "positive total evaluation bound, at most 60m")
+	resourcePolicyPath := f.String("resource-policy", "", "optional strict JSON runtime admission policy for factorized-v1; resource deferral prevents full qualification")
 	stateDir := f.String("state-dir", "", "new absolute private state directory; explicit state is retained, failed temporary state is also retained")
 	f.Usage = func() {
-		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--state-dir NEW_PRIVATE_PATH] [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--batch-size 1|2] [--verifier-policy factorized-v1 --verifier-source-think] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving.")
+		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--state-dir NEW_PRIVATE_PATH] [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--batch-size 1|2] [--verifier-policy factorized-v1 --verifier-source-think] [--verifier-source-max-input-tokens N] [--verifier-pair-model MODEL --verifier-pair-max-input-tokens N] [--resource-policy PATH] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving.")
 	}
 	if err := f.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
@@ -239,6 +271,8 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 		return fail("invalid_flags")
 	}
 	report.EmbeddingModel, report.VerifierModel = *embeddingModel, *verifierModel
+	report.VerifierSourceMaxInputTokens = *verifierSourceInput
+	report.VerifierPairModel, report.VerifierPairMaxInputTokens = *verifierPairModel, *verifierPairInput
 	report.BatchSize = *batchSize
 	report.VerifierPolicy = *verifierPolicy
 	report.VerifierSourceThink = *verifierSourceThink
@@ -249,7 +283,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	if !math.IsNaN(*threshold) && !math.IsInf(*threshold, 0) {
 		report.MinSimilarity = *threshold
 	}
-	if (*verifierPolicy != "" && *verifierPolicy != "factorized-v1") || (*verifierPolicy != "" && *batchSize != 1) || (*verifierSourceThink && *verifierPolicy != "factorized-v1") || f.NArg() != 0 || !*live || *suitePath == "" || *batchSize < 1 || *batchSize > 2 || *timeout <= 0 || *timeout > 60*time.Minute || math.IsNaN(*threshold) || math.IsInf(*threshold, 0) || *threshold < 0 || *threshold > 1 {
+	if (*resourcePolicyPath != "" && *verifierPolicy != "factorized-v1") || (*verifierPolicy != "" && *verifierPolicy != "factorized-v1") || (*verifierPolicy != "" && *batchSize != 1) || (*verifierSourceThink && *verifierPolicy != "factorized-v1") || f.NArg() != 0 || !*live || *suitePath == "" || *batchSize < 1 || *batchSize > 2 || *timeout <= 0 || *timeout > 60*time.Minute || math.IsNaN(*threshold) || math.IsInf(*threshold, 0) || *threshold < 0 || *threshold > 1 {
 		return fail("explicit_live_suite_and_bounded_flags_required")
 	}
 	suite, raw, err := loadSemanticEvalSuite(*suitePath)
@@ -271,11 +305,33 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	defer stop()
 	ctx, cancel := context.WithTimeout(ctx, *timeout)
 	defer cancel()
-	config, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "controlled-evaluation", Domain: "synthetic-challenge", EvidenceRevision: report.SourceSHA256, EmbeddingModel: *embeddingModel, MinSimilarity: *threshold, MaxInputBytes: semantic.MaxInputBytes}, ReadOnly: true, Intent: "answer-validity-evaluation", VerifierModel: *verifierModel, VerifierPolicy: *verifierPolicy, VerifierSourceThink: *verifierSourceThink, VerifierMaxInputTokens: *verifierInput, VerifierMaxOutputTokens: *verifierOutput, VerifierTimeoutMS: *verifierTimeout})
+	config, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "controlled-evaluation", Domain: "synthetic-challenge", EvidenceRevision: report.SourceSHA256, EmbeddingModel: *embeddingModel, MinSimilarity: *threshold, MaxInputBytes: semantic.MaxInputBytes}, ReadOnly: true, Intent: "answer-validity-evaluation", VerifierModel: *verifierModel, VerifierSourceMaxInputTokens: *verifierSourceInput, VerifierPairModel: *verifierPairModel, VerifierPairMaxInputTokens: *verifierPairInput, VerifierPolicy: *verifierPolicy, VerifierSourceThink: *verifierSourceThink, VerifierMaxInputTokens: *verifierInput, VerifierMaxOutputTokens: *verifierOutput, VerifierTimeoutMS: *verifierTimeout})
 	if err != nil {
 		return fail("invalid_local_model_policy")
 	}
 	report.VerifierMaxInputTokens, report.VerifierMaxOutputTokens, report.VerifierTimeoutMS = config.VerifierMaxInputTokens, config.VerifierMaxOutputTokens, config.VerifierTimeoutMS
+	var admit inference.AdmissionFunc
+	if *resourcePolicyPath != "" {
+		file, openErr := os.Open(*resourcePolicyPath)
+		if openErr != nil {
+			return fail("invalid_resource_policy")
+		}
+		info, statErr := file.Stat()
+		if statErr != nil || !info.Mode().IsRegular() {
+			_ = file.Close()
+			return fail("invalid_resource_policy")
+		}
+		policy, loadErr := delegation.LoadReuseAdmissionPolicy(file)
+		closeErr := file.Close()
+		if loadErr != nil || closeErr != nil {
+			return fail("invalid_resource_policy")
+		}
+		admit, err = delegation.NewResourceAdmission(policy, nil)
+		if err != nil {
+			return fail("invalid_resource_policy")
+		}
+		report.ResourcePolicy = &policy
+	}
 	// Validate and create state before any provider metadata or inference. Existing
 	// paths are never reused: a retained uncertain job needs operator inspection.
 	state, err = newSemanticEvalBroker(ctx, *stateDir)
@@ -297,7 +353,12 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	if *batchSize == 2 {
 		verifier, err = validityeval.NewPairVerifier(ctx, broker, *base, config)
 	} else if *verifierPolicy == "factorized-v1" {
-		verifier, err = delegation.NewFactorizedVerifier(ctx, broker, *base, config)
+		var factorized *delegation.FactorizedVerifier
+		factorized, err = delegation.NewFactorizedVerifier(ctx, broker, *base, config)
+		if factorized != nil {
+			factorized.Admission = admit
+			verifier = factorized
+		}
 	} else {
 		verifier, err = delegation.NewLocalVerifier(ctx, broker, *base, config)
 	}
@@ -311,9 +372,22 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 		return fail(semanticEvalContextCategory(ctx))
 	}
 	for _, pair := range report.Pairs {
+		if semanticEvalResourceDeferred(pair) {
+			return fail("resource_admission_deferred")
+		}
+		if pair.Status == "not_run" || pair.Status == "queued" || pair.Status == "batch_required" {
+			return fail("pair_execution_incomplete")
+		}
 		if pair.ErrorCategory != "" {
 			return fail("pair_execution_errors")
 		}
+	}
+	totals, usage := semanticEvalSummarize(report.Pairs, report.SourceEmbeddings, report.BatchVerificationWork)
+	if totals.Unscored != 0 {
+		return fail("pair_execution_incomplete")
+	}
+	if usage.VerifierUnknownUsageCalls != 0 || usage.EmbeddingUnknownUsageCalls != 0 {
+		return fail("usage_unconfirmed")
 	}
 	return nil
 }
@@ -596,7 +670,9 @@ func semanticEvalRun(ctx context.Context, suite semanticEvalSuite, embedder sema
 						}
 						row.Verification = &result
 						row.Verdict = result.Verdict
-						if verifyErr != nil {
+						if errors.Is(verifyErr, inference.ErrAdmissionDeferred) && semanticEvalDeferredVerification(result) {
+							row.Status, row.ErrorCategory, row.Abstained = "resource_deferred", "resource_deferred", true
+						} else if verifyErr != nil {
 							row.Status, row.ErrorCategory, row.Abstained = "error", "verification_failed", true
 						} else if !semanticEvalVerified(result, config) {
 							row.Status, row.ErrorCategory, row.Abstained = "error", "verification_evidence_unconfirmed", true
@@ -683,6 +759,57 @@ func semanticEvalVerified(result semantic.ValidityResult, config semantic.ReuseC
 	return result.GenerationCalled && *result.InputTokens > 0
 }
 
+func semanticEvalDeferredStage(w semantic.VerificationWork) bool {
+	return w.AdmissionDeferred && !w.GenerationCalled && !w.Complete && !w.Durable && !w.Reused && w.ReceiptKey == "" && w.OutputSHA256 == "" && w.InputTokens != nil && w.OutputTokens != nil && *w.InputTokens == 0 && *w.OutputTokens == 0
+}
+
+// This is adapter evidence of a missing applicability decision, not a negative
+// model verdict. A completed source certificate may precede the deferred stage;
+// its real work remains counted. Unknown or executed final work cannot qualify.
+func semanticEvalDeferredVerification(v semantic.ValidityResult) bool {
+	if len(v.Work) < 1 || len(v.Work) > 2 || v.Complete || v.Durable || v.Reused || v.SharedWork || v.Verdict != "unknown" || v.ReceiptKey != "" || v.OutputSHA256 != "" || v.InputTokens == nil || v.OutputTokens == nil {
+		return false
+	}
+	var input, output int64
+	generated := false
+	for i, w := range v.Work {
+		stage := "source"
+		if i == 1 {
+			stage = "equivalence"
+		}
+		if w.Stage != stage {
+			return false
+		}
+		if i == len(v.Work)-1 {
+			if !semanticEvalDeferredStage(w) {
+				return false
+			}
+		} else {
+			const prefix = "inference/v1/jobs/"
+			job, err := hex.DecodeString(strings.TrimPrefix(w.ReceiptKey, prefix))
+			hash, hashErr := hex.DecodeString(w.OutputSHA256)
+			if w.AdmissionDeferred || !w.Complete || !w.Durable || !strings.HasPrefix(w.ReceiptKey, prefix) || err != nil || len(job) != 32 || hashErr != nil || len(hash) != 32 || w.InputTokens == nil || w.OutputTokens == nil || *w.InputTokens < 0 || *w.OutputTokens < 0 {
+				return false
+			}
+			if w.Reused {
+				if w.GenerationCalled || *w.InputTokens != 0 || *w.OutputTokens != 0 {
+					return false
+				}
+			} else if !w.GenerationCalled || *w.InputTokens < 1 || *w.OutputTokens < 1 {
+				return false
+			}
+			input += *w.InputTokens
+			output += *w.OutputTokens
+			generated = generated || w.GenerationCalled
+		}
+	}
+	return *v.InputTokens == input && *v.OutputTokens == output && v.GenerationCalled == generated
+}
+
+func semanticEvalResourceDeferred(row semanticEvalPair) bool {
+	return row.Status == "resource_deferred" && row.ErrorCategory == "resource_deferred" && !row.Served && row.Verification != nil && semanticEvalDeferredVerification(*row.Verification)
+}
+
 func semanticEvalContextCategory(ctx context.Context) string {
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
 		return "deadline_exceeded"
@@ -697,6 +824,33 @@ func semanticEvalSummarize(pairs []semanticEvalPair, sources []semanticEvalSourc
 	countVerification = func(result semantic.ValidityResult) {
 		if len(result.Work) > 0 {
 			for _, w := range result.Work {
+				if semanticEvalDeferredStage(w) {
+					usage.DeferredVerifierStages++
+					continue
+				}
+				if w.Model != "" && w.RuntimeIdentity != "" {
+					i := 0
+					for i < len(usage.VerifierModels) && (usage.VerifierModels[i].Model != w.Model || usage.VerifierModels[i].RuntimeIdentity != w.RuntimeIdentity) {
+						i++
+					}
+					if i == len(usage.VerifierModels) {
+						usage.VerifierModels = append(usage.VerifierModels, semanticEvalModelUsage{Model: w.Model, RuntimeIdentity: w.RuntimeIdentity})
+					}
+					bucket := &usage.VerifierModels[i]
+					if w.GenerationCalled {
+						bucket.GenerationCalls++
+					}
+					if w.Reused {
+						bucket.CachedVerifications++
+					}
+					if w.InputTokens == nil || w.OutputTokens == nil {
+						bucket.UnknownUsageCalls++
+					} else {
+						bucket.KnownUsageCalls++
+						bucket.InputTokens += *w.InputTokens
+						bucket.OutputTokens += *w.OutputTokens
+					}
+				}
 				countVerification(semantic.ValidityResult{GenerationCalled: w.GenerationCalled, Reused: w.Reused, InputTokens: w.InputTokens, OutputTokens: w.OutputTokens})
 			}
 			return
@@ -739,15 +893,35 @@ func semanticEvalSummarize(pairs []semanticEvalPair, sources []semanticEvalSourc
 		countEmbedding(source.Attempted, source.InputTokens)
 	}
 	for _, row := range pairs {
+		deferred := semanticEvalResourceDeferred(row)
+		unscored := !row.Served && (deferred || row.ErrorCategory != "" || row.Status == "error" || row.Status == "not_run" || row.Status == "queued" || row.Status == "batch_required" || row.Status == "resource_deferred")
 		if row.ExpectedReuse {
 			totals.PositiveLabels++
+		} else {
+			totals.NegativeLabels++
+		}
+		if deferred {
+			totals.ResourceDeferred++
+			if row.ExpectedReuse {
+				totals.DeferredPositiveLabels++
+			} else {
+				totals.DeferredNegativeLabels++
+			}
+		}
+		if unscored {
+			totals.Unscored++
+			if row.ExpectedReuse {
+				totals.UnscoredPositiveLabels++
+			} else {
+				totals.UnscoredNegativeLabels++
+			}
+		} else if row.ExpectedReuse {
 			if row.Served {
 				totals.TP++
 			} else {
 				totals.FN++
 			}
 		} else {
-			totals.NegativeLabels++
 			if row.Served {
 				totals.FP++
 			} else {
@@ -756,10 +930,10 @@ func semanticEvalSummarize(pairs []semanticEvalPair, sources []semanticEvalSourc
 		}
 		if row.Status == "not_run" {
 			totals.Unattempted++
-		} else if row.ErrorCategory == "" {
+		} else if row.ErrorCategory == "" && !unscored {
 			totals.Completed++
 		}
-		if row.ErrorCategory != "" {
+		if row.ErrorCategory != "" && !deferred {
 			totals.Errors++
 		}
 		if row.Abstained {
@@ -771,7 +945,7 @@ func semanticEvalSummarize(pairs []semanticEvalPair, sources []semanticEvalSourc
 		if row.Status == "guard_rejected" {
 			totals.GuardRejections++
 		}
-		if row.Verification != nil && row.Verification.Verdict == "unknown" {
+		if row.Verification != nil && row.Verification.Verdict == "unknown" && !deferred {
 			totals.UnknownVerdicts++
 		}
 		countEmbedding(row.EmbeddingAttempted, row.EmbeddingInputTokens)
@@ -790,10 +964,18 @@ func semanticEvalSummarize(pairs []semanticEvalPair, sources []semanticEvalSourc
 		return &value
 	}
 	totals.Precision = ratio(totals.TP, totals.TP+totals.FP)
-	totals.Recall = ratio(totals.TP, totals.PositiveLabels)
-	totals.Accuracy = ratio(totals.TP+totals.TN, totals.Total)
+	totals.Recall = ratio(totals.TP, totals.PositiveLabels-totals.UnscoredPositiveLabels)
+	totals.Accuracy = ratio(totals.TP+totals.TN, totals.Total-totals.Unscored)
+	if totals.Unscored > 0 {
+		n := totals.Total - totals.Unscored
+		totals.ConfusionPairs = &n
+	}
 	totals.Coverage = ratio(totals.TP+totals.FP, totals.Total)
 	totals.PrecisionWilson95Lower, totals.PrecisionWilson95Upper = semanticEvalWilson95(totals.TP, totals.TP+totals.FP)
+	if len(usage.VerifierModels) > 1 {
+		usage.MixedVerifierModelUsage = true
+		usage.VerifierTokenAccounting = "reservation_accounting_sum_of_separately_metered_model_units"
+	}
 	usage.LogicalModelCalls = usage.EmbeddingCalls + usage.VerifierGenerationCalls
 	return totals, usage
 }

@@ -10,7 +10,7 @@ import (
 func ValidateVerifierWork(v ValidityResult, c ReuseConfig) error {
 	invalid := errors.New("unconfirmed factorized verification work")
 	if c.VerifierPolicy == "" {
-		if len(v.Work) != 0 {
+		if len(v.Work) != 0 || v.MixedModelUsage {
 			return invalid
 		}
 		return nil
@@ -22,6 +22,17 @@ func ValidateVerifierWork(v ValidityResult, c ReuseConfig) error {
 	if !strings.HasPrefix(v.ReceiptKey, prefix) || !validHash(strings.TrimPrefix(v.ReceiptKey, prefix)) || v.OutputSHA256 != strings.TrimPrefix(v.ReceiptKey, prefix) {
 		return invalid
 	}
+	attributed := c.VerifierSourceMaxInputTokens != 0 || c.VerifierPairModel != "" || c.VerifierPairMaxInputTokens != 0
+	pairModel := c.VerifierPairModel
+	if pairModel == "" {
+		pairModel = c.VerifierModel
+	}
+	if c.VerifierSourceMaxInputTokens < 0 || c.VerifierSourceMaxInputTokens > c.VerifierMaxInputTokens/2 || c.VerifierPairMaxInputTokens < 0 || c.VerifierPairMaxInputTokens > c.VerifierMaxInputTokens/2 {
+		return invalid
+	}
+	if v.MixedModelUsage != (len(v.Work) == 2 && pairModel != c.VerifierModel) {
+		return invalid
+	}
 	input, output := int64(0), int64(0)
 	generated, reused := false, true
 	for i, w := range v.Work {
@@ -30,10 +41,27 @@ func ValidateVerifierWork(v ValidityResult, c ReuseConfig) error {
 			expected = "equivalence"
 		}
 		const job = "inference/v1/jobs/"
-		if w.Stage != expected || !w.Complete || !w.Durable || !strings.HasPrefix(w.ReceiptKey, job) || !validHash(strings.TrimPrefix(w.ReceiptKey, job)) || !validHash(w.OutputSHA256) || w.InputTokens == nil || w.OutputTokens == nil {
+		if w.AdmissionDeferred || w.Stage != expected || !w.Complete || !w.Durable || !strings.HasPrefix(w.ReceiptKey, job) || !validHash(strings.TrimPrefix(w.ReceiptKey, job)) || !validHash(w.OutputSHA256) || w.InputTokens == nil || w.OutputTokens == nil {
 			return invalid
 		}
-		if *w.InputTokens < 0 || *w.OutputTokens < 0 || *w.InputTokens > c.VerifierMaxInputTokens/2 || *w.OutputTokens > c.VerifierMaxOutputTokens/2 {
+		inputCap, model := c.VerifierMaxInputTokens/2, c.VerifierModel
+		if c.VerifierSourceMaxInputTokens != 0 {
+			inputCap = c.VerifierSourceMaxInputTokens
+		}
+		if i == 1 {
+			inputCap, model = c.VerifierMaxInputTokens/2, pairModel
+			if c.VerifierPairMaxInputTokens != 0 {
+				inputCap = c.VerifierPairMaxInputTokens
+			}
+		}
+		if attributed {
+			if w.Model != model || !validHash(w.RuntimeIdentity) {
+				return invalid
+			}
+		} else if w.Model != "" || w.RuntimeIdentity != "" {
+			return invalid
+		}
+		if *w.InputTokens < 0 || *w.OutputTokens < 0 || *w.InputTokens > inputCap || *w.OutputTokens > c.VerifierMaxOutputTokens/2 {
 			return invalid
 		}
 		if w.Reused {
