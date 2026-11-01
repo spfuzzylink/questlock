@@ -12,20 +12,25 @@ import (
 	"strings"
 
 	"github.com/spfuzzylink/questlock/inference"
+	"github.com/spfuzzylink/questlock/semantic"
 )
 
 type measurementHeader struct {
-	Schema              string                `json:"schema"`
-	CasesSHA256         string                `json:"cases_sha256"`
-	Model               string                `json:"model"`
-	VerifierModel       string                `json:"verifier_model"`
-	VerifierPolicy      string                `json:"verifier_policy"`
-	MinSimilarity       float64               `json:"min_similarity"`
-	DailyBudget         inference.TokenBudget `json:"daily_budget"`
-	FreshBaseline       bool                  `json:"fresh_baseline"`
-	FreshRepeatBaseline bool                  `json:"fresh_repeat_baseline,omitempty"`
-	PaidFallback        bool                  `json:"paid_fallback_enabled"`
-	ProviderCharge      float64               `json:"provider_api_charge_usd"`
+	Schema                  string                `json:"schema"`
+	CasesSHA256             string                `json:"cases_sha256"`
+	Model                   string                `json:"model"`
+	VerifierModel           string                `json:"verifier_model"`
+	VerifierPolicy          string                `json:"verifier_policy"`
+	VerifierSourceThink     bool                  `json:"verifier_source_think,omitempty"`
+	VerifierMaxOutputTokens int64                 `json:"verifier_max_output_tokens,omitempty"`
+	VerifierTimeoutMS       int                   `json:"verifier_timeout_ms,omitempty"`
+	SemanticTimeoutMS       int                   `json:"semantic_timeout_ms,omitempty"`
+	MinSimilarity           float64               `json:"min_similarity"`
+	DailyBudget             inference.TokenBudget `json:"daily_budget"`
+	FreshBaseline           bool                  `json:"fresh_baseline"`
+	FreshRepeatBaseline     bool                  `json:"fresh_repeat_baseline,omitempty"`
+	PaidFallback            bool                  `json:"paid_fallback_enabled"`
+	ProviderCharge          float64               `json:"provider_api_charge_usd"`
 }
 type usageSummary struct {
 	Calls       int   `json:"generation_calls"`
@@ -92,7 +97,7 @@ func reportFile(path string, out io.Writer) error {
 
 func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 	bad := errors.New("invalid measurement schema or work attribution") // Never echo private input or decoder errors.
-	report := attemptReport{Schema: "questlock.paraphrase-attempt-report.v1", Phases: map[string]*phaseSummary{}, Eligibility: map[string]bool{}, Reasons: []string{}, Comparison: "observed usage subtotals only; primary comparison is 12 paraphrases versus 12 fresh baselines; opt-in whole-cohort comparison is 12 paraphrases plus 12 exact repeats versus 24 measured fresh baselines; verifier and embedding tokenizers remain separate; source common cold work separate; no dollar or savings estimate", LatencyBasis: "elapsed_ms measures immediately before Router.Run through RecordOutcome, including finish/indexing and outcome registration; excludes forensic output fetch and JSONL writes. Runner Measurement.TotalMS is a partial clock; separate verifier/embedding clocks may overlap it or extend after runner finish and are never added."}
+	report := attemptReport{Schema: "questlock.paraphrase-attempt-report.v1", Phases: map[string]*phaseSummary{}, Eligibility: map[string]bool{}, Reasons: []string{}, Comparison: "observed usage subtotals only; primary comparison is 12 paraphrases versus 12 fresh baselines; opt-in whole-cohort comparison is 12 paraphrases plus 12 exact repeats versus 24 measured fresh baselines; verifier and embedding tokenizers remain separate; source-answer generation is common cold work, while seed indexing/registration and embedding are reuse overhead; the full seed phase is reported separately and is not all common work; no dollar or savings estimate", LatencyBasis: "elapsed_ms measures immediately before Router.Run through RecordOutcome, including finish/indexing and outcome registration; excludes forensic output fetch and JSONL writes. Runner Measurement.TotalMS is a partial clock; separate verifier/embedding clocks may overlap it or extend after runner finish and are never added."}
 	scanner := bufio.NewScanner(io.LimitReader(input, (8<<20)+1))
 	scanner.Buffer(make([]byte, 4096), 1<<20)
 	if !scanner.Scan() {
@@ -100,7 +105,10 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 	}
 	var header measurementHeader
 	sum := sha256.Sum256(casesJSON)
-	if strictRecord(scanner.Bytes(), &header) != nil || header.Schema != "questlock.paraphrase-measurement.v1" || header.CasesSHA256 != hex.EncodeToString(sum[:]) || header.Model == "" || header.VerifierModel == "" || header.VerifierPolicy != "factorized-v1" || header.MinSimilarity != .25 || header.PaidFallback || header.ProviderCharge != 0 || header.FreshRepeatBaseline && !header.FreshBaseline {
+	if strictRecord(scanner.Bytes(), &header) != nil || header.Schema != "questlock.paraphrase-measurement.v1" || header.CasesSHA256 != hex.EncodeToString(sum[:]) || header.Model == "" || header.VerifierModel == "" || header.VerifierPolicy != "factorized-v1" || header.PaidFallback || header.ProviderCharge != 0 || header.FreshRepeatBaseline && !header.FreshBaseline {
+		return report, bad
+	}
+	if !validMeasurementVerifierHeader(scanner.Bytes(), header) {
 		return report, bad
 	}
 	var set caseSet
@@ -413,6 +421,54 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 	}
 	report.LatencyEligibility = map[string]bool{"all_executed_rows_timed": timed && complete, "primary_eligible": eligible && timed && complete, "whole_cohort_eligible": wholeEligible && timed && complete}
 	return report, nil
+}
+
+// Optional metadata is absent in older logs. An explicitly present zero/null
+// cap is not a normalized declaration and cannot silently inherit a default.
+func validMeasurementVerifierHeader(raw []byte, h measurementHeader) bool {
+	var fields map[string]json.RawMessage
+	if json.Unmarshal(raw, &fields) != nil {
+		return false
+	}
+	for key := range fields {
+		for _, canonical := range []string{"verifier_source_think", "verifier_max_output_tokens", "verifier_timeout_ms", "semantic_timeout_ms"} {
+			if strings.EqualFold(key, canonical) && key != canonical {
+				return false
+			}
+		}
+	}
+	output := int64(128)
+	if h.VerifierSourceThink {
+		output = 0
+	}
+	if _, present := fields["verifier_max_output_tokens"]; present {
+		if h.VerifierMaxOutputTokens < 32 {
+			return false
+		}
+		output = h.VerifierMaxOutputTokens
+	}
+	timeout := 60000
+	if h.VerifierSourceThink {
+		timeout = 0
+	}
+	if _, present := fields["verifier_timeout_ms"]; present {
+		if h.VerifierTimeoutMS < 1 {
+			return false
+		}
+		timeout = h.VerifierTimeoutMS
+	}
+	config, err := measurementVerifierConfig(h.VerifierModel, h.VerifierSourceThink, output, timeout, h.MinSimilarity)
+	if err != nil {
+		return false
+	}
+	if _, present := fields["semantic_timeout_ms"]; present {
+		if h.SemanticTimeoutMS < 1 {
+			return false
+		}
+		config.TimeoutMS = h.SemanticTimeoutMS
+		_, err = semantic.NormalizeReuseConfig(config)
+	}
+	return err == nil
 }
 
 type receiptAttribution struct {

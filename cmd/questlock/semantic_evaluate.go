@@ -145,6 +145,7 @@ type semanticEvalReport struct {
 	EmbeddingModel             string                        `json:"embedding_model"`
 	VerifierModel              string                        `json:"verifier_model"`
 	VerifierPolicy             string                        `json:"verifier_policy,omitempty"`
+	VerifierSourceThink        bool                          `json:"verifier_source_think"`
 	VerifierMaxInputTokens     int64                         `json:"verifier_max_input_tokens,omitempty"`
 	VerifierMaxOutputTokens    int64                         `json:"verifier_max_output_tokens,omitempty"`
 	VerifierTimeoutMS          int                           `json:"verifier_timeout_ms,omitempty"`
@@ -196,11 +197,12 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	verifierOutput := f.Int64("verifier-max-output-tokens", 0, "total verifier output cap; zero selects the policy default")
 	verifierTimeout := f.Int("verifier-timeout-ms", 0, "total verifier invocation timeout; zero selects the policy default")
 	verifierPolicy := f.String("verifier-policy", "", "empty for published standalone; factorized-v1 for source certification plus answer applicability")
+	verifierSourceThink := f.Bool("verifier-source-think", false, "explicit bounded reasoning for factorized-v1 source certification only; applicability remains non-thinking")
 	threshold := f.Float64("min-similarity", 0.9, "retrieval cosine cutoff; not validity confidence")
 	batchSize := f.Int("batch-size", 1, "1 for standalone validity; 2 for compatible validity pairs")
 	timeout := f.Duration("timeout", 20*time.Minute, "positive total evaluation bound, at most 60m")
 	f.Usage = func() {
-		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--batch-size 1|2] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving.")
+		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--batch-size 1|2] [--verifier-policy factorized-v1 --verifier-source-think] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving.")
 	}
 	if err := f.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
@@ -211,13 +213,14 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	report.EmbeddingModel, report.VerifierModel = *embeddingModel, *verifierModel
 	report.BatchSize = *batchSize
 	report.VerifierPolicy = *verifierPolicy
+	report.VerifierSourceThink = *verifierSourceThink
 	if *verifierPolicy == "factorized-v1" {
 		report.OutputContractGuardVersion = semantic.OutputContractGuardVersion
 	}
 	if !math.IsNaN(*threshold) && !math.IsInf(*threshold, 0) {
 		report.MinSimilarity = *threshold
 	}
-	if (*verifierPolicy != "" && *verifierPolicy != "factorized-v1") || (*verifierPolicy != "" && *batchSize != 1) || f.NArg() != 0 || !*live || *suitePath == "" || *batchSize < 1 || *batchSize > 2 || *timeout <= 0 || *timeout > 60*time.Minute || math.IsNaN(*threshold) || math.IsInf(*threshold, 0) || *threshold < 0 || *threshold > 1 {
+	if (*verifierPolicy != "" && *verifierPolicy != "factorized-v1") || (*verifierPolicy != "" && *batchSize != 1) || (*verifierSourceThink && *verifierPolicy != "factorized-v1") || f.NArg() != 0 || !*live || *suitePath == "" || *batchSize < 1 || *batchSize > 2 || *timeout <= 0 || *timeout > 60*time.Minute || math.IsNaN(*threshold) || math.IsInf(*threshold, 0) || *threshold < 0 || *threshold > 1 {
 		return fail("explicit_live_suite_and_bounded_flags_required")
 	}
 	suite, raw, err := loadSemanticEvalSuite(*suitePath)
@@ -239,7 +242,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	defer stop()
 	ctx, cancel := context.WithTimeout(ctx, *timeout)
 	defer cancel()
-	config, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "controlled-evaluation", Domain: "synthetic-challenge", EvidenceRevision: report.SourceSHA256, EmbeddingModel: *embeddingModel, MinSimilarity: *threshold, MaxInputBytes: semantic.MaxInputBytes}, ReadOnly: true, Intent: "answer-validity-evaluation", VerifierModel: *verifierModel, VerifierPolicy: *verifierPolicy, VerifierMaxInputTokens: *verifierInput, VerifierMaxOutputTokens: *verifierOutput, VerifierTimeoutMS: *verifierTimeout})
+	config, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "controlled-evaluation", Domain: "synthetic-challenge", EvidenceRevision: report.SourceSHA256, EmbeddingModel: *embeddingModel, MinSimilarity: *threshold, MaxInputBytes: semantic.MaxInputBytes}, ReadOnly: true, Intent: "answer-validity-evaluation", VerifierModel: *verifierModel, VerifierPolicy: *verifierPolicy, VerifierSourceThink: *verifierSourceThink, VerifierMaxInputTokens: *verifierInput, VerifierMaxOutputTokens: *verifierOutput, VerifierTimeoutMS: *verifierTimeout})
 	if err != nil {
 		return fail("invalid_local_model_policy")
 	}

@@ -19,9 +19,12 @@ const (
 	DefaultVerifierTimeoutMS             = 30000
 	MaxVerifierInputTokens         int64 = 32768
 	MaxVerifierOutputTokens        int64 = 512
-	MaxVerifierTimeoutMS                 = 120000
-	MaxWaitForCandidateMS                = 30000
-	MaxVerdictBytes                      = 4096
+	// Thinking is an explicit factorized-source option. The ordinary verifier
+	// keeps its existing output ceiling and does not enable reasoning by default.
+	MaxFactorizedThinkingOutputTokens int64 = 4096
+	MaxVerifierTimeoutMS                    = 120000
+	MaxWaitForCandidateMS                   = 30000
+	MaxVerdictBytes                         = 4096
 	// ProtectedTermsVersion identifies the lexical guard, independently of a
 	// verifier prompt or any observed quality result.
 	ProtectedTermsVersion = 2
@@ -36,6 +39,7 @@ type ReuseConfig struct {
 	Intent                  string `json:"intent"`
 	VerifierModel           string `json:"verifier_model"`
 	VerifierPolicy          string `json:"verifier_policy,omitempty"`
+	VerifierSourceThink     bool   `json:"verifier_source_think,omitempty"`
 	VerifierMaxInputTokens  int64  `json:"verifier_max_input_tokens,omitempty"`
 	VerifierMaxOutputTokens int64  `json:"verifier_max_output_tokens,omitempty"`
 	VerifierTimeoutMS       int    `json:"verifier_timeout_ms,omitempty"`
@@ -55,14 +59,21 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	if c.VerifierPolicy != "" && c.VerifierPolicy != "factorized-v1" {
 		return ReuseConfig{}, errors.New("unsupported semantic verifier policy")
 	}
+	if c.VerifierSourceThink && c.VerifierPolicy != "factorized-v1" {
+		return ReuseConfig{}, errors.New("source thinking requires the factorized verifier policy")
+	}
 	base := c.Config
 	base.Mode = "shadow"
+	maxTimeout := MaxTimeoutMS
+	if c.VerifierSourceThink {
+		maxTimeout = MaxVerifierTimeoutMS
+	}
 	if base.TimeoutMS == 0 {
 		// Controlled work includes embedding and verifier setup/execution.
 		// An earlier caller deadline still bounds every phase.
-		base.TimeoutMS = MaxTimeoutMS
+		base.TimeoutMS = maxTimeout
 	}
-	base, err := NormalizeConfig(base)
+	base, err := normalizeConfig(base, maxTimeout)
 	if err != nil {
 		return ReuseConfig{}, err
 	}
@@ -76,11 +87,21 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	}
 	if c.VerifierMaxOutputTokens == 0 {
 		c.VerifierMaxOutputTokens = DefaultVerifierMaxOutputTokens
+		if c.VerifierSourceThink {
+			c.VerifierMaxOutputTokens = MaxFactorizedThinkingOutputTokens
+		}
 	}
 	if c.VerifierTimeoutMS == 0 {
 		c.VerifierTimeoutMS = DefaultVerifierTimeoutMS
+		if c.VerifierSourceThink {
+			c.VerifierTimeoutMS = MaxVerifierTimeoutMS
+		}
 	}
-	if c.VerifierMaxInputTokens < 1 || c.VerifierMaxInputTokens > MaxVerifierInputTokens || c.VerifierMaxOutputTokens < 16 || c.VerifierMaxOutputTokens > MaxVerifierOutputTokens || c.VerifierTimeoutMS < 1 || c.VerifierTimeoutMS > MaxVerifierTimeoutMS {
+	maxOutput := MaxVerifierOutputTokens
+	if c.VerifierSourceThink {
+		maxOutput = MaxFactorizedThinkingOutputTokens
+	}
+	if c.VerifierMaxInputTokens < 1 || c.VerifierMaxInputTokens > MaxVerifierInputTokens || c.VerifierMaxOutputTokens < 16 || c.VerifierMaxOutputTokens > maxOutput || c.VerifierTimeoutMS < 1 || c.VerifierTimeoutMS > MaxVerifierTimeoutMS {
 		return ReuseConfig{}, errors.New("semantic verifier limits exceed supported bounds")
 	}
 	if c.VerifierPolicy == "factorized-v1" && (c.VerifierMaxInputTokens < 2 || c.VerifierMaxOutputTokens < 32) {

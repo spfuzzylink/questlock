@@ -70,6 +70,10 @@ func run(args []string, out io.Writer) error {
 	ollamaURL := f.String("ollama", "", "explicit literal-loopback installed Ollama runtime")
 	model := f.String("model", "qwen3.5:9b", "explicit installed local answer model; no weight downloads")
 	verifierModel := f.String("verifier-model", "qwen3.5:9b", "explicit installed local verifier model")
+	verifierSourceThink := f.Bool("verifier-source-think", false, "explicit bounded source reasoning; applicability remains non-thinking")
+	verifierOutput := f.Int64("verifier-max-output-tokens", 128, "total verifier output cap; source reasoning without this flag selects its policy default")
+	verifierTimeout := f.Int("verifier-timeout-ms", 60000, "total verifier invocation deadline, still bounded by the caller and resolver")
+	minSimilarity := f.Float64("min-similarity", 0.25, "retrieval cutoff in 0..1; zero selects the semantic policy default")
 	tokenPath := f.String("token-file", "", "absolute private scoped token file")
 	statePath := f.String("state", "", "new absolute private progress file")
 	outputPath := f.String("output", "", "new absolute private JSONL report")
@@ -80,8 +84,19 @@ func run(args []string, out io.Writer) error {
 		}
 		return e
 	}
+	outputExplicit, timeoutExplicit, verifierOptionsExplicit := false, false, false
+	f.Visit(func(v *flag.Flag) {
+		switch v.Name {
+		case "verifier-max-output-tokens":
+			outputExplicit, verifierOptionsExplicit = true, true
+		case "verifier-timeout-ms":
+			timeoutExplicit, verifierOptionsExplicit = true, true
+		case "verifier-source-think", "min-similarity":
+			verifierOptionsExplicit = true
+		}
+	})
 	if *reportPath != "" {
-		if f.NArg() != 0 || *live || *baseline || *repeatBaseline || *brokerURL != "" || *ollamaURL != "" || *tokenPath != "" || *statePath != "" || *outputPath != "" {
+		if f.NArg() != 0 || *live || *baseline || *repeatBaseline || *brokerURL != "" || *ollamaURL != "" || *tokenPath != "" || *statePath != "" || *outputPath != "" || verifierOptionsExplicit {
 			return errors.New("--report must be used without live-run options")
 		}
 		return reportFile(*reportPath, out)
@@ -96,6 +111,18 @@ func run(args []string, out io.Writer) error {
 	}
 	if f.NArg() != 0 || !loopbackOrigin(*brokerURL) || !loopbackOrigin(*ollamaURL) {
 		return errors.New("explicit literal-loopback endpoints required")
+	}
+	outputLimit := *verifierOutput
+	if *verifierSourceThink && !outputExplicit {
+		outputLimit = 0 // Explicit reasoning selects its separately bounded policy default.
+	}
+	timeoutLimit := *verifierTimeout
+	if *verifierSourceThink && !timeoutExplicit {
+		timeoutLimit = 0
+	}
+	verifierConfig, e := measurementVerifierConfig(*verifierModel, *verifierSourceThink, outputLimit, timeoutLimit, *minSimilarity)
+	if e != nil {
+		return e
 	}
 	var set caseSet
 	d := json.NewDecoder(bytes.NewReader(casesJSON))
@@ -133,7 +160,17 @@ func run(args []string, out io.Writer) error {
 	defer report.Close()
 	budget := &inference.TokenBudget{InputTokens: 524288, OutputTokens: 16384, TotalTokens: 540672}
 	h := sha256.Sum256(casesJSON)
-	header := map[string]any{"schema": "questlock.paraphrase-measurement.v1", "cases_sha256": hex.EncodeToString(h[:]), "model": *model, "verifier_model": *verifierModel, "verifier_policy": "factorized-v1", "min_similarity": 0.25, "daily_budget": budget, "fresh_baseline": *baseline, "paid_fallback_enabled": false, "provider_api_charge_usd": 0}
+	header := map[string]any{"schema": "questlock.paraphrase-measurement.v1", "cases_sha256": hex.EncodeToString(h[:]), "model": *model, "verifier_model": *verifierModel, "verifier_policy": "factorized-v1", "min_similarity": verifierConfig.MinSimilarity, "daily_budget": budget, "fresh_baseline": *baseline, "paid_fallback_enabled": false, "provider_api_charge_usd": 0}
+	if verifierConfig.VerifierSourceThink {
+		header["verifier_source_think"] = true
+		header["semantic_timeout_ms"] = verifierConfig.TimeoutMS
+	}
+	if verifierConfig.VerifierSourceThink || verifierConfig.VerifierMaxOutputTokens != 128 {
+		header["verifier_max_output_tokens"] = verifierConfig.VerifierMaxOutputTokens
+	}
+	if verifierConfig.VerifierTimeoutMS != 60000 {
+		header["verifier_timeout_ms"] = verifierConfig.VerifierTimeoutMS
+	}
 	if *repeatBaseline {
 		header["fresh_repeat_baseline"] = true
 	}
@@ -175,6 +212,10 @@ func run(args []string, out io.Writer) error {
 			request.Policy.Local.Spec.Model = *model
 			if request.SemanticReuse != nil {
 				request.SemanticReuse.VerifierModel = *verifierModel
+				request.SemanticReuse.VerifierSourceThink = verifierConfig.VerifierSourceThink
+				request.SemanticReuse.VerifierMaxOutputTokens = verifierConfig.VerifierMaxOutputTokens
+				request.SemanticReuse.VerifierTimeoutMS = verifierConfig.VerifierTimeoutMS
+				request.SemanticReuse.MinSimilarity = verifierConfig.MinSimilarity
 			}
 			r := row{CaseID: c.ID, Phase: phase, Input: input}
 			if (phase == "paraphrase" || phase == "exact") && !sourceOK {
@@ -262,6 +303,16 @@ func run(args []string, out io.Writer) error {
 		return errors.New("known failures retained; do not select only successful cases")
 	}
 	return nil
+}
+
+// Validate measurement options before opening credentials or constructing a
+// provider. The real requests retain their case-specific evidence and checks.
+func measurementVerifierConfig(model string, think bool, output int64, timeout int, similarity float64) (semantic.ReuseConfig, error) {
+	c, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "business-measurement-options", Domain: "synthetic-business-measurement", EvidenceRevision: "options-1", EmbeddingModel: "all-minilm", MinSimilarity: similarity}, ReadOnly: true, Intent: "validate-measurement-options", VerifierModel: model, VerifierPolicy: "factorized-v1", VerifierSourceThink: think, VerifierMaxInputTokens: 16384, VerifierMaxOutputTokens: output, VerifierTimeoutMS: timeout})
+	if err != nil {
+		return semantic.ReuseConfig{}, errors.New("invalid bounded semantic verifier options")
+	}
+	return c, nil
 }
 func measurementStep(revision string, c businessCase, step int, budget *inference.TokenBudget) (string, delegation.Request) {
 	phase, input := "seed", c.OriginalQuestion

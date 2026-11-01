@@ -135,10 +135,7 @@ func ReusePartition(request Request, tier Tier, runtimeID string) (string, error
 	if err != nil {
 		return "", err
 	}
-	base := request
-	c.Config.Mode = "shadow"
-	base.SemanticShadow = &c.Config
-	partition, err := ShadowPartition(base, tier, runtimeID)
+	partition, err := normalizedSemanticPartition(request, tier, runtimeID, c.Config)
 	if err != nil {
 		return "", err
 	}
