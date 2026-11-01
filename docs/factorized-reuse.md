@@ -90,6 +90,15 @@ They can conservatively withhold an otherwise usable answer. Changed numbers,
 identifiers, roles and conditions remain the contextual verifier’s job. Keep
 independent hard negatives in the workload.
 
+There is also a rejection-only screen for statistical measures in saved answers.
+An answer saying “average latency below 250 ms” cannot borrow evidence that only
+establishes “p95 latency below 250 ms.” Recognized measures near numbers must
+appear in the approved context or bindings; mean/average and median/p50 count as
+aliases. Questions and instructions supply no evidence for this screen. It does
+not check which object a measurement belongs to, prove its value, or validate
+every unit, denominator or time window. It can withhold valid derived statistics.
+Both model checks remain required after the screen passes.
+
 ## Measure the whole attempt
 
 The first new wording pays for source certification and question comparison.
