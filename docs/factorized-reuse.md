@@ -37,6 +37,30 @@ This is still an experimental verifier. Qualify it on your own work before
 serving its results. A valid JSON verdict or high embedding similarity does not
 prove that a model understood the question.
 
+```mermaid
+flowchart TD
+    A[Approved read-only task] --> B{Valid exact result?}
+    B -->|yes| C[Return checked result: no new model work]
+    B -->|no| D[Claim task, check resources, retrieve candidate]
+    D --> E[Validate original source, evidence, checks and expiry]
+    E --> F[Source support and completeness certificate]
+    F --> G[Check the unchanged answer against the current question]
+    G -->|accept| H[Publish alias with original source expiry]
+    H --> C
+    D -->|known miss or pressure skip| I[Bounded fresh local generation]
+    E -->|known rejection| I
+    F -->|known rejection or abstention| I
+    G -->|known rejection or abstention| I
+    D -->|pending or uncertain| J[Stop; keep claim and reservations]
+    F -->|unconfirmed work| J
+    G -->|unconfirmed work| J
+```
+
+The source certificate may already exist. That saves its model call, but it
+doesn't remove current source validation or the new question's applicability
+check. Unconfirmed source reads or publication also stop; the fresh path cannot
+be used to escape an uncertain result.
+
 ## Opt in explicitly
 
 Add these settings to an otherwise complete [controlled reuse request](controlled-reuse.md):
