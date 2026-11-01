@@ -24,7 +24,9 @@ a context hash or a generated summary cannot replace it. The second check sees
 the full saved answer, including its keys, values and layout. That costs input
 tokens, but a coarse label such as “JSON object” cannot tell us whether the keys
 match. The source check can be cached; net savings still need measurement.
-The receipt stage named `equivalence` records this applicability check.
+The receipt stage named `equivalence` records this applicability check. Intent
+labels still partition work and bind its identity; they are omitted from the
+model input so a source label cannot define what the new question means.
 
 This is still an experimental verifier. Qualify it on your own work before
 serving its results. A valid JSON verdict or high embedding similarity does not

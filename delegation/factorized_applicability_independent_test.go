@@ -96,7 +96,7 @@ func TestIndependentApplicabilityReceivesExactAnswerAndPreservesExactFirst(t *te
 		if err := json.Unmarshal([]byte(strings.TrimPrefix(p.requests[len(p.requests)-1].Input, "\n\nTask:\n")), &fields); err != nil {
 			t.Fatal(err)
 		}
-		for key, expected := range map[string]string{"cached_answer": answer, "question": question, "instructions": f.request.Spec.Instructions, "intent": f.request.SemanticReuse.Intent} {
+		for key, expected := range map[string]string{"cached_answer": answer, "question": question, "instructions": f.request.Spec.Instructions} {
 			var actual string
 			if json.Unmarshal(fields[key], &actual) != nil || actual != expected {
 				t.Fatalf("applicability lost exact %s: %s", key, fields[key])
@@ -108,6 +108,12 @@ func TestIndependentApplicabilityReceivesExactAnswerAndPreservesExactFirst(t *te
 			t.Fatal("answer applicability lost approved background or bindings")
 		}
 	}
+	for _, request := range p.requests {
+		var fields map[string]json.RawMessage
+		if json.Unmarshal([]byte(strings.TrimPrefix(request.Input, "\n\nTask:\n")), &fields) != nil || fields["intent"] != nil || strings.Contains(request.Input, f.request.SemanticReuse.Intent) {
+			t.Fatal("source intent metadata reached a model stage")
+		}
+	}
 	beforeCalls := len(p.requests)
 	exact, err := f.router.Run(t.Context(), f.request)
 	if err != nil || exact.Response == nil || exact.Response.Text != answer || len(exact.Attempts) != 1 || !exact.Attempts[0].Result.Reused || len(p.requests) != beforeCalls || f.target.generations != 1 {
@@ -117,6 +123,56 @@ func TestIndependentApplicabilityReceivesExactAnswerAndPreservesExactFirst(t *te
 	original, err := f.router.Run(t.Context(), f.request)
 	if err != nil || original.SemanticReuse == nil || original.SemanticReuse.Status != "skipped_exact" || len(p.requests) != beforeCalls || f.target.generations != 1 {
 		t.Fatalf("exact original no longer bypasses answer verification: observation=%+v error=%v", original.SemanticReuse, err)
+	}
+}
+
+func TestIndependentApplicabilityOmitsSourceIntentButBindsFullRequestReceipt(t *testing.T) {
+	// Labels intentionally suggest different actors. This checks only metadata
+	// transport and receipt identity, not whether a model understands either role.
+	intents := []string{"source-employee-answer-hint", "source-manager-answer-hint"}
+	const accepted = `{"verdict":"accept","answer_covers_current":true,"unchanged_facts":true,"same_output_contract":true}`
+	var previousPayloads []string
+	var previousStageReceipts []string
+	var previousReceipt string
+	for _, intent := range intents {
+		v, _ := factorizedTestVerifier(t, nil)
+		p := &independentApplicabilityProvider{decision: accepted}
+		v.runner.Provider = p
+		v.config.Intent = intent
+		request := factorizedTestRequest()
+		request.Intent = intent
+		out, err := v.Verify(t.Context(), request)
+		if err != nil || !out.Accepted() || len(p.requests) != 2 || len(out.Work) != 2 {
+			t.Fatalf("scripted metadata isolation setup failed: %+v %v", out, err)
+		}
+		payloads := make([]string, len(p.requests))
+		stageReceipts := make([]string, len(out.Work))
+		for i, stage := range p.requests {
+			payloads[i] = stage.Prefix + "\n" + stage.Input
+			stageReceipts[i] = out.Work[i].ReceiptKey
+			var fields map[string]json.RawMessage
+			if json.Unmarshal([]byte(strings.TrimPrefix(stage.Input, "\n\nTask:\n")), &fields) != nil || fields["intent"] != nil {
+				t.Fatal("source metadata intent field reached a model stage")
+			}
+			for _, label := range intents {
+				if strings.Contains(stage.Input, label) || strings.Contains(stage.Prefix, label) {
+					t.Fatal("actor-bearing source label leaked into verifier task data or instructions")
+				}
+			}
+			if previousPayloads != nil && payloads[i] != previousPayloads[i] {
+				t.Fatal("changing only source intent metadata changed a model payload")
+			}
+			if previousStageReceipts != nil && stageReceipts[i] == previousStageReceipts[i] {
+				t.Fatal("source metadata intent no longer binds the stage certificate identity")
+			}
+		}
+		artifact, err := v.runner.Broker.Get(t.Context(), out.ReceiptKey)
+		var receipt factorizedReceipt
+		encodedRequest, _ := json.Marshal(request)
+		if err != nil || json.Unmarshal([]byte(artifact.Content), &receipt) != nil || receipt.RequestSHA256 != reuseHash(string(encodedRequest)) || previousReceipt != "" && out.ReceiptKey == previousReceipt {
+			t.Fatal("omitting source metadata from model input lost its full-request receipt binding")
+		}
+		previousPayloads, previousStageReceipts, previousReceipt = payloads, stageReceipts, out.ReceiptKey
 	}
 }
 
