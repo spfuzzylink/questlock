@@ -206,7 +206,7 @@ func validLabel(s string) bool {
 
 func validOutcome(o Outcome) bool {
 	switch o {
-	case Complete, Reused, Pending, BudgetBlocked, Incomplete, LimitExceeded, Uncertain, NotDurable, Failed:
+	case Complete, Reused, Pending, BudgetBlocked, Deferred, Incomplete, LimitExceeded, Uncertain, NotDurable, Failed:
 		return true
 	}
 	return false
@@ -254,7 +254,7 @@ func validateExecution(e Execution) error {
 	}
 	for name, ms := range e.PhaseMS {
 		switch name {
-		case "provider_setup", "runtime_identity", "plan", "lookup", "admission", "preflight", "reservation", "generation", "publication", "settlement", "recovery":
+		case "provider_setup", "runtime_identity", "plan", "lookup", "resource_admission", "admission", "reuse_resolution", "preflight", "reservation", "generation", "publication", "settlement", "recovery":
 		default:
 			return ErrInvalidExecution
 		}
@@ -266,6 +266,9 @@ func validateExecution(e Execution) error {
 		return ErrInvalidExecution
 	}
 	if !e.Reused && (e.AvoidedUsage != (Usage{}) || e.AvoidedCostUSD != nil || e.Outcome == Reused) {
+		return ErrInvalidExecution
+	}
+	if e.Outcome == Deferred && (e.Reused || e.Durable || e.Generation != nil || e.ThisRunUsage != (Usage{}) || e.OriginalUsage != (Usage{}) || e.CostUSD != nil && *e.CostUSD != 0) {
 		return ErrInvalidExecution
 	}
 	if g := e.Generation; g != nil {
@@ -288,7 +291,7 @@ func validateExecution(e Execution) error {
 				return ErrInvalidExecution
 			}
 		}
-		if !validInterval(g.StartedAt, g.EndedAt) || g.StartedAt.Before(e.StartedAt) || g.EndedAt.After(e.EndedAt) || !validOutcome(g.Outcome) || g.Outcome == Reused || g.Outcome == Pending || g.Outcome == BudgetBlocked || (g.Model != "" && !validLabel(g.Model)) || !validUsage(g.Usage) || !validCost(g.CostUSD) {
+		if !validInterval(g.StartedAt, g.EndedAt) || g.StartedAt.Before(e.StartedAt) || g.EndedAt.After(e.EndedAt) || !validOutcome(g.Outcome) || g.Outcome == Reused || g.Outcome == Pending || g.Outcome == BudgetBlocked || g.Outcome == Deferred || (g.Model != "" && !validLabel(g.Model)) || !validUsage(g.Usage) || !validCost(g.CostUSD) {
 			return ErrInvalidExecution
 		}
 		if !g.KnownUsage && (g.Usage != (Usage{}) || g.CostUSD != nil || e.ThisRunUsage != (Usage{}) || e.CostUSD != nil) {

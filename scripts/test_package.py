@@ -115,6 +115,8 @@ class PackageTests(unittest.TestCase):
             "examples/outcomes/README.md", "examples/outcomes/completed-run.json", "examples/outcomes/accept.json",
         }
         self.assertTrue(required.issubset(package.PUBLIC_FILES))
+        self.assertIn("examples/paraphrase-reuse/report.go", package.PUBLIC_FILES)
+        self.assertIn("examples/paraphrase-reuse/resource-policy.json", package.PUBLIC_FILES)
         self.assertEqual(len(package.PUBLIC_FILES), len(set(package.PUBLIC_FILES)))
         self.assertEqual(package.TARGETS, ("darwin/amd64", "darwin/arm64", "linux/amd64", "linux/arm64"))
         with tempfile.TemporaryDirectory() as temp:

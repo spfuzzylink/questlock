@@ -95,6 +95,11 @@ the operating system's pressure warning.
 
 ## Don't spend more checking than answering
 
+The experimental [two-stage policy](factorized-reuse.md) can reuse a grounded,
+complete source-answer certificate while checking each new wording separately.
+It needs no question list. It keeps the full approved background and has different
+guard behavior; opt in explicitly and measure its entire cost before serving it.
+
 A verifier reads the evidence and old answer before making a decision. For a
 short question, that can cost more tokens than generating fresh. Measure the
 whole path, including embeddings, misses and failed checks.
@@ -252,6 +257,15 @@ answers, real local embeddings and durable verifier inference; it generates no
 fresh answer baseline and measures no answer-generation saving. A completed
 report means execution finished, not that the population met a quality target.
 
+For a diagnostic you want to inspect later, add `--state-dir /absolute/new/path`.
+Use a new path below a private directory you own. The diagnostic keeps its
+`state.db` and `worker.token` there, including pending claims and reservations.
+It refuses existing directories; this flag does not resume or retry a run.
+Without the flag, temporary state is removed only after a fully known completed
+run and successful report delivery. Failures or unknown usage keep it, with the
+private path printed to diagnostics. Keep that directory out of Git and preserve
+it for inspection. Starting another run does not resolve an uncertain call.
+
 Choose a labeled question population before evaluating it. A false acceptance
 means a cached answer was served although it did not satisfy the current
 request. Report precision among served answers, recall among eligible answers,
@@ -289,6 +303,9 @@ Use v0.15+ for every worker and outcome reader sharing a controlled-reuse cohort
 Older strict readers cannot read a run containing the new `verification_work`
 field. Upgrade those participants before recording controlled verification work;
 ordinary requests omit the field when there is no verifier work.
+
+Optional factorized stage model/runtime and pre-claim deferral work fields require
+v0.17+ for every reader and writer when those fields are recorded.
 
 Measure net savings against matched fresh local runs, including embedding,
 verifier, setup and publication overhead, failures and human rework. For a short

@@ -19,9 +19,12 @@ const (
 	DefaultVerifierTimeoutMS             = 30000
 	MaxVerifierInputTokens         int64 = 32768
 	MaxVerifierOutputTokens        int64 = 512
-	MaxVerifierTimeoutMS                 = 120000
-	MaxWaitForCandidateMS                = 30000
-	MaxVerdictBytes                      = 4096
+	// Thinking is an explicit factorized-source option. The ordinary verifier
+	// keeps its existing output ceiling and does not enable reasoning by default.
+	MaxFactorizedThinkingOutputTokens int64 = 4096
+	MaxVerifierTimeoutMS                    = 120000
+	MaxWaitForCandidateMS                   = 30000
+	MaxVerdictBytes                         = 4096
 	// ProtectedTermsVersion identifies the lexical guard, independently of a
 	// verifier prompt or any observed quality result.
 	ProtectedTermsVersion = 2
@@ -32,13 +35,18 @@ const (
 // the same flat JSON names as shadow configuration.
 type ReuseConfig struct {
 	Config
-	ReadOnly                bool   `json:"read_only"`
-	Intent                  string `json:"intent"`
-	VerifierModel           string `json:"verifier_model"`
-	VerifierMaxInputTokens  int64  `json:"verifier_max_input_tokens,omitempty"`
-	VerifierMaxOutputTokens int64  `json:"verifier_max_output_tokens,omitempty"`
-	VerifierTimeoutMS       int    `json:"verifier_timeout_ms,omitempty"`
-	WaitForCandidateMS      int    `json:"wait_for_candidate_ms,omitempty"`
+	ReadOnly                     bool   `json:"read_only"`
+	Intent                       string `json:"intent"`
+	VerifierModel                string `json:"verifier_model"`
+	VerifierSourceMaxInputTokens int64  `json:"verifier_source_max_input_tokens,omitempty"`
+	VerifierPairModel            string `json:"verifier_pair_model,omitempty"`
+	VerifierPairMaxInputTokens   int64  `json:"verifier_pair_max_input_tokens,omitempty"`
+	VerifierPolicy               string `json:"verifier_policy,omitempty"`
+	VerifierSourceThink          bool   `json:"verifier_source_think,omitempty"`
+	VerifierMaxInputTokens       int64  `json:"verifier_max_input_tokens,omitempty"`
+	VerifierMaxOutputTokens      int64  `json:"verifier_max_output_tokens,omitempty"`
+	VerifierTimeoutMS            int    `json:"verifier_timeout_ms,omitempty"`
+	WaitForCandidateMS           int    `json:"wait_for_candidate_ms,omitempty"`
 }
 
 // NormalizeReuseConfig preserves the shadow configuration contract while
@@ -51,14 +59,30 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	if !validLabel(c.Intent, 128) || !validOllamaModel(c.VerifierModel) {
 		return ReuseConfig{}, errors.New("semantic reuse requires a bounded intent and installed local verifier model name")
 	}
+	if c.VerifierPolicy != "" && c.VerifierPolicy != "factorized-v1" {
+		return ReuseConfig{}, errors.New("unsupported semantic verifier policy")
+	}
+	if (c.VerifierSourceMaxInputTokens != 0 || c.VerifierPairModel != "" || c.VerifierPairMaxInputTokens != 0) && c.VerifierPolicy != "factorized-v1" {
+		return ReuseConfig{}, errors.New("source/pair input caps or a separate pair model require the factorized verifier policy")
+	}
+	if c.VerifierPairModel != "" && !validOllamaModel(c.VerifierPairModel) {
+		return ReuseConfig{}, errors.New("pair verifier requires an installed local model name")
+	}
+	if c.VerifierSourceThink && c.VerifierPolicy != "factorized-v1" {
+		return ReuseConfig{}, errors.New("source thinking requires the factorized verifier policy")
+	}
 	base := c.Config
 	base.Mode = "shadow"
+	maxTimeout := MaxTimeoutMS
+	if c.VerifierSourceThink {
+		maxTimeout = MaxVerifierTimeoutMS
+	}
 	if base.TimeoutMS == 0 {
 		// Controlled work includes embedding and verifier setup/execution.
 		// An earlier caller deadline still bounds every phase.
-		base.TimeoutMS = MaxTimeoutMS
+		base.TimeoutMS = maxTimeout
 	}
-	base, err := NormalizeConfig(base)
+	base, err := normalizeConfig(base, maxTimeout)
 	if err != nil {
 		return ReuseConfig{}, err
 	}
@@ -66,15 +90,37 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	c.Config = base
 	if c.VerifierMaxInputTokens == 0 {
 		c.VerifierMaxInputTokens = DefaultVerifierMaxInputTokens
+		if c.VerifierPolicy == "factorized-v1" {
+			c.VerifierMaxInputTokens *= 2
+		}
 	}
 	if c.VerifierMaxOutputTokens == 0 {
 		c.VerifierMaxOutputTokens = DefaultVerifierMaxOutputTokens
+		if c.VerifierSourceThink {
+			c.VerifierMaxOutputTokens = MaxFactorizedThinkingOutputTokens
+		}
 	}
 	if c.VerifierTimeoutMS == 0 {
 		c.VerifierTimeoutMS = DefaultVerifierTimeoutMS
+		if c.VerifierSourceThink {
+			c.VerifierTimeoutMS = MaxVerifierTimeoutMS
+		}
 	}
-	if c.VerifierMaxInputTokens < 1 || c.VerifierMaxInputTokens > MaxVerifierInputTokens || c.VerifierMaxOutputTokens < 16 || c.VerifierMaxOutputTokens > MaxVerifierOutputTokens || c.VerifierTimeoutMS < 1 || c.VerifierTimeoutMS > MaxVerifierTimeoutMS {
+	maxOutput := MaxVerifierOutputTokens
+	if c.VerifierSourceThink {
+		maxOutput = MaxFactorizedThinkingOutputTokens
+	}
+	if c.VerifierMaxInputTokens < 1 || c.VerifierMaxInputTokens > MaxVerifierInputTokens || c.VerifierMaxOutputTokens < 16 || c.VerifierMaxOutputTokens > maxOutput || c.VerifierTimeoutMS < 1 || c.VerifierTimeoutMS > MaxVerifierTimeoutMS {
 		return ReuseConfig{}, errors.New("semantic verifier limits exceed supported bounds")
+	}
+	if c.VerifierPolicy == "factorized-v1" && (c.VerifierMaxInputTokens < 2 || c.VerifierMaxOutputTokens < 32) {
+		return ReuseConfig{}, errors.New("factorized verifier requires bounded capacity for both stages")
+	}
+	if c.VerifierSourceMaxInputTokens < 0 || c.VerifierSourceMaxInputTokens > c.VerifierMaxInputTokens/2 {
+		return ReuseConfig{}, errors.New("source verifier input cap must be positive and no greater than half the total verifier input cap, or zero for the existing half")
+	}
+	if c.VerifierPairMaxInputTokens < 0 || c.VerifierPairMaxInputTokens > c.VerifierMaxInputTokens/2 {
+		return ReuseConfig{}, errors.New("pair verifier input cap must be positive and no greater than half the total verifier input cap, or zero for the existing half")
 	}
 	if c.WaitForCandidateMS < 0 || c.WaitForCandidateMS > MaxWaitForCandidateMS {
 		return ReuseConfig{}, errors.New("semantic candidate wait must be 0..30000 milliseconds")
@@ -84,7 +130,34 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 
 // ValidityRequest supplies both questions and the evidence against which the
 // unchanged cached answer must be assessed. Treat its strings as task data.
+type ValiditySource struct {
+	Key                string `json:"key"`
+	Version            int64  `json:"version"`
+	SHA256             string `json:"sha256"`
+	OutputSHA256       string `json:"output_sha256"`
+	RequestFingerprint string `json:"request_fingerprint"`
+}
+
+// VerificationWork records one durable model job. Reused jobs carry zero current usage.
+type VerificationWork struct {
+	Stage string `json:"stage"`
+	// AdmissionDeferred is adapter proof of a pre-claim resource deferral,
+	// not a completed verdict or a cached model job.
+	AdmissionDeferred bool   `json:"admission_deferred,omitempty"`
+	Model             string `json:"model,omitempty"`
+	RuntimeIdentity   string `json:"runtime_identity,omitempty"`
+	GenerationCalled  bool   `json:"generation_called"`
+	Complete          bool   `json:"complete"`
+	Durable           bool   `json:"durable"`
+	InputTokens       *int64 `json:"input_tokens"`
+	OutputTokens      *int64 `json:"output_tokens"`
+	Reused            bool   `json:"reused"`
+	ReceiptKey        string `json:"receipt_key,omitempty"`
+	OutputSHA256      string `json:"output_sha256,omitempty"`
+}
+
 type ValidityRequest struct {
+	Source           *ValiditySource   `json:"source,omitempty"`
 	OriginalQuestion string            `json:"original_question"`
 	Question         string            `json:"question"`
 	Instructions     string            `json:"instructions"`
@@ -97,6 +170,10 @@ type ValidityRequest struct {
 // ValidityResult separates the verdict from execution evidence supplied by the
 // trusted adapter. Missing usage is unknown; it is never inferred as zero.
 type ValidityResult struct {
+	Work []VerificationWork `json:"work,omitempty"`
+	// MixedModelUsage marks sums of separately metered model token units. These
+	// scalars are reservation accounting, not tokenizer-equivalent work or cost.
+	MixedModelUsage  bool   `json:"mixed_model_usage,omitempty"`
 	GenerationCalled bool   `json:"generation_called"`
 	Complete         bool   `json:"complete"`
 	Durable          bool   `json:"durable"`
@@ -238,6 +315,28 @@ func CheckProtectedTerms(original, current string) []string {
 		}
 	}
 	return reasons
+}
+
+// CheckReuseProtectedTerms keeps the published guard for the published policy.
+// The factorized policy validates text and quote syntax only; literal changes,
+// omissions and meaning are left to its mandatory full-context verifier.
+// Passing this guard never authorizes reuse. The factorized verifier version
+// binds this guard contract as well as its model prompts.
+func CheckReuseProtectedTerms(original, current, policy string) []string {
+	if policy == "" {
+		return CheckProtectedTerms(original, current)
+	}
+	if policy != "factorized-v1" || !validGuardText(original) || !validGuardText(current) {
+		return []string{"invalid_protected_text"}
+	}
+	_, aOK := quotedTerms(original)
+	_, bOK := quotedTerms(current)
+	if !aOK || !bOK {
+		return []string{"invalid_protected_quotes"}
+	}
+	// Natural-language equivalence, including literal roles and quantities,
+	// is decided by the mandatory contextual verifier, never this syntax gate.
+	return nil
 }
 
 type termSnapshot struct {

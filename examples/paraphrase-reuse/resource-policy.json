@@ -1,0 +1,13 @@
+{
+  "min_available_memory_bytes": 1073741824,
+  "max_concurrent": 1,
+  "max_queued": 8,
+  "max_wait_ms": 30000,
+  "poll_interval_ms": 250,
+  "probe_timeout_ms": 3000,
+  "max_sample_age_ms": 5000,
+  "max_load_milli_per_capacity": 2000,
+  "max_cpu_stall_milli_percent": 20000,
+  "max_memory_stall_milli_percent": 1000,
+  "allow_high_memory_pressure": false
+}

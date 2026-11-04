@@ -38,6 +38,15 @@ func ShadowPartition(request Request, tier Tier, runtimeID string) (string, erro
 	if err != nil {
 		return "", err
 	}
+	return normalizedSemanticPartition(request, tier, runtimeID, c)
+}
+
+// Both public partition entry points validate their own policy first. Hash only
+// the shared retrieval contract here; operational timeouts are not task facts.
+func normalizedSemanticPartition(request Request, tier Tier, runtimeID string, c semantic.Config) (string, error) {
+	if len(runtimeID) != 64 {
+		return "", errors.New("semantic contract requires a runtime identity")
+	}
 	spec := tier.Spec
 	spec.Task, spec.Revision = request.Spec.Task, request.Spec.Revision
 	spec.Instructions, spec.Context = request.Spec.Instructions, request.Spec.Context

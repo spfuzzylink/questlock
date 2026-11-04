@@ -30,6 +30,9 @@ func NewLocalVerifier(ctx context.Context, broker inference.Broker, baseURL stri
 	if err != nil {
 		return nil, err
 	}
+	if c.VerifierPolicy != "" {
+		return nil, errors.New("standalone verifier does not implement the selected policy")
+	}
 	p, err := inference.NewOllamaProviderContext(ctx, baseURL, c.VerifierModel)
 	if err != nil {
 		return nil, errors.New("local validity verifier unavailable")
