@@ -25,8 +25,6 @@ import (
 	"github.com/spfuzzylink/questlock/internal/httpapi"
 	"github.com/spfuzzylink/questlock/internal/store"
 	"github.com/spfuzzylink/questlock/internal/validityeval"
-	"github.com/spfuzzylink/questlock/cmd/questlock"
-	"unicode"
 	"github.com/spfuzzylink/questlock/protocol"
 	"github.com/spfuzzylink/questlock/semantic"
 	"golang.org/x/sys/unix"
@@ -83,9 +81,6 @@ type semanticEvalPair struct {
 	VerificationAttempted bool                     `json:"verification_attempted"`
 	Verification          *semantic.ValidityResult `json:"verification,omitempty"`
 	TotalMS               float64                  `json:"total_ms"`
-}
-	QualityScores               []paraphraseConfidenceScore       `json:"quality_scores,omitempty"`
-	DriftScore                  *float64                           `json:"drift_score,omitempty"`
 }
 
 type semanticEvalSourceEmbedding struct {
@@ -208,7 +203,7 @@ type semanticEvalReport struct {
 func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runErr error) {
 	started := time.Now()
 	var state *semanticEvalState
-	report := semanticEvalReport{Schema: 1, ProtectedTermsVersion: semantic.ProtectedTermsVersion, Mode: "local_semantic_validity_diagnostic", Status: "partial_failed", FrozenCorpusSHA256: semanticEvalFrozenSHA256, PhysicalHosts: 1, SourceAnswers: "fixed_labelled_fixtures", RetrievalThresholdMeaning: "Cosine retrieval cutoff only; it is not a validity confidence or quality estimate.", QualityTargetMeaning: "The requested 90–98% target is not a universal guarantee. Metrics and Wilson intervals describe this declared sample only; corpus selection and dependence limit generalization.", MetricMeaning: "TP/FP/TN/FN classify served results and known withholding decisions. Any served result is counted even when execution also failed, so unsafe false acceptances cannot disappear. Unserved execution errors, unattempted work and proven pre-claim resource deferrals remain in Total and label counts but are unscored. Accuracy and recall use the scored population; coverage is served/Total. Operational errors, unknowns and missing work remain visible and prevent full qualification. Precision is null when nothing is served. Proven pre-claim resource deferrals remain in the declared population and label counts but are excluded from TP/FP/TN/FN, recall and accuracy; confusion_pairs declares that denominator. Any deferred, missing or failed work prevents complete qualification.", ModelCallBasis: "Logical embedding Embed calls plus verifier Generate calls reported by the inference runner; metadata reads and token-count preflight requests are excluded. Verification attempts, cached verifications and unknown usage are separate.", Errors: []string{}, SourceEmbeddings: []semanticEvalSourceEmbedding{}, Pairs: []semanticEvalPair{}, QualityScores: []paraphraseConfidenceScore{}, DriftScore: nil,}
+	report := semanticEvalReport{Schema: 1, ProtectedTermsVersion: semantic.ProtectedTermsVersion, Mode: "local_semantic_validity_diagnostic", Status: "partial_failed", FrozenCorpusSHA256: semanticEvalFrozenSHA256, PhysicalHosts: 1, SourceAnswers: "fixed_labelled_fixtures", RetrievalThresholdMeaning: "Cosine retrieval cutoff only; it is not a validity confidence or quality estimate.", QualityTargetMeaning: "The requested 90–98% target is not a universal guarantee. Metrics and Wilson intervals describe this declared sample only; corpus selection and dependence limit generalization.", MetricMeaning: "TP/FP/TN/FN classify served results and known withholding decisions. Any served result is counted even when execution also failed, so unsafe false acceptances cannot disappear. Unserved execution errors, unattempted work and proven pre-claim resource deferrals remain in Total and label counts but are unscored. Accuracy and recall use the scored population; coverage is served/Total. Operational errors, unknowns and missing work remain visible and prevent full qualification. Precision is null when nothing is served. Proven pre-claim resource deferrals remain in the declared population and label counts but are excluded from TP/FP/TN/FN, recall and accuracy; confusion_pairs declares that denominator. Any deferred, missing or failed work prevents complete qualification.", ModelCallBasis: "Logical embedding Embed calls plus verifier Generate calls reported by the inference runner; metadata reads and token-count preflight requests are excluded. Verification attempts, cached verifications and unknown usage are separate.", Errors: []string{}, SourceEmbeddings: []semanticEvalSourceEmbedding{}, Pairs: []semanticEvalPair{}}
 	defer func() {
 		report.TotalMS = float64(time.Since(started)) / float64(time.Millisecond)
 		report.Totals, report.Usage = semanticEvalSummarize(report.Pairs, report.SourceEmbeddings, report.BatchVerificationWork)
@@ -380,10 +375,11 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 		if semanticEvalResourceDeferred(pair) {
 			return fail("resource_admission_deferred")
 		}
-		return fail("resource_admission_deferred")
-	}
+		if pair.Status == "not_run" || pair.Status == "queued" || pair.Status == "batch_required" {
+	// Quality threshold check - skip if below threshold
 	if pair.QualityScore != nil && *pair.QualityScore < 0.85 {
-}	if pair.Status == "not_run" || pair.Status == "queued" || pair.Status == "batch_required" {
+		return fail("quality_below_threshold")
+	}
 			return fail("pair_execution_incomplete")
 		}
 		if pair.ErrorCategory != "" {
@@ -823,6 +819,18 @@ func semanticEvalContextCategory(ctx context.Context) string {
 		return "deadline_exceeded"
 	}
 	return "canceled"
+}
+
+func calculateParaphraseQuality(rawSimilarity float64, intentCriticality int) float64 {
+	if math.IsNaN(rawSimilarity) || math.IsInf(rawSimilarity, 0) || rawSimilarity < 0 || rawSimilarity > 1.0 {
+		return 0.0
+	}
+	// Criticality weights: 1.0 -> 0.95 -> 0.80 (Low -> Moderate -> High)
+	weight := 1.0 - float64(intentCriticality-1)*0.05
+	if weight < 0.8 {
+		weight = 0.8
+	}
+	return rawSimilarity * weight
 }
 
 func semanticEvalSummarize(pairs []semanticEvalPair, sources []semanticEvalSourceEmbedding, shared ...[]semantic.ValidityResult) (semanticEvalTotals, semanticEvalUsage) {
