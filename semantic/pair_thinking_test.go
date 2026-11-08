@@ -58,7 +58,7 @@ func TestPairThinkingIsIndependentOptionalAndBounded(t *testing.T) {
 		out             int64
 		whole, verifier int
 		valid           bool
-	}{{32, 1, 1, true}, {128, 750, 900, true}, {4096, 120000, 120000, true}, {31, 120000, 120000, false}, {4097, 120000, 120000, false}, {4096, 120001, 120000, false}, {4096, 120000, 120001, false}} {
+	}{{32, 1, 1, true}, {128, 750, 900, true}, {4096, 120000, 120000, true}, {31, 120000, 120000, false}, {4097, 120000, 120000, false}, {4096, 600001, 120000, false}, {4096, 120000, 600001, false}} {
 		c := validReuseConfig()
 		c.VerifierPolicy = "factorized-v1"
 		c.VerifierPairThink = true

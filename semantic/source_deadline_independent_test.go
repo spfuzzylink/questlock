@@ -40,7 +40,7 @@ func TestIndependentSourceDeadlineOptInDoesNotBroadenShadowOrPublishedReuse(t *t
 			t.Fatalf("explicit smaller deadline was replaced: %+v %v", got, err)
 		}
 	}
-	for _, bad := range []int{-1, 120001} {
+	for _, bad := range []int{-1, 600001} {
 		c.TimeoutMS, c.VerifierTimeoutMS = bad, 120000
 		if _, err := NormalizeReuseConfig(c); err == nil {
 			t.Fatal("source reasoning bypassed the resolver deadline ceiling")

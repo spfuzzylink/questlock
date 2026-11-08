@@ -454,7 +454,7 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 		case "missing_provenance", "source_not_eligible", "current_checks_failed", "verifier_rejected_or_abstained", "invalid_protected_text", "invalid_protected_quotes", "protected_numbers_changed", "protected_identifiers_changed", "protected_urls_changed", "protected_quotes_changed", "protected_negations_changed", "protected_operators_changed", "protected_units_changed",
 			"invalid_output_contract_text", "output_contract_conflict", "output_numeric_contract_mismatch", "output_json_contract_mismatch", "output_csv_contract_mismatch", "output_tsv_contract_mismatch", "output_table_contract_mismatch", "output_prose_contract_mismatch", "output_no_json_contract_mismatch",
 			"invalid_language_contract_text", "output_language_changed", "output_language_unknown", "output_language_source_unknown", "output_language_ambiguous",
-			"target_risk_invalid_text", "target_risk_binary_orientation", "target_risk_scope_expansion", "target_risk_authority_change":
+			"target_risk_invalid_text", "target_risk_binary_orientation", "target_risk_scope_expansion", "target_risk_authority_change", "target_risk_operation_object_change":
 			observation.Rejections = append(observation.Rejections, code)
 		}
 	}

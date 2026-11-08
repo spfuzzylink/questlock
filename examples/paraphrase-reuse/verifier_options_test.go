@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/spfuzzylink/questlock/semantic"
 	"math"
 	"reflect"
 	"strings"
@@ -28,7 +29,7 @@ func TestMeasurementVerifierOptionsKeepDefaultsAndBoundExplicitReasoning(t *test
 		{"above reasoning ceiling", true, 4097, 120000, .1, 0, false},
 		{"short stage cap", true, 31, 60000, .1, 0, false},
 		{"negative timeout", true, 4096, -1, .1, 0, false},
-		{"above timeout", true, 4096, 120001, .1, 0, false},
+		{"above timeout", true, 4096, 600001, .1, 0, false},
 		{"negative similarity", true, 4096, 120000, -.1, 0, false},
 		{"NaN similarity", true, 4096, 120000, math.NaN(), 0, false},
 		{"infinite similarity", true, 4096, 120000, math.Inf(1), 0, false},
@@ -133,7 +134,7 @@ func TestReportRejectsMalformedOrContradictoryVerifierDeclarations(t *testing.T)
 		"null declared cap":           func(h map[string]any) { h["verifier_max_output_tokens"] = nil },
 		"stage cap too short":         func(h map[string]any) { h["verifier_source_think"] = true; h["verifier_max_output_tokens"] = 31 },
 		"no-think whole-path ceiling": func(h map[string]any) { h["semantic_timeout_ms"] = 60001 },
-		"thinking whole-path ceiling": func(h map[string]any) { h["verifier_source_think"] = true; h["semantic_timeout_ms"] = 120001 },
+		"thinking whole-path ceiling": func(h map[string]any) { h["verifier_source_think"] = true; h["semantic_timeout_ms"] = 600001 },
 		"zero whole-path declaration": func(h map[string]any) { h["semantic_timeout_ms"] = 0 },
 		"null whole-path declaration": func(h map[string]any) { h["semantic_timeout_ms"] = nil },
 		"zero declared timeout":       func(h map[string]any) { h["verifier_timeout_ms"] = 0 },
@@ -238,6 +239,48 @@ func TestMeasurementSamplingRejectsCaseAliasesAndCollisions(t *testing.T) {
 			if _, err := summarizeMeasurement(strings.NewReader(record)); err == nil {
 				t.Fatalf("sampling alias or collision accepted: %s", suffix)
 			}
+		}
+	}
+}
+
+func TestMeasurementThinkingDeadlineMatchesRequestsAndOldHeaders(t *testing.T) {
+	c, err := measurementVerifierConfig("fixture:local", false, true, 0, 240000, .1)
+	if err != nil || c.TimeoutMS != 240000 || c.VerifierTimeoutMS != 240000 || c.VerifierSourceThink || !c.VerifierPairThink || c.VerifierMaxOutputTokens != 4096 {
+		t.Fatal("measurement normalized before selecting deadline", err)
+	}
+	var set caseSet
+	if err := json.Unmarshal(casesJSON, &set); err != nil {
+		t.Fatal(err)
+	}
+	_, request := measurementStep(set.Revision, set.Cases[0], 1, nil)
+	request.SemanticReuse.VerifierPairThink = c.VerifierPairThink
+	request.SemanticReuse.VerifierTimeoutMS = c.VerifierTimeoutMS
+	actual, err := semantic.NormalizeReuseConfig(*request.SemanticReuse)
+	if err != nil || actual.TimeoutMS != c.TimeoutMS {
+		t.Fatal("request retained an accidental earlier default deadline", err)
+	}
+	log := fixtureMeasurement(t, fixtureRows(t, true), true)
+	old, err := summarizeMeasurement(strings.NewReader(log))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, whole := range []int{0, 45000, 240000, 600000} {
+		updated := replaceMeasurementHeader(t, log, func(h map[string]any) {
+			h["verifier_pair_think"] = true
+			h["verifier_timeout_ms"] = 240000
+			if whole != 0 {
+				h["semantic_timeout_ms"] = whole
+			}
+		})
+		report, err := summarizeMeasurement(strings.NewReader(updated))
+		if err != nil || !reflect.DeepEqual(old, report) {
+			t.Fatal("valid long/short caller deadline changed actual work or old-log reading", err)
+		}
+	}
+	for _, key := range []string{"verifier_timeout_ms", "semantic_timeout_ms"} {
+		updated := replaceMeasurementHeader(t, log, func(h map[string]any) { h["verifier_pair_think"] = true; h[key] = 600001 })
+		if _, err := summarizeMeasurement(strings.NewReader(updated)); err == nil {
+			t.Fatal("over-ceiling thinking header accepted", key)
 		}
 	}
 }

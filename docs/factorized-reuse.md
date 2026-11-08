@@ -1,36 +1,37 @@
 # Check the answer once. Check each new question separately.
 
-**Release gate: not qualified.** The latest completed development regression
-served 65 of 71 valid paraphrases and incorrectly served 2 of 73 invalid requests.
-One changed the requester's role; the other asked for JSON while the saved answer
-was a bullet list. Broker recovery also missed its declared recall floor: 9 of
-11 valid requests reused against a minimum of 10. A smaller passing pilot had
-not exposed these failures. Keep this candidate out of production.
+**Release gate: still open.** The latest consumed development pilot approved
+reuse for all 12 eligible answers and withheld all 8 invalid requests across six families.
+Every generation had confirmed usage. The larger 144-request regression is in
+progress; fresh independent validation and matched cost measurements still follow.
+A passing pilot does not qualify the release. These validity checks use fixed
+source answers; the matched Go workflow benchmark also needs to exercise fresh
+generation and alias publication.
 
-[Retained development runs](benchmarks/factorized-reuse/README.md) include the
-subsequent misses, capped reasoning and zero-work source-certificate hits. Their
-offline check runs as part of `make check`.
+The successor checks whether the unchanged answer covers the new request.
+Source bindings describe the saved task; they cannot substitute its old target
+when the request changes the object. A necessary prerequisite can also answer a
+before/without question negatively. A narrower question need not repeat the
+original question. Exact reuse and the default standalone verifier keep their
+existing behavior.
 
-The successor tightens those general grammar checks and asks the verifier whether
-the unchanged answer covers the new request. A narrower question need not be
-equivalent to the original question. These changes pass offline checks; they
-still need measured qualification. Exact reuse and the default standalone
-verifier retain their existing behavior.
+The pilot used `qwen3.5:9b` for 10 source checks (7,363 input and 140 output
+tokens) and `qwen3:14b` for 17 question checks (12,396 input and 7,826 output
+tokens, including reasoning). There were 31 embedding calls with 909 reported
+input tokens. This profile explicitly selected a shared four-minute verifier
+budget; one verification completed in 134.6 seconds. Context and output caps
+stayed fixed. The two-minute thinking default stays unchanged.
 
-The completed regression used 18 source checks on `qwen3.5:9b` (13,135 input and
-252 output tokens) and 139 question checks on `qwen3:14b` (94,793 input and 5,013
-output tokens). All 157 generations had confirmed usage and durable receipts;
-the independent scope and history audit found no orphan jobs, held budgets or
-new unknown outcomes. No hard resource stop fired. These are different model
-tokenizers, so their raw counts are not a normalized savings figure. Provider
-API spend was $0 with paid fallback disabled. This regression measured validity,
-not fresh-answer savings or reduced hosted Codex usage.
+[Retained development runs](benchmarks/factorized-reuse/README.md) include eight
+failed configurations and the passing pilot. An earlier full regression served
+65/71 valid requests and incorrectly served 2/73 invalid ones. Those results and
+six historical unknown outcomes remain recorded. A new result cannot recover an
+older unconfirmed call. The evidence's offline check runs in `make check`.
 
-Older development tables use their original labels and configurations. The
-previous 69/72 result included a reversed-polarity request later corrected to a
-negative label, so that aggregate does not establish current safety or recall.
-The format failures and unsupported-source checks remain historical evidence,
-not fresh qualification of this candidate.
+Provider API spend was $0 with paid fallback disabled. Model token counts stay
+separate; they are not a normalized savings figure. This pilot measured validity,
+not fresh-answer savings or reduced hosted Codex usage. Older labels and policy
+versions stay with their original reports.
 
 Someone asks the same thing in different words. We want the saved answer back,
 without quietly borrowing an answer to a different question.
@@ -136,6 +137,17 @@ rather than silently ignoring it. The diagnostic and measurement example expose
 diagnostic keeps its 20-minute default and one-hour wall limit, with a two-hour
 wall limit only when pair reasoning is explicitly enabled. Per-verification
 deadlines and token/resource caps remain separately bounded.
+
+Factorized thinking keeps its 120,000ms verifier default. An explicit
+`verifier_timeout_ms` (CLI `--verifier-timeout-ms`) may select up to 600,000ms
+when either stage's thinking flag is enabled. Source and pair share that deadline;
+it is not a separate allowance for each stage. With `timeout_ms` omitted, the
+resolver uses the larger of 120,000ms and the selected verifier deadline. An
+explicit shorter resolver deadline or earlier caller cancellation still wins.
+Nonthinking and standalone limits remain unchanged. Check the read-only numeric
+capability `questlock_status.request_schemas.semantic_reuse_factorized_thinking_max_timeout_ms`
+before requesting a longer deadline through MCP. A longer deadline permits more
+latency; token/output caps and existing unfinished claims remain unchanged.
 
 Optional `verifier_pair_temperature` (finite 0..2) and `verifier_pair_seed`
 (integer 0..2147483647) apply only to factorized applicability requests. Omitted

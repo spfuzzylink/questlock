@@ -66,7 +66,7 @@ func TestSourceThinkingDoesNotBroadenOtherPoliciesOrExplicitLimits(t *testing.T)
 		{"negative reasoning cap", "factorized-v1", true, -1, 30000, false},
 		{"inclusive reasoning maximum", "factorized-v1", true, 4096, 120000, true},
 		{"above reasoning maximum", "factorized-v1", true, 4097, 120000, false},
-		{"reasoning timeout not raised", "factorized-v1", true, 4096, 120001, false},
+		{"reasoning timeout ceiling", "factorized-v1", true, 4096, 600001, false},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			c := validReuseConfig()

@@ -129,8 +129,12 @@ func TestIndependentFactorizedServingCarriesCompleteEvidenceAndExpiresWithSource
 		if err := json.Unmarshal([]byte(strings.TrimPrefix(request.Input, "\n\nTask:\n")), &fields); err != nil {
 			t.Fatal(err)
 		}
+		bindingsKey := "bindings"
+		if i == 1 {
+			bindingsKey = "source_bindings"
+		}
 		var evidence, instructions string
-		if json.Unmarshal(fields["context"], &evidence) != nil || json.Unmarshal(fields["instructions"], &instructions) != nil || !strings.Contains(evidence, f.request.Spec.Context[0].Text) || instructions != f.request.Spec.Instructions || fields["bindings"] == nil {
+		if json.Unmarshal(fields["context"], &evidence) != nil || json.Unmarshal(fields["instructions"], &instructions) != nil || !strings.Contains(evidence, f.request.Spec.Context[0].Text) || instructions != f.request.Spec.Instructions || fields[bindingsKey] == nil {
 			t.Fatalf("stage %d lost complete approved context: %s", i, request.Input)
 		}
 		if fields["cached_answer"] == nil || i == 0 && (fields["original_question"] == nil || fields["question"] != nil) || i == 1 && (fields["original_question"] == nil || fields["question"] == nil) {

@@ -47,8 +47,8 @@ func TestSourceThinkingHasBoundedWholePathAndVerifierDeadlines(t *testing.T) {
 		{"smaller whole path retained", 750, 0, 750, 120000, true},
 		{"smaller verifier retained", 0, 900, 120000, 900, true},
 		{"both smaller retained", 32000, 1000, 32000, 1000, true},
-		{"whole path too long", 120001, 120000, 0, 0, false},
-		{"verifier too long", 120000, 120001, 0, 0, false},
+		{"whole path too long", 600001, 120000, 0, 0, false},
+		{"verifier too long", 120000, 600001, 0, 0, false},
 		{"negative whole path", -1, 120000, 0, 0, false},
 		{"negative verifier", 120000, -1, 0, 0, false},
 	} {

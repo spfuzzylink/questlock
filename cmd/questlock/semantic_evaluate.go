@@ -257,7 +257,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	verifierPairInput := f.Int64("verifier-pair-max-input-tokens", 0, "optional applicability input cap; zero uses half total verifier input, positive values cannot exceed that half")
 	verifierInput := f.Int64("verifier-max-input-tokens", 0, "total verifier input reservation cap; zero selects the policy default")
 	verifierOutput := f.Int64("verifier-max-output-tokens", 0, "total verifier output cap; zero selects the policy default")
-	verifierTimeout := f.Int("verifier-timeout-ms", 0, "total verifier invocation timeout; zero selects the policy default")
+	verifierTimeout := f.Int("verifier-timeout-ms", 0, "shared source+pair deadline in ms; zero selects default (thinking: 120000); max 600000 only for factorized thinking, otherwise 120000; earlier caller deadline wins")
 	verifierPolicy := f.String("verifier-policy", "", "empty for published standalone; factorized-v1 for source certification plus answer applicability")
 	verifierSourceThink := f.Bool("verifier-source-think", false, "explicit bounded reasoning for factorized-v1 source certification only")
 	verifierPairThink := f.Bool("verifier-pair-think", false, "explicit bounded reasoning for factorized-v1 applicability only; source reasoning is independent")
@@ -270,7 +270,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	stopOnExecutionError := f.Bool("stop-on-execution-error", false, "stop scheduling after an execution error or unconfirmed evidence; known semantic outcomes continue")
 	stateDir := f.String("state-dir", "", "new absolute private state directory; explicit state is retained, failed temporary state is also retained")
 	f.Usage = func() {
-		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--state-dir NEW_PRIVATE_PATH] [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--batch-size 1|2] [--verifier-policy factorized-v1] [--verifier-source-think] [--verifier-pair-think] [--verifier-pair-temperature N --verifier-pair-seed N] [--verifier-source-max-input-tokens N] [--verifier-pair-model MODEL --verifier-pair-max-input-tokens N] [--resource-policy PATH] [--stop-on-execution-error] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving.")
+		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--state-dir NEW_PRIVATE_PATH] [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--batch-size 1|2] [--verifier-policy factorized-v1] [--verifier-source-think] [--verifier-pair-think] [--verifier-pair-temperature N --verifier-pair-seed N] [--verifier-source-max-input-tokens N] [--verifier-pair-model MODEL --verifier-pair-max-input-tokens N] [--resource-policy PATH] [--stop-on-execution-error] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving. Verifier deadlines default to 120000ms for thinking; an explicit factorized-thinking deadline may be at most 600000ms and is shared by both stages.")
 	}
 	if err := f.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {

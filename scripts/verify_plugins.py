@@ -285,7 +285,8 @@ def protocol_check(plugin, client, home, env, version):
                     "semantic_shadow_modes": ["shadow"], "semantic_reuse_modes": ["controlled"],
                     "semantic_reuse_optional_verifier_policies": ["factorized-v1"],
                     "semantic_reuse_optional_reasoning_fields": ["verifier_source_think", "verifier_pair_think"],
-                    "semantic_reuse_optional_sampling_fields": ["verifier_pair_temperature", "verifier_pair_seed"]}
+                    "semantic_reuse_optional_sampling_fields": ["verifier_pair_temperature", "verifier_pair_seed"],
+                    "semantic_reuse_factorized_thinking_max_timeout_ms": 600000}
                 and set(contract.get("tools", [])) == TOOLS
                 and contract.get("read_only") is True and contract.get("model_calls") == 0,
                 "worker status did not identify the connected runtime contract")

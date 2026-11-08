@@ -27,6 +27,7 @@ def metric(actual, numerator, denominator):
 index = json.loads((HERE / "index.json").read_text())
 assert not index["paid_fallback_enabled"] and index["provider_api_charge_usd"] == 0
 combined = Counter()
+unknown_keys = []
 for entry in index["runs"]:
     report = pinned(entry["file"], entry["sha256"])
     fixture = pinned(entry["fixture"], entry["fixture_sha256"])
@@ -73,28 +74,38 @@ for entry in index["runs"]:
     fresh = [w for w in work if w["generation_called"]]
     cached = [w for w in work if w["reused"]]
     assert len({w["receipt_key"] for w in fresh}) == len(fresh)
-    assert all(w["durable"] and w["input_tokens"] is not None and
-               w["output_tokens"] is not None for w in fresh)
+    known = [w for w in work if w["input_tokens"] is not None and w["output_tokens"] is not None]
+    unknown = [w for w in work if w not in known]
+    assert all(type(w["input_tokens"]) is int and type(w["output_tokens"]) is int and
+               w["input_tokens"] >= 0 and w["output_tokens"] >= 0 and w["durable"] for w in known)
+    # These retained unknown records have no response usage. Do not value them at zero.
+    assert all(w["input_tokens"] is None and w["output_tokens"] is None and
+               w["generation_called"] and not w["reused"] and not w["complete"] for w in unknown)
+    unknown_keys.extend(w["receipt_key"] for w in unknown)
     assert all(w["stage"] == "source" and w["complete"] and w["durable"] and
                not w["generation_called"] and w["input_tokens"] == w["output_tokens"] == 0
                for w in cached)
+    assert all(w["receipt_key"] in {f["receipt_key"] for f in fresh} for w in cached)
     assert len(fresh) == usage["verifier_generation_calls"]
     assert len(cached) == usage["cached_verifications"]
-    assert len(fresh) + len(cached) == usage["verifier_known_usage_calls"]
-    assert usage["verifier_unknown_usage_calls"] == 0
-    assert usage["verifier_input_tokens"] == sum(w["input_tokens"] for w in work)
-    assert usage["verifier_output_tokens"] == sum(w["output_tokens"] for w in work)
+    assert len(known) == usage["verifier_known_usage_calls"]
+    assert len(unknown) == usage["verifier_unknown_usage_calls"]
+    assert usage["verifier_input_tokens"] == sum(w["input_tokens"] for w in known)
+    assert usage["verifier_output_tokens"] == sum(w["output_tokens"] for w in known)
     models = defaultdict(Counter)
     for w in fresh:
-        models[(w["model"], w["runtime_identity"])].update(
-            generation_calls=1, input_tokens=w["input_tokens"], output_tokens=w["output_tokens"])
+        bucket = models[(w["model"], w["runtime_identity"])]
+        bucket.update(generation_calls=1)
+        if w in known:
+            bucket.update(input_tokens=w["input_tokens"], output_tokens=w["output_tokens"])
     for model in usage["verifier_models"]:
         actual = models.pop((model["model"], model["runtime_identity"]), Counter())
         assert all(actual[k] == model[k] for k in ("generation_calls", "input_tokens", "output_tokens"))
         group = [w for w in work if (w["model"], w["runtime_identity"]) ==
                  (model["model"], model["runtime_identity"])]
         assert model["cached_verifications"] == sum(w["reused"] for w in group)
-        assert model["known_usage_calls"] == len(group) and model["unknown_usage_calls"] == 0
+        assert model["known_usage_calls"] == sum(w in known for w in group)
+        assert model["unknown_usage_calls"] == sum(w in unknown for w in group)
     assert not models
     embeddings = report["source_embeddings"] + rows
     calls = sum(e.get("attempted", e.get("embedding_attempted", False)) for e in embeddings)
@@ -102,17 +113,20 @@ for entry in index["runs"]:
     assert calls == usage["embedding_calls"] and tokens == usage["embedding_input_tokens"]
     assert usage["embedding_unknown_usage_calls"] == 0
     assert usage["logical_model_calls"] == calls + len(fresh)
-    combined.update(native_generations=len(fresh), cached_source_checks=len(cached),
-                    incomplete_generations=sum(not w["complete"] for w in fresh))
+    combined.update(native_generation_attempts=len(fresh), cached_source_checks=len(cached),
+                    incomplete_known_generations=sum(not w["complete"] for w in fresh if w in known),
+                    unknown_usage_attempts=len(unknown))
     print(entry["name"], dict(counts), "native", len(fresh), "cached", len(cached))
-assert combined == Counter(native_generations=271, cached_source_checks=158, incomplete_generations=22)
+assert combined == Counter(native_generation_attempts=346, cached_source_checks=181,
+                           incomplete_known_generations=22, unknown_usage_attempts=1)
+assert sorted(unknown_keys) == index["recent_unknown_usage_job_keys"]
 assert index["retained_prior_native_attempts"] == 201
 assert index["retained_prior_complete_known"] == 195
 assert index["retained_prior_incomplete_known"] == 1
 assert index["retained_prior_usage_unknown"] == 5
 assert 195 + 1 + 5 == 201
-assert 201 + combined["native_generations"] == 472
-assert 195 + combined["native_generations"] - combined["incomplete_generations"] == 444
-assert 1 + combined["incomplete_generations"] == 23
-assert 23 + index["retained_prior_usage_unknown"] == 28
+assert 201 + combined["native_generation_attempts"] == 547
+assert 195 + combined["native_generation_attempts"] - combined["incomplete_known_generations"] - combined["unknown_usage_attempts"] == 518
+assert 1 + combined["incomplete_known_generations"] == 23
+assert 23 + index["retained_prior_usage_unknown"] + combined["unknown_usage_attempts"] == 29
 print("PASS:", dict(combined), "Paid fallback off; provider API $0. No fresh-answer savings measured.")

@@ -1,6 +1,6 @@
 # Before we trust a saved answer
 
-This snapshot ends at the audited 472-attempt development boundary. Later
+This snapshot ends at the audited 547-attempt development boundary. Later
 qualification needs its own retained evidence.
 
 Two people can ask different questions and need the same answer. They can also
@@ -12,10 +12,15 @@ onboarding, incident handoffs, release decisions, refund calculations and broker
 recovery. The fixtures include narrower questions and changed constraints. They
 are test populations, not question lists required by the product.
 
-None of the six configurations below qualified. Keeping their misses and costs
-helps explain what still needs work.
+These are validity diagnostics using fixed source answers. They do not measure
+fresh answer generation or alias publication; the matched workflow benchmark
+needs separate evidence for those paths.
 
-| Run | Valid requests served | Invalid requests served | Unscored requests | New generations | Cached source checks |
+Eight runs failed; the latest pilot passed all 20 requests. The larger regression
+and fresh independent qualification remain separate gates. Keeping every run's
+misses and costs helps explain what still needs work.
+
+| Run | Valid requests served | Invalid requests served | Unscored requests | Generation attempts | Cached source checks |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | [Initial two-stage regression](guard4-r3.json) | 65 / 71 | 2 / 73 | 0 | 157 | 122 |
 | [Compact applicability check](compact-pilot.json) | 8 / 12 | 0 / 8 | 0 | 28 | 9 |
@@ -23,6 +28,9 @@ helps explain what still needs work.
 | [Same smaller model for both stages](same-model-pilot.json) | 5 / 12 | 0 / 8 | 0 | 28 | 9 |
 | [Smaller model with pair reasoning](thinking-pilot.json) | 0 / 12 | 0 / 8 | 18 | 28 | 9 |
 | [Fixed sampled pair reasoning, stop on execution error](sampled-thinking-pilot.json) | 0 / 12 | 0 / 8 | 20 | 2 | 0 |
+| [Larger model with sampled pair reasoning](pair14-thinking-pilot.json) | 11 / 12 | 1 / 8 | 0 | 28 | 9 |
+| [Relation guard and source-binding clarification](relation-deadline-pilot.json) | 8 / 12 | 0 / 8 | 7 | 20 | 5 |
+| [Explicit four-minute shared budget: passing pilot](explicit-deadline-pilot.json) | 12 / 12 | 0 / 8 | 0 | 27 | 9 |
 
 The table uses the whole declared population. Unscored work is still in those
 denominators; it cannot be counted as a correct rejection. The reports also give
@@ -33,12 +41,30 @@ make that pilot pass. The first pair-reasoning run exhausted its output cap on a
 check and left 19 requests unattempted. Their receipts retain usage, but contain
 no final answer or reasoning trace that could establish why they failed.
 
-Across these runs, 158 source-certificate lookups reused completed receipts with
-zero current generation tokens. There were also 271 new generations, including
-22 incomplete ones. All their measured costs remain in the reports. The
+The larger model completed its calls, but reused a desk-tray refund calculation
+when the request switched to returning the lamp. It also withheld a valid pickup
+question. Completed JSON and reasoning output did not establish correctness.
+
+The relation successor made 13 correct decisions before an unconfirmed pair
+result at the configured 120-second deadline boundary stopped the run. Six
+requests were never attempted. Those seven unscored requests prevent
+qualification. The receipt cannot establish the transport cause or final upstream
+outcome; the unknown job remains fenced.
+
+With an explicitly selected four-minute budget, the next pilot completed all 20
+requests correctly. One verification took 134.6 seconds; its pair generation used
+1,515 output tokens including reasoning. Context and output caps stayed fixed.
+This new invocation cannot settle or recover the older unknown job. The ordinary
+two-minute thinking default stays unchanged; longer waits require caller choice.
+
+Across these runs, 181 source-certificate lookups reused completed receipts with
+zero current generation tokens. There were also 346 generation attempts: 323
+complete with known usage, 22 incomplete with known usage, and one with unknown
+usage. Known-token subtotals exclude that unknown call; they do not value it at
+zero. All measured costs and the unknown job identity remain in the reports. The
 separately audited earlier boundary retains another 201 attempts, including one
-incomplete result and five unknown outcomes. That is 472 attempts in total and
-28 unfinished execution fences; no claim was cleared to get another try.
+incomplete result and five unknown outcomes. That is 547 attempts in total and
+29 unfinished execution fences; no claim was cleared to get another try.
 
 Paid fallback was disabled and provider API spend was $0. Local hardware and time
 still have costs. These runs checked answer validity; they did not generate
@@ -50,7 +76,7 @@ Run `python3 docs/benchmarks/factorized-reuse/verify.py` from the repository roo
 to check the pinned fixtures, per-row counts, per-model usage and cached work
 offline. [The index](index.json) records the distinct prompts, schemas, source
 files, binaries and runtimes. The earlier 201-attempt boundary comes from its
-retained independent audit; these six report files do not recompute those older
+retained independent audit; these nine report files do not recompute those older
 receipts. Replaying the arithmetic does not certify model reasoning or turn
 already-consumed data into a fresh holdout.
 

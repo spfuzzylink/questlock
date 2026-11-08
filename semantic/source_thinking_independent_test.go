@@ -52,8 +52,8 @@ func TestIndependentSourceThinkingRequiresExplicitFactorizedPolicyAndBoundedOutp
 			t.Fatalf("valid explicit thinking allowance changed: %d %+v %v", cap, got, err)
 		}
 	}
-	c.VerifierTimeoutMS = MaxVerifierTimeoutMS + 1
+	c.VerifierTimeoutMS = MaxFactorizedThinkingTimeoutMS + 1
 	if _, err := NormalizeReuseConfig(c); err == nil {
-		t.Fatal("source thinking bypassed the existing maximum timeout")
+		t.Fatal("source thinking bypassed the explicit thinking maximum timeout")
 	}
 }

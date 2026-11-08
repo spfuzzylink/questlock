@@ -35,7 +35,7 @@ func TestTargetRisksIndependentDevelopmentContract(t *testing.T) {
 				}
 				seen[code] = true
 				switch code {
-				case "target_risk_binary_orientation", "target_risk_scope_expansion", "target_risk_authority_change", "target_risk_invalid_text":
+				case "target_risk_binary_orientation", "target_risk_scope_expansion", "target_risk_authority_change", "target_risk_operation_object_change", "target_risk_invalid_text":
 				default:
 					t.Fatal("unbounded reason", code)
 				}

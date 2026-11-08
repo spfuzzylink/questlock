@@ -24,8 +24,10 @@ const (
 	// keeps its existing output ceiling and does not enable reasoning by default.
 	MaxFactorizedThinkingOutputTokens int64 = 4096
 	MaxVerifierTimeoutMS                    = 120000
-	MaxWaitForCandidateMS                   = 30000
-	MaxVerdictBytes                         = 4096
+	// A larger thinking deadline requires explicit configuration; defaults stay at 120s.
+	MaxFactorizedThinkingTimeoutMS = 600000
+	MaxWaitForCandidateMS          = 30000
+	MaxVerdictBytes                = 4096
 	// ProtectedTermsVersion identifies the lexical guard, independently of a
 	// verifier prompt or any observed quality result.
 	ProtectedTermsVersion = 2
@@ -93,16 +95,32 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	if thinking && c.VerifierPolicy != "factorized-v1" {
 		return ReuseConfig{}, errors.New("stage thinking requires the factorized verifier policy")
 	}
+	maxVerifierTimeout := MaxVerifierTimeoutMS
+	if thinking {
+		maxVerifierTimeout = MaxFactorizedThinkingTimeoutMS
+	}
+	if c.VerifierTimeoutMS == 0 {
+		c.VerifierTimeoutMS = DefaultVerifierTimeoutMS
+		if thinking {
+			c.VerifierTimeoutMS = MaxVerifierTimeoutMS
+		}
+	}
+	if c.VerifierTimeoutMS < 1 || c.VerifierTimeoutMS > maxVerifierTimeout {
+		return ReuseConfig{}, errors.New("semantic verifier limits exceed supported bounds")
+	}
 	base := c.Config
 	base.Mode = "shadow"
 	maxTimeout := MaxTimeoutMS
 	if thinking {
-		maxTimeout = MaxVerifierTimeoutMS
+		maxTimeout = MaxFactorizedThinkingTimeoutMS
 	}
 	if base.TimeoutMS == 0 {
 		// Controlled work includes embedding and verifier setup/execution.
 		// An earlier caller deadline still bounds every phase.
-		base.TimeoutMS = maxTimeout
+		base.TimeoutMS = MaxTimeoutMS
+		if thinking {
+			base.TimeoutMS = max(MaxVerifierTimeoutMS, c.VerifierTimeoutMS)
+		}
 	}
 	base, err := normalizeConfig(base, maxTimeout)
 	if err != nil {
@@ -122,17 +140,11 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 			c.VerifierMaxOutputTokens = MaxFactorizedThinkingOutputTokens
 		}
 	}
-	if c.VerifierTimeoutMS == 0 {
-		c.VerifierTimeoutMS = DefaultVerifierTimeoutMS
-		if thinking {
-			c.VerifierTimeoutMS = MaxVerifierTimeoutMS
-		}
-	}
 	maxOutput := MaxVerifierOutputTokens
 	if thinking {
 		maxOutput = MaxFactorizedThinkingOutputTokens
 	}
-	if c.VerifierMaxInputTokens < 1 || c.VerifierMaxInputTokens > MaxVerifierInputTokens || c.VerifierMaxOutputTokens < 16 || c.VerifierMaxOutputTokens > maxOutput || c.VerifierTimeoutMS < 1 || c.VerifierTimeoutMS > MaxVerifierTimeoutMS {
+	if c.VerifierMaxInputTokens < 1 || c.VerifierMaxInputTokens > MaxVerifierInputTokens || c.VerifierMaxOutputTokens < 16 || c.VerifierMaxOutputTokens > maxOutput {
 		return ReuseConfig{}, errors.New("semantic verifier limits exceed supported bounds")
 	}
 	if c.VerifierPolicy == "factorized-v1" && (c.VerifierMaxInputTokens < 2 || c.VerifierMaxOutputTokens < 32) {

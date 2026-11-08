@@ -18,10 +18,10 @@ import (
 
 func TestFactorizedPairProtocolPinsReviewedSufficiencyContract(t *testing.T) {
 	h := sha256.Sum256([]byte(factorizedPairInstructions))
-	if hex.EncodeToString(h[:]) != "f78b5c6c979c756f8dd08a765470aa6f5fa84c1f94400211719efd163a7bd18d" {
+	if hex.EncodeToString(h[:]) != "a8c5e831d22a4b9ef2e9964063bafdcb574d18e5229a63b8bda977c9825fd05a" {
 		t.Fatal("reviewed pair protocol bytes changed")
 	}
-	if factorizedVerifierVersion != "questlock-factorized-validity-v17" {
+	if factorizedVerifierVersion != "questlock-factorized-validity-v19" {
 		t.Fatal("reviewed pair protocol must retain its distinct policy identity")
 	}
 }

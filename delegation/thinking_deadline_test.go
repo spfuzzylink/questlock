@@ -1,0 +1,192 @@
+package delegation
+
+import (
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/spfuzzylink/questlock/inference"
+	"github.com/spfuzzylink/questlock/semantic"
+)
+
+// Captured from the immutable relation-v2 source before deadline changes.
+const thinkingDeadlineLegacyFixtures = `[{"config_sha256":"84124af31454036e51f2ebd87b5fe3386386d662f034242729cf101a824616c0","name":"standalone-default","native_plan_fingerprint":"068f6687043194fa1fed1ee3e54ef2db9b9ddeb53af9cff4ff721e5e6e31b50c","pair":false,"policy":"","policy_identity":"8f14b9e53bcace43089f76ff82e5e3e7bdcced4a3111cfcd7f1cb18932579baf","source":false,"verifier":0,"whole":0},{"config_sha256":"48e0b9a1e43e7c5828319ae37d9cbec3263936596d92ec835f8bd6558d61691c","name":"factorized-default","native_plan_fingerprint":"eb67f1f10de4c56d5e6a59ed50bae47cd599ebdff4754bf94015e288f190369f","pair":false,"policy":"factorized-v1","policy_identity":"9bdaa4fddae13513fe9cee2cbbd895ec75723cbb1f9354ad0fe3ea3d8c4c9bcf","source":false,"verifier":0,"whole":0},{"config_sha256":"15804af8d5ec8027ea92474858cca24f691710ed9cf328dc74c6e37be0b4f1f3","name":"source-default","native_plan_fingerprint":"c6e612da9cef019e9e44ca344ea8742417d5f00f790db658f8c0aa84387d63cc","pair":false,"policy":"factorized-v1","policy_identity":"2502a4349a6019008f1788173c3f23b8e4825156ba6c522911785fb03bec95ba","source":true,"verifier":0,"whole":0},{"config_sha256":"974d52e696f91926f69e4bb7aae52ae7f411103e06527c90be52297a4ef9706b","name":"pair-default","native_plan_fingerprint":"2caa0b59e9324ab30eef5fbbf6e625fa8e64e478b7003b3aa979f245ffd15839","pair":true,"policy":"factorized-v1","policy_identity":"8b9be2f69d884d18f08d2f56e961a345b201fdd1a738bffb69a29ff33275337f","source":false,"verifier":0,"whole":0},{"config_sha256":"8169fb1dfe986302f1033de7dcfca3ac6bd8c3cd0cb0e63f19cc73c3eee2fa4c","name":"both-small-verifier","native_plan_fingerprint":"65cec34e6516a7fbd9d387036947017b44ae925a316d175dfae753c52fb3e515","pair":true,"policy":"factorized-v1","policy_identity":"de4cefbd8ad79f1202f085c5b3bf8f2d0d7bd5fb53be0ee2209f8930b55c1e5f","source":true,"verifier":30000,"whole":0},{"config_sha256":"974d52e696f91926f69e4bb7aae52ae7f411103e06527c90be52297a4ef9706b","name":"pair-explicit120","native_plan_fingerprint":"2caa0b59e9324ab30eef5fbbf6e625fa8e64e478b7003b3aa979f245ffd15839","pair":true,"policy":"factorized-v1","policy_identity":"8b9be2f69d884d18f08d2f56e961a345b201fdd1a738bffb69a29ff33275337f","source":false,"verifier":120000,"whole":0},{"config_sha256":"ace8b81336454334f7c5d3b853255ee4385f8766bafd7405d700a9b7c4165863","name":"pair-short-whole","native_plan_fingerprint":"69b5d4ced088ae01b4e900b5f9b2dca82f2847dd06e7bb79fe0762b4b6246782","pair":true,"policy":"factorized-v1","policy_identity":"d911ffd5cb8f49907bd108b571d15b8a141be8f01b3dbc27eff8a7c7c40239a7","source":false,"verifier":60000,"whole":45000},{"config_sha256":"32c14214eaee54f15414182c522a7c6af18f7e6064c03cc4b763748d6398ace0","name":"ordinary-max","native_plan_fingerprint":"7a96c547052e9af4430df953f030d0bf0f1aadfebc7d599556d208c96cd46c7e","pair":false,"policy":"factorized-v1","policy_identity":"cad432bb959fd8e4585f4a8c3d4abedaa3a8f1af1b56b7455b6ee7f981cbb7cf","source":false,"verifier":120000,"whole":60000}]`
+
+func TestThinkingDeadlinePreservesLegacyJSONPolicyAndNativeIdentities(t *testing.T) {
+	var fixtures []struct {
+		Name, Policy          string
+		Source, Pair          bool
+		Whole, Verifier       int
+		ConfigSHA256          string `json:"config_sha256"`
+		PolicyIdentity        string `json:"policy_identity"`
+		NativePlanFingerprint string `json:"native_plan_fingerprint"`
+	}
+	if json.Unmarshal([]byte(thinkingDeadlineLegacyFixtures), &fixtures) != nil {
+		t.Fatal("bad legacy fixture")
+	}
+	for _, x := range fixtures {
+		c := controlledTestConfig()
+		c.VerifierPolicy = x.Policy
+		c.VerifierSourceThink = x.Source
+		c.VerifierPairThink = x.Pair
+		c.TimeoutMS = x.Whole
+		c.VerifierTimeoutMS = x.Verifier
+		c.VerifierMaxInputTokens = 0
+		c.VerifierMaxOutputTokens = 0
+		c, err := semantic.NormalizeReuseConfig(c)
+		if err != nil {
+			t.Fatal(err)
+		}
+		raw, _ := json.Marshal(c)
+		digest := sha256.Sum256(raw)
+		identity := factorizedPolicyIdentity(c, strings.Repeat("a", 64), strings.Repeat("b", 64))
+		v := FactorizedVerifier{config: c, identity: identity}
+		p, err := inference.BuildPlan(v.stageSpec("equivalence", "stable", factorizedPairInstructions, `{"context":"unchanged"}`, "answer_covers_current", "unchanged_facts"))
+		if err != nil || hex.EncodeToString(digest[:]) != x.ConfigSHA256 || identity != x.PolicyIdentity || p.Fingerprint != x.NativePlanFingerprint {
+			t.Fatal("legacy default/explicit deadline identity changed", x.Name, err)
+		}
+	}
+}
+
+type thinkingDeadlineProbe struct {
+	*factorizedTestProvider
+	deadlines []time.Time
+	counted   []inference.Request
+}
+
+func (p *thinkingDeadlineProbe) record(ctx context.Context) {
+	d, ok := ctx.Deadline()
+	if !ok {
+		p.deadlines = append(p.deadlines, time.Time{})
+	} else {
+		p.deadlines = append(p.deadlines, d)
+	}
+}
+func (p *thinkingDeadlineProbe) CountInputTokens(ctx context.Context, r inference.Request) (int64, error) {
+	p.record(ctx)
+	p.counted = append(p.counted, r)
+	return p.factorizedTestProvider.CountInputTokens(ctx, r)
+}
+func (p *thinkingDeadlineProbe) Generate(ctx context.Context, r inference.Request) (inference.Response, error) {
+	p.record(ctx)
+	return p.factorizedTestProvider.Generate(ctx, r)
+}
+
+func TestThinkingDeadlineIsOneSharedContextAndCeilNativeCountGenerateOptions(t *testing.T) {
+	for _, milliseconds := range []int{240000, 240001, 600000} {
+		v, base := factorizedTestVerifier(t, nil)
+		c := v.config
+		c.TimeoutMS = 0
+		c.VerifierPairThink = true
+		c.VerifierTimeoutMS = milliseconds
+		c.VerifierMaxOutputTokens = 4096
+		var err error
+		v.config, err = semantic.NormalizeReuseConfig(c)
+		if err != nil {
+			t.Fatal(err)
+		}
+		p := &thinkingDeadlineProbe{factorizedTestProvider: base}
+		v.runner.Provider = p
+		started := time.Now()
+		out, err := v.Verify(t.Context(), factorizedTestRequest())
+		if err != nil || !out.Accepted() || len(p.deadlines) != 4 || len(p.counted) != 2 {
+			t.Fatal("bounded fixture failed", err)
+		}
+		for _, deadline := range p.deadlines {
+			if !deadline.Equal(p.deadlines[0]) || deadline.Before(started.Add(time.Duration(milliseconds)*time.Millisecond-time.Second)) || deadline.After(time.Now().Add(time.Duration(milliseconds)*time.Millisecond)) {
+				t.Fatal("source and pair received additive/widened/truncated deadlines")
+			}
+		}
+		for i, r := range p.counted {
+			generated := base.requests[i]
+			if r.Ollama.GenerationTimeoutSeconds == nil || *r.Ollama.GenerationTimeoutSeconds != int64((milliseconds+999)/1000) || generated.Ollama.GenerationTimeoutSeconds == nil || *generated.Ollama.GenerationTimeoutSeconds != *r.Ollama.GenerationTimeoutSeconds || r.MaxOutputTokens != 2048 || r.ContextWindow != generated.ContextWindow || r.Input != generated.Input || r.Prefix != generated.Prefix {
+				t.Fatal("count/generate deadline, complete input or cap differs")
+			}
+		}
+	}
+}
+
+func TestThinkingLongDeadlineCallerCancellationRetainsUsageAndFence(t *testing.T) {
+	v, base := factorizedTestVerifier(t, nil)
+	c := v.config
+	c.TimeoutMS = 0
+	c.VerifierPairThink = true
+	c.VerifierTimeoutMS = 240000
+	var err error
+	v.config, err = semantic.NormalizeReuseConfig(c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p := &canceledPairThinkingProvider{factorizedTestProvider: base, started: make(chan struct{})}
+	v.runner.Provider = p
+	ctx, cancel := context.WithTimeout(t.Context(), 50*time.Millisecond)
+	defer cancel()
+	out, err := v.Verify(ctx, factorizedTestRequest())
+	if err == nil || out.Accepted() || len(out.Work) != 2 || out.Work[0].InputTokens == nil || out.Work[1].InputTokens != nil || !out.Work[1].GenerationCalled {
+		t.Fatal("earlier caller lost source usage or unknown pair")
+	}
+	_, err = v.Verify(t.Context(), factorizedTestRequest())
+	if err == nil || p.pairStarts.Load() != 1 || base.sourceCalls != 1 {
+		t.Fatal("long profile bypassed an uncertain claim")
+	}
+}
+
+type thinkingDeadlineControlledCancel struct {
+	*independentFactorizedProvider
+	pairStarts int
+}
+
+func (p *thinkingDeadlineControlledCancel) Generate(ctx context.Context, r inference.Request) (inference.Response, error) {
+	if strings.HasPrefix(r.Prefix, factorizedPairInstructions) {
+		p.pairStarts++
+		<-ctx.Done()
+		return inference.Response{}, ctx.Err()
+	}
+	return p.independentFactorizedProvider.Generate(ctx, r)
+}
+
+func TestThinkingLongDeadlineControlledResolverCancellationKeepsFence(t *testing.T) {
+	for _, shortResolver := range []bool{true, false} {
+		f := independentFactorizedSetup(t)
+		c := *f.request.SemanticReuse
+		c.VerifierPairThink = true
+		c.VerifierTimeoutMS = 240000
+		c.TimeoutMS = 240000
+		if shortResolver {
+			c.TimeoutMS = 50
+		}
+		var err error
+		c, err = semantic.NormalizeReuseConfig(c)
+		if err != nil {
+			t.Fatal(err)
+		}
+		f.request.SemanticReuse = &c
+		f.verifier.config = c
+		f.seed(t)
+		p := &thinkingDeadlineControlledCancel{independentFactorizedProvider: f.stages}
+		f.verifier.runner.Provider = p
+		ctx := t.Context()
+		if !shortResolver {
+			var cancel context.CancelFunc
+			ctx, cancel = context.WithTimeout(ctx, 50*time.Millisecond)
+			defer cancel()
+		}
+		f.request.Spec.Input = "Which review must still happen before the preview proceeds?"
+		out, err := f.router.Run(ctx, f.request)
+		if err == nil || out.SemanticReuse == nil || out.SemanticReuse.GenerationAvoided || p.pairStarts != 1 || f.target.generations != 1 || len(out.SemanticReuse.Verifications) != 1 {
+			t.Fatalf("short resolver/caller did not stop controlled work: %+v %v", out.SemanticReuse, err)
+		}
+		work := out.SemanticReuse.Verifications[0].Work
+		if len(work) != 2 || work[0].InputTokens == nil || work[1].InputTokens != nil || !work[1].GenerationCalled {
+			t.Fatal("controlled cancellation lost known source/unknown pair evidence")
+		}
+		_, err = f.router.Run(t.Context(), f.request)
+		if err == nil || p.pairStarts != 1 || f.target.generations != 1 {
+			t.Fatal("canceled controlled pair retried or generated fallback")
+		}
+	}
+}

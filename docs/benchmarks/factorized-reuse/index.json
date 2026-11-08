@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "meaning": "Consumed development diagnostics, including failed and discarded configurations. These are not fresh holdout qualification, a benchmark of answer generation, or a savings claim. Verify recomputes preserved observations, not model reasoning correctness.",
+  "meaning": "Consumed development diagnostics: eight failed runs and one passing pilot. R3 and independent qualification remain separate gates. This is not an answer-generation savings or general model-correctness claim.",
   "paid_fallback_enabled": false,
   "provider_api_charge_usd": 0,
   "runs": [
@@ -295,6 +295,176 @@
         "explicit_pair_seed": 42,
         "stop_on_execution_error": true
       }
+    },
+    {
+      "name": "pair14-thinking-pilot",
+      "file": "pair14-thinking-pilot.json",
+      "sha256": "a55fa9a3387121b1af06772620e9b7ab2b4dc582ba1c45409b648eeb04f896db",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "cbc70e9dd448898552e9ce99f2394d07a6387df24ff06deb5ee0d52c4d9fc061",
+        "manifest_sha256": "52428c80e49d193bee638c92042e7b22deebd82384b9fb05ea26547515fea4a6",
+        "binary_sha256": "9b02167c49b5bdcc073cb0207a8b5cee993395d24ac007344defd5bf554cb0af",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "f78b5c6c979c756f8dd08a765470aa6f5fa84c1f94400211719efd163a7bd18d",
+          "policy_version": "questlock-factorized-validity-v17"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "d090612b776e0f5fb9e709c9c7d165a4a952631e2e298194148de163235e0a4a",
+          "semantic/reuse.go": "d6a92781c3f2a0f7d31588e5ba0349602725e0ccc1a30fd3c0dc28d76804711c",
+          "inference/ollama.go": "a6c1bfcedf4636b1acdec81c15c9bdcb4b158b451ac4a007cef529e21319e919"
+        },
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        },
+        "explicit_pair_temperature": 0.6,
+        "explicit_pair_seed": 42,
+        "stop_on_execution_error": true
+      }
+    },
+    {
+      "name": "relation-deadline-pilot",
+      "file": "relation-deadline-pilot.json",
+      "sha256": "71d2ba9476c577bd66515cab0d1229c46ec18e3c216492d3dff471024f9dba2b",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "c5c46b6592afb2de3945a4e114efa3b4d8583e2f12816beb275a73b279ee7730",
+        "manifest_sha256": "9f7388af6243ef68014ac07a57d6f620ad508ceeb953215dbda0da33c0b936ff",
+        "binary_sha256": "f6f19c6f78f14fa21010450f9c92c9cad833fa3b666b2095d3df888da07c6af4",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "a8c5e831d22a4b9ef2e9964063bafdcb574d18e5229a63b8bda977c9825fd05a",
+          "policy_version": "questlock-factorized-validity-v19"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "pair_input_binding_key": "source_bindings",
+        "report_schema": 1,
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "a541650e3d9855912aa484d76827ab60e0991d842035036d0c1d8dc91a82030a",
+          "semantic/reuse.go": "d6a92781c3f2a0f7d31588e5ba0349602725e0ccc1a30fd3c0dc28d76804711c",
+          "inference/ollama.go": "a6c1bfcedf4636b1acdec81c15c9bdcb4b158b451ac4a007cef529e21319e919",
+          "semantic/target_operation_object.go": "6d57f8e2bf51ab54e2518d94855e8505d0bf8f4b85430966a15b7741d572bbf6",
+          "semantic/target_risks.go": "660e47a4a02286cac42828846d81e96d992f03b76d41b79864a0ce54c8b341ba"
+        },
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        },
+        "explicit_pair_temperature": 0.6,
+        "explicit_pair_seed": 42,
+        "stop_on_execution_error": true,
+        "independent_audit_sha256": "720e7de264cebe05c1cd0e63f25f4da47ec5924dc132a0b508e13bea0bcfa660"
+      }
+    },
+    {
+      "name": "explicit-deadline-pilot",
+      "file": "explicit-deadline-pilot.json",
+      "sha256": "af04f6eaf2f07224ecd7586e085ea554970f6cdae14fe5aedcd8870425460752",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "development_gate": "passed_pilot_only",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "5d260449ae8e51c7256713d7598b48ba7ffbcc940af598dd4bacb98cb2a6fa2e",
+        "manifest_sha256": "4aa74f69c4d4e2d422272fb27458e203c7c8e75af9ca1c007bc222a50678354a",
+        "binary_sha256": "c1154feea76d66fb39b9e18b87f6f80f5f27d91ba78a9ca2f33af0ac2b1951bc",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "a8c5e831d22a4b9ef2e9964063bafdcb574d18e5229a63b8bda977c9825fd05a",
+          "policy_version": "questlock-factorized-validity-v19"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "pair_input_binding_key": "source_bindings",
+        "report_schema": 1,
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "a541650e3d9855912aa484d76827ab60e0991d842035036d0c1d8dc91a82030a",
+          "semantic/reuse.go": "03c641e17fc49d7d94f6aec0e21a804496332599ab6a6a867e0d3d8254d44363",
+          "inference/ollama.go": "a6c1bfcedf4636b1acdec81c15c9bdcb4b158b451ac4a007cef529e21319e919",
+          "semantic/target_operation_object.go": "6d57f8e2bf51ab54e2518d94855e8505d0bf8f4b85430966a15b7741d572bbf6",
+          "semantic/target_risks.go": "660e47a4a02286cac42828846d81e96d992f03b76d41b79864a0ce54c8b341ba"
+        },
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        },
+        "explicit_pair_temperature": 0.6,
+        "explicit_pair_seed": 42,
+        "verifier_timeout_ms": 240000,
+        "effective_resolver_timeout_ms": 240000,
+        "stop_on_execution_error": true,
+        "independent_audit_sha256": "a483a10464ab5a1e737d861d5738151c520a413d0da35e6aa8a669a4059a20e0"
+      }
     }
   ],
   "retained_prior_native_attempts": 201,
@@ -302,5 +472,8 @@
   "retained_prior_incomplete_known": 1,
   "retained_prior_complete_known": 195,
   "prior_boundary_basis": "Independent prior-scope audit boundary preserved in the frozen pre-run plan. Prior jobs are not recomputed from these recent report files.",
-  "prior_boundary_source_sha256": "520397afb2a2893a2e3c6cf4961845a46b0ea763f03acb8c5a4c2a268e2394df"
+  "prior_boundary_source_sha256": "520397afb2a2893a2e3c6cf4961845a46b0ea763f03acb8c5a4c2a268e2394df",
+  "recent_unknown_usage_job_keys": [
+    "inference/v1/jobs/16c3ce324f8325f9c3b1d960083f4ae6f1eaf4d39db330ab2bc27f4f2877c498"
+  ]
 }

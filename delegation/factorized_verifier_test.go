@@ -140,7 +140,11 @@ func TestFactorizedCertificateAndPairReuseHaveSeparateUsage(t *testing.T) {
 		t.Fatalf("certificate not reused independently: %+v %v calls=%d/%d", novel, err, provider.sourceCalls, provider.pairCalls)
 	}
 	for _, request := range provider.requests {
-		if !strings.Contains(request.Input, `"context"`) || !strings.Contains(request.Input, `"instructions"`) || !strings.Contains(request.Input, `"bindings"`) || strings.Contains(request.Input, `"source"`) || strings.Contains(request.Input, strings.Repeat("b", 64)) {
+		bindingsKey := `"bindings"`
+		if provider.stage(request) == "equivalence" {
+			bindingsKey = `"source_bindings"`
+		}
+		if !strings.Contains(request.Input, `"context"`) || !strings.Contains(request.Input, `"instructions"`) || !strings.Contains(request.Input, bindingsKey) || strings.Contains(request.Input, `"source"`) || strings.Contains(request.Input, strings.Repeat("b", 64)) {
 			t.Fatalf("stage omitted background or exposed source metadata: %s", request.Input)
 		}
 		if provider.stage(request) == "source" && strings.Contains(request.Input, `"question"`) {

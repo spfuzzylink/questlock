@@ -11,7 +11,7 @@ import (
 // TargetRiskGuardVersion binds the rejection-only target-risk policy. An empty
 // result only passes to the existing guards and contextual verifier; it is not
 // evidence of equivalence, source validity, complete coverage or safe actions.
-const TargetRiskGuardVersion = 5
+const TargetRiskGuardVersion = 6
 
 var (
 	targetBinary             = regexp.MustCompile(`^(?:is|are|was|were|do|does|did|can|could|may|might|will|would|should|must|has|have|had)\b`)
@@ -75,6 +75,9 @@ func CheckReuseTargetRisks(originalQuestion, instructions, currentQuestion, cach
 	}
 	if targetAuthorityChange(targetPlain(originalQuestion), defaults, targetPlain(currentQuestion)) || targetExclusiveAuthority.MatchString(targetPlain(currentQuestion)) && targetJointAuthority(cachedAnswer) {
 		reasons = append(reasons, "target_risk_authority_change")
+	}
+	if targetOperationObjectChange(originalQuestion, currentQuestion) {
+		reasons = append(reasons, "target_risk_operation_object_change")
 	}
 	return reasons
 }

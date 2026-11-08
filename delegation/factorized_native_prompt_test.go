@@ -105,6 +105,8 @@ func TestIndependentFactorizedNativeWireSeparatesPolicyAndDataWithBoundedPreflig
 		types := map[string]string{"verdict": "string", "supported": "boolean", "complete": "boolean"}
 		expected := map[string]any{"original_question": request.OriginalQuestion, "instructions": request.Instructions, "context": request.Context, "cached_answer": request.CachedAnswer, "bindings": request.Bindings}
 		if i == 1 {
+			delete(expected, "bindings")
+			expected["source_bindings"] = request.Bindings
 			policy = factorizedPairInstructions
 			types = map[string]string{"verdict": "string", "answer_covers_current": "boolean", "unchanged_facts": "boolean", "same_output_contract": "boolean"}
 			expected["question"] = request.Question

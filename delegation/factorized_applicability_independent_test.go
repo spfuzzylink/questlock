@@ -104,7 +104,7 @@ func TestIndependentApplicabilityReceivesExactAnswerAndPreservesExactFirst(t *te
 		}
 		var background string
 		var bindings map[string]string
-		if json.Unmarshal(fields["context"], &background) != nil || !strings.Contains(background, f.request.Spec.Context[0].Text) || json.Unmarshal(fields["bindings"], &bindings) != nil || bindings["channel"] != "preview" {
+		if json.Unmarshal(fields["context"], &background) != nil || !strings.Contains(background, f.request.Spec.Context[0].Text) || json.Unmarshal(fields["source_bindings"], &bindings) != nil || bindings["channel"] != "preview" {
 			t.Fatal("answer applicability lost approved background or bindings")
 		}
 	}

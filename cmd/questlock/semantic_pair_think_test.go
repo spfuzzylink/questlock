@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -30,6 +31,10 @@ func TestSemanticEvaluationPairThinkingFlagsAndScopedWallDeadline(t *testing.T) 
 		{"ordinary still one hour", []string{"--timeout", "1h1ns"}, false, 0, 0, "explicit_live_suite_and_bounded_flags_required"},
 		{"explicit false still one hour", []string{"--verifier-policy", "factorized-v1", "--verifier-pair-think=false", "--timeout", "2h"}, false, 0, 0, "explicit_live_suite_and_bounded_flags_required"},
 		{"source still one hour", []string{"--verifier-policy", "factorized-v1", "--verifier-source-think", "--timeout", "1h1ns"}, false, 0, 0, "explicit_live_suite_and_bounded_flags_required"},
+		{"pair longer deadline", []string{"--verifier-policy", "factorized-v1", "--verifier-pair-think", "--verifier-timeout-ms", "240000"}, true, 4096, 240000, "embedding_setup_failed"},
+		{"source max deadline", []string{"--verifier-policy", "factorized-v1", "--verifier-source-think", "--verifier-timeout-ms", "600000"}, false, 4096, 600000, "embedding_setup_failed"},
+		{"pair deadline over max", []string{"--verifier-policy", "factorized-v1", "--verifier-pair-think", "--verifier-timeout-ms", "600001"}, true, 0, 0, "invalid_local_model_policy"},
+		{"nonthinking deadline unchanged", []string{"--verifier-policy", "factorized-v1", "--verifier-timeout-ms", "120001"}, false, 0, 0, "invalid_local_model_policy"},
 		{"pair legacy rejected", []string{"--verifier-pair-think"}, true, 0, 0, "explicit_live_suite_and_bounded_flags_required"},
 		{"pair output bounded", []string{"--verifier-policy", "factorized-v1", "--verifier-pair-think", "--verifier-max-output-tokens", "4097"}, true, 0, 0, "invalid_local_model_policy"},
 	} {
@@ -49,5 +54,15 @@ func TestSemanticEvaluationPairThinkingFlagsAndScopedWallDeadline(t *testing.T) 
 				t.Fatal("falseoptionalreportfield changedoldwire")
 			}
 		})
+	}
+}
+
+func TestSemanticEvaluationThinkingDeadlineHelp(t *testing.T) {
+	var output, diagnostics bytes.Buffer
+	if err := semanticEvaluateCommand([]string{"--help"}, &output, &diagnostics); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(diagnostics.String(), "120000ms") || !strings.Contains(diagnostics.String(), "600000ms") || !strings.Contains(diagnostics.String(), "shared by both stages") {
+		t.Fatal("deadline help omitted default, conditional maximum or shared semantics")
 	}
 }

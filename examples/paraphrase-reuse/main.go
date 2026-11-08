@@ -79,7 +79,7 @@ func run(args []string, out io.Writer) error {
 	verifierPairTemperature := f.Float64("verifier-pair-temperature", 0, "optional applicability temperature in 0..2; absent keeps zero")
 	verifierPairSeed := f.Int64("verifier-pair-seed", 0, "optional applicability seed in 0..2147483647; absent leaves runtime default")
 	verifierOutput := f.Int64("verifier-max-output-tokens", 128, "total verifier output cap; either reasoning flag without this option selects its policy default")
-	verifierTimeout := f.Int("verifier-timeout-ms", 60000, "total verifier invocation deadline, still bounded by the caller and resolver")
+	verifierTimeout := f.Int("verifier-timeout-ms", 60000, "shared source+pair deadline in ms; thinking defaults to 120000 and permits an explicit value up to 600000, otherwise max 120000; earlier caller/resolver deadline wins")
 	minSimilarity := f.Float64("min-similarity", 0.25, "retrieval cutoff in 0..1; zero selects the semantic policy default")
 	resourcePolicyPath := f.String("resource-policy", "", "optional runtime-only JSON admission policy; bounded wait before any fresh claim")
 	tokenPath := f.String("token-file", "", "absolute private scoped token file")
