@@ -7,6 +7,10 @@ was a bullet list. Broker recovery also missed its declared recall floor: 9 of
 11 valid requests reused against a minimum of 10. A smaller passing pilot had
 not exposed these failures. Keep this candidate out of production.
 
+[Retained development runs](benchmarks/factorized-reuse/README.md) include the
+subsequent misses, capped reasoning and zero-work source-certificate hits. Their
+offline check runs as part of `make check`.
+
 The successor tightens those general grammar checks and asks the verifier whether
 the unchanged answer covers the new request. A narrower question need not be
 equivalent to the original question. These changes pass offline checks; they
@@ -114,13 +118,35 @@ rejection or `unknown` verdict with confirmed usage is a known abstention; the
 approved workflow may continue to fresh bounded local generation.
 
 Some installed models need a reasoning budget to check a saved answer properly.
-Set `verifier_source_think: true` to allow reasoning in the source check only.
-This opt-in defaults to a shared 4,096-token output allowance and a 120-second
-deadline; each stage gets half the token allowance. Smaller explicit caps still
-apply. The question comparison does not enable reasoning. Count the source's
-reasoning tokens too: hiding its reasoning text does not make that work free.
-Without this setting, the existing smaller limits stay unchanged. A larger
-budget is an option to test, not evidence of better answers or lower cost.
+Set `verifier_source_think: true` for source-check reasoning, or
+`verifier_pair_think: true` for applicability-check reasoning. These opt-ins are
+independent and require `factorized-v1`. Either opt-in defaults to a shared
+4,096-token output allowance and a 120-second deadline; each stage still gets
+half the token allowance. Smaller explicit caps still apply. Count reasoning
+output in the selected stage too: hiding its text does not make that work free.
+With both settings omitted or false, the existing smaller limits and identities
+stay unchanged. A larger budget is an option to test, not evidence of better
+answers or lower cost.
+
+Before enabling pair reasoning through MCP, check that
+`questlock_status.request_schemas.semantic_reuse_optional_reasoning_fields`
+includes `verifier_pair_think`. Older workers must reject this unsupported field
+rather than silently ignoring it. The diagnostic and measurement example expose
+`--verifier-pair-think`; no client configuration change is required. The
+diagnostic keeps its 20-minute default and one-hour wall limit, with a two-hour
+wall limit only when pair reasoning is explicitly enabled. Per-verification
+deadlines and token/resource caps remain separately bounded.
+
+Optional `verifier_pair_temperature` (finite 0..2) and `verifier_pair_seed`
+(integer 0..2147483647) apply only to factorized applicability requests. Omitted
+values preserve temperature zero and no explicit seed; explicit zero is retained.
+They bind the policy and native request identities without changing source-stage
+sampling, prompts, output limits or deadlines. A seed is a requested runtime
+control, not a cross-runtime determinism guarantee. The diagnostic and measurement
+example expose `--verifier-pair-temperature` and `--verifier-pair-seed`. For MCP,
+check `questlock_status.request_schemas.semantic_reuse_optional_sampling_fields`
+for both names before sending them to a worker. No client configuration change
+is required.
 
 ## Give busy hardware time to catch up
 

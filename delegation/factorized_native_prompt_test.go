@@ -23,6 +23,7 @@ type independentNativeVerifierBody struct {
 		Predict     int64   `json:"num_predict"`
 		Context     int64   `json:"num_ctx"`
 		Temperature float64 `json:"temperature"`
+		Seed        *int64  `json:"seed"`
 	} `json:"options"`
 }
 

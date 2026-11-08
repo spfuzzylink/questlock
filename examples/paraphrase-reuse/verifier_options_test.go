@@ -34,7 +34,7 @@ func TestMeasurementVerifierOptionsKeepDefaultsAndBoundExplicitReasoning(t *test
 		{"infinite similarity", true, 4096, 120000, math.Inf(1), 0, false},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			c, err := measurementVerifierConfig("fixture:local", tc.think, tc.output, tc.timeout, tc.similarity)
+			c, err := measurementVerifierConfig("fixture:local", tc.think, false, tc.output, tc.timeout, tc.similarity)
 			if tc.valid {
 				if err != nil || c.VerifierSourceThink != tc.think || c.VerifierMaxInputTokens != 16384 || c.VerifierMaxOutputTokens != tc.wantOutput || c.VerifierTimeoutMS != tc.timeout || c.MinSimilarity != tc.similarity {
 					t.Fatalf("option drift: %+v %v", c, err)
@@ -44,11 +44,11 @@ func TestMeasurementVerifierOptionsKeepDefaultsAndBoundExplicitReasoning(t *test
 			}
 		})
 	}
-	thinkingDefault, thinkErr := measurementVerifierConfig("fixture:local", true, 0, 0, .1)
+	thinkingDefault, thinkErr := measurementVerifierConfig("fixture:local", true, false, 0, 0, .1)
 	if thinkErr != nil || thinkingDefault.TimeoutMS != 120000 || thinkingDefault.VerifierTimeoutMS != 120000 {
 		t.Fatalf("thinking whole-path or verifier default is too short: %+v %v", thinkingDefault, thinkErr)
 	}
-	zero, err := measurementVerifierConfig("fixture:local", false, 128, 60000, 0)
+	zero, err := measurementVerifierConfig("fixture:local", false, false, 128, 60000, 0)
 	if err != nil || zero.MinSimilarity != .9 {
 		t.Fatalf("semantic zero/default convention changed: %+v %v", zero, err)
 	}
@@ -149,5 +149,95 @@ func TestReportRejectsMalformedOrContradictoryVerifierDeclarations(t *testing.T)
 				t.Fatal("malformed or contradictory policy accepted")
 			}
 		})
+	}
+}
+
+func TestMeasurementPairThinkingDefaultsAndHeaderCompatibility(t *testing.T) {
+	c, err := measurementVerifierConfig("fixture:local", false, true, 0, 0, .1)
+	if err != nil || c.VerifierSourceThink || !c.VerifierPairThink || c.TimeoutMS != 120000 || c.VerifierTimeoutMS != 120000 || c.VerifierMaxOutputTokens != 4096 {
+		t.Fatalf("pair thinking normalized too late or enabledsource: %+v %v", c, err)
+	}
+	short, err := measurementVerifierConfig("fixture:local", false, true, 128, 750, .1)
+	if err != nil || short.VerifierMaxOutputTokens != 128 || short.VerifierTimeoutMS != 750 {
+		t.Fatal("explicitshorteroptionsreplaced")
+	}
+	log := fixtureMeasurement(t, fixtureRows(t, true), true)
+	old, err := summarizeMeasurement(strings.NewReader(log))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, value := range []any{true, false} {
+		report, err := summarizeMeasurement(strings.NewReader(replaceMeasurementHeader(t, log, func(h map[string]any) { h["verifier_pair_think"] = value })))
+		if err != nil || !reflect.DeepEqual(old, report) {
+			t.Fatal("optionalpairmetadatachangedactualworkoroldlogreading", err)
+		}
+	}
+	for _, value := range []any{nil, "true"} {
+		if _, err := summarizeMeasurement(strings.NewReader(replaceMeasurementHeader(t, log, func(h map[string]any) { h["verifier_pair_think"] = value }))); err == nil {
+			t.Fatal("invalidpairboolaccepted")
+		}
+	}
+	if err := run([]string{"--report", "missing", "--verifier-pair-think"}, &bytes.Buffer{}); err == nil || !strings.Contains(err.Error(), "without live-run options") {
+		t.Fatal("offline report acceptedreplacementreasoningpolicy")
+	}
+}
+
+func TestMeasurementSamplingHeadersAndFlagsPreserveActualWork(t *testing.T) {
+	log := fixtureMeasurement(t, fixtureRows(t, true), true)
+	old, err := summarizeMeasurement(strings.NewReader(log))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		temp float64
+		seed int64
+	}{{0, 0}, {1, 42}, {2, 2147483647}} {
+		report, err := summarizeMeasurement(strings.NewReader(replaceMeasurementHeader(t, log, func(h map[string]any) { h["verifier_pair_temperature"], h["verifier_pair_seed"] = tc.temp, tc.seed })))
+		if err != nil || !reflect.DeepEqual(old, report) {
+			t.Fatal("sampling metadata changed actual measured work", err)
+		}
+	}
+	for _, tc := range []struct {
+		key   string
+		value any
+	}{{"verifier_pair_temperature", nil}, {"verifier_pair_temperature", 2.1}, {"verifier_pair_temperature", "1"}, {"verifier_pair_seed", nil}, {"verifier_pair_seed", -1}, {"verifier_pair_seed", 2147483648}, {"verifier_pair_seed", .5}, {"verifier_pair_seed", "42"}} {
+		if _, err := summarizeMeasurement(strings.NewReader(replaceMeasurementHeader(t, log, func(h map[string]any) { h[tc.key] = tc.value }))); err == nil {
+			t.Fatalf("invalid header accepted: %+v", tc)
+		}
+	}
+	for _, flag := range []string{"--verifier-pair-temperature", "--verifier-pair-seed"} {
+		if err := run([]string{"--report", "missing", flag, "0"}, &bytes.Buffer{}); err == nil || !strings.Contains(err.Error(), "without live-run options") {
+			t.Fatal("report accepted replacement sampling policy")
+		}
+	}
+	for _, args := range [][]string{{"--verifier-pair-temperature", "NaN"}, {"--verifier-pair-temperature", "2.1"}, {"--verifier-pair-seed", "-1"}, {"--verifier-pair-seed", "2147483648"}} {
+		flags := append([]string{"--live", "--broker", "http://127.0.0.1:1", "--ollama", "http://127.0.0.1:1"}, args...)
+		if err := run(flags, &bytes.Buffer{}); err == nil || !strings.Contains(err.Error(), "pair") {
+			t.Fatalf("invalid sampling reached file/model work: %v", err)
+		}
+	}
+}
+
+func TestMeasurementSamplingRejectsCaseAliasesAndCollisions(t *testing.T) {
+	log := fixtureMeasurement(t, fixtureRows(t, true), true)
+	end := strings.IndexByte(log, '\n')
+	if end < 0 {
+		t.Fatal("missing header")
+	}
+	header := strings.TrimSuffix(log[:end], "}")
+	for _, field := range []struct{ key, value string }{
+		{"verifier_pair_temperature", "1"},
+		{"verifier_pair_seed", "42"},
+	} {
+		canonical := `"` + field.key + `":` + field.value
+		alias := `"` + strings.ToUpper(field.key) + `":` + field.value
+		// Exercise both orders: encoding/json matches tagged struct fields
+		// without regard to case, while duplicate-key checks use exact keys.
+		for _, suffix := range []string{alias, canonical + "," + alias, alias + "," + canonical} {
+			record := header + "," + suffix + "}" + log[end:]
+			if _, err := summarizeMeasurement(strings.NewReader(record)); err == nil {
+				t.Fatalf("sampling alias or collision accepted: %s", suffix)
+			}
+		}
 	}
 }

@@ -419,11 +419,13 @@ func (p *OllamaProvider) Generate(ctx context.Context, req Request) (Response, e
 			NumPredict  int64    `json:"num_predict"`
 			NumCtx      int64    `json:"num_ctx"`
 			Temperature *float64 `json:"temperature,omitempty"`
+			Seed        *int64   `json:"seed,omitempty"`
 		} `json:"options"`
 	}{Model: p.model, System: req.Prefix, Prompt: req.Input, Stream: req.Stream, Think: ollamaThinkingEnabled(req.Ollama)}
 	body.Options.NumPredict, body.Options.NumCtx = req.MaxOutputTokens, req.ContextWindow
 	if req.Ollama != nil {
 		body.Options.Temperature = req.Ollama.Temperature
+		body.Options.Seed = req.Ollama.Seed
 		body.KeepAlive = req.Ollama.KeepAliveSeconds
 	}
 	body.System, body.Prompt, body.Format = rendered.system, rendered.prompt, rendered.format

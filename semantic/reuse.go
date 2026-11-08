@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"math"
 	"regexp"
 	"slices"
 	"strings"
@@ -19,7 +20,7 @@ const (
 	DefaultVerifierTimeoutMS             = 30000
 	MaxVerifierInputTokens         int64 = 32768
 	MaxVerifierOutputTokens        int64 = 512
-	// Thinking is an explicit factorized-source option. The ordinary verifier
+	// Thinking is an explicit factorized-stage option. The ordinary verifier
 	// keeps its existing output ceiling and does not enable reasoning by default.
 	MaxFactorizedThinkingOutputTokens int64 = 4096
 	MaxVerifierTimeoutMS                    = 120000
@@ -35,18 +36,21 @@ const (
 // the same flat JSON names as shadow configuration.
 type ReuseConfig struct {
 	Config
-	ReadOnly                     bool   `json:"read_only"`
-	Intent                       string `json:"intent"`
-	VerifierModel                string `json:"verifier_model"`
-	VerifierSourceMaxInputTokens int64  `json:"verifier_source_max_input_tokens,omitempty"`
-	VerifierPairModel            string `json:"verifier_pair_model,omitempty"`
-	VerifierPairMaxInputTokens   int64  `json:"verifier_pair_max_input_tokens,omitempty"`
-	VerifierPolicy               string `json:"verifier_policy,omitempty"`
-	VerifierSourceThink          bool   `json:"verifier_source_think,omitempty"`
-	VerifierMaxInputTokens       int64  `json:"verifier_max_input_tokens,omitempty"`
-	VerifierMaxOutputTokens      int64  `json:"verifier_max_output_tokens,omitempty"`
-	VerifierTimeoutMS            int    `json:"verifier_timeout_ms,omitempty"`
-	WaitForCandidateMS           int    `json:"wait_for_candidate_ms,omitempty"`
+	ReadOnly                     bool     `json:"read_only"`
+	Intent                       string   `json:"intent"`
+	VerifierModel                string   `json:"verifier_model"`
+	VerifierSourceMaxInputTokens int64    `json:"verifier_source_max_input_tokens,omitempty"`
+	VerifierPairModel            string   `json:"verifier_pair_model,omitempty"`
+	VerifierPairMaxInputTokens   int64    `json:"verifier_pair_max_input_tokens,omitempty"`
+	VerifierPolicy               string   `json:"verifier_policy,omitempty"`
+	VerifierSourceThink          bool     `json:"verifier_source_think,omitempty"`
+	VerifierPairThink            bool     `json:"verifier_pair_think,omitempty"`
+	VerifierPairTemperature      *float64 `json:"verifier_pair_temperature,omitempty"`
+	VerifierPairSeed             *int64   `json:"verifier_pair_seed,omitempty"`
+	VerifierMaxInputTokens       int64    `json:"verifier_max_input_tokens,omitempty"`
+	VerifierMaxOutputTokens      int64    `json:"verifier_max_output_tokens,omitempty"`
+	VerifierTimeoutMS            int      `json:"verifier_timeout_ms,omitempty"`
+	WaitForCandidateMS           int      `json:"wait_for_candidate_ms,omitempty"`
 }
 
 // NormalizeReuseConfig preserves the shadow configuration contract while
@@ -68,13 +72,31 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	if c.VerifierPairModel != "" && !validOllamaModel(c.VerifierPairModel) {
 		return ReuseConfig{}, errors.New("pair verifier requires an installed local model name")
 	}
-	if c.VerifierSourceThink && c.VerifierPolicy != "factorized-v1" {
-		return ReuseConfig{}, errors.New("source thinking requires the factorized verifier policy")
+	if (c.VerifierPairTemperature != nil || c.VerifierPairSeed != nil) && c.VerifierPolicy != "factorized-v1" {
+		return ReuseConfig{}, errors.New("pair sampling requires the factorized verifier policy")
+	}
+	if c.VerifierPairTemperature != nil {
+		temperature := *c.VerifierPairTemperature
+		if math.IsNaN(temperature) || math.IsInf(temperature, 0) || temperature < 0 || temperature > 2 {
+			return ReuseConfig{}, errors.New("pair temperature must be finite and between 0 and 2")
+		}
+		c.VerifierPairTemperature = &temperature
+	}
+	if c.VerifierPairSeed != nil {
+		seed := *c.VerifierPairSeed
+		if seed < 0 || seed > 2147483647 {
+			return ReuseConfig{}, errors.New("pair seed must be between 0 and 2147483647")
+		}
+		c.VerifierPairSeed = &seed
+	}
+	thinking := c.VerifierSourceThink || c.VerifierPairThink
+	if thinking && c.VerifierPolicy != "factorized-v1" {
+		return ReuseConfig{}, errors.New("stage thinking requires the factorized verifier policy")
 	}
 	base := c.Config
 	base.Mode = "shadow"
 	maxTimeout := MaxTimeoutMS
-	if c.VerifierSourceThink {
+	if thinking {
 		maxTimeout = MaxVerifierTimeoutMS
 	}
 	if base.TimeoutMS == 0 {
@@ -96,18 +118,18 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	}
 	if c.VerifierMaxOutputTokens == 0 {
 		c.VerifierMaxOutputTokens = DefaultVerifierMaxOutputTokens
-		if c.VerifierSourceThink {
+		if thinking {
 			c.VerifierMaxOutputTokens = MaxFactorizedThinkingOutputTokens
 		}
 	}
 	if c.VerifierTimeoutMS == 0 {
 		c.VerifierTimeoutMS = DefaultVerifierTimeoutMS
-		if c.VerifierSourceThink {
+		if thinking {
 			c.VerifierTimeoutMS = MaxVerifierTimeoutMS
 		}
 	}
 	maxOutput := MaxVerifierOutputTokens
-	if c.VerifierSourceThink {
+	if thinking {
 		maxOutput = MaxFactorizedThinkingOutputTokens
 	}
 	if c.VerifierMaxInputTokens < 1 || c.VerifierMaxInputTokens > MaxVerifierInputTokens || c.VerifierMaxOutputTokens < 16 || c.VerifierMaxOutputTokens > maxOutput || c.VerifierTimeoutMS < 1 || c.VerifierTimeoutMS > MaxVerifierTimeoutMS {

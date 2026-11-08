@@ -30,7 +30,7 @@ func TestOllamaGenerationTimeoutValidationAndIdentity(t *testing.T) {
 	for _, seconds := range []int64{1, 120, 600} {
 		s.Ollama = &OllamaOptions{GenerationTimeoutSeconds: &seconds}
 		plan, err := BuildPlan(s)
-		if err != nil || plan.Request.Ollama != s.Ollama || seen[plan.Fingerprint] || plan.Request.Prefix != baseline.Request.Prefix || plan.Request.Input != baseline.Request.Input {
+		if err != nil || !reflect.DeepEqual(plan.Request.Ollama, s.Ollama) || plan.Request.Ollama == s.Ollama || seen[plan.Fingerprint] || plan.Request.Prefix != baseline.Request.Prefix || plan.Request.Input != baseline.Request.Input {
 			t.Fatalf("explicit timeout lost identity or changed prompt: %+v, %v", plan, err)
 		}
 		seen[plan.Fingerprint] = true

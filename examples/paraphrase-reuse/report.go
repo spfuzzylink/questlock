@@ -27,6 +27,9 @@ type measurementHeader struct {
 	VerifierPairMaxInputTokens   int64                            `json:"verifier_pair_max_input_tokens,omitempty"`
 	VerifierPolicy               string                           `json:"verifier_policy"`
 	VerifierSourceThink          bool                             `json:"verifier_source_think,omitempty"`
+	VerifierPairThink            bool                             `json:"verifier_pair_think,omitempty"`
+	VerifierPairTemperature      *float64                         `json:"verifier_pair_temperature,omitempty"`
+	VerifierPairSeed             *int64                           `json:"verifier_pair_seed,omitempty"`
 	VerifierMaxOutputTokens      int64                            `json:"verifier_max_output_tokens,omitempty"`
 	VerifierTimeoutMS            int                              `json:"verifier_timeout_ms,omitempty"`
 	SemanticTimeoutMS            int                              `json:"semantic_timeout_ms,omitempty"`
@@ -536,7 +539,7 @@ func validMeasurementVerifierHeader(raw []byte, h measurementHeader) bool {
 		return false
 	}
 	for key := range fields {
-		for _, canonical := range []string{"verifier_source_think", "verifier_max_output_tokens", "verifier_timeout_ms", "semantic_timeout_ms", "resource_policy", "verifier_pair_model", "verifier_pair_max_input_tokens", "verifier_max_input_tokens", "verifier_source_max_input_tokens"} {
+		for _, canonical := range []string{"verifier_source_think", "verifier_pair_think", "verifier_pair_temperature", "verifier_pair_seed", "verifier_max_output_tokens", "verifier_timeout_ms", "semantic_timeout_ms", "resource_policy", "verifier_pair_model", "verifier_pair_max_input_tokens", "verifier_max_input_tokens", "verifier_source_max_input_tokens"} {
 			if strings.EqualFold(key, canonical) && key != canonical {
 				return false
 			}
@@ -560,7 +563,7 @@ func validMeasurementVerifierHeader(raw []byte, h measurementHeader) bool {
 		}
 	}
 	output := int64(128)
-	if h.VerifierSourceThink {
+	if h.VerifierSourceThink || h.VerifierPairThink {
 		output = 0
 	}
 	if _, present := fields["verifier_max_output_tokens"]; present {
@@ -570,7 +573,7 @@ func validMeasurementVerifierHeader(raw []byte, h measurementHeader) bool {
 		output = h.VerifierMaxOutputTokens
 	}
 	timeout := 60000
-	if h.VerifierSourceThink {
+	if h.VerifierSourceThink || h.VerifierPairThink {
 		timeout = 0
 	}
 	if _, present := fields["verifier_timeout_ms"]; present {
@@ -579,10 +582,16 @@ func validMeasurementVerifierHeader(raw []byte, h measurementHeader) bool {
 		}
 		timeout = h.VerifierTimeoutMS
 	}
-	config, err := measurementVerifierConfig(h.VerifierModel, h.VerifierSourceThink, output, timeout, h.MinSimilarity)
+	config, err := measurementVerifierConfig(h.VerifierModel, h.VerifierSourceThink, h.VerifierPairThink, output, timeout, h.MinSimilarity)
 	if err != nil {
 		return false
 	}
+	for key, value := range map[string]bool{"verifier_pair_temperature": h.VerifierPairTemperature != nil, "verifier_pair_seed": h.VerifierPairSeed != nil} {
+		if _, present := fields[key]; present && !value {
+			return false
+		}
+	}
+	config.VerifierPairTemperature, config.VerifierPairSeed = h.VerifierPairTemperature, h.VerifierPairSeed
 	config.VerifierPairModel, config.VerifierPairMaxInputTokens = h.VerifierPairModel, h.VerifierPairMaxInputTokens
 	if h.VerifierMaxInputTokens != 0 {
 		config.VerifierMaxInputTokens = h.VerifierMaxInputTokens

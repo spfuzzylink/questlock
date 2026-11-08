@@ -16,6 +16,7 @@ import (
 	"github.com/spfuzzylink/questlock/delegation"
 	"github.com/spfuzzylink/questlock/evaluation"
 	"github.com/spfuzzylink/questlock/revision"
+	"github.com/spfuzzylink/questlock/semantic"
 )
 
 func readWorkerStatus(t *testing.T, session *mcp.ClientSession) Status {
@@ -161,5 +162,36 @@ func TestStatusProfileLabelsAreBoundedNonsecretTokens(t *testing.T) {
 		if validProfile(profile.ID, profile.Kind) {
 			t.Fatalf("accepted unbounded/non-label profile: %+v", profile)
 		}
+	}
+}
+
+func TestStatusAdvertisesOptionalPairThinkingWithoutWork(t *testing.T) {
+	session, _, _, _ := connectWorker(t, Options{Workspace: t.TempDir(), Execute: func(context.Context, delegation.Request) (delegation.Result, error) {
+		t.Fatal("discoveryexecutedmodelwork")
+		return delegation.Result{}, nil
+	}}, "")
+	status := readWorkerStatus(t, session)
+	if !reflect.DeepEqual(status.RequestSchemas.SemanticReuseOptionalReasoningFields, []string{"verifier_source_think", "verifier_pair_think"}) || !reflect.DeepEqual(status.RequestSchemas.SemanticReuseOptionalSamplingFields, []string{"verifier_pair_temperature", "verifier_pair_seed"}) || status.ModelCalls != 0 {
+		t.Fatal("pairreasoningcapabilitymissingorstatusperformedwork")
+	}
+}
+
+func TestWorkerAcceptsExplicitPairReasoningFieldWithoutSourceReasoning(t *testing.T) {
+	root := t.TempDir()
+	request := approvedRequest()
+	temperature, seed := float64(1), int64(42)
+	request.SemanticReuse = &semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "worker-pair-test", Domain: "approved", EvidenceRevision: "revision-1", EmbeddingModel: "all-minilm", MinSimilarity: .9}, ReadOnly: true, Intent: "approved-read-only", VerifierModel: "fixture:local", VerifierPolicy: "factorized-v1", VerifierPairThink: true, VerifierPairTemperature: &temperature, VerifierPairSeed: &seed}
+	requestFile(t, root, "pair.json", request)
+	calls := 0
+	session, _, _, _ := connectWorker(t, Options{Workspace: root, Execute: func(_ context.Context, r delegation.Request) (delegation.Result, error) {
+		calls++
+		if r.SemanticReuse == nil || !r.SemanticReuse.VerifierPairThink || r.SemanticReuse.VerifierSourceThink || r.SemanticReuse.VerifierPairTemperature == nil || *r.SemanticReuse.VerifierPairTemperature != 1 || r.SemanticReuse.VerifierPairSeed == nil || *r.SemanticReuse.VerifierPairSeed != 42 {
+			t.Fatal("MCP request ignored pair option or enabled source reasoning")
+		}
+		return completedResult(), nil
+	}}, "")
+	result, err := session.CallTool(t.Context(), &mcp.CallToolParams{Name: ToolName, Arguments: map[string]any{"request_path": "pair.json"}})
+	if err != nil || result.IsError || calls != 1 {
+		t.Fatalf("explicit optional pair request rejected: %+v %v calls=%d", result, err, calls)
 	}
 }

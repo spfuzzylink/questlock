@@ -1,0 +1,306 @@
+{
+  "schema": 1,
+  "meaning": "Consumed development diagnostics, including failed and discarded configurations. These are not fresh holdout qualification, a benchmark of answer generation, or a savings claim. Verify recomputes preserved observations, not model reasoning correctness.",
+  "paid_fallback_enabled": false,
+  "provider_api_charge_usd": 0,
+  "runs": [
+    {
+      "name": "guard4-r3",
+      "file": "guard4-r3.json",
+      "sha256": "2b53e0b23b3ebecddfba95fa218af2b7a880b5e01a7689050ad007766fbf076e",
+      "fixture": "r3-cases.json",
+      "fixture_sha256": "acee755756623aa2f4a947b2d898d5fb00700f1dec095dcab3fdd238dd1b84db",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "520397afb2a2893a2e3c6cf4961845a46b0ea763f03acb8c5a4c2a268e2394df",
+        "manifest_sha256": "9b846b408d184e0e640b51866f72933ab779f9c667f67c0de50153f212a395d4",
+        "binary_sha256": "ee826a4e2915d34078d9298ec3692e45d0d5155b282109778594d767b042c5a0",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "7ae4ebb901b6377042f50b83440349eea95de7c25e1911cc29fda74e1d630cb9",
+          "policy_version": "questlock-factorized-validity-v16"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "002076a029e9ed25363c5940ccf2c596d01557637f4487383ce57f3b25147e71",
+          "semantic/reuse.go": "0134ff28a9418f7f2257d3f02ed3ba4465a59dda6c12bade0c0d8c660d1ff32f",
+          "inference/ollama.go": "3518c039856e4973bc47aa98a8dc6f25646c834cc2e96c013cf793cbddcaf883"
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        }
+      }
+    },
+    {
+      "name": "compact-pilot",
+      "file": "compact-pilot.json",
+      "sha256": "4225119ade3a31e74947cc855b01050a5772170b83a727227a1bf3c94fe0cba0",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "a16348198c5bfcd281d51bc4a402144a7d24bb69541cf8f7d667ff4ad0f1fb04",
+        "manifest_sha256": "783c659aadfb213a738f58a8e1d264ddc7ae1541678ba45e32df11f0839ae387",
+        "binary_sha256": "dc28f77259137347c6d97af8ce917242b8968c8645c0395c475569500c9cd1eb",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "f78b5c6c979c756f8dd08a765470aa6f5fa84c1f94400211719efd163a7bd18d",
+          "policy_version": "questlock-factorized-validity-v17"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "9ed598bd55de1e2c81322b0256c6ea00bd0cc303f573b3ca8c884c47cafccbe1",
+          "semantic/reuse.go": "0134ff28a9418f7f2257d3f02ed3ba4465a59dda6c12bade0c0d8c660d1ff32f",
+          "inference/ollama.go": "3518c039856e4973bc47aa98a8dc6f25646c834cc2e96c013cf793cbddcaf883"
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        }
+      }
+    },
+    {
+      "name": "evidence-pilot-discarded",
+      "file": "evidence-pilot-discarded.json",
+      "sha256": "bc72ec618525a14e1534cc3d73a9e44827f494fe008bcd9bc24b144b5416b121",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "a14e749a23e96ab2f5f384193e5021bc9f06afcfc71a93015881bb0504d42ca5",
+        "manifest_sha256": "8fd7b414757ed2d86ed9397456fd9f314218f06ccdd6f21c56d5143007ad25e4",
+        "binary_sha256": "72dae579f6637363bed5f691b368d151040c871e1ebcb259b8ade8d4c20ca278",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "7a640d651c49a04b8f68c42454352a299e672a5a054eaa1663ea907cbed5935a",
+          "policy_version": "questlock-factorized-validity-v18"
+        },
+        "pair_protocol": "five evidence/relation/decision strings; Go-derived verdict; discarded prototype",
+        "report_schema": 1,
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "dd28d7e2bab4ff0e18ee31d9618bd34551822a7d5eb8197013b0befa7ff47698",
+          "semantic/reuse.go": "0134ff28a9418f7f2257d3f02ed3ba4465a59dda6c12bade0c0d8c660d1ff32f",
+          "inference/ollama.go": "3518c039856e4973bc47aa98a8dc6f25646c834cc2e96c013cf793cbddcaf883"
+        },
+        "pair_schema": {
+          "answer_basis_quote": "exact UTF-8 substring, at most160bytes",
+          "answer_basis_relation": "direct|negative|conditional|insufficient|contradictory|unknown",
+          "coverage": "complete|partial|absent|unknown",
+          "facts": "valid|changed|unsupported|unknown",
+          "format": "same|changed|unknown",
+          "extra_fields_allowed": false
+        }
+      }
+    },
+    {
+      "name": "same-model-pilot",
+      "file": "same-model-pilot.json",
+      "sha256": "978fe8b1161d46811998cccbef8a16506c78ba5f91acc061a4e4cf142e1da08c",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "1eff2de7cb6410e72135a9cae66082d09aee30df4090bd2cd665ab813f37879e",
+        "manifest_sha256": "e70d04f054b683ec195156170e46b61a2b00c26ac714b3529e9b6f1880eaf9c4",
+        "binary_sha256": "dc28f77259137347c6d97af8ce917242b8968c8645c0395c475569500c9cd1eb",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "f78b5c6c979c756f8dd08a765470aa6f5fa84c1f94400211719efd163a7bd18d",
+          "policy_version": "questlock-factorized-validity-v17"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "9ed598bd55de1e2c81322b0256c6ea00bd0cc303f573b3ca8c884c47cafccbe1",
+          "semantic/reuse.go": "0134ff28a9418f7f2257d3f02ed3ba4465a59dda6c12bade0c0d8c660d1ff32f",
+          "inference/ollama.go": "3518c039856e4973bc47aa98a8dc6f25646c834cc2e96c013cf793cbddcaf883"
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        }
+      }
+    },
+    {
+      "name": "thinking-pilot",
+      "file": "thinking-pilot.json",
+      "sha256": "f9c2b33c03fb45ce86a30075a058b10ac37bd3520c214857c66321fb73f2d426",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "c453c8e8ba844769d81438ffed90c9a4bab6f6270c69499e76722649dade26f6",
+        "manifest_sha256": "a10ace9c3d9c53d5ea98c630f6569553798cda1214b6dc97dd4323beb48f11dd",
+        "binary_sha256": "213501d2d1c58efaa0598ce7345f0733196523dfa9805d379ecbcf746d568c00",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "f78b5c6c979c756f8dd08a765470aa6f5fa84c1f94400211719efd163a7bd18d",
+          "policy_version": "questlock-factorized-validity-v17"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "fea9787a9f09d74c8957d8b85856dde9439cf6ae4ecd94ceda6382df13743175",
+          "semantic/reuse.go": "10a8aed45d2076e98884861bfb1e1d4c352416eed0fcdac4fa863971b9ce7055",
+          "inference/ollama.go": "3518c039856e4973bc47aa98a8dc6f25646c834cc2e96c013cf793cbddcaf883"
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        }
+      }
+    },
+    {
+      "name": "sampled-thinking-pilot",
+      "file": "sampled-thinking-pilot.json",
+      "sha256": "0ebf8add9c0a02384401f6ec442792c7e6973ee655c20b4d34867cce080a14e2",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "03e4d4ba421844dc09b3c9da2dde8ea205934bc8615a8d6a34e1ac0ab517bf91",
+        "manifest_sha256": "59905c88850a8169d4e5d8629b9f7f0afda66a20ab71c27e41dd25e4428e3027",
+        "binary_sha256": "9b02167c49b5bdcc073cb0207a8b5cee993395d24ac007344defd5bf554cb0af",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "f78b5c6c979c756f8dd08a765470aa6f5fa84c1f94400211719efd163a7bd18d",
+          "policy_version": "questlock-factorized-validity-v17"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "d090612b776e0f5fb9e709c9c7d165a4a952631e2e298194148de163235e0a4a",
+          "semantic/reuse.go": "d6a92781c3f2a0f7d31588e5ba0349602725e0ccc1a30fd3c0dc28d76804711c",
+          "inference/ollama.go": "a6c1bfcedf4636b1acdec81c15c9bdcb4b158b451ac4a007cef529e21319e919"
+        },
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        },
+        "explicit_pair_temperature": 1,
+        "explicit_pair_seed": 42,
+        "stop_on_execution_error": true
+      }
+    }
+  ],
+  "retained_prior_native_attempts": 201,
+  "retained_prior_usage_unknown": 5,
+  "retained_prior_incomplete_known": 1,
+  "retained_prior_complete_known": 195,
+  "prior_boundary_basis": "Independent prior-scope audit boundary preserved in the frozen pre-run plan. Prior jobs are not recomputed from these recent report files.",
+  "prior_boundary_source_sha256": "520397afb2a2893a2e3c6cf4961845a46b0ea763f03acb8c5a4c2a268e2394df"
+}

@@ -341,10 +341,20 @@ func (v *FactorizedVerifier) Verify(ctx context.Context, request semantic.Validi
 
 func (v *FactorizedVerifier) stageSpec(stage, revision, instructions, input, left, right string) inference.Spec {
 	zero := int64(0)
-	// Deliberation is an explicit, bounded source-only option. A cached source
-	// pays no new reasoning cost; applicability checks never enable thinking.
-	think := v.config.VerifierSourceThink && stage == "source"
+	// Each stage has an independent, explicit reasoning opt-in. Cached work
+	// pays no new reasoning cost; omitted flags preserve the non-thinking wire.
+	think := v.config.VerifierSourceThink && stage == "source" || v.config.VerifierPairThink && stage == "equivalence"
 	temperature := float64(0)
+	var seed *int64
+	if stage == "equivalence" {
+		if v.config.VerifierPairTemperature != nil {
+			temperature = *v.config.VerifierPairTemperature
+		}
+		if v.config.VerifierPairSeed != nil {
+			value := *v.config.VerifierPairSeed
+			seed = &value
+		}
+	}
 	timeout := int64((v.config.VerifierTimeoutMS + 999) / 1000)
 	outputTypes := map[string]string{"verdict": "string", left: "boolean", right: "boolean"}
 	if stage == "equivalence" {
@@ -360,7 +370,7 @@ func (v *FactorizedVerifier) stageSpec(stage, revision, instructions, input, lef
 	if stage == "equivalence" {
 		model, inputCap = factorizedPairPolicy(v.config)
 	}
-	return inference.Spec{Task: "reuse-factorized-" + stage + "-" + v.identity[:24], Revision: revision, Provider: "ollama", Model: model, Instructions: instructions, Input: input, MaxContextBytes: 131072, MaxInputTokens: inputCap, MaxOutputTokens: v.config.VerifierMaxOutputTokens / 2, ReuseForSeconds: 3600, DailyTokenBudget: v.DailyTokenBudget, Ollama: &inference.OllamaOptions{Format: "json", Think: &think, Temperature: &temperature, KeepAliveSeconds: &zero, GenerationTimeoutSeconds: &timeout, OutputTypes: outputTypes}}
+	return inference.Spec{Task: "reuse-factorized-" + stage + "-" + v.identity[:24], Revision: revision, Provider: "ollama", Model: model, Instructions: instructions, Input: input, MaxContextBytes: 131072, MaxInputTokens: inputCap, MaxOutputTokens: v.config.VerifierMaxOutputTokens / 2, ReuseForSeconds: 3600, DailyTokenBudget: v.DailyTokenBudget, Ollama: &inference.OllamaOptions{Format: "json", Think: &think, Temperature: &temperature, Seed: seed, KeepAliveSeconds: &zero, GenerationTimeoutSeconds: &timeout, OutputTypes: outputTypes}}
 }
 
 func (v *FactorizedVerifier) stage(ctx context.Context, name string, spec inference.Spec) (inference.Result, semantic.VerificationWork, error) {

@@ -74,8 +74,11 @@ func run(args []string, out io.Writer) error {
 	verifierInput := f.Int64("verifier-max-input-tokens", 16384, "total verifier input reservation cap")
 	verifierSourceInput := f.Int64("verifier-source-max-input-tokens", 0, "optional source input cap, at most half the total verifier input cap")
 	verifierPairInput := f.Int64("verifier-pair-max-input-tokens", 0, "optional applicability input cap, at most half the total verifier input cap")
-	verifierSourceThink := f.Bool("verifier-source-think", false, "explicit bounded source reasoning; applicability remains non-thinking")
-	verifierOutput := f.Int64("verifier-max-output-tokens", 128, "total verifier output cap; source reasoning without this flag selects its policy default")
+	verifierSourceThink := f.Bool("verifier-source-think", false, "explicit bounded source reasoning, independent of applicability reasoning")
+	verifierPairThink := f.Bool("verifier-pair-think", false, "explicit bounded applicability reasoning; source reasoning is independent")
+	verifierPairTemperature := f.Float64("verifier-pair-temperature", 0, "optional applicability temperature in 0..2; absent keeps zero")
+	verifierPairSeed := f.Int64("verifier-pair-seed", 0, "optional applicability seed in 0..2147483647; absent leaves runtime default")
+	verifierOutput := f.Int64("verifier-max-output-tokens", 128, "total verifier output cap; either reasoning flag without this option selects its policy default")
 	verifierTimeout := f.Int("verifier-timeout-ms", 60000, "total verifier invocation deadline, still bounded by the caller and resolver")
 	minSimilarity := f.Float64("min-similarity", 0.25, "retrieval cutoff in 0..1; zero selects the semantic policy default")
 	resourcePolicyPath := f.String("resource-policy", "", "optional runtime-only JSON admission policy; bounded wait before any fresh claim")
@@ -96,7 +99,7 @@ func run(args []string, out io.Writer) error {
 			outputExplicit, verifierOptionsExplicit = true, true
 		case "verifier-timeout-ms":
 			timeoutExplicit, verifierOptionsExplicit = true, true
-		case "verifier-source-think", "min-similarity", "verifier-pair-model", "verifier-pair-max-input-tokens", "verifier-max-input-tokens", "verifier-source-max-input-tokens":
+		case "verifier-pair-temperature", "verifier-pair-seed", "verifier-source-think", "verifier-pair-think", "min-similarity", "verifier-pair-model", "verifier-pair-max-input-tokens", "verifier-max-input-tokens", "verifier-source-max-input-tokens":
 			verifierOptionsExplicit = true
 		}
 	})
@@ -118,14 +121,14 @@ func run(args []string, out io.Writer) error {
 		return errors.New("explicit literal-loopback endpoints required")
 	}
 	outputLimit := *verifierOutput
-	if *verifierSourceThink && !outputExplicit {
+	if (*verifierSourceThink || *verifierPairThink) && !outputExplicit {
 		outputLimit = 0 // Explicit reasoning selects its separately bounded policy default.
 	}
 	timeoutLimit := *verifierTimeout
-	if *verifierSourceThink && !timeoutExplicit {
+	if (*verifierSourceThink || *verifierPairThink) && !timeoutExplicit {
 		timeoutLimit = 0
 	}
-	verifierConfig, e := measurementVerifierConfig(*verifierModel, *verifierSourceThink, outputLimit, timeoutLimit, *minSimilarity)
+	verifierConfig, e := measurementVerifierConfig(*verifierModel, *verifierSourceThink, *verifierPairThink, outputLimit, timeoutLimit, *minSimilarity)
 	if e != nil {
 		return e
 	}
@@ -136,6 +139,14 @@ func run(args []string, out io.Writer) error {
 	verifierConfig.VerifierSourceMaxInputTokens = *verifierSourceInput
 	verifierConfig.VerifierPairModel = *verifierPairModel
 	verifierConfig.VerifierPairMaxInputTokens = *verifierPairInput
+	f.Visit(func(v *flag.Flag) {
+		switch v.Name {
+		case "verifier-pair-temperature":
+			verifierConfig.VerifierPairTemperature = verifierPairTemperature
+		case "verifier-pair-seed":
+			verifierConfig.VerifierPairSeed = verifierPairSeed
+		}
+	})
 	verifierConfig, e = semantic.NormalizeReuseConfig(verifierConfig)
 	if e != nil {
 		return e
@@ -205,11 +216,22 @@ func run(args []string, out io.Writer) error {
 	if resourcePolicy != nil {
 		header["resource_policy"] = resourcePolicy
 	}
+	if verifierConfig.VerifierPairTemperature != nil {
+		header["verifier_pair_temperature"] = *verifierConfig.VerifierPairTemperature
+	}
+	if verifierConfig.VerifierPairSeed != nil {
+		header["verifier_pair_seed"] = *verifierConfig.VerifierPairSeed
+	}
 	if verifierConfig.VerifierSourceThink {
 		header["verifier_source_think"] = true
+	}
+	if verifierConfig.VerifierPairThink {
+		header["verifier_pair_think"] = true
+	}
+	if verifierConfig.VerifierSourceThink || verifierConfig.VerifierPairThink {
 		header["semantic_timeout_ms"] = verifierConfig.TimeoutMS
 	}
-	if verifierConfig.VerifierSourceThink || verifierConfig.VerifierMaxOutputTokens != 128 {
+	if verifierConfig.VerifierSourceThink || verifierConfig.VerifierPairThink || verifierConfig.VerifierMaxOutputTokens != 128 {
 		header["verifier_max_output_tokens"] = verifierConfig.VerifierMaxOutputTokens
 	}
 	if verifierConfig.VerifierTimeoutMS != 60000 {
@@ -272,6 +294,9 @@ func run(args []string, out io.Writer) error {
 				request.SemanticReuse.VerifierPairModel = verifierConfig.VerifierPairModel
 				request.SemanticReuse.VerifierPairMaxInputTokens = verifierConfig.VerifierPairMaxInputTokens
 				request.SemanticReuse.VerifierSourceThink = verifierConfig.VerifierSourceThink
+				request.SemanticReuse.VerifierPairThink = verifierConfig.VerifierPairThink
+				request.SemanticReuse.VerifierPairTemperature = verifierConfig.VerifierPairTemperature
+				request.SemanticReuse.VerifierPairSeed = verifierConfig.VerifierPairSeed
 				request.SemanticReuse.VerifierMaxOutputTokens = verifierConfig.VerifierMaxOutputTokens
 				request.SemanticReuse.VerifierTimeoutMS = verifierConfig.VerifierTimeoutMS
 				request.SemanticReuse.MinSimilarity = verifierConfig.MinSimilarity
@@ -374,8 +399,8 @@ func run(args []string, out io.Writer) error {
 
 // Validate measurement options before opening credentials or constructing a
 // provider. The real requests retain their case-specific evidence and checks.
-func measurementVerifierConfig(model string, think bool, output int64, timeout int, similarity float64) (semantic.ReuseConfig, error) {
-	c, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "business-measurement-options", Domain: "synthetic-business-measurement", EvidenceRevision: "options-1", EmbeddingModel: "all-minilm", MinSimilarity: similarity}, ReadOnly: true, Intent: "validate-measurement-options", VerifierModel: model, VerifierPolicy: "factorized-v1", VerifierSourceThink: think, VerifierMaxInputTokens: 16384, VerifierMaxOutputTokens: output, VerifierTimeoutMS: timeout})
+func measurementVerifierConfig(model string, think, pairThink bool, output int64, timeout int, similarity float64) (semantic.ReuseConfig, error) {
+	c, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "business-measurement-options", Domain: "synthetic-business-measurement", EvidenceRevision: "options-1", EmbeddingModel: "all-minilm", MinSimilarity: similarity}, ReadOnly: true, Intent: "validate-measurement-options", VerifierModel: model, VerifierPolicy: "factorized-v1", VerifierSourceThink: think, VerifierPairThink: pairThink, VerifierMaxInputTokens: 16384, VerifierMaxOutputTokens: output, VerifierTimeoutMS: timeout})
 	if err != nil {
 		return semantic.ReuseConfig{}, errors.New("invalid bounded semantic verifier options")
 	}

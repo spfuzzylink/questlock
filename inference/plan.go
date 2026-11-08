@@ -68,7 +68,7 @@ func BuildPlan(s Spec) (Plan, error) {
 	}
 	p.Request = Request{Stream: s.Stream, Provider: provider, Model: s.Model, ReasoningEffort: s.ReasoningEffort, Prefix: prefix, Input: input, MaxOutputTokens: s.MaxOutputTokens, CacheMode: mode}
 	p.Request.OpenRouter, p.Request.SGLang = s.OpenRouter, s.SGLang
-	p.Request.Ollama = s.Ollama
+	p.Request.Ollama = cloneOllamaOptions(s.Ollama)
 	if provider == "ollama" {
 		p.Request.ContextWindow = s.MaxInputTokens + s.MaxOutputTokens + 512
 	}
@@ -229,6 +229,9 @@ func validateOllamaOptions(options *OllamaOptions) error {
 			return errors.New("ollama temperature must be finite and between 0 and 2")
 		}
 	}
+	if options.Seed != nil && (*options.Seed < 0 || *options.Seed > 2147483647) {
+		return errors.New("ollama seed must be between 0 and 2147483647")
+	}
 	if options.KeepAliveSeconds != nil && (*options.KeepAliveSeconds < 0 || *options.KeepAliveSeconds > 300) {
 		return errors.New("ollama keep_alive_seconds must be between 0 and 300")
 	}
@@ -242,6 +245,41 @@ func validateOllamaOptions(options *OllamaOptions) error {
 		return err
 	}
 	return nil
+}
+
+// Snapshot optional controls so later caller mutations cannot change the wire
+// request after its fingerprint has been computed.
+func cloneOllamaOptions(options *OllamaOptions) *OllamaOptions {
+	if options == nil {
+		return nil
+	}
+	copy := *options
+	copy.Temperature = cloneOllamaValue(options.Temperature)
+	copy.Seed = cloneOllamaValue(options.Seed)
+	copy.KeepAliveSeconds = cloneOllamaValue(options.KeepAliveSeconds)
+	copy.Think = cloneOllamaValue(options.Think)
+	copy.GenerationTimeoutSeconds = cloneOllamaValue(options.GenerationTimeoutSeconds)
+	if options.OutputTypes != nil {
+		copy.OutputTypes = make(map[string]string, len(options.OutputTypes))
+		for k, v := range options.OutputTypes {
+			copy.OutputTypes[k] = v
+		}
+	}
+	if options.FieldRoles != nil {
+		copy.FieldRoles = make(map[string]string, len(options.FieldRoles))
+		for k, v := range options.FieldRoles {
+			copy.FieldRoles[k] = v
+		}
+	}
+	return &copy
+}
+
+func cloneOllamaValue[T any](value *T) *T {
+	if value == nil {
+		return nil
+	}
+	copy := *value
+	return &copy
 }
 
 func ollamaThinkingEnabled(options *OllamaOptions) bool {

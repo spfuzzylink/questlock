@@ -64,6 +64,7 @@ type Request struct {
 // OllamaOptions opts into local generation controls without changing runtime
 // defaults for requests that omit them. Format accepts only "json" or empty;
 // a non-nil Temperature must be finite and between 0 and 2, inclusive.
+// A non-nil Seed must be between 0 and 2147483647; nil leaves the runtime default.
 // KeepAliveSeconds accepts 0..300; 0 requests unloading after generation.
 // Think defaults to false. Explicit true requires nonstream generation and
 // installed model metadata advertising boolean true; reasoning is discarded.
@@ -81,6 +82,7 @@ type Request struct {
 type OllamaOptions struct {
 	Format                   string            `json:"format,omitempty"`
 	Temperature              *float64          `json:"temperature,omitempty"`
+	Seed                     *int64            `json:"seed,omitempty"`
 	KeepAliveSeconds         *int64            `json:"keep_alive_seconds,omitempty"`
 	Think                    *bool             `json:"think,omitempty"`
 	GenerationTimeoutSeconds *int64            `json:"generation_timeout_seconds,omitempty"`
