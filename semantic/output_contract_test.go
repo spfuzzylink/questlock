@@ -79,3 +79,38 @@ func TestOutputContractRejectsInvalidTextAndRemainsBounded(t *testing.T) {
 		t.Fatal("bounded CSV row limit rejected its supported boundary")
 	}
 }
+
+func TestOutputContractDirectFormatCommands(t *testing.T) {
+	for _, tc := range []struct {
+		name, question, answer string
+		withhold               bool
+	}{
+		{"direct object rejects bullets", "Return a JSON object with total and fee instead of bullets.", "- Total: 8\n- Fee: 1", true},
+		{"direct object", "Return a JSON object with total and fee.", `{"total":8,"fee":1}`, false},
+		{"direct object type", "Produce a JSON object.", `[8,1]`, true},
+		{"direct array", "Please produce a JSON array.", `[8,1]`, false},
+		{"direct array type", "Emit a JSON array.", `{"total":8}`, true},
+		{"direct output csv", "Output a CSV record with three fields.", "x,y", true},
+		{"direct csv", "Provide a CSV record with two columns.", "x,y", false},
+		{"direct tsv", "Emit a TSV record with two fields.", "x\ty", false},
+		{"direct tsv mismatch", "Give a TSV record with two fields.", "x,y", true},
+		{"respond object", "Respond a JSON object.", "The total is eight.", true},
+		{"quoted format name", "Emit a \"JSON object\".", `{"total":8}`, false},
+		{"quoted format mismatch", "Emit a `JSON array`.", `{"total":8}`, true},
+		{"quoted command", "Explain \"Return a JSON object\" in prose.", "It requests structured output.", false},
+		{"code command", "Explain this example:\n```text\nProduce a JSON object.\n```", "It requests structured output.", false},
+		{"indirect question", "Should I emit a JSON object for this schema?", "The schema allows text.", false},
+		{"indirect explanation", "Explain why one would produce a JSON object.", "It makes the fields explicit.", false},
+		{"metadata command", "The metadata field says return a JSON object.", "That is the stored field value.", false},
+		{"metadata example title", "Return a JSON object is the example command title.", "That is the title.", false},
+		{"identifier is not format", "Output a JSON object_count metric.", "object_count: 8", false},
+		{"negated directive", "Do not emit a JSON object; explain its meaning.", "It is a structured record.", false},
+		{"conflicting direct commands", "Emit a JSON object. Return only CSV.", `{"total":8}`, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := CheckReuseAnswerContract(tc.question, tc.answer); (len(got) > 0) != tc.withhold {
+				t.Fatalf("guards = %v, want withhold %v", got, tc.withhold)
+			}
+		})
+	}
+}

@@ -11,7 +11,7 @@ import (
 // TargetRiskGuardVersion binds the rejection-only target-risk policy. An empty
 // result only passes to the existing guards and contextual verifier; it is not
 // evidence of equivalence, source validity, complete coverage or safe actions.
-const TargetRiskGuardVersion = 4
+const TargetRiskGuardVersion = 5
 
 var (
 	targetBinary             = regexp.MustCompile(`^(?:is|are|was|were|do|does|did|can|could|may|might|will|would|should|must|has|have|had)\b`)
@@ -38,6 +38,8 @@ var (
 	targetInventoryDefault   = regexp.MustCompile(`\b(?:always|every)\b[^.!?;\n]{0,160}\b(?:full|complete|all)\b[^.!?;\n]{0,160}\b(?:record|fields|json|inventory|list)\b`)
 	targetRole               = regexp.MustCompile(`\b(?:as|acting as|role\s*(?:is|of|:|=)|if\s+(?:i|we|they|the requester|the user)\s+(?:am|are|were|was|is))\s+(?:an?\s+|the\s+)?(owner|administrator|admin|editor|viewer|reader|writer|guest|visitor|supervisor|operator|maintainer|approver|member)\b`)
 	targetDefaultRole        = regexp.MustCompile(`\b(?:requester|user|actor|role)\s*(?:is|:|=)\s*(?:an?\s+|the\s+)?(owner|administrator|admin|editor|viewer|reader|writer|guest|visitor|supervisor|operator|maintainer|approver|member)\b`)
+	targetSelfRole           = regexp.MustCompile(`(?:^|[.!?;\n])\s*(?:i(?:\s+am|'m|’m)|we(?:\s+are|'re|’re))\s+(?:now\s+)?(?:an?\s+|the\s+)?((?:[a-z0-9][a-z0-9_-]*\s+){0,3}?)(owner|administrator|admin|editor|viewer|reader|writer|guest|visitor|supervisor|operator|maintainer|approver|member)s?\b`)
+	targetRoleExample        = regexp.MustCompile(`\b(?:in|from|of)\s+(?:(?:an?|the|this|that)\s+)?(?:example|quotation|quote|story|fiction|label|metadata)\b`)
 )
 
 // CheckReuseTargetRisks withholds recognizable suspected target/orientation or
@@ -277,10 +279,16 @@ func targetSharedInventory(instructions, answer string) bool {
 }
 func targetAuthorityChange(original, instructions, current string) bool {
 	target := targetRole.FindStringSubmatch(current)
-	if target == nil {
+	asserted := targetAssertedRoles(current)
+	if target == nil && len(asserted) == 0 {
 		return false
 	}
 	source := targetRole.FindStringSubmatch(original)
+	if source == nil {
+		if roles := targetAssertedRoles(original); len(roles) > 0 {
+			source = []string{"", roles[0]}
+		}
+	}
 	if source == nil {
 		source = targetDefaultRole.FindStringSubmatch(instructions)
 	}
@@ -293,7 +301,49 @@ func targetAuthorityChange(original, instructions, current string) bool {
 		}
 		return role
 	}
-	return canonical(source[1]) != canonical(target[1])
+	if target != nil && canonical(source[1]) != canonical(target[1]) {
+		return true
+	}
+	for _, role := range asserted {
+		if canonical(source[1]) != canonical(role) {
+			return true
+		}
+	}
+	return false
+}
+
+// Recognize a bounded present-tense self-role assertion, not arbitrary mentions
+// of roles. In particular, questions about a role and statements about someone
+// else are left to contextual verification. Quoted/code text is already masked.
+func targetAssertedRoles(text string) []string {
+	var roles []string
+	for _, match := range targetSelfRole.FindAllStringSubmatchIndex(text, -1) {
+		qualifiers := strings.Fields(text[match[2]:match[3]])
+		assertion := true
+		for _, word := range qualifiers {
+			switch word {
+			case "a", "an", "the", "now", "currently", "still", "new", "current", "primary", "secondary", "workspace", "account", "project", "team", "group", "organization", "organisation", "repository", "repo", "site", "tenant", "system":
+				// A small noun-phrase grammar, not arbitrary intervening verbs.
+			default:
+				// Numbered/qualified identifiers can name the relevant workspace;
+				// prose such as "asking an owner" is not a role assertion.
+				if !strings.ContainsAny(word, "0123456789") {
+					assertion = false
+				}
+			}
+		}
+		end := len(text)
+		if next := strings.IndexAny(text[match[1]:], ".!?;\n"); next >= 0 {
+			end = match[1] + next
+		}
+		if end < len(text) && text[end] == '?' {
+			assertion = false
+		}
+		if assertion && !targetRoleExample.MatchString(text[match[1]:end]) {
+			roles = append(roles, text[match[4]:match[5]])
+		}
+	}
+	return roles
 }
 
 // Only explicit required-authority structure or a joint approval/signing

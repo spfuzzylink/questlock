@@ -304,3 +304,64 @@ func TestTargetRisksBothActionsDoNotCreateMultipleAuthorityActors(t *testing.T) 
 		}
 	}
 }
+
+func TestTargetRiskPresentSelfRoleAssertions(t *testing.T) {
+	for _, tc := range []struct {
+		name, original, instructions, current string
+		withhold                              bool
+	}{
+		{"current self role", "As an editor, may I view the record?", "", "I am an owner. Explain my access.", true},
+		{"current qualified role", "As an editor, may I view the record?", "", "I am now a workspace owner rather than an editor. Explain my access.", true},
+		{"numbered workspace role", "As an editor, may I view the record?", "", "I am now a zone-4 owner. Explain my access.", true},
+		{"plural self role", "As a member, may we view the record?", "", "We are now owners. Explain our access.", true},
+		{"straight self contraction", "As an editor, may I view the record?", "", "I'm now an owner. Explain my access.", true},
+		{"curly self contraction", "As an editor, may I view the record?", "", "I’m now an owner. Explain my access.", true},
+		{"straight plural contraction", "As a member, may we view the record?", "", "We're now owners. Explain our access.", true},
+		{"curly plural contraction", "As a member, may we view the record?", "", "We’re now owners. Explain our access.", true},
+		{"present source comparison", "I am an editor. Explain my access.", "", "I am now a reader. Explain my access.", true},
+		{"instruction source comparison", "Explain my access.", "The requester is an editor.", "I am now an operator. Explain my access.", true},
+		{"later assertion changes role", "As an editor, may I view the record?", "", "I am an editor. I am now an owner. Explain my access.", true},
+		{"same role", "As an editor, may I view the record?", "", "I am now an editor. Explain my access.", false},
+		{"same self role", "I am a reader. Explain my access.", "", "I am now a reader. Explain the same access.", false},
+		{"same straight self contraction", "As an editor, may I view the record?", "", "I'm now an editor. Explain my access.", false},
+		{"same curly self contraction", "As an editor, may I view the record?", "", "I’m now an editor. Explain my access.", false},
+		{"same straight plural contraction", "As a member, may we view the record?", "", "We're now members. Explain our access.", false},
+		{"same curly plural contraction", "As a member, may we view the record?", "", "We’re now members. Explain our access.", false},
+		{"contracted source comparison", "I'm an editor. Explain my access.", "", "I am now an owner. Explain my access.", true},
+		{"canonical admin role", "As an administrator, may I view the record?", "", "I am now an admin. Explain my access.", false},
+		{"direct question", "As an editor, may I view the record?", "", "Am I now an owner? Explain the policy.", false},
+		{"declarative form question", "As an editor, may I view the record?", "", "I am now an owner? Explain the policy.", false},
+		{"straight contraction question", "As an editor, may I view the record?", "", "I'm an owner? Explain the policy.", false},
+		{"curly contraction question", "As an editor, may I view the record?", "", "I’m an owner? Explain the policy.", false},
+		{"assertion before later question", "As an editor, may I view the record?", "", "I am an owner. What access do I have?", true},
+		{"indirect question", "As an editor, may I view the record?", "", "Explain whether I am now an owner under the policy.", false},
+		{"asking another actor", "As an editor, may I view the record?", "", "I am asking an owner about access.", false},
+		{"considering another actor", "As an editor, may I view the record?", "", "I am considering an owner for this task.", false},
+		{"contacting another actor", "As an editor, may I view the record?", "", "I am contacting an owner about access.", false},
+		{"with another actor", "As an editor, may I view the record?", "", "I am with an owner. Explain the policy.", false},
+		{"third party", "As an editor, may I view the record?", "", "My colleague is now an owner. Explain my editor access.", false},
+		{"other actor after same role", "As an editor, may I view the record?", "", "I am an editor whose manager is an owner. Explain my access.", false},
+		{"historical", "As an editor, may I view the record?", "", "I was an owner previously. Explain my editor access.", false},
+		{"historical qualifier", "As an editor, may I view the record?", "", "I am formerly an owner. Explain the policy.", false},
+		{"former role", "As an editor, may I view the record?", "", "I am a former owner. Explain the policy.", false},
+		{"negative assertion", "As an editor, may I view the record?", "", "I am not an owner. Explain the policy.", false},
+		{"no longer", "As an editor, may I view the record?", "", "I am no longer an owner. Explain the policy.", false},
+		{"example assertion", "As an editor, may I view the record?", "", "I am an owner in the example. Explain the actual editor policy.", false},
+		{"metadata assertion", "As an editor, may I view the record?", "", "I am an owner in this metadata. Explain the actual editor policy.", false},
+		{"quoted assertion", "As an editor, may I view the record?", "", "The label reads \"I am now an owner\". Explain my editor access.", false},
+		{"code assertion", "As an editor, may I view the record?", "", "```text\nI am now an owner.\n```\nExplain my editor access.", false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			got := CheckReuseTargetRisks(tc.original, tc.instructions, tc.current, "The role controls which records may be viewed.")
+			found := false
+			for _, code := range got {
+				if code == "target_risk_authority_change" {
+					found = true
+				}
+			}
+			if found != tc.withhold {
+				t.Fatalf("authority guard = %v, want withhold %v", got, tc.withhold)
+			}
+		})
+	}
+}

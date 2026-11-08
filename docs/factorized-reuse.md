@@ -1,12 +1,26 @@
 # Check the answer once. Check each new question separately.
 
-**Release gate: not qualified.** The current mixed-model development pilot
-completed all nine consumed cases with known usage: 4 true positives, 2 false
-negatives, 2 false positives and 1 true negative. The larger regression rounds
-were stopped. The unsafe acceptances involved reversed question polarity and
-incomplete coverage of a broader permissions request. Configurable resource
-admission does not resolve those semantic failures. Keep this candidate out of
-production; the published policy is unchanged.
+**Release gate: not qualified.** The latest completed development regression
+served 65 of 71 valid paraphrases and incorrectly served 2 of 73 invalid requests.
+One changed the requester's role; the other asked for JSON while the saved answer
+was a bullet list. Broker recovery also missed its declared recall floor: 9 of
+11 valid requests reused against a minimum of 10. A smaller passing pilot had
+not exposed these failures. Keep this candidate out of production.
+
+The successor tightens those general grammar checks and asks the verifier whether
+the unchanged answer covers the new request. A narrower question need not be
+equivalent to the original question. These changes pass offline checks; they
+still need measured qualification. Exact reuse and the default standalone
+verifier retain their existing behavior.
+
+The completed regression used 18 source checks on `qwen3.5:9b` (13,135 input and
+252 output tokens) and 139 question checks on `qwen3:14b` (94,793 input and 5,013
+output tokens). All 157 generations had confirmed usage and durable receipts;
+the independent scope and history audit found no orphan jobs, held budgets or
+new unknown outcomes. No hard resource stop fired. These are different model
+tokenizers, so their raw counts are not a normalized savings figure. Provider
+API spend was $0 with paid fallback disabled. This regression measured validity,
+not fresh-answer savings or reduced hosted Codex usage.
 
 Older development tables use their original labels and configurations. The
 previous 69/72 result included a reversed-polarity request later corrected to a

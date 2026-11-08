@@ -12,11 +12,13 @@ import (
 
 // OutputContractGuardVersion identifies rejection-only checks for explicit
 // presentation requests. Passing them never establishes meaning or correctness.
-const OutputContractGuardVersion = 2
+const OutputContractGuardVersion = 3
 
 var (
 	explicitFormat = regexp.MustCompile(`(?i)\b(?:return|respond|output|provide|give|format)\b[^.!?;\n]{0,160}?\b(?:as|in|using)\s+(?:(?:exactly|only|just|a|an|the)\s+){0,4}(?:(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+)[-\s]+(?:(?:columns?|fields?)[-\s]+)?)?[` + "`\"" + `]?(json(?:\s+(?:object|array))?|csv|tsv|markdown\s+table)\b`)
 	onlyFormat     = regexp.MustCompile(`(?i)\b(?:return|respond|output|provide|give)\s+(?:with\s+)?only\s+(?:an?\s+)?(json(?:\s+(?:object|array))?|csv|tsv)\b`)
+	directFormat   = regexp.MustCompile(`(?i)(?:^|[.!?;\n])\s*(?:please\s+)?(?:return|respond|output|provide|give|produce|emit)\s+(?:(?:a|an|the|one|single|exactly|only)\s+){0,4}[` + "`\"" + `]?(json\s+(?:object|array)|csv|tsv)\b`)
+	formatMention  = regexp.MustCompile(`(?i)^\s+(?:is|was|means|appears|denotes|describes)\b`)
 	onlyNumeric    = regexp.MustCompile(`(?i)\b(?:return|respond|output|provide|give)\b[^.?!;\n]{0,80}?\b(?:only|just)\s+(?:(?:the|a|an)\s+)?(numeric|number|integer|decimal)\b`)
 	numericOnly    = regexp.MustCompile(`(?i)\b(?:return|respond|output|provide|give)\b[^.?!;\n]{0,80}?\b(numeric|number|integer|decimal)[-\s]+only\b`)
 	numericValue   = regexp.MustCompile(`^[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?$`)
@@ -78,9 +80,12 @@ func CheckReuseAnswerContract(question, answer string) []string {
 		}
 	}
 	previous := ""
-	for _, pattern := range []*regexp.Regexp{explicitFormat, onlyFormat} {
+	for _, pattern := range []*regexp.Regexp{explicitFormat, onlyFormat, directFormat} {
 		for _, match := range pattern.FindAllStringSubmatchIndex(question, -1) {
 			if quotedRequest(question, match[0]) {
+				continue
+			}
+			if pattern == directFormat && formatMention.MatchString(question[match[3]:outputClauseEnd(question, match[1])]) {
 				continue
 			}
 			if pattern == explicitFormat {
