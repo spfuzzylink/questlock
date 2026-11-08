@@ -12,7 +12,7 @@ import (
 
 // OutputContractGuardVersion identifies rejection-only checks for explicit
 // presentation requests. Passing them never establishes meaning or correctness.
-const OutputContractGuardVersion = 3
+const OutputContractGuardVersion = 4
 
 var (
 	explicitFormat = regexp.MustCompile(`(?i)\b(?:return|respond|output|provide|give|format)\b[^.!?;\n]{0,160}?\b(?:as|in|using)\s+(?:(?:exactly|only|just|a|an|the)\s+){0,4}(?:(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+)[-\s]+(?:(?:columns?|fields?)[-\s]+)?)?[` + "`\"" + `]?(json(?:\s+(?:object|array))?|csv|tsv|markdown\s+table)\b`)
@@ -80,6 +80,19 @@ func CheckReuseAnswerContract(question, answer string) []string {
 		}
 	}
 	previous := ""
+	for _, contract := range requestedDelimitedRows(question) {
+		if contract.conflict || previous != "" && previous != contract.format {
+			return []string{"output_contract_conflict"}
+		}
+		previous = contract.format
+		delimiter := ','
+		if contract.format == "tsv" {
+			delimiter = '\t'
+		}
+		if !delimitedAnswer(answer, delimiter, contract.columns) || !delimitedHeaderMatches(answer, delimiter, contract.header) {
+			return []string{"output_" + contract.format + "_contract_mismatch"}
+		}
+	}
 	for _, pattern := range []*regexp.Regexp{explicitFormat, onlyFormat, directFormat} {
 		for _, match := range pattern.FindAllStringSubmatchIndex(question, -1) {
 			if quotedRequest(question, match[0]) {
@@ -121,11 +134,15 @@ func CheckReuseAnswerContract(question, answer string) []string {
 					return []string{"output_json_contract_mismatch"}
 				}
 			case "csv", "tsv":
+				width, header, conflict := delimitedColumnContract(question, match[3], outputClauseEnd(question, match[1]), columns)
+				if conflict {
+					return []string{"output_contract_conflict"}
+				}
 				delimiter := ','
 				if format == "tsv" {
 					delimiter = '\t'
 				}
-				if !delimitedAnswer(answer, delimiter, columns) {
+				if !delimitedAnswer(answer, delimiter, width) || !delimitedHeaderMatches(answer, delimiter, header) {
 					return []string{"output_" + format + "_contract_mismatch"}
 				}
 			default: // Whitespace in the recognized Markdown table phrase can vary.
