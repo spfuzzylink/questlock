@@ -26,6 +26,10 @@ def metric(actual, numerator, denominator):
 
 index = json.loads((HERE / "index.json").read_text())
 assert not index["paid_fallback_enabled"] and index["provider_api_charge_usd"] == 0
+assert len(index["runs"]) == 10
+assert index["closed_boundary"] == dict(native_attempts=586, complete_known_usage=556,
+                                       incomplete_known_usage=24, usage_unknown=6,
+                                       unfinished_execution_fences=30, recent_cached_source_checks=211)
 combined = Counter()
 unknown_keys = []
 for entry in index["runs"]:
@@ -117,16 +121,16 @@ for entry in index["runs"]:
                     incomplete_known_generations=sum(not w["complete"] for w in fresh if w in known),
                     unknown_usage_attempts=len(unknown))
     print(entry["name"], dict(counts), "native", len(fresh), "cached", len(cached))
-assert combined == Counter(native_generation_attempts=346, cached_source_checks=181,
-                           incomplete_known_generations=22, unknown_usage_attempts=1)
+assert combined == Counter(native_generation_attempts=385, cached_source_checks=211,
+                           incomplete_known_generations=23, unknown_usage_attempts=1)
 assert sorted(unknown_keys) == index["recent_unknown_usage_job_keys"]
 assert index["retained_prior_native_attempts"] == 201
 assert index["retained_prior_complete_known"] == 195
 assert index["retained_prior_incomplete_known"] == 1
 assert index["retained_prior_usage_unknown"] == 5
 assert 195 + 1 + 5 == 201
-assert 201 + combined["native_generation_attempts"] == 547
-assert 195 + combined["native_generation_attempts"] - combined["incomplete_known_generations"] - combined["unknown_usage_attempts"] == 518
-assert 1 + combined["incomplete_known_generations"] == 23
-assert 23 + index["retained_prior_usage_unknown"] + combined["unknown_usage_attempts"] == 29
+assert 201 + combined["native_generation_attempts"] == 586
+assert 195 + combined["native_generation_attempts"] - combined["incomplete_known_generations"] - combined["unknown_usage_attempts"] == 556
+assert 1 + combined["incomplete_known_generations"] == 24
+assert 24 + index["retained_prior_usage_unknown"] + combined["unknown_usage_attempts"] == 30
 print("PASS:", dict(combined), "Paid fallback off; provider API $0. No fresh-answer savings measured.")

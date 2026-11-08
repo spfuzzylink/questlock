@@ -1,12 +1,12 @@
 # Check the answer once. Check each new question separately.
 
-**Release gate: still open.** The latest consumed development pilot approved
-reuse for all 12 eligible answers and withheld all 8 invalid requests across six families.
-Every generation had confirmed usage. The larger 144-request regression is in
-progress; fresh independent validation and matched cost measurements still follow.
-A passing pilot does not qualify the release. These validity checks use fixed
-source answers; the matched Go workflow benchmark also needs to exercise fresh
-generation and alias publication.
+**Release gate: still open.** The four-minute-budget development pilot passed
+all 20 requests, but the same profile failed the larger 144-request regression.
+Two invalid answers were served. A contradictory complete verdict was withheld
+as protocol `unknown`; a later call exhausted its output cap and stopped the run,
+leaving 107 requests unattempted. Fresh independent qualification and matched
+cost measurements have not run. These checks use fixed source answers; they do
+not measure fresh answer generation or alias publication.
 
 The successor checks whether the unchanged answer covers the new request.
 Source bindings describe the saved task; they cannot substitute its old target
@@ -15,23 +15,26 @@ before/without question negatively. A narrower question need not repeat the
 original question. Exact reuse and the default standalone verifier keep their
 existing behavior.
 
-The pilot used `qwen3.5:9b` for 10 source checks (7,363 input and 140 output
+The passing pilot used `qwen3.5:9b` for 10 source checks (7,363 input and 140 output
 tokens) and `qwen3:14b` for 17 question checks (12,396 input and 7,826 output
-tokens, including reasoning). There were 31 embedding calls with 909 reported
-input tokens. This profile explicitly selected a shared four-minute verifier
-budget; one verification completed in 134.6 seconds. Context and output caps
-stayed fixed. The two-minute thinking default stays unchanged.
+tokens, including reasoning). Its 31 embedding calls reported 909 input tokens.
+The failed larger regression added five source checks (3,359 input and 70 output)
+and 34 question checks (22,526 input and 15,322 output), including all known
+failed work. Its 42 embedding calls reported 1,068 input tokens. These were
+explicit shared four-minute verifier budgets with fixed context and output caps;
+the two-minute thinking default stays unchanged.
 
-[Retained development runs](benchmarks/factorized-reuse/README.md) include eight
-failed configurations and the passing pilot. An earlier full regression served
-65/71 valid requests and incorrectly served 2/73 invalid ones. Those results and
-six historical unknown outcomes remain recorded. A new result cannot recover an
-older unconfirmed call. The evidence's offline check runs in `make check`.
+[Retained development runs](benchmarks/factorized-reuse/README.md) preserve nine
+failed runs and the passing pilot, including all 144 rows of the stopped larger
+regression. The audited boundary is 586 native attempts: 556 complete with known
+usage, 24 incomplete with known usage, and six with unknown usage. All 30
+unfinished fences remain. A new result cannot recover an older unconfirmed call.
+The evidence's offline check runs in `make check`.
 
 Provider API spend was $0 with paid fallback disabled. Model token counts stay
-separate; they are not a normalized savings figure. This pilot measured validity,
-not fresh-answer savings or reduced hosted Codex usage. Older labels and policy
-versions stay with their original reports.
+separate; they are not a normalized savings figure. These validity diagnostics
+did not measure fresh-answer savings, alias publication or reduced hosted Codex
+usage. Older labels and policy versions stay with their original reports.
 
 Someone asks the same thing in different words. We want the saved answer back,
 without quietly borrowing an answer to a different question.
