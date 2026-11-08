@@ -110,6 +110,36 @@ func TestThinkingDeadlineIsOneSharedContextAndCeilNativeCountGenerateOptions(t *
 	}
 }
 
+type thinkingDeadlineCallerProbe struct {
+	*canceledPairThinkingProvider
+	t        *testing.T
+	deadline time.Time
+}
+
+func (p *thinkingDeadlineCallerProbe) Generate(ctx context.Context, r inference.Request) (inference.Response, error) {
+	if p.stage(r) == "equivalence" {
+		if deadline, ok := ctx.Deadline(); !ok || !deadline.Equal(p.deadline) {
+			p.t.Error("pair did not inherit the earlier caller deadline")
+		}
+	}
+	return p.canceledPairThinkingProvider.Generate(ctx, r)
+}
+
+func cancelAfterThinkingPairStarts(started <-chan struct{}, cancel context.CancelFunc) <-chan bool {
+	observed := make(chan bool, 1)
+	go func() {
+		pairStarted := false
+		select {
+		case <-started:
+			pairStarted = true
+		case <-time.After(3 * time.Second):
+		}
+		cancel()
+		observed <- pairStarted
+	}()
+	return observed
+}
+
 func TestThinkingLongDeadlineCallerCancellationRetainsUsageAndFence(t *testing.T) {
 	v, base := factorizedTestVerifier(t, nil)
 	c := v.config
@@ -121,11 +151,17 @@ func TestThinkingLongDeadlineCallerCancellationRetainsUsageAndFence(t *testing.T
 	if err != nil {
 		t.Fatal(err)
 	}
-	p := &canceledPairThinkingProvider{factorizedTestProvider: base, started: make(chan struct{})}
-	v.runner.Provider = p
-	ctx, cancel := context.WithTimeout(t.Context(), 50*time.Millisecond)
+	ctx, cancel := context.WithTimeout(t.Context(), 30*time.Second)
 	defer cancel()
+	deadline, _ := ctx.Deadline()
+	p := &thinkingDeadlineCallerProbe{canceledPairThinkingProvider: &canceledPairThinkingProvider{factorizedTestProvider: base, started: make(chan struct{})}, t: t, deadline: deadline}
+	v.runner.Provider = p
+	// Cancellation must interrupt a started pair, rather than race durable setup.
+	started := cancelAfterThinkingPairStarts(p.started, cancel)
 	out, err := v.Verify(ctx, factorizedTestRequest())
+	if !<-started {
+		t.Fatal("pair did not start before the bounded setup wait")
+	}
 	if err == nil || out.Accepted() || len(out.Work) != 2 || out.Work[0].InputTokens == nil || out.Work[1].InputTokens != nil || !out.Work[1].GenerationCalled {
 		t.Fatal("earlier caller lost source usage or unknown pair")
 	}
@@ -137,15 +173,31 @@ func TestThinkingLongDeadlineCallerCancellationRetainsUsageAndFence(t *testing.T
 
 type thinkingDeadlineControlledCancel struct {
 	*independentFactorizedProvider
-	pairStarts int
+	t                *testing.T
+	expectedDeadline func() time.Time
+	started          chan struct{}
+	pairStarts       int
+	sourceDeadline   time.Time
+	pairDeadline     time.Time
+	pairError        error
 }
 
 func (p *thinkingDeadlineControlledCancel) Generate(ctx context.Context, r inference.Request) (inference.Response, error) {
 	if strings.HasPrefix(r.Prefix, factorizedPairInstructions) {
 		p.pairStarts++
+		var ok bool
+		p.pairDeadline, ok = ctx.Deadline()
+		if !ok || !p.pairDeadline.Equal(p.expectedDeadline()) {
+			p.t.Error("pair did not inherit the exact resolver deadline")
+		}
+		if p.pairStarts == 1 {
+			close(p.started)
+		}
 		<-ctx.Done()
-		return inference.Response{}, ctx.Err()
+		p.pairError = ctx.Err()
+		return inference.Response{}, p.pairError
 	}
+	p.sourceDeadline, _ = ctx.Deadline()
 	return p.independentFactorizedProvider.Generate(ctx, r)
 }
 
@@ -157,7 +209,7 @@ func TestThinkingLongDeadlineControlledResolverCancellationKeepsFence(t *testing
 		c.VerifierTimeoutMS = 240000
 		c.TimeoutMS = 240000
 		if shortResolver {
-			c.TimeoutMS = 50
+			c.TimeoutMS = 2000
 		}
 		var err error
 		c, err = semantic.NormalizeReuseConfig(c)
@@ -167,16 +219,42 @@ func TestThinkingLongDeadlineControlledResolverCancellationKeepsFence(t *testing
 		f.request.SemanticReuse = &c
 		f.verifier.config = c
 		f.seed(t)
-		p := &thinkingDeadlineControlledCancel{independentFactorizedProvider: f.stages}
+		var resolverDeadline, beforeRouterRun time.Time
+		embedderFactory := f.router.Reuse.EmbedderFactory
+		f.router.Reuse.EmbedderFactory = func(ctx context.Context, c semantic.Config) (semantic.Embedder, error) {
+			observedAt := time.Now()
+			resolverDeadline, _ = ctx.Deadline()
+			// Bracket deadline construction, independent of setup/completion speed.
+			if shortResolver && (resolverDeadline.Before(beforeRouterRun.Add(2*time.Second)) || resolverDeadline.After(observedAt.Add(2*time.Second))) {
+				t.Error("resolver did not construct the configured 2s deadline")
+				return nil, context.DeadlineExceeded
+			}
+			return embedderFactory(ctx, c)
+		}
+		p := &thinkingDeadlineControlledCancel{independentFactorizedProvider: f.stages, t: t, expectedDeadline: func() time.Time { return resolverDeadline }, started: make(chan struct{})}
 		f.verifier.runner.Provider = p
 		ctx := t.Context()
+		var started <-chan bool
+		var callerDeadline time.Time
 		if !shortResolver {
 			var cancel context.CancelFunc
-			ctx, cancel = context.WithTimeout(ctx, 50*time.Millisecond)
+			ctx, cancel = context.WithTimeout(ctx, 30*time.Second)
 			defer cancel()
+			callerDeadline, _ = ctx.Deadline()
+			started = cancelAfterThinkingPairStarts(p.started, cancel)
 		}
 		f.request.Spec.Input = "Which review must still happen before the preview proceeds?"
+		beforeRouterRun = time.Now()
 		out, err := f.router.Run(ctx, f.request)
+		if started != nil && !<-started {
+			t.Fatal("controlled pair did not start before the bounded setup wait")
+		}
+		if resolverDeadline.IsZero() || !p.sourceDeadline.Equal(resolverDeadline) || !p.pairDeadline.Equal(resolverDeadline) {
+			t.Fatal("source and pair did not share the exact shorter resolver deadline")
+		}
+		if shortResolver && p.pairError != context.DeadlineExceeded || !shortResolver && (!resolverDeadline.Equal(callerDeadline) || p.pairError != context.Canceled) {
+			t.Fatal("controlled work did not obey the shorter resolver or caller cancellation")
+		}
 		if err == nil || out.SemanticReuse == nil || out.SemanticReuse.GenerationAvoided || p.pairStarts != 1 || f.target.generations != 1 || len(out.SemanticReuse.Verifications) != 1 {
 			t.Fatalf("short resolver/caller did not stop controlled work: %+v %v", out.SemanticReuse, err)
 		}
