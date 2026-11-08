@@ -94,7 +94,11 @@ def load_forbidden():
 
 def public_email(address, metadata=False):
     address = address.lower()
-    if address.endswith(b"@users.noreply.github.com") or address == b"noreply@github.com":
+    # Exact public tool attribution, not a domain-wide identity exception.
+    # Allowing a credit does not authenticate its author or approve its output.
+    if address.endswith(b"@users.noreply.github.com") or address in {
+        b"noreply@github.com", b"noreply@anthropic.com",
+    }:
         return True
     if not metadata:
         domain = address.rsplit(b"@", 1)[-1]
@@ -251,7 +255,7 @@ class Guard:
             if line.startswith((b"author ", b"committer ", b"tagger ")):
                 match = re.search(rb"<([^<>]*)> [0-9]+ [+-][0-9]{4}$", line)
                 if not match or not public_email(match.group(1), metadata=True):
-                    self.record(label, {"author/committer email is not a GitHub noreply address"})
+                    self.record(label, {"author/committer email is not an allowed public noreply identity"})
 
     def tree(self, tree):
         if tree in self.trees:

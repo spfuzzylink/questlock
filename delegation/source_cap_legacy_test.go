@@ -7,15 +7,18 @@ import (
 	"testing"
 )
 
-func TestSourceCapZeroPreservesV15IdentityBytes(t *testing.T) {
+func TestTargetRiskPolicyInvalidatesPriorV15FactorizedIdentity(t *testing.T) {
 	c := controlledTestConfig()
 	c.VerifierPolicy = "factorized-v1"
 	c, e := semantic.NormalizeReuseConfig(c)
 	if e != nil {
 		t.Fatal(e)
 	}
-	if got := factorizedPolicyIdentity(c, strings.Repeat("a", 64), strings.Repeat("b", 64)); got != "f650c114870cd94b15bd5d0d154d85ace295ff6a448fc253e03bdbad607a8eb3" {
-		t.Fatal("no-option v15 identity changed", got)
+	// The optional source-cap addition preserved this old v15 identity. The
+	// rejection policy now intentionally invalidates experimental decisions
+	// made before whole-reply target risks were screened.
+	if got := factorizedPolicyIdentity(c, strings.Repeat("a", 64), strings.Repeat("b", 64)); got == "f650c114870cd94b15bd5d0d154d85ace295ff6a448fc253e03bdbad607a8eb3" {
+		t.Fatal("new risk policy reused the prior v15 identity", got)
 	}
 }
 func TestSourceCapBindsOnlyExplicitSourceContextAndKeepsFullInput(t *testing.T) {

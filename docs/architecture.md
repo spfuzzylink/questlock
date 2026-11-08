@@ -48,13 +48,18 @@ source-answer certificate, then checks the actual unchanged answer against the
 new request and its output contract under the full background. Stage receipts retain
 their own usage; an immutable combined receipt binds the decision to both stages,
 the source and the request. Source expiry and target ownership still apply.
+Rejection-only screens also withhold suspected changes in answer polarity,
+capability scope and approval roles. They cannot authorize reuse; the contextual
+check still decides whether the actual saved answer covers the current request.
 
 ```mermaid
 flowchart LR
     Q[New read-only question] --> E{Exact task hit?}
     E -->|Yes| R[Return checked result; no model work]
     E -->|No; own target claim| S[Retrieve and validate original source]
-    S --> C[Certify source support and completeness; certificate can be reused]
+    S --> G[Screen scope, roles and reply polarity]
+    G --> C[Certify source support and completeness; certificate can be reused]
+    G -->|Known rejection| F[Normal bounded fresh generation]
     C --> P[Check exact answer against new request and full background]
     P --> V[Revalidate source and publish durable answer reference]
     P -->|Known rejection| F[Normal bounded fresh generation]

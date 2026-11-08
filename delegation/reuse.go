@@ -344,6 +344,7 @@ func (r *controlledResolver) candidate(ctx context.Context, candidate semantic.C
 	if r.config.VerifierPolicy == "factorized-v1" {
 		guards = append(guards, semantic.CheckReuseAnswerContract(r.request.Spec.Input, source.Response.Text)...)
 		guards = append(guards, semantic.CheckReuseLanguageContract(proof.Question, r.request.Spec.Instructions, r.request.Spec.Input)...)
+		guards = append(guards, semantic.CheckReuseTargetRisks(proof.Question, r.request.Spec.Instructions, r.request.Spec.Input, source.Response.Text)...)
 	}
 	if len(guards) > 0 {
 		obs.Rejections = append(obs.Rejections, guards...)

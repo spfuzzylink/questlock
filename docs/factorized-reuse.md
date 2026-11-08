@@ -224,6 +224,17 @@ not check which object a measurement belongs to, prove its value, or validate
 every unit, denominator or time window. It can withhold valid derived statistics.
 Both model checks remain required after the screen passes.
 
+Some answers depend on how the question is asked. “Yes, that blocks the release”
+doesn't answer “Is the release ready?” unchanged. A saved explanation of read
+access also doesn't cover a new request for read **and** write access.
+
+The two-stage policy now has a rejection-only screen for suspected changes in
+yes/no direction, capability scope and approval roles. It runs before the
+question-checking model can authorize reuse. It can withhold valid paraphrases;
+passing it proves neither equivalence nor correctness. The full evidence and
+unchanged answer still go to the contextual verifier. Its version is part of the
+policy identity, so an older experimental decision cannot skip the new check.
+
 ## Measure the whole attempt
 
 The first new wording pays for source certification and question comparison.

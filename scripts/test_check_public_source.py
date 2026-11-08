@@ -56,6 +56,19 @@ class PatternTests(unittest.TestCase):
             self.assertFalse(GUARD.public_email(address))
             self.assertIn("email address outside public/example allowlist", GUARD.content_issues(address))
 
+    def test_public_tool_credit_is_an_exact_exception(self):
+        credit = b"noreply@anthropic.com"
+        self.assertTrue(GUARD.public_email(credit))
+        self.assertTrue(GUARD.public_email(credit, metadata=True))
+        self.assertEqual(GUARD.content_issues(b"Co-Authored-By: Claude Code <" + credit + b">"), set())
+        for address in (
+            b"person" + b"@anthropic.com",
+            b"noreply" + b"@anthropic.com.attacker.invalid",
+            b"noreply" + b"@sub.anthropic.com",
+        ):
+            self.assertFalse(GUARD.public_email(address))
+            self.assertFalse(GUARD.public_email(address, metadata=True))
+
     def test_guard_and_tests_do_not_contain_matching_fixture_literals(self):
         for path in (SCRIPT, Path(__file__)):
             self.assertEqual(GUARD.content_issues(path.read_bytes()), set())
