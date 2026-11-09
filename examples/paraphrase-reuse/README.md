@@ -107,3 +107,38 @@ which is a partial runner clock. `reported_verification_ms` and
 `reported_embedding_ms` are separate diagnostics: work may overlap runner time,
 and finish/indexing embeddings can occur after the runner returns. These clocks
 are never added to each other or used to invent missing end-to-end time.
+
+For a different approved workload, pass `--cases-file /absolute/private/cases.json`.
+It keeps the same six cases, two paraphrases per case and two checks: valid JSON
+and full-object `json_equals`. Copy the shape of `cases.json`; change the record,
+questions, expected fields and revision together. The file must be a private
+regular file, at most 1 MiB, in a private directory. Its exact bytes are hashed
+in the report. To summarize that run, supply the same file with `--report`:
+
+```sh
+go run ./examples/paraphrase-reuse --report /absolute/private/run/results.jsonl \
+  --cases-file /absolute/private/cases.json
+```
+
+Long answers need enough room in both arms. `--answer-max-output-tokens 2048`
+sets the same answer ceiling for the source and every fresh control. It does
+not relax the business checks or reduce verifier evidence. The default is 256;
+the maximum is 4,096. Review the complete verifier inputs too: a long saved
+answer must fit alongside its evidence and the verifier prompt.
+
+Optional `--max-duration 2h`, `--daily-input-tokens`, `--daily-output-tokens` and
+`--daily-total-tokens` declare a different bounded experiment before it starts.
+The defaults above stay unchanged. Duration is 1 ms to 2 hours in whole
+milliseconds; each token cap is positive and at most 1 trillion. The total is
+an independent joint cap, not an extra allowance. The log and offline summary
+retain the selected bounds. These flags never change an existing broker ledger;
+workers sharing a scope must agree on its caps. A cap, timeout or uncertain
+outcome stops the run. Preserve its costs and claims rather than rerunning it
+with a larger allowance.
+
+Compare short and long workloads separately. Include the first verification,
+source indexing, embeddings, rejected candidates and failed fresh answers.
+Then compare the measured exact repeats against their measured fresh controls.
+A first paraphrase can cost more to check than to regenerate; repeated aliases
+can amortize that overhead. A larger output cap alone is not a longer answer or
+a savings result.

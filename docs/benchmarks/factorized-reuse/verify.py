@@ -26,10 +26,56 @@ def metric(actual, numerator, denominator):
 
 index = json.loads((HERE / "index.json").read_text())
 assert not index["paid_fallback_enabled"] and index["provider_api_charge_usd"] == 0
-assert len(index["runs"]) == 10
-assert index["closed_boundary"] == dict(native_attempts=586, complete_known_usage=556,
-                                       incomplete_known_usage=24, usage_unknown=6,
-                                       unfinished_execution_fences=30, recent_cached_source_checks=211)
+assert len(index["runs"]) == 12
+assert index["closed_boundary"] == dict(native_attempts=618, complete_known_usage=587,
+                                       incomplete_known_usage=24, usage_unknown=7,
+                                       unfinished_execution_fences=31, recent_cached_source_checks=222)
+# Reconstruct the consumed 24-row union instead of trusting a new question list.
+latest = next(entry for entry in index["runs"] if entry["name"] == "target-contract-pilot24")
+assert latest["name"] == "target-contract-pilot24"
+derivation = pinned(latest["fixture_derivation"]["file"], latest["fixture_derivation"]["sha256"])
+prior = pinned(derivation["prior_fixture"], derivation["prior_fixture_sha256"])
+regression = pinned(derivation["regression_fixture"], derivation["regression_fixture_sha256"])
+derived = pinned(derivation["derived_fixture"], derivation["derived_fixture_sha256"])
+assert derivation["derived_fixture"] == latest["fixture"]
+assert derivation["derived_fixture_sha256"] == latest["fixture_sha256"]
+extra = derivation["additional_problem_variant_ids"]
+assert set(extra) == {"fresh3-support-01-n4", "fresh3-support-02-n4", "fresh3-onboard-01-n4", "fresh3-onboard-02-n1"}
+wanted = {v["id"] for c in prior["cases"] for v in c["variants"]} | set(extra)
+assert len(wanted) == 24
+expected = []
+for case in sorted(regression["cases"], key=lambda c: c["id"]):
+    variants = [v for v in sorted(case["variants"], key=lambda v: v["id"]) if v["id"] in wanted]
+    if variants:
+        expected.append({**case, "variants": variants})
+assert derived["cases"] == expected
+latest_report = pinned(latest["file"], latest["sha256"])
+assert "verifier_pair_think" not in latest_report
+assert latest["provenance"]["declared_verifier_pair_think"] is False
+assert latest["audit_summary"]["original_scorer_error"] == "report config verifier_pair_think"
+assert latest["audit_summary"]["original_raw_unchanged"] is True
+assert latest["audit_summary"]["encoding_only_replay_gate"] == "failed"
+assert {k: latest_report["totals"][k] for k in ("true_positives", "false_positives", "true_negatives", "false_negatives")} == dict(true_positives=6, false_positives=1, true_negatives=11, false_negatives=6)
+
+# A safely stopped process is not a completed model call or a quality result.
+stop = index["runs"][-1]
+assert stop["name"] == "assessment-memory-stop-pilot24"
+stopped = pinned(stop["file"], stop["sha256"])
+assert stopped["source_sha256"] == latest["fixture_sha256"]
+assert stopped["status"] == "partial_failed" and stopped["errors"] == ["canceled"]
+assert stopped["verifier_pair_assessment"] is True and "verifier_pair_think" not in stopped
+assert stopped["totals"]["confusion_pairs"] == 0
+assert stopped["totals"]["unscored"] == 24 and stopped["totals"]["unattempted"] == 23
+assert all(stopped["totals"][key] == 0 for key in ("true_positives", "false_positives", "true_negatives", "false_negatives"))
+assert all(stopped["totals"][key] is None for key in ("precision", "recall", "accuracy"))
+assert stop["audit_summary"]["usage_unknown"] == 1
+assert stop["audit_summary"]["actual_server_delivery_or_execution_completion_proved"] is False
+assert stop["audit_summary"]["forensic_inventory_only"] is True
+assert stop["resource_stop"]["after_child_sample_present"] is False
+assert stop["resource_stop"]["child_finished_event_present"] is False
+assert stop["resource_stop"]["child_and_watchdog_returned"] is True
+assert stop["development_gate"] == "operational_stop_no_semantic_estimate"
+
 combined = Counter()
 unknown_keys = []
 for entry in index["runs"]:
@@ -121,16 +167,16 @@ for entry in index["runs"]:
                     incomplete_known_generations=sum(not w["complete"] for w in fresh if w in known),
                     unknown_usage_attempts=len(unknown))
     print(entry["name"], dict(counts), "native", len(fresh), "cached", len(cached))
-assert combined == Counter(native_generation_attempts=385, cached_source_checks=211,
-                           incomplete_known_generations=23, unknown_usage_attempts=1)
+assert combined == Counter(native_generation_attempts=417, cached_source_checks=222,
+                           incomplete_known_generations=23, unknown_usage_attempts=2)
 assert sorted(unknown_keys) == index["recent_unknown_usage_job_keys"]
 assert index["retained_prior_native_attempts"] == 201
 assert index["retained_prior_complete_known"] == 195
 assert index["retained_prior_incomplete_known"] == 1
 assert index["retained_prior_usage_unknown"] == 5
 assert 195 + 1 + 5 == 201
-assert 201 + combined["native_generation_attempts"] == 586
-assert 195 + combined["native_generation_attempts"] - combined["incomplete_known_generations"] - combined["unknown_usage_attempts"] == 556
+assert 201 + combined["native_generation_attempts"] == 618
+assert 195 + combined["native_generation_attempts"] - combined["incomplete_known_generations"] - combined["unknown_usage_attempts"] == 587
 assert 1 + combined["incomplete_known_generations"] == 24
-assert 24 + index["retained_prior_usage_unknown"] + combined["unknown_usage_attempts"] == 30
+assert 24 + index["retained_prior_usage_unknown"] + combined["unknown_usage_attempts"] == 31
 print("PASS:", dict(combined), "Paid fallback off; provider API $0. No fresh-answer savings measured.")

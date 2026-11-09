@@ -61,7 +61,7 @@ func TestRelationV20PreservesSourceFrameAndEveryApprovedPairValue(t *testing.T) 
 		}
 	}
 	hash := sha256.Sum256([]byte(factorizedSupportInstructions))
-	if hex.EncodeToString(hash[:]) != "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141" || !strings.HasPrefix(p.requests[0].Prefix, factorizedSupportInstructions) || factorizedVerifierVersion != "questlock-factorized-validity-v20" || semantic.TargetRiskGuardVersion != 6 {
+	if hex.EncodeToString(hash[:]) != "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141" || !strings.HasPrefix(p.requests[0].Prefix, factorizedSupportInstructions) || factorizedVerifierVersion != "questlock-factorized-validity-v20" || semantic.TargetRiskGuardVersion != 7 {
 		t.Fatal("source or version contract changed")
 	}
 }

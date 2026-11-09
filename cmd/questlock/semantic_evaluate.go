@@ -177,6 +177,7 @@ type semanticEvalReport struct {
 	VerifierPolicy               string                           `json:"verifier_policy,omitempty"`
 	VerifierSourceThink          bool                             `json:"verifier_source_think"`
 	VerifierPairThink            bool                             `json:"verifier_pair_think,omitempty"`
+	VerifierPairAssessment       bool                             `json:"verifier_pair_assessment,omitempty"`
 	VerifierPairTemperature      *float64                         `json:"verifier_pair_temperature,omitempty"`
 	VerifierPairSeed             *int64                           `json:"verifier_pair_seed,omitempty"`
 	VerifierMaxInputTokens       int64                            `json:"verifier_max_input_tokens,omitempty"`
@@ -261,6 +262,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	verifierPolicy := f.String("verifier-policy", "", "empty for published standalone; factorized-v1 for source certification plus answer applicability")
 	verifierSourceThink := f.Bool("verifier-source-think", false, "explicit bounded reasoning for factorized-v1 source certification only")
 	verifierPairThink := f.Bool("verifier-pair-think", false, "explicit bounded reasoning for factorized-v1 applicability only; source reasoning is independent")
+	verifierPairAssessment := f.Bool("verifier-pair-assessment", false, "explicit bounded assessment before factorized pair decisions; cannot combine with pair thinking")
 	verifierPairTemperature := f.Float64("verifier-pair-temperature", 0, "optional factorized pair temperature in 0..2; absent keeps zero")
 	verifierPairSeed := f.Int64("verifier-pair-seed", 0, "optional factorized pair seed in 0..2147483647; absent leaves the runtime default")
 	threshold := f.Float64("min-similarity", 0.9, "retrieval cosine cutoff; not validity confidence")
@@ -270,7 +272,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	stopOnExecutionError := f.Bool("stop-on-execution-error", false, "stop scheduling after an execution error or unconfirmed evidence; known semantic outcomes continue")
 	stateDir := f.String("state-dir", "", "new absolute private state directory; explicit state is retained, failed temporary state is also retained")
 	f.Usage = func() {
-		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--state-dir NEW_PRIVATE_PATH] [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--batch-size 1|2] [--verifier-policy factorized-v1] [--verifier-source-think] [--verifier-pair-think] [--verifier-pair-temperature N --verifier-pair-seed N] [--verifier-source-max-input-tokens N] [--verifier-pair-model MODEL --verifier-pair-max-input-tokens N] [--resource-policy PATH] [--stop-on-execution-error] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving. Verifier deadlines default to 120000ms for thinking; an explicit factorized-thinking deadline may be at most 600000ms and is shared by both stages.")
+		_, _ = fmt.Fprintln(diagnostics, "Usage: questlock semantic evaluate --live --suite PATH [--state-dir NEW_PRIVATE_PATH] [--embedding-model all-minilm] [--verifier-model qwen3.5:4b] [--min-similarity 0.9] [--batch-size 1|2] [--verifier-policy factorized-v1] [--verifier-source-think] [--verifier-pair-think | --verifier-pair-assessment] [--verifier-pair-temperature N --verifier-pair-seed N] [--verifier-source-max-input-tokens N] [--verifier-pair-model MODEL --verifier-pair-max-input-tokens N] [--resource-policy PATH] [--stop-on-execution-error] [--timeout 20m]\nThis diagnostic uses fixed labelled source answers, local embeddings and durable local validity inference. It measures no answer-generation saving. Verifier deadlines default to 120000ms for thinking; an explicit factorized-thinking deadline may be at most 600000ms and is shared by both stages.")
 	}
 	if err := f.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
@@ -299,6 +301,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	report.VerifierPolicy = *verifierPolicy
 	report.VerifierSourceThink = *verifierSourceThink
 	report.VerifierPairThink = *verifierPairThink
+	report.VerifierPairAssessment = *verifierPairAssessment
 	report.StopOnExecutionError = *stopOnExecutionError
 	if *verifierPolicy == "factorized-v1" {
 		report.OutputContractGuardVersion = semantic.OutputContractGuardVersion
@@ -311,7 +314,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	if *verifierPairThink {
 		maxDiagnosticTimeout = 2 * time.Hour
 	}
-	if (*resourcePolicyPath != "" && *verifierPolicy != "factorized-v1") || (*verifierPolicy != "" && *verifierPolicy != "factorized-v1") || (*verifierPolicy != "" && *batchSize != 1) || ((*verifierSourceThink || *verifierPairThink) && *verifierPolicy != "factorized-v1") || f.NArg() != 0 || !*live || *suitePath == "" || *batchSize < 1 || *batchSize > 2 || *timeout <= 0 || *timeout > maxDiagnosticTimeout || math.IsNaN(*threshold) || math.IsInf(*threshold, 0) || *threshold < 0 || *threshold > 1 {
+	if (*resourcePolicyPath != "" && *verifierPolicy != "factorized-v1") || (*verifierPolicy != "" && *verifierPolicy != "factorized-v1") || (*verifierPolicy != "" && *batchSize != 1) || ((*verifierSourceThink || *verifierPairThink || *verifierPairAssessment) && *verifierPolicy != "factorized-v1") || f.NArg() != 0 || !*live || *suitePath == "" || *batchSize < 1 || *batchSize > 2 || *timeout <= 0 || *timeout > maxDiagnosticTimeout || math.IsNaN(*threshold) || math.IsInf(*threshold, 0) || *threshold < 0 || *threshold > 1 {
 		return fail("explicit_live_suite_and_bounded_flags_required")
 	}
 	suite, raw, err := loadSemanticEvalSuite(*suitePath)
@@ -333,7 +336,7 @@ func semanticEvaluateCommand(args []string, output, diagnostics io.Writer) (runE
 	defer stop()
 	ctx, cancel := context.WithTimeout(ctx, *timeout)
 	defer cancel()
-	config, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "controlled-evaluation", Domain: "synthetic-challenge", EvidenceRevision: report.SourceSHA256, EmbeddingModel: *embeddingModel, MinSimilarity: *threshold, MaxInputBytes: semantic.MaxInputBytes}, ReadOnly: true, Intent: "answer-validity-evaluation", VerifierModel: *verifierModel, VerifierSourceMaxInputTokens: *verifierSourceInput, VerifierPairModel: *verifierPairModel, VerifierPairMaxInputTokens: *verifierPairInput, VerifierPolicy: *verifierPolicy, VerifierSourceThink: *verifierSourceThink, VerifierPairThink: *verifierPairThink, VerifierPairTemperature: pairTemperature, VerifierPairSeed: pairSeed, VerifierMaxInputTokens: *verifierInput, VerifierMaxOutputTokens: *verifierOutput, VerifierTimeoutMS: *verifierTimeout})
+	config, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "controlled-evaluation", Domain: "synthetic-challenge", EvidenceRevision: report.SourceSHA256, EmbeddingModel: *embeddingModel, MinSimilarity: *threshold, MaxInputBytes: semantic.MaxInputBytes}, ReadOnly: true, Intent: "answer-validity-evaluation", VerifierModel: *verifierModel, VerifierSourceMaxInputTokens: *verifierSourceInput, VerifierPairModel: *verifierPairModel, VerifierPairMaxInputTokens: *verifierPairInput, VerifierPolicy: *verifierPolicy, VerifierSourceThink: *verifierSourceThink, VerifierPairThink: *verifierPairThink, VerifierPairAssessment: *verifierPairAssessment, VerifierPairTemperature: pairTemperature, VerifierPairSeed: pairSeed, VerifierMaxInputTokens: *verifierInput, VerifierMaxOutputTokens: *verifierOutput, VerifierTimeoutMS: *verifierTimeout})
 	if err != nil {
 		return fail("invalid_local_model_policy")
 	}

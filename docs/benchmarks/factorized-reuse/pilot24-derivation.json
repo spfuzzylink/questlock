@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "meaning": "Consumed diagnostic union, not a fresh independent population. Preserve original full source data, labels and answers.",
+  "prior_fixture": "pilot-cases.json",
+  "prior_fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+  "regression_fixture": "r3-cases.json",
+  "regression_fixture_sha256": "acee755756623aa2f4a947b2d898d5fb00700f1dec095dcab3fdd238dd1b84db",
+  "derived_fixture": "pilot24-cases.json",
+  "derived_fixture_sha256": "2c89a3616c1d6fc8fa0833f8df09c31e590bafe09db45568b51a9c8d2239e428",
+  "additional_problem_variant_ids": [
+    "fresh3-support-01-n4",
+    "fresh3-support-02-n4",
+    "fresh3-onboard-01-n4",
+    "fresh3-onboard-02-n1"
+  ],
+  "selection": "Union the prior20 variant IDs and all four additional problem IDs; sort cases and variants by stable ID; retain all other source fields unchanged."
+}

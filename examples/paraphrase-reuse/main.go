@@ -2,7 +2,6 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"crypto/sha256"
 	_ "embed"
@@ -76,11 +75,18 @@ func run(args []string, out io.Writer) error {
 	verifierPairInput := f.Int64("verifier-pair-max-input-tokens", 0, "optional applicability input cap, at most half the total verifier input cap")
 	verifierSourceThink := f.Bool("verifier-source-think", false, "explicit bounded source reasoning, independent of applicability reasoning")
 	verifierPairThink := f.Bool("verifier-pair-think", false, "explicit bounded applicability reasoning; source reasoning is independent")
+	verifierPairAssessment := f.Bool("verifier-pair-assessment", false, "bounded pair assessment before decisions; cannot combine with pair thinking")
 	verifierPairTemperature := f.Float64("verifier-pair-temperature", 0, "optional applicability temperature in 0..2; absent keeps zero")
 	verifierPairSeed := f.Int64("verifier-pair-seed", 0, "optional applicability seed in 0..2147483647; absent leaves runtime default")
 	verifierOutput := f.Int64("verifier-max-output-tokens", 128, "total verifier output cap; either reasoning flag without this option selects its policy default")
 	verifierTimeout := f.Int("verifier-timeout-ms", 60000, "shared source+pair deadline in ms; thinking defaults to 120000 and permits an explicit value up to 600000, otherwise max 120000; earlier caller/resolver deadline wins")
 	minSimilarity := f.Float64("min-similarity", 0.25, "retrieval cutoff in 0..1; zero selects the semantic policy default")
+	casesPath := f.String("cases-file", "", "optional absolute private six-case JSON snapshot; also selects cases for --report")
+	maxDuration := f.Duration("max-duration", 30*time.Minute, "explicit whole-run deadline, positive and at most 2h")
+	dailyInput := f.Int64("daily-input-tokens", 524288, "scope/day input token cap, positive and at most 1e12")
+	dailyOutput := f.Int64("daily-output-tokens", 16384, "scope/day output token cap, positive and at most 1e12")
+	dailyTotal := f.Int64("daily-total-tokens", 540672, "scope/day joint token cap, positive and at most 1e12")
+	answerOutput := f.Int64("answer-max-output-tokens", 256, "same answer output ceiling for source and fresh controls, 1..4096")
 	resourcePolicyPath := f.String("resource-policy", "", "optional runtime-only JSON admission policy; bounded wait before any fresh claim")
 	tokenPath := f.String("token-file", "", "absolute private scoped token file")
 	statePath := f.String("state", "", "new absolute private progress file")
@@ -95,11 +101,13 @@ func run(args []string, out io.Writer) error {
 	outputExplicit, timeoutExplicit, verifierOptionsExplicit := false, false, false
 	f.Visit(func(v *flag.Flag) {
 		switch v.Name {
+		case "max-duration", "daily-input-tokens", "daily-output-tokens", "daily-total-tokens", "answer-max-output-tokens":
+			verifierOptionsExplicit = true
 		case "verifier-max-output-tokens":
 			outputExplicit, verifierOptionsExplicit = true, true
 		case "verifier-timeout-ms":
 			timeoutExplicit, verifierOptionsExplicit = true, true
-		case "verifier-pair-temperature", "verifier-pair-seed", "verifier-source-think", "verifier-pair-think", "min-similarity", "verifier-pair-model", "verifier-pair-max-input-tokens", "verifier-max-input-tokens", "verifier-source-max-input-tokens":
+		case "verifier-pair-temperature", "verifier-pair-seed", "verifier-source-think", "verifier-pair-think", "verifier-pair-assessment", "min-similarity", "verifier-pair-model", "verifier-pair-max-input-tokens", "verifier-max-input-tokens", "verifier-source-max-input-tokens":
 			verifierOptionsExplicit = true
 		}
 	})
@@ -107,7 +115,11 @@ func run(args []string, out io.Writer) error {
 		if f.NArg() != 0 || *live || *baseline || *repeatBaseline || *brokerURL != "" || *ollamaURL != "" || *tokenPath != "" || *statePath != "" || *outputPath != "" || *resourcePolicyPath != "" || verifierOptionsExplicit {
 			return errors.New("--report must be used without live-run options")
 		}
-		return reportFile(*reportPath, out)
+		data, _, err := loadMeasurementCases(*casesPath)
+		if err != nil {
+			return err
+		}
+		return reportFileWithCases(*reportPath, data, out)
 	}
 	if *repeatBaseline && !*baseline {
 		return errors.New("--fresh-repeat-baseline requires --fresh-baseline")
@@ -120,15 +132,19 @@ func run(args []string, out io.Writer) error {
 	if f.NArg() != 0 || !loopbackOrigin(*brokerURL) || !loopbackOrigin(*ollamaURL) {
 		return errors.New("explicit literal-loopback endpoints required")
 	}
+	budget := &inference.TokenBudget{InputTokens: *dailyInput, OutputTokens: *dailyOutput, TotalTokens: *dailyTotal}
+	if !validMeasurementBudget(*budget) || *maxDuration < time.Millisecond || *maxDuration > 2*time.Hour || *maxDuration%time.Millisecond != 0 || *answerOutput < 1 || *answerOutput > 4096 {
+		return errors.New("invalid measurement budget, duration or answer output ceiling")
+	}
 	outputLimit := *verifierOutput
-	if (*verifierSourceThink || *verifierPairThink) && !outputExplicit {
+	if (*verifierSourceThink || *verifierPairThink || *verifierPairAssessment) && !outputExplicit {
 		outputLimit = 0 // Explicit reasoning selects its separately bounded policy default.
 	}
 	timeoutLimit := *verifierTimeout
 	if (*verifierSourceThink || *verifierPairThink) && !timeoutExplicit {
 		timeoutLimit = 0
 	}
-	verifierConfig, e := measurementVerifierConfig(*verifierModel, *verifierSourceThink, *verifierPairThink, outputLimit, timeoutLimit, *minSimilarity)
+	verifierConfig, e := measurementVerifierConfigWithAssessment(*verifierModel, *verifierSourceThink, *verifierPairThink, *verifierPairAssessment, outputLimit, timeoutLimit, *minSimilarity)
 	if e != nil {
 		return e
 	}
@@ -164,16 +180,9 @@ func run(args []string, out io.Writer) error {
 		}
 		resourcePolicy = &policy
 	}
-	var set caseSet
-	d := json.NewDecoder(bytes.NewReader(casesJSON))
-	d.DisallowUnknownFields()
-	if d.Decode(&set) != nil || set.Schema != 1 || len(set.Cases) != 6 {
-		return errors.New("invalid frozen six-case snapshot")
-	}
-	for _, c := range set.Cases {
-		if c.ID == "" || len(c.Paraphrases) != 2 || len(c.Checks) != 2 || c.Checks[1].Kind != "json_equals" {
-			return errors.New("invalid frozen business checks")
-		}
+	caseData, set, e := loadMeasurementCases(*casesPath)
+	if e != nil {
+		return e
 	}
 	tokenFile, e := privateFile(*tokenPath, false)
 	if e != nil {
@@ -198,9 +207,14 @@ func run(args []string, out io.Writer) error {
 		return e
 	}
 	defer report.Close()
-	budget := &inference.TokenBudget{InputTokens: 524288, OutputTokens: 16384, TotalTokens: 540672}
-	h := sha256.Sum256(casesJSON)
+	h := sha256.Sum256(caseData)
 	header := map[string]any{"schema": "questlock.paraphrase-measurement.v1", "cases_sha256": hex.EncodeToString(h[:]), "model": *model, "verifier_model": *verifierModel, "verifier_policy": "factorized-v1", "min_similarity": verifierConfig.MinSimilarity, "daily_budget": budget, "fresh_baseline": *baseline, "paid_fallback_enabled": false, "provider_api_charge_usd": 0}
+	if *maxDuration != 30*time.Minute {
+		header["max_duration_ms"] = maxDuration.Milliseconds()
+	}
+	if *answerOutput != 256 {
+		header["answer_max_output_tokens"] = *answerOutput
+	}
 	if verifierConfig.VerifierMaxInputTokens != 16384 {
 		header["verifier_max_input_tokens"] = verifierConfig.VerifierMaxInputTokens
 	}
@@ -228,6 +242,9 @@ func run(args []string, out io.Writer) error {
 	if verifierConfig.VerifierPairThink {
 		header["verifier_pair_think"] = true
 	}
+	if verifierConfig.VerifierPairAssessment {
+		header["verifier_pair_assessment"] = true
+	}
 	if verifierConfig.VerifierSourceThink || verifierConfig.VerifierPairThink {
 		header["semantic_timeout_ms"] = verifierConfig.TimeoutMS
 	}
@@ -243,7 +260,7 @@ func run(args []string, out io.Writer) error {
 	if e = appendJSON(report, header); e != nil {
 		return e
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), *maxDuration)
 	defer cancel()
 	p, e := inference.NewOllamaProviderContext(ctx, *ollamaURL, *model)
 	if e != nil {
@@ -284,7 +301,7 @@ func run(args []string, out io.Writer) error {
 			steps = 9
 		}
 		for step := 0; step < steps; step++ {
-			phase, request := measurementStep(set.Revision, c, step, budget)
+			phase, request := measurementStepWithAnswerLimit(set.Revision, c, step, budget, *answerOutput)
 			input := request.Spec.Input
 			request.Policy.Local.Spec.Model = *model
 			if request.SemanticReuse != nil {
@@ -295,6 +312,7 @@ func run(args []string, out io.Writer) error {
 				request.SemanticReuse.VerifierPairMaxInputTokens = verifierConfig.VerifierPairMaxInputTokens
 				request.SemanticReuse.VerifierSourceThink = verifierConfig.VerifierSourceThink
 				request.SemanticReuse.VerifierPairThink = verifierConfig.VerifierPairThink
+				request.SemanticReuse.VerifierPairAssessment = verifierConfig.VerifierPairAssessment
 				request.SemanticReuse.VerifierPairTemperature = verifierConfig.VerifierPairTemperature
 				request.SemanticReuse.VerifierPairSeed = verifierConfig.VerifierPairSeed
 				request.SemanticReuse.VerifierMaxOutputTokens = verifierConfig.VerifierMaxOutputTokens
@@ -400,12 +418,22 @@ func run(args []string, out io.Writer) error {
 // Validate measurement options before opening credentials or constructing a
 // provider. The real requests retain their case-specific evidence and checks.
 func measurementVerifierConfig(model string, think, pairThink bool, output int64, timeout int, similarity float64) (semantic.ReuseConfig, error) {
-	c, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "business-measurement-options", Domain: "synthetic-business-measurement", EvidenceRevision: "options-1", EmbeddingModel: "all-minilm", MinSimilarity: similarity}, ReadOnly: true, Intent: "validate-measurement-options", VerifierModel: model, VerifierPolicy: "factorized-v1", VerifierSourceThink: think, VerifierPairThink: pairThink, VerifierMaxInputTokens: 16384, VerifierMaxOutputTokens: output, VerifierTimeoutMS: timeout})
+	return measurementVerifierConfigWithAssessment(model, think, pairThink, false, output, timeout, similarity)
+}
+
+func measurementVerifierConfigWithAssessment(model string, think, pairThink, assessment bool, output int64, timeout int, similarity float64) (semantic.ReuseConfig, error) {
+	c, err := semantic.NormalizeReuseConfig(semantic.ReuseConfig{Config: semantic.Config{Mode: "controlled", Family: "business-measurement-options", Domain: "synthetic-business-measurement", EvidenceRevision: "options-1", EmbeddingModel: "all-minilm", MinSimilarity: similarity}, ReadOnly: true, Intent: "validate-measurement-options", VerifierModel: model, VerifierPolicy: "factorized-v1", VerifierSourceThink: think, VerifierPairThink: pairThink, VerifierPairAssessment: assessment, VerifierMaxInputTokens: 16384, VerifierMaxOutputTokens: output, VerifierTimeoutMS: timeout})
 	if err != nil {
 		return semantic.ReuseConfig{}, errors.New("invalid bounded semantic verifier options")
 	}
 	return c, nil
 }
+func measurementStepWithAnswerLimit(revision string, c businessCase, step int, budget *inference.TokenBudget, output int64) (string, delegation.Request) {
+	phase, request := measurementStep(revision, c, step, budget)
+	request.Policy.Local.Spec.MaxOutputTokens = output
+	return phase, request
+}
+
 func measurementStep(revision string, c businessCase, step int, budget *inference.TokenBudget) (string, delegation.Request) {
 	phase, input := "seed", c.OriginalQuestion
 	if step > 0 && step < 3 {

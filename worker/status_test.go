@@ -171,7 +171,7 @@ func TestStatusAdvertisesOptionalPairThinkingWithoutWork(t *testing.T) {
 		return delegation.Result{}, nil
 	}}, "")
 	status := readWorkerStatus(t, session)
-	if !reflect.DeepEqual(status.RequestSchemas.SemanticReuseOptionalReasoningFields, []string{"verifier_source_think", "verifier_pair_think"}) || !reflect.DeepEqual(status.RequestSchemas.SemanticReuseOptionalSamplingFields, []string{"verifier_pair_temperature", "verifier_pair_seed"}) || status.RequestSchemas.SemanticReuseFactorizedThinkingMaxTimeoutMS != 600000 || status.ModelCalls != 0 {
+	if !reflect.DeepEqual(status.RequestSchemas.SemanticReuseOptionalReasoningFields, []string{"verifier_source_think", "verifier_pair_think", "verifier_pair_assessment"}) || !reflect.DeepEqual(status.RequestSchemas.SemanticReuseOptionalSamplingFields, []string{"verifier_pair_temperature", "verifier_pair_seed"}) || status.RequestSchemas.SemanticReuseFactorizedThinkingMaxTimeoutMS != 600000 || status.ModelCalls != 0 {
 		t.Fatal("pairreasoningcapabilitymissingorstatusperformedwork")
 	}
 }

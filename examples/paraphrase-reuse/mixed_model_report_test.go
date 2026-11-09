@@ -9,7 +9,7 @@ import (
 
 func TestMeasurementSeparatesMixedVerifierModels(t *testing.T) {
 	rows := fixtureRows(t)
-	h := measurementHeader{Schema: "questlock.paraphrase-measurement.v1", CasesSHA256: fixtureDigest(string(casesJSON)), Model: "fixture", VerifierModel: "other-tokenizer", VerifierPairModel: "pair-tokenizer", VerifierPairMaxInputTokens: 6400, VerifierPolicy: "factorized-v1", MinSimilarity: .25, FreshBaseline: true}
+	h := measurementHeader{Schema: "questlock.paraphrase-measurement.v1", CasesSHA256: fixtureDigest(string(casesJSON)), Model: "fixture", VerifierModel: "other-tokenizer", VerifierPairModel: "pair-tokenizer", VerifierPairMaxInputTokens: 6400, VerifierPolicy: "factorized-v1", MinSimilarity: .25, DailyBudget: fixtureDailyBudget(), FreshBaseline: true}
 	for _, r := range rows {
 		if r.Result.SemanticReuse != nil {
 			for j := range r.Result.SemanticReuse.Verifications {

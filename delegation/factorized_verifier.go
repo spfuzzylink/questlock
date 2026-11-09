@@ -73,6 +73,10 @@ func NewFactorizedVerifier(ctx context.Context, broker inference.Broker, baseURL
 
 func factorizedPolicyIdentity(c semantic.ReuseConfig, sourceRuntime, pairRuntime string) string {
 	pairModel, pairInput := factorizedPairPolicy(c)
+	pairInstructions := factorizedPairInstructions
+	if c.VerifierPairAssessment {
+		pairInstructions = factorizedAssessmentPairInstructions
+	}
 	data, _ := json.Marshal(struct {
 		Version, SupportInstructions, PairInstructions, SourceRuntime, PairRuntime string
 		PairModel                                                                  string
@@ -81,7 +85,7 @@ func factorizedPolicyIdentity(c semantic.ReuseConfig, sourceRuntime, pairRuntime
 		OutputContractVersion, SourceMeasurementVersion, LanguageContractVersion   int
 		TargetRiskVersion                                                          int
 		SourceMaxInputTokens                                                       int64 `json:",omitempty"`
-	}{factorizedVerifierVersion, factorizedSupportInstructions, factorizedPairInstructions, sourceRuntime, pairRuntime, pairModel, pairInput, c, semantic.OutputContractGuardVersion, semantic.SourceMeasurementGuardVersion, semantic.LanguageContractGuardVersion, semantic.TargetRiskGuardVersion, c.VerifierSourceMaxInputTokens})
+	}{factorizedVerifierVersion, factorizedSupportInstructions, pairInstructions, sourceRuntime, pairRuntime, pairModel, pairInput, c, semantic.OutputContractGuardVersion, semantic.SourceMeasurementGuardVersion, semantic.LanguageContractGuardVersion, semantic.TargetRiskGuardVersion, c.VerifierSourceMaxInputTokens})
 	return reuseHash(string(data))
 }
 
@@ -329,6 +333,9 @@ func (v *FactorizedVerifier) Verify(ctx context.Context, request semantic.Validi
 		return out, stageErr
 	}
 	pairDecision, parseErr := parseFactorizedDecision([]byte(pair.Response.Text), "answer_covers_current", "unchanged_facts", "same_output_contract")
+	if v.config.VerifierPairAssessment {
+		pairDecision, parseErr = parseFactorizedAssessmentDecision([]byte(pair.Response.Text))
+	}
 	if parseErr == nil {
 		if pairDecision.accepted() {
 			out.Verdict, out.SameIntent, out.SameFacts, out.SameConstraints = "accept", true, true, true
@@ -359,6 +366,10 @@ func (v *FactorizedVerifier) stageSpec(stage, revision, instructions, input, lef
 	outputTypes := map[string]string{"verdict": "string", left: "boolean", right: "boolean"}
 	if stage == "equivalence" {
 		outputTypes["same_output_contract"] = "boolean"
+		if v.config.VerifierPairAssessment {
+			instructions = factorizedAssessmentPairInstructions
+			outputTypes["answer_assessment"] = "string"
+		}
 	}
 	// Output budgets retain fixed halves. Optional smaller input caps keep
 	// each stage within its existing half without changing the complete data.

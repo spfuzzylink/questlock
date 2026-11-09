@@ -20,6 +20,11 @@ const thinkingDeadlineLegacyFixtures = `[{"config_sha256":"84124af31454036e51f2e
 // historical pins above and pin the reviewed successor identities explicitly.
 const targetContractV20Identities = `[{"name":"standalone-default","native_plan_fingerprint":"95b05fba34b6cedd44e70788eb58b77986ca69432d89192f6fb2358f829f687d","policy_identity":"a219c6db8dd2d69a0e99f752e2b449469a71fa39a7f3160ab093eeddbae39320"},{"name":"factorized-default","native_plan_fingerprint":"e683c3909f89ed5d8de3b67e97077935064a2b623cd492dad6ffa43a400f8b0b","policy_identity":"d22cb65fa70fc5a5c4c8a1390d22c5098292222bf338da98c75695761c73e1a8"},{"name":"source-default","native_plan_fingerprint":"5640e3cd93a02818c2eaa22a0654cca1c2a818f3f529f282fd153d0710df23a3","policy_identity":"c02537841ba1e3a44e55101a640bd28ed4e3def84fe4f72de9f08abf05aad63a"},{"name":"pair-default","native_plan_fingerprint":"a887788eae399f1111d0c9863b95b9c64516bf732f0b5dfda5ca2659752c1da2","policy_identity":"c79e3c982c09b8182df976012f0a985fe9caf673a0a348603f0e27cb411fffa1"},{"name":"both-small-verifier","native_plan_fingerprint":"90d5342084ed4406398610c5d02bd38846625bcc7e3c4e2c18e7798c05d7bc74","policy_identity":"aec13e286520a6e5a98ac2846a9ff584d2bab7d93b1f7607a6a6e687b381b552"},{"name":"pair-explicit120","native_plan_fingerprint":"a887788eae399f1111d0c9863b95b9c64516bf732f0b5dfda5ca2659752c1da2","policy_identity":"c79e3c982c09b8182df976012f0a985fe9caf673a0a348603f0e27cb411fffa1"},{"name":"pair-short-whole","native_plan_fingerprint":"15dc53256fc00eba4c81f0d59c26d5fa1336256012666ea7d136471b6cc0d822","policy_identity":"0b8fac7d9058235ef139ec0b2796b32e5e565f105d31e9f0eabb6009c2d26eb9"},{"name":"ordinary-max","native_plan_fingerprint":"b339f089ff68a3b2bea7757e97c679da3827cb674c1e16f07e1c9ed4d89d55a7","policy_identity":"cf3bc930ffe0ff7db6528d3a4b0cbfa94922d24b604065a945162315c024d915"}]`
 
+// Guard 7 rejects newly adopted snapshots before model work. Legacy config
+// bytes and v19/v20 guard-6 pins remain above; these are the intentional new
+// guard-bound identities, not a change to native thinking or exact reuse.
+const adoptedUpdateRisk7Identities = `[{"name":"standalone-default","native_plan_fingerprint":"3944dc5cd5a61f7b35da0527a3dd54e02eaa9066a0160ca01a1307a5f69d8a68","policy_identity":"b1917d4b85c06bd9662993cb28ee6bb5f5cfb3c5d35bf52f5dd7c19b48f8257c"},{"name":"factorized-default","native_plan_fingerprint":"77e490df2f65fe735455406ea92c7900367d8b6d4de2448ea21df0f89bc6a624","policy_identity":"f220aed22f57c21e59e849d9ef4eab65918ab0160db1028df0077ba81e00cf5f"},{"name":"source-default","native_plan_fingerprint":"1e1bb788738862b4ebc54e1713eb0f0098cd10ea593f36dd7253430375cedb7e","policy_identity":"6ea5e17bc75a039a931744c354eae48470bb99f9bba59f9ab07d947c99c8ef12"},{"name":"pair-default","native_plan_fingerprint":"9dabe499bd798da25a7f093f09568e51416241d2c22d73d3eda79ff68f8c30a3","policy_identity":"e69d0cbb589b7309b2ae1fdb1a4c93f9cfebe1583cd70da241f63a92c86e85c6"},{"name":"both-small-verifier","native_plan_fingerprint":"b38db3d27885168b63d7603218c7f2ff9f532599087af2107bc6a7d05f8a397a","policy_identity":"53b4924176c70b981c2937b62e44dac391f5d28259bdeb16ccbe420d40e3ee2a"},{"name":"pair-explicit120","native_plan_fingerprint":"9dabe499bd798da25a7f093f09568e51416241d2c22d73d3eda79ff68f8c30a3","policy_identity":"e69d0cbb589b7309b2ae1fdb1a4c93f9cfebe1583cd70da241f63a92c86e85c6"},{"name":"pair-short-whole","native_plan_fingerprint":"499d54bf293542a90d34337950f6af740e2fa63272555a29822f9d40a0231b7e","policy_identity":"e361edd5a5e285700e82333eb7c092325f16e902887d1568b2574ba1a4f79533"},{"name":"ordinary-max","native_plan_fingerprint":"2535d8f444b33630f54144e374540a24212a8da8bdaa23a04b1ae22591f3cd26","policy_identity":"ef2a2a0701b20e8094be30e9fa002dccab823bc588817d302b1a7e199eea4d7c"}]`
+
 func TestThinkingDeadlinePreservesLegacyConfigAndPinsV20Identities(t *testing.T) {
 	var fixtures []struct {
 		Name, Policy          string
@@ -37,7 +42,7 @@ func TestThinkingDeadlinePreservesLegacyConfigAndPinsV20Identities(t *testing.T)
 		PolicyIdentity        string `json:"policy_identity"`
 		NativePlanFingerprint string `json:"native_plan_fingerprint"`
 	}
-	if json.Unmarshal([]byte(targetContractV20Identities), &current) != nil || len(current) != len(fixtures) {
+	if json.Unmarshal([]byte(adoptedUpdateRisk7Identities), &current) != nil || len(current) != len(fixtures) {
 		t.Fatal("invalid v20 identity pins")
 	}
 	for index, x := range fixtures {
@@ -64,7 +69,7 @@ func TestThinkingDeadlinePreservesLegacyConfigAndPinsV20Identities(t *testing.T)
 		v := FactorizedVerifier{config: c, identity: identity}
 		p, err := inference.BuildPlan(v.stageSpec("equivalence", "stable", factorizedPairInstructions, `{"context":"unchanged"}`, "answer_covers_current", "unchanged_facts"))
 		if err != nil || hex.EncodeToString(digest[:]) != x.ConfigSHA256 || identity != pin.PolicyIdentity || p.Fingerprint != pin.NativePlanFingerprint || identity == x.PolicyIdentity || p.Fingerprint == x.NativePlanFingerprint {
-			t.Fatal("legacy config bytes or reviewed v20 identity changed", x.Name, err)
+			t.Fatal("legacy config bytes or reviewed guard-7 identity changed", x.Name, err)
 		}
 	}
 }

@@ -1,0 +1,363 @@
+{
+  "schema_version": 1,
+  "population": "Consumed diagnostic union: exact prior20 plus all four latest R3 problem rows; original full source data, labels and answers unchanged. Sorted by stable IDs. This is not fresh validation.",
+  "label_rule": "Reuse only when the unchanged saved answer fully satisfies the variant under its source instructions and evidence. Extra required-contract detail is permitted for a narrower request; changed facts, authority, time, operation, language, or output contracts require a new answer.",
+  "cases": [
+    {
+      "id": "fresh3-broker-01",
+      "family": "broker_lifecycle",
+      "instructions": "Use exactly three lines labeled Current state, Next transition, and Allowed actor. Describe the deterministic lifecycle from this snapshot. Do not acknowledge, renew, or requeue the job. A lease is valid strictly before its expiry time.",
+      "evidence": "AlderQueue job J-804 is leased to worker-amber on attempt 2. Snapshot time is 2032-11-03 10:02:00 UTC; the lease expires at 10:05:00 UTC. No acknowledgment has been recorded. Only the lease owner may acknowledge or renew before expiry. On expiry without acknowledgment, the broker automatically places the job into ready state if attempt count is below 4; otherwise it puts the job in dead-letter state. The current attempt count is 2. Automatic expiry requeue does not itself increment the attempt count; the next lease acquisition does. There is no manual requeue request in this record.",
+      "answer": "Current state: J-804 is leased to worker-amber on attempt 2 at 10:02 UTC; its lease remains valid until, but not including, 10:05 UTC.\nNext transition: Without acknowledgment by expiry, the broker automatically returns J-804 to ready at 10:05 because attempt 2 is below 4; the count stays 2 until the next lease acquisition.\nAllowed actor: Only worker-amber may acknowledge or renew before 10:05 UTC.",
+      "original_question": "At 10:02 UTC, what is J-804 current state, what happens at 10:05 if it remains unacknowledged, and who can act before expiry?",
+      "bindings": {
+        "service": "AlderQueue",
+        "job": "J-804",
+        "lease_owner": "worker-amber",
+        "snapshot": "2032-11-03T10:02Z",
+        "attempt": "2"
+      },
+      "intent": "explain_job_lease_expiry_transition",
+      "variants": [
+        {
+          "id": "fresh3-broker-01-n1",
+          "question": "J-804 is on attempt 4 rather than attempt 2. Explain its unacknowledged expiry transition under the same threshold.",
+          "should_reuse": false,
+          "reason": "Attempt 4 reaches the dead-letter branch rather than the saved ready branch."
+        },
+        {
+          "id": "fresh3-broker-01-p1",
+          "question": "Explain the 10:02 J-804 lease, expiry path without acknowledgment, and authorized actor in the required three lines.",
+          "should_reuse": true,
+          "reason": "Same job, owner, count, timing, and lifecycle conditions."
+        },
+        {
+          "id": "fresh3-broker-01-p4",
+          "question": "Can someone besides worker-amber renew this lease before 10:05? Include the standard current-state and transition lines.",
+          "should_reuse": true,
+          "reason": "The allowed-actor line explicitly limits renewal to the same owner."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-broker-02",
+      "family": "broker_lifecycle",
+      "instructions": "Return exactly one JSON object with keys state, new_deliveries, pending_ack_count, close_condition, and forced_close_at_utc. Describe the snapshot and lifecycle rule. Do not close the connection or acknowledge messages.",
+      "evidence": "{\"service\": \"MarbleBus\", \"tenant\": \"Spruce Circle\", \"connection\": \"C-62\", \"snapshot_utc\": \"2032-11-05T16:10:00Z\", \"state\": \"draining\", \"new_deliveries_allowed\": false, \"pending_ack_count\": 3, \"drain_started_utc\": \"2032-11-05T16:08:00Z\", \"forced_close_at_utc\": \"2032-11-05T16:13:00Z\", \"rules\": {\"clean_close\": \"close when pending acknowledgment count reaches zero before deadline\", \"deadline_close\": \"at deadline, force close and requeue each unacknowledged message\", \"ack_during_drain\": \"existing consumer may acknowledge already delivered messages\"}, \"observed_acks_since_snapshot\": 0}",
+      "answer": "{\"state\":\"draining\",\"new_deliveries\":false,\"pending_ack_count\":3,\"close_condition\":\"clean close when pending acknowledgments reach zero before deadline; otherwise force close at deadline and requeue unacknowledged messages\",\"forced_close_at_utc\":\"2032-11-05T16:13:00Z\"}",
+      "original_question": "Describe C-62 at 16:10 UTC: its state, whether new deliveries are allowed, pending acknowledgments, and how or when draining ends.",
+      "bindings": {
+        "service": "MarbleBus",
+        "connection": "C-62",
+        "tenant": "Spruce Circle",
+        "snapshot": "2032-11-05T16:10Z",
+        "mode": "draining"
+      },
+      "intent": "explain_connection_drain_lifecycle",
+      "variants": [
+        {
+          "id": "fresh3-broker-02-p4",
+          "question": "What happens if the three messages are still unacknowledged at 16:13? Retain the full standard object.",
+          "should_reuse": true,
+          "reason": "The close_condition states forced closure and requeue at the recorded deadline."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-incident-01",
+      "family": "incident_handoff",
+      "instructions": "Return exactly four lines labeled Impact, Mitigation, Owner, and Next update. Summarize only the timestamped snapshot; do not claim a recovery or execute operational changes.",
+      "evidence": "LanternDock incident LD-214, North Basin, snapshot 2032-07-18 09:42 UTC: Batch ingestion is delayed for the North Basin paid tier; queries and the free tier are unaffected. The queue has 1,800 batches and the oldest batch is 12 minutes old. At 09:35 UTC the on-call engineer limited new batch submissions to 40 per minute. The queue is still growing at 09:42 UTC, so the incident remains open. The current incident owner is the ingestion on-call engineer. The next status update is due at 09:55 UTC. Restoring normal submission limits requires the incident owner to observe a falling queue for ten continuous minutes; that condition has not been met.",
+      "answer": "Impact: North Basin paid-tier batch ingestion is delayed; queries and the free tier are unaffected. The queue contains 1,800 batches, with the oldest 12 minutes old, and is still growing.\nMitigation: New batch submissions are limited to 40 per minute since 09:35 UTC; the incident remains open.\nOwner: The ingestion on-call engineer owns LD-214.\nNext update: 09:55 UTC on 2032-07-18.",
+      "original_question": "Give the LD-214 handoff at 09:42 UTC, including customer impact, the current mitigation, accountable owner, and next update time.",
+      "bindings": {
+        "service": "LanternDock",
+        "incident": "LD-214",
+        "region": "North Basin",
+        "snapshot": "2032-07-18T09:42Z"
+      },
+      "intent": "summarize_ingest_incident_handoff",
+      "variants": [
+        {
+          "id": "fresh3-incident-01-n1",
+          "question": "At 10:05 UTC the queue is empty and submissions have returned to normal. Give the LD-214 handoff for 10:05.",
+          "should_reuse": false,
+          "reason": "The updated recovered state and mitigation differ from the 09:42 snapshot."
+        },
+        {
+          "id": "fresh3-incident-01-p1",
+          "question": "Summarize the 09:42 LD-214 snapshot for the next on-call person using the four required lines.",
+          "should_reuse": true,
+          "reason": "Same incident, timestamp, and handoff fields."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-incident-03",
+      "family": "incident_handoff",
+      "instructions": "Use exactly four bullets labeled Scope, Workaround, Blocker, and Next owner. Distinguish verified observations from a recovery claim. Report the snapshot without taking action.",
+      "evidence": "| PebbleRelay PR-307 at 2032-09-06 22:10 UTC | Detail |\n|---|---|\n| Cluster | bay-east |\n| Symptom | New mutual-TLS client handshakes fail |\n| Existing sessions | Continue normally |\n| Cause confirmed | Expired server certificate on gateway pair A |\n| Workaround active | New clients routed to gateway pair B since 22:04 UTC |\n| Verification | Pair B accepts new handshakes; pair A remains unhealthy |\n| Blocker | Replacement certificate awaits security signer approval |\n| Next owner | Night network engineer |\n| Owner first task | Check signer approval at 22:20 UTC |\n| Incident status | Open |",
+      "answer": "- Scope: New mutual-TLS client handshakes fail on bay-east gateway pair A because its server certificate expired; existing sessions continue normally. The incident remains open.\n- Workaround: New clients have been routed to pair B since 22:04 UTC; pair B accepts new handshakes, while pair A remains unhealthy.\n- Blocker: The replacement certificate awaits security signer approval.\n- Next owner: The night network engineer must check signer approval at 22:20 UTC.",
+      "original_question": "Prepare the 22:10 PR-307 handoff for the night shift: scope, active workaround, blocker, and next owner with their first task.",
+      "bindings": {
+        "service": "PebbleRelay",
+        "incident": "PR-307",
+        "cluster": "bay-east",
+        "snapshot": "2032-09-06T22:10Z"
+      },
+      "intent": "summarize_certificate_incident_handoff",
+      "variants": [
+        {
+          "id": "fresh3-incident-03-p3",
+          "question": "Are established sessions broken too? Keep the standard scope, workaround, blocker, and owner bullets.",
+          "should_reuse": true,
+          "reason": "The scope bullet explicitly states existing sessions continue normally."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-onboard-01",
+      "family": "onboarding",
+      "instructions": "Provide exactly four numbered steps in policy order, naming the responsible role for each. This is a read-only onboarding checklist. Do not imply that any step has already been performed.",
+      "evidence": "MossQuarry Cedar-cohort onboarding policy: a new analyst using a managed device receives staging access only. First, the analyst completes the Data Basics course. Second, the analyst files a staging-access request and attaches that course certificate. Third, the team lead approves that request. Fourth, the identity administrator grants the staging-analyst group after approval. Production access is not part of this onboarding flow and requires a separate security review. No course completion, request, approval, or grant has occurred for the fictional new starter described here.",
+      "answer": "1. Analyst: Complete the Data Basics course.\n2. Analyst: File a staging-access request with the course certificate attached.\n3. Team lead: Approve the staging-access request.\n4. Identity administrator: Grant the staging-analyst group after approval.",
+      "original_question": "Give the ordered onboarding checklist for a Cedar-cohort analyst on a managed device who needs staging access, including who owns each step.",
+      "bindings": {
+        "organization": "MossQuarry",
+        "cohort": "Cedar",
+        "role": "analyst",
+        "environment": "staging",
+        "device": "managed"
+      },
+      "intent": "explain_analyst_staging_onboarding",
+      "variants": [
+        {
+          "id": "fresh3-onboard-01-n1",
+          "question": "Use the checklist to grant staging-analyst to the new starter now, then confirm successful access.",
+          "should_reuse": false,
+          "reason": "Executing a group grant and confirming access are not accomplished by a checklist."
+        },
+        {
+          "id": "fresh3-onboard-01-n4",
+          "question": "Give the checklist with one CSV row per step and columns step_number, owner, action.",
+          "should_reuse": false,
+          "reason": "The saved numbered prose does not satisfy the CSV output contract."
+        },
+        {
+          "id": "fresh3-onboard-01-p1",
+          "question": "What are the four policy steps and owners to onboard this Cedar analyst into staging?",
+          "should_reuse": true,
+          "reason": "Same cohort, device, access target, order, and owners."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-onboard-02",
+      "family": "onboarding",
+      "instructions": "Return exactly three labeled lines: Prerequisites:, Approver:, and Pickup:. Include every prerequisite listed for the selected badge type. Do not create or approve a badge request.",
+      "evidence": "{\"organization\": \"CinderAtlas\", \"cohort\": \"Larch\", \"worker_type\": \"contractor\", \"site\": \"South Annex\", \"badge_type\": \"daytime\", \"daytime_badge\": {\"prerequisites\": [\"signed visitor terms\", \"completed fire-safety module\", \"sponsor-submitted badge request\"], \"approver\": \"site operations coordinator\", \"pickup\": \"South Annex reception, weekdays 09:00-16:00, after approval, with the request reference\"}, \"overnight_badge\": {\"extra_prerequisite\": \"security interview\", \"approver\": \"security duty manager\"}, \"state\": \"No request has yet been submitted.\"}",
+      "answer": "Prerequisites: Sign the visitor terms, complete the fire-safety module, and have the sponsor submit a badge request.\nApprover: The site operations coordinator approves the daytime badge.\nPickup: After approval, collect it at South Annex reception on a weekday from 09:00 to 16:00 with the request reference.",
+      "original_question": "For a Larch contractor needing a daytime badge at South Annex, what prerequisites, approver, and pickup instructions apply?",
+      "bindings": {
+        "organization": "CinderAtlas",
+        "cohort": "Larch",
+        "worker_type": "contractor",
+        "worksite": "South Annex",
+        "badge_type": "daytime"
+      },
+      "intent": "explain_contractor_badge_prerequisites",
+      "variants": [
+        {
+          "id": "fresh3-onboard-02-n1",
+          "question": "For an overnight badge at South Annex, give all prerequisites, approver, and pickup instructions.",
+          "should_reuse": false,
+          "reason": "Overnight requires a security interview and a different approver, absent from the saved answer."
+        },
+        {
+          "id": "fresh3-onboard-02-p4",
+          "question": "Can pickup occur before approval, and what should the contractor bring? Retain the standard response fields.",
+          "should_reuse": true,
+          "reason": "The answer states pickup is after approval and requires the request reference."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-refund-01",
+      "family": "refund_arithmetic",
+      "instructions": "Give exactly four lines labeled Item base, Tax, Total, and Exclusions. Use USD with two decimals. Compute the eligible refund only; do not issue it. Apply the discount before tax and round each item tax to cents using ordinary half-up rounding.",
+      "evidence": "FrostPetal order FP-602 contains a desk tray at USD 48.00 and a lamp at USD 72.00. A 25% promotion applied separately to both item prices. Sales tax is 8% of each discounted item price. Shipping was USD 9.00, is nonrefundable, and was not taxed. The customer returns only the desk tray within the 30-day return window, unused, so its discounted price and its original item tax are refundable with no restocking fee. The lamp is kept. There are no other discounts, fees, or refunds.",
+      "answer": "Item base: USD 36.00 (48.00 minus 25%).\nTax: USD 2.88 (36.00 times 8%).\nTotal: USD 38.88.\nExclusions: The kept lamp and USD 9.00 shipping are not refunded; no restocking fee applies.",
+      "original_question": "For FP-602, calculate the eligible refund for returning only the desk tray, showing the discounted item base, tax, total, and exclusions.",
+      "bindings": {
+        "merchant": "FrostPetal",
+        "order": "FP-602",
+        "currency": "USD",
+        "returned_item": "desk tray",
+        "refund_basis": "discounted_item_plus_tax"
+      },
+      "intent": "calculate_partial_item_refund",
+      "variants": [
+        {
+          "id": "fresh3-refund-01-n1",
+          "question": "Calculate the refund for returning only the lamp while keeping the desk tray, with the same policy.",
+          "should_reuse": false,
+          "reason": "The returned item changes; the eligible total would be USD 58.32, not USD 38.88."
+        },
+        {
+          "id": "fresh3-refund-01-p1",
+          "question": "What is the refund arithmetic for the unused desk tray in FP-602, including base, tax, total, and exclusions?",
+          "should_reuse": true,
+          "reason": "Same returned item, promotion, tax, eligibility, and output contract."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-refund-03",
+      "family": "refund_arithmetic",
+      "instructions": "Use exactly four bullets labeled Net item, Tax reversal, Fee, and Refund. Show USD to two decimals. Use the recorded item coupon allocation rather than reallocating the order coupon. The restocking fee is deducted after reversing original item tax and is not itself taxable. Calculate only.",
+      "evidence": "| PlumeKiln order PK-413 | Amount or rule |\n|---|---|\n| Canister list price | USD 64.00 |\n| Scoop list price | USD 36.00 |\n| Order coupon | USD 20.00 |\n| Recorded coupon allocated to canister | USD 12.80 |\n| Recorded coupon allocated to scoop | USD 7.20 |\n| Tax rate on each net item | 6.25% |\n| Returned item | canister only; scoop kept |\n| Return eligibility | eligible within window |\n| Canister restocking fee | USD 4.00 after tax reversal |\n| Shipping | USD 0.00 |\n| Prior refunds | none |",
+      "answer": "- Net item: USD 51.20 (64.00 minus the recorded 12.80 coupon share).\n- Tax reversal: USD 3.20 (51.20 times 6.25%).\n- Fee: USD 4.00 deducted after tax reversal; the fee is not taxable.\n- Refund: USD 50.40 (51.20 plus 3.20 minus 4.00).",
+      "original_question": "Calculate the eligible refund for returning only the canister in PK-413, using its recorded coupon share, original tax reversal, and the restocking fee.",
+      "bindings": {
+        "merchant": "PlumeKiln",
+        "order": "PK-413",
+        "currency": "USD",
+        "returned_item": "canister",
+        "coupon_allocation": "per_item_recorded"
+      },
+      "intent": "calculate_return_after_allocated_coupon",
+      "variants": [
+        {
+          "id": "fresh3-refund-03-n4",
+          "question": "Return a JSON object with net_item, tax_reversal, fee, and refund as numeric values instead of bullets.",
+          "should_reuse": false,
+          "reason": "The saved text bullets do not satisfy the newly requested JSON schema or numeric types."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-release-01",
+      "family": "release_readiness",
+      "instructions": "Use exactly three lines labeled Decision, Blocking gates, and Recheck. A production release is READY only if every named blocking gate passes. A scheduled deployment is not authorization to deploy. Give a read-only readiness assessment.",
+      "evidence": "JuniperSpoke 2.8.0-rc2 readiness snapshot at 2032-10-04 15:00 UTC for a proposed 17:00 UTC production release: integration tests pass; migration rehearsal passes; rollback rehearsal has not run; security review is approved. All four are blocking gates. Documentation polish is a nonblocking follow-up. The release captain owns the missing rollback rehearsal and will provide its result at 16:15 UTC. No production deployment has been started. A gate lacking a result counts as not passed.",
+      "answer": "Decision: HOLD for the proposed 17:00 UTC production release of 2.8.0-rc2.\nBlocking gates: The rollback rehearsal has not run; integration tests, migration rehearsal, and security review have passed. Documentation polish is nonblocking.\nRecheck: Ask the release captain for the rollback rehearsal result at 16:15 UTC on 2032-10-04.",
+      "original_question": "Is JuniperSpoke 2.8.0-rc2 ready for the proposed 17:00 production release at the 15:00 snapshot, what blocks it, and when should we recheck?",
+      "bindings": {
+        "product": "JuniperSpoke",
+        "release": "2.8.0-rc2",
+        "target": "2032-10-04T17:00Z",
+        "environment": "production"
+      },
+      "intent": "assess_release_gate_snapshot",
+      "variants": [
+        {
+          "id": "fresh3-release-01-n1",
+          "question": "At 16:15 the rollback rehearsal passed and all other gates remain passed. Assess readiness under that updated snapshot.",
+          "should_reuse": false,
+          "reason": "Every blocking gate now passes, so the saved HOLD and missing-rehearsal blocker are wrong."
+        },
+        {
+          "id": "fresh3-release-01-p1",
+          "question": "Assess the 15:00 rc2 production-readiness snapshot and identify the unresolved gate and recheck time.",
+          "should_reuse": true,
+          "reason": "Same version, time, target, blocking policy, and response contract."
+        },
+        {
+          "id": "fresh3-release-01-p4",
+          "question": "Who must supply the outstanding readiness evidence, and when? Keep the Decision and Blocking gates lines.",
+          "should_reuse": true,
+          "reason": "The release captain and 16:15 follow-up already satisfy the focused question."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-release-02",
+      "family": "release_readiness",
+      "instructions": "Return exactly one JSON object with keys decision, blockers, nonblocking_followup, and next_review_utc. blockers must be an array of strings. Apply the recorded gate classifications. Do not publish the API.",
+      "evidence": "{\"product\": \"FableCrate\", \"candidate\": \"api-5.3-rc1\", \"schema_version\": \"v5\", \"snapshot_utc\": \"2032-10-08T11:30:00Z\", \"gates\": [{\"name\": \"v5 compatibility tests\", \"blocking\": true, \"status\": \"pass\"}, {\"name\": \"rate-limit soak\", \"blocking\": true, \"status\": \"fail\"}, {\"name\": \"consumer signoff\", \"blocking\": true, \"status\": \"pass\"}, {\"name\": \"sample client refresh\", \"blocking\": false, \"status\": \"pending\"}], \"rate_limit_soak_detail\": \"retry budget exceeded the 2 percent ceiling\", \"gate_owner\": \"API reliability lead\", \"next_review_utc\": \"2032-10-08T13:00:00Z\", \"rule\": \"HOLD if any blocking gate is not pass; otherwise READY\"}",
+      "answer": "{\"decision\":\"HOLD\",\"blockers\":[\"rate-limit soak failed: retry budget exceeded the 2 percent ceiling\"],\"nonblocking_followup\":\"sample client refresh is pending\",\"next_review_utc\":\"2032-10-08T13:00:00Z\"}",
+      "original_question": "Assess FableCrate api-5.3-rc1 at 11:30 using the recorded v5 gate classifications, with blockers, nonblocking follow-up, and next review.",
+      "bindings": {
+        "product": "FableCrate",
+        "release": "api-5.3-rc1",
+        "schema": "v5",
+        "snapshot": "2032-10-08T11:30Z"
+      },
+      "intent": "assess_api_schema_release",
+      "variants": [
+        {
+          "id": "fresh3-release-02-p3",
+          "question": "Does the pending sample client refresh itself block this candidate? Include the complete readiness object.",
+          "should_reuse": true,
+          "reason": "The object identifies that refresh as nonblocking and names the actual blocker."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-support-01",
+      "family": "support_faq",
+      "instructions": "Answer from the policy snapshot only. Use exactly three lines beginning Eligibility:, Owner step:, and Link lifetime:. Explain policy; do not perform account actions. Retain all three lines even for a question focused on one policy detail.",
+      "evidence": "VellumNest policy snapshot dated 2032-04-12: Maple-7 is on the Studio plan. A workspace owner can request a ZIP archive of an archived notebook from Settings > Archives. Editors can view archived notebooks but cannot request ZIP archives. Studio includes archive export at no charge. A completed export link expires 48 hours after generation. The notebook called Fern Ledger is archived in Maple-7; its requester currently has the editor role. An owner can request the archive directly; changing the editor role is not required. This snapshot describes eligibility and contains no generated export link.",
+      "answer": "Eligibility: You cannot request the ZIP as an editor; Studio includes the export at no charge for an owner.\nOwner step: A Maple-7 owner must request Fern Ledger from Settings > Archives; your role need not change.\nLink lifetime: A generated download link lasts 48 hours.",
+      "original_question": "As the editor of Fern Ledger in Maple-7, can I request its archive ZIP, what must an owner do, and how long would the download link last?",
+      "bindings": {
+        "product": "VellumNest",
+        "workspace": "Maple-7",
+        "role": "editor",
+        "plan": "Studio",
+        "operation": "archive_export"
+      },
+      "intent": "explain_archive_export_eligibility",
+      "variants": [
+        {
+          "id": "fresh3-support-01-n1",
+          "question": "I am now a Maple-7 owner rather than an editor. Explain whether I can request Fern Ledger and include the owner step and link lifetime.",
+          "should_reuse": false,
+          "reason": "The saved answer denies requester eligibility based on the old editor role."
+        },
+        {
+          "id": "fresh3-support-01-n2",
+          "question": "Request the Fern Ledger archive ZIP now using the owner account and return its actual download link.",
+          "should_reuse": false,
+          "reason": "An execution request and actual generated link cannot be satisfied by a policy explanation."
+        },
+        {
+          "id": "fresh3-support-01-n4",
+          "question": "A revised policy makes archive links expire after 12 hours. Under that revision, explain eligibility, owner procedure, and expiry.",
+          "should_reuse": false,
+          "reason": "The revised lifetime is 12 hours, whereas the answer states 48 hours."
+        },
+        {
+          "id": "fresh3-support-01-p1",
+          "question": "For Fern Ledger, explain my editor export rights, the owner procedure, and the expiry period in the required format.",
+          "should_reuse": true,
+          "reason": "Same notebook, role, plan, operation, and three-line contract."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-support-02",
+      "family": "support_faq",
+      "instructions": "Return one JSON object with exactly the keys can_edit, can_read, charge_while_paused, and resume_actor. Booleans must be JSON booleans. Answer the supplied snapshot, without changing the project.",
+      "evidence": "{\"product\": \"CopperCanopy\", \"project\": \"HarborTiles\", \"snapshot_date\": \"2032-05-03\", \"billing_cycle\": \"quarterly\", \"state\": \"paused\", \"requester_role\": \"contributor\", \"paused_project_policy\": {\"contributor_can_edit\": false, \"contributor_can_read\": true, \"seat_charge_while_paused\": \"none\", \"resume_actor\": \"workspace owner\"}, \"note\": \"A pause stops new seat charges immediately. Existing paid invoices are not refunded by pausing. Resuming requires a workspace owner.\"}",
+      "answer": "{\"can_edit\":false,\"can_read\":true,\"charge_while_paused\":\"none\",\"resume_actor\":\"workspace owner\"}",
+      "original_question": "What access and ongoing seat billing apply to me as a contributor while HarborTiles is paused, and who can resume it?",
+      "bindings": {
+        "product": "CopperCanopy",
+        "project": "HarborTiles",
+        "state": "paused",
+        "role": "contributor",
+        "billing": "quarterly"
+      },
+      "intent": "explain_pause_seat_access",
+      "variants": [
+        {
+          "id": "fresh3-support-02-n4",
+          "question": "A policy update lets project maintainers resume paused projects instead of workspace owners. Use that policy for the four-key object.",
+          "should_reuse": false,
+          "reason": "The actor field would need to change to project maintainer."
+        }
+      ]
+    }
+  ]
+}

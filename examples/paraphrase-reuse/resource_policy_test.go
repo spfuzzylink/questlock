@@ -34,7 +34,7 @@ func deferredFixture(t *testing.T, phase ...string) (measurementHeader, row) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	h := measurementHeader{Schema: "questlock.paraphrase-measurement.v1", CasesSHA256: fixtureDigest(string(casesJSON)), Model: "fixture", VerifierModel: "other-tokenizer", VerifierPolicy: "factorized-v1", MinSimilarity: .25, ResourcePolicy: &p}
+	h := measurementHeader{Schema: "questlock.paraphrase-measurement.v1", CasesSHA256: fixtureDigest(string(casesJSON)), Model: "fixture", VerifierModel: "other-tokenizer", VerifierPolicy: "factorized-v1", MinSimilarity: .25, DailyBudget: fixtureDailyBudget(), ResourcePolicy: &p}
 	return h, r
 }
 

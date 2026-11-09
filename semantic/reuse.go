@@ -47,6 +47,7 @@ type ReuseConfig struct {
 	VerifierPolicy               string   `json:"verifier_policy,omitempty"`
 	VerifierSourceThink          bool     `json:"verifier_source_think,omitempty"`
 	VerifierPairThink            bool     `json:"verifier_pair_think,omitempty"`
+	VerifierPairAssessment       bool     `json:"verifier_pair_assessment,omitempty"`
 	VerifierPairTemperature      *float64 `json:"verifier_pair_temperature,omitempty"`
 	VerifierPairSeed             *int64   `json:"verifier_pair_seed,omitempty"`
 	VerifierMaxInputTokens       int64    `json:"verifier_max_input_tokens,omitempty"`
@@ -90,6 +91,9 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 			return ReuseConfig{}, errors.New("pair seed must be between 0 and 2147483647")
 		}
 		c.VerifierPairSeed = &seed
+	}
+	if c.VerifierPairAssessment && (c.VerifierPolicy != "factorized-v1" || c.VerifierPairThink) {
+		return ReuseConfig{}, errors.New("pair assessment requires factorized policy and native pair thinking disabled")
 	}
 	thinking := c.VerifierSourceThink || c.VerifierPairThink
 	if thinking && c.VerifierPolicy != "factorized-v1" {
@@ -136,6 +140,9 @@ func NormalizeReuseConfig(c ReuseConfig) (ReuseConfig, error) {
 	}
 	if c.VerifierMaxOutputTokens == 0 {
 		c.VerifierMaxOutputTokens = DefaultVerifierMaxOutputTokens
+		if c.VerifierPairAssessment {
+			c.VerifierMaxOutputTokens = MaxVerifierOutputTokens
+		}
 		if thinking {
 			c.VerifierMaxOutputTokens = MaxFactorizedThinkingOutputTokens
 		}

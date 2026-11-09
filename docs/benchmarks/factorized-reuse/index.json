@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "meaning": "Consumed development diagnostics: nine failed runs and one passing pilot. The larger regression failed after the pilot passed. Independent fresh qualification and matched economics remain unmeasured. This is not an answer-generation, alias-publication, savings or general model-correctness claim.",
+  "meaning": "Consumed development diagnostics: ten failed quality runs, one passing pilot and one operational stop with no semantic decisions. Independent fresh qualification and matched economics remain unmeasured. This is not an answer-generation, alias-publication, savings or general model-correctness claim.",
   "paid_fallback_enabled": false,
   "provider_api_charge_usd": 0,
   "runs": [
@@ -544,6 +544,195 @@
         "answer_generation_or_alias_publication_measured": false,
         "inclusive_reasoning_output_counted_once": true
       }
+    },
+    {
+      "name": "target-contract-pilot24",
+      "file": "target-contract-pilot24.json",
+      "sha256": "5b26233eac151e71b40449a486f28a2ec8105ec97621db15be8bad10112e36f2",
+      "fixture": "pilot24-cases.json",
+      "fixture_sha256": "2c89a3616c1d6fc8fa0833f8df09c31e590bafe09db45568b51a9c8d2239e428",
+      "development_gate": "failed_pilot24",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "01da49c82571f47ed1ae0de0e0aa24889e76e7f368f9bc731c5842ac29c60f75",
+        "manifest_sha256": "b5d6f3be0c29226dcad0442eb705b8425171a39872a8960204e49ebf3a1ed017",
+        "binary_sha256": "ed7bc2196fc3d47142fb40fd39791dd62902e2d4fd60d649448cdc792b85f445",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "a9a7ffc20ac2c08285fdcf3cc98a3565afeb4740f363375dedc9bc9d627ba8c8",
+          "policy_version": "questlock-factorized-validity-v20"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "pair_input_binding_key": "source_bindings",
+        "report_schema": 1,
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "ed85a56b4bb4d6d187aa4ed6289e93f75a66a8aef7ca45ef1bc28b9677c83d65",
+          "semantic/reuse.go": "03c641e17fc49d7d94f6aec0e21a804496332599ab6a6a867e0d3d8254d44363",
+          "inference/ollama.go": "a6c1bfcedf4636b1acdec81c15c9bdcb4b158b451ac4a007cef529e21319e919",
+          "semantic/target_operation_object.go": "6d57f8e2bf51ab54e2518d94855e8505d0bf8f4b85430966a15b7741d572bbf6",
+          "semantic/target_risks.go": "660e47a4a02286cac42828846d81e96d992f03b76d41b79864a0ce54c8b341ba"
+        },
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        },
+        "explicit_pair_temperature": 0.6,
+        "explicit_pair_seed": 42,
+        "verifier_timeout_ms": 60000,
+        "effective_resolver_timeout_ms": 60000,
+        "stop_on_execution_error": true,
+        "independent_audit_sha256": "7eea17b0916b5e02296e955304d720117267a35b4524b8f46ec25f2800fef539",
+        "encoding_addendum_sha256": "92f81c2e5d7eb1c3682e25d8d1218c5263a32d44af46872c3de9c7b665e08210",
+        "declared_verifier_pair_think": false
+      },
+      "audit_summary": {
+        "evidence_audit_passed": true,
+        "semantic_qualification_passed": false,
+        "native_attempts": 31,
+        "complete_known_usage": 31,
+        "incomplete_known_usage": 0,
+        "usage_unknown": 0,
+        "cached_source_checks": 11,
+        "false_positives": 1,
+        "false_negatives": 6,
+        "not_run": 0,
+        "unscored": 0,
+        "new_unfinished_fences": 0,
+        "holds": 0,
+        "old_16c3_still_unconfirmed": true,
+        "answer_generation_or_alias_publication_measured": false,
+        "original_scorer_error": "report config verifier_pair_think",
+        "original_raw_unchanged": true,
+        "encoding_only_replay_gate": "failed"
+      },
+      "encoding_note": "The original scorer required a present false verifier_pair_think field. Go omitted it through omitempty. The raw report remains unchanged. Independent replay normalized only that absent declared-false field in a separate copy; the same semantic gate still failed with six false negatives and one false positive.",
+      "fixture_derivation": {
+        "file": "pilot24-derivation.json",
+        "sha256": "088e02d3f462c7c995761fcbdc52a710904ea4679b90a45698b351eacf20d0c2"
+      }
+    },
+    {
+      "name": "assessment-memory-stop-pilot24",
+      "file": "assessment-memory-stop-pilot24.json",
+      "sha256": "762def657da1c3c168c6729f29330499faa97e4325f055c387ec9ee3513f2a8e",
+      "fixture": "pilot24-cases.json",
+      "fixture_sha256": "2c89a3616c1d6fc8fa0833f8df09c31e590bafe09db45568b51a9c8d2239e428",
+      "development_gate": "operational_stop_no_semantic_estimate",
+      "qualified": false,
+      "provenance": {
+        "report_schema": 1,
+        "physical_hosts": 1,
+        "verifier_pair_assessment": true,
+        "declared_verifier_source_think": false,
+        "declared_verifier_pair_think": false,
+        "explicit_pair_temperature": 0.6,
+        "explicit_pair_seed": 42,
+        "verifier_max_input_tokens": 16384,
+        "verifier_source_max_input_tokens": 5376,
+        "verifier_pair_max_input_tokens": 8192,
+        "verifier_max_output_tokens": 512,
+        "verifier_timeout_ms": 60000,
+        "effective_resolver_timeout_ms": 60000,
+        "stop_on_execution_error": true,
+        "independent_audit_sha256": "e60f8896629da086f0176d48c3b6d35166399db2f25c17724fa30e7718ac78d4",
+        "snapshot_proof_sha256": "2f356acd790c74dfaf33b2207c592677e8c4e6eaa53448168c055d0dd4082699",
+        "count_profile_sha256": "e3d77e2ef24f605eca52a181ab606bc9a6f4c8156c4ad976382a3fc593f16600",
+        "binary_sha256": "5315823a3ce11cf0ac7471b3c244e68d6aaa5d0ca3fcfce144735604007d4614",
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "e5cb90179dd5e5436aeeb2813416a83a0f2c6fc2f2495869ad2e8cd9f817728b"
+        },
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "1854c2a9de247b1034eab2bcbe60de5438e652d7912aa0c57692474f3959a537"
+        },
+        "native_full_input_count_sha256": "3e470db276a431915c89f8c34fd386fad59d301a860a4fd161b34938eec4c541",
+        "native_full_input_frames": 198,
+        "one_pilot_approval_sha256": "c9d5b6675f1ccd18dc7e75befcecfa0ae2071c49e77d5765d027d10d74611c71",
+        "count_profile_is_not_live_generation_authority": true,
+        "declared_runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "pair_protocol": "Optional bounded assessment string before the same strict verdict and three Boolean checks; assessment prose is untrusted diagnostics, never proof.",
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "answer_assessment": "first field; nonempty bounded UTF-8 string; untrusted diagnostic",
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        }
+      },
+      "audit_summary": {
+        "evidence_inventory_complete": true,
+        "semantic_qualification_passed": false,
+        "native_claim_attempts": 1,
+        "client_reported_generate_calls": 1,
+        "actual_server_delivery_or_execution_completion_proved": false,
+        "complete_known_usage": 0,
+        "incomplete_known_usage": 0,
+        "usage_unknown": 1,
+        "cached_source_checks": 0,
+        "semantic_decisions": 0,
+        "scored": 0,
+        "not_run": 23,
+        "unscored": 24,
+        "source_execution_errors": 1,
+        "new_unfinished_fences": 1,
+        "holds": 0,
+        "old_617_and30_fences_retained": true,
+        "old_16c3_still_unconfirmed": true,
+        "answer_generation_or_alias_publication_measured": false,
+        "after_child_sample_present": false,
+        "child_finished_event_present": false,
+        "forensic_inventory_only": true,
+        "api_ps_empty_is_not_completion_or_usage_proof": true
+      },
+      "resource_stop": {
+        "before_child_memory_pressure": "high",
+        "before_child_available_memory_bytes": 185335808,
+        "hard_event_reason": "memory_pressure",
+        "critical_memory_pressure": "critical",
+        "parent_elapsed_seconds": 4.609871864318848,
+        "child_and_watchdog_returned": true,
+        "abort_path_wait_proof": "Pinned watchdog stop() waits for its child before returning; the parent subprocess returned and recorded its exit.",
+        "after_child_sample_present": false,
+        "child_finished_event_present": false
+      },
+      "accounting_meaning": "One durable native claim and client-reported generation attempt became uncertain, without response or usage. Neither delivery to the model server nor completion is proved. Known native usage subtotals are zero because none was confirmed; the unknown attempt is not valued at zero. Two embedding calls reported72 input tokens. This is a forensic inventory of an operational stop, not a completed qualification or model-quality result."
     }
   ],
   "retained_prior_native_attempts": 201,
@@ -553,14 +742,15 @@
   "prior_boundary_basis": "Independent prior-scope audit boundary preserved in the frozen pre-run plan. Prior jobs are not recomputed from these recent report files.",
   "prior_boundary_source_sha256": "520397afb2a2893a2e3c6cf4961845a46b0ea763f03acb8c5a4c2a268e2394df",
   "recent_unknown_usage_job_keys": [
-    "inference/v1/jobs/16c3ce324f8325f9c3b1d960083f4ae6f1eaf4d39db330ab2bc27f4f2877c498"
+    "inference/v1/jobs/16c3ce324f8325f9c3b1d960083f4ae6f1eaf4d39db330ab2bc27f4f2877c498",
+    "inference/v1/jobs/e7a136610252bc6d9fe63b63d7f4d64df6892184246c5a0421803e0391931ab7"
   ],
   "closed_boundary": {
-    "native_attempts": 586,
-    "complete_known_usage": 556,
+    "native_attempts": 618,
+    "complete_known_usage": 587,
     "incomplete_known_usage": 24,
-    "usage_unknown": 6,
-    "unfinished_execution_fences": 30,
-    "recent_cached_source_checks": 211
+    "usage_unknown": 7,
+    "unfinished_execution_fences": 31,
+    "recent_cached_source_checks": 222
   }
 }

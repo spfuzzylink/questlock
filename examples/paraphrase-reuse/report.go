@@ -17,6 +17,8 @@ import (
 )
 
 type measurementHeader struct {
+	MaxDurationMS                int64                            `json:"max_duration_ms,omitempty"`
+	AnswerMaxOutputTokens        int64                            `json:"answer_max_output_tokens,omitempty"`
 	Schema                       string                           `json:"schema"`
 	CasesSHA256                  string                           `json:"cases_sha256"`
 	Model                        string                           `json:"model"`
@@ -28,6 +30,7 @@ type measurementHeader struct {
 	VerifierPolicy               string                           `json:"verifier_policy"`
 	VerifierSourceThink          bool                             `json:"verifier_source_think,omitempty"`
 	VerifierPairThink            bool                             `json:"verifier_pair_think,omitempty"`
+	VerifierPairAssessment       bool                             `json:"verifier_pair_assessment,omitempty"`
 	VerifierPairTemperature      *float64                         `json:"verifier_pair_temperature,omitempty"`
 	VerifierPairSeed             *int64                           `json:"verifier_pair_seed,omitempty"`
 	VerifierMaxOutputTokens      int64                            `json:"verifier_max_output_tokens,omitempty"`
@@ -76,22 +79,30 @@ type phaseSummary struct {
 	UnknownEndToEndMS    int                      `json:"unknown_end_to_end_records"`
 }
 type attemptReport struct {
-	Schema                string                   `json:"schema"`
-	Phases                map[string]*phaseSummary `json:"phases"`
-	FinalMarker           bool                     `json:"final_marker_present"`
-	DeclaredFailures      bool                     `json:"declared_failures"`
-	Eligibility           map[string]bool          `json:"comparison_eligibility"`
-	Reasons               []string                 `json:"ineligible_reasons"`
-	Comparison            string                   `json:"comparison_basis"`
-	ComparedRequests      int                      `json:"compared_requests_per_arm"`
-	WholeEligibility      map[string]bool          `json:"whole_cohort_comparison_eligibility"`
-	WholeReasons          []string                 `json:"whole_cohort_ineligible_reasons"`
-	WholeComparedRequests int                      `json:"whole_cohort_compared_requests_per_arm"`
-	LatencyBasis          string                   `json:"latency_basis"`
-	LatencyEligibility    map[string]bool          `json:"end_to_end_latency_comparison_eligibility"`
+	CasesSHA256                   string                   `json:"cases_sha256"`
+	DeclaredMaxDurationMS         int64                    `json:"declared_max_duration_ms,omitempty"`
+	DeclaredAnswerMaxOutputTokens int64                    `json:"declared_answer_max_output_tokens,omitempty"`
+	DeclaredDailyBudget           *inference.TokenBudget   `json:"declared_daily_budget,omitempty"`
+	Schema                        string                   `json:"schema"`
+	Phases                        map[string]*phaseSummary `json:"phases"`
+	FinalMarker                   bool                     `json:"final_marker_present"`
+	DeclaredFailures              bool                     `json:"declared_failures"`
+	Eligibility                   map[string]bool          `json:"comparison_eligibility"`
+	Reasons                       []string                 `json:"ineligible_reasons"`
+	Comparison                    string                   `json:"comparison_basis"`
+	ComparedRequests              int                      `json:"compared_requests_per_arm"`
+	WholeEligibility              map[string]bool          `json:"whole_cohort_comparison_eligibility"`
+	WholeReasons                  []string                 `json:"whole_cohort_ineligible_reasons"`
+	WholeComparedRequests         int                      `json:"whole_cohort_compared_requests_per_arm"`
+	LatencyBasis                  string                   `json:"latency_basis"`
+	LatencyEligibility            map[string]bool          `json:"end_to_end_latency_comparison_eligibility"`
 }
 
 func reportFile(path string, out io.Writer) error {
+	return reportFileWithCases(path, casesJSON, out)
+}
+
+func reportFileWithCases(path string, caseData []byte, out io.Writer) error {
 	file, err := privateFile(path, false)
 	if err != nil {
 		return errors.New("report requires an existing absolute private regular file")
@@ -101,7 +112,7 @@ func reportFile(path string, out io.Writer) error {
 	if err != nil || info.Size() > 8<<20 {
 		return errors.New("report exceeds the 8 MiB file bound")
 	}
-	report, err := summarizeMeasurement(file)
+	report, err := summarizeMeasurementWithCases(file, caseData)
 	if err != nil {
 		return err
 	}
@@ -109,6 +120,10 @@ func reportFile(path string, out io.Writer) error {
 }
 
 func summarizeMeasurement(input io.Reader) (attemptReport, error) {
+	return summarizeMeasurementWithCases(input, casesJSON)
+}
+
+func summarizeMeasurementWithCases(input io.Reader, caseData []byte) (attemptReport, error) {
 	bad := errors.New("invalid measurement schema or work attribution") // Never echo private input or decoder errors.
 	report := attemptReport{Schema: "questlock.paraphrase-attempt-report.v1", Phases: map[string]*phaseSummary{}, Eligibility: map[string]bool{}, Reasons: []string{}, Comparison: "observed usage subtotals only; primary comparison is 12 paraphrases versus 12 fresh baselines; opt-in whole-cohort comparison is 12 paraphrases plus 12 exact repeats versus 24 measured fresh baselines; verifier and embedding tokenizers remain separate; source-answer generation is common cold work, while seed indexing/registration and embedding are reuse overhead; the full seed phase is reported separately and is not all common work; no dollar or savings estimate", LatencyBasis: "elapsed_ms measures immediately before Router.Run through RecordOutcome, including finish/indexing and outcome registration; excludes forensic output fetch and JSONL writes. Runner Measurement.TotalMS is a partial clock; separate verifier/embedding clocks may overlap it or extend after runner finish and are never added."}
 	scanner := bufio.NewScanner(io.LimitReader(input, (8<<20)+1))
@@ -117,12 +132,16 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 		return report, bad
 	}
 	var header measurementHeader
-	sum := sha256.Sum256(casesJSON)
+	sum := sha256.Sum256(caseData)
 	if strictRecord(scanner.Bytes(), &header) != nil || header.Schema != "questlock.paraphrase-measurement.v1" || header.CasesSHA256 != hex.EncodeToString(sum[:]) || header.Model == "" || header.VerifierModel == "" || header.VerifierPolicy != "factorized-v1" || header.PaidFallback || header.ProviderCharge != 0 || header.FreshRepeatBaseline && !header.FreshBaseline {
 		return report, bad
 	}
 	if !validMeasurementVerifierHeader(scanner.Bytes(), header) {
 		return report, bad
+	}
+	report.CasesSHA256, report.DeclaredMaxDurationMS, report.DeclaredAnswerMaxOutputTokens = header.CasesSHA256, header.MaxDurationMS, header.AnswerMaxOutputTokens
+	if header.DailyBudget != (inference.TokenBudget{}) {
+		report.DeclaredDailyBudget = &header.DailyBudget
 	}
 	if header.ResourcePolicy != nil {
 		policy, err := delegation.NormalizeReuseAdmissionPolicy(*header.ResourcePolicy)
@@ -133,8 +152,8 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 	if header.VerifierPairModel != "" && header.VerifierPairModel != header.VerifierModel {
 		report.Comparison += " Source and applicability tokenizers differ: verifier aggregate counts are reservation-accounting sums only; use the per-model buckets, calls and elapsed time, not a normalized token-saving percentage."
 	}
-	var set caseSet
-	if json.Unmarshal(casesJSON, &set) != nil {
+	set, caseErr := decodeMeasurementCases(caseData)
+	if caseErr != nil {
 		return report, bad
 	}
 	expected, checks := map[string]bool{}, map[string]businessCase{}
@@ -290,6 +309,13 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 				passed = false
 			} else {
 				if m.Fingerprint != "" && answer.Fingerprint != "" && m.Fingerprint != answer.Fingerprint || m.KnownGenerationUsage != (m.GenerationUsage != nil) || m.KnownGenerationUsage && !m.GenerationCalled || m.TotalMS < 0 {
+					return report, bad
+				}
+				answerCap := header.AnswerMaxOutputTokens
+				if answerCap == 0 {
+					answerCap = 256
+				}
+				if m.GenerationUsage != nil && m.GenerationUsage.OutputTokens > answerCap {
 					return report, bad
 				}
 				p.AttemptMS += m.TotalMS
@@ -534,15 +560,43 @@ func summarizeMeasurement(input io.Reader) (attemptReport, error) {
 // Optional metadata is absent in older logs. An explicitly present zero/null
 // cap is not a normalized declaration and cannot silently inherit a default.
 func validMeasurementVerifierHeader(raw []byte, h measurementHeader) bool {
+	if !validMeasurementBudget(h.DailyBudget) {
+		return false
+	}
 	var fields map[string]json.RawMessage
 	if json.Unmarshal(raw, &fields) != nil {
 		return false
 	}
+	if value, present := fields["daily_budget"]; present {
+		var caps map[string]json.RawMessage
+		if json.Unmarshal(value, &caps) != nil || len(caps) != 3 {
+			return false
+		}
+		for _, key := range []string{"input_tokens", "output_tokens", "total_tokens"} {
+			if _, exists := caps[key]; !exists {
+				return false
+			}
+		}
+	}
+	for _, option := range []struct {
+		key        string
+		value, max int64
+	}{{"max_duration_ms", h.MaxDurationMS, 7200000}, {"answer_max_output_tokens", h.AnswerMaxOutputTokens, 4096}} {
+		if _, present := fields[option.key]; present && (option.value < 1 || option.value > option.max) {
+			return false
+		}
+	}
+
 	for key := range fields {
-		for _, canonical := range []string{"verifier_source_think", "verifier_pair_think", "verifier_pair_temperature", "verifier_pair_seed", "verifier_max_output_tokens", "verifier_timeout_ms", "semantic_timeout_ms", "resource_policy", "verifier_pair_model", "verifier_pair_max_input_tokens", "verifier_max_input_tokens", "verifier_source_max_input_tokens"} {
+		for _, canonical := range []string{"daily_budget", "max_duration_ms", "answer_max_output_tokens", "verifier_source_think", "verifier_pair_think", "verifier_pair_assessment", "verifier_pair_temperature", "verifier_pair_seed", "verifier_max_output_tokens", "verifier_timeout_ms", "semantic_timeout_ms", "resource_policy", "verifier_pair_model", "verifier_pair_max_input_tokens", "verifier_max_input_tokens", "verifier_source_max_input_tokens"} {
 			if strings.EqualFold(key, canonical) && key != canonical {
 				return false
 			}
+		}
+	}
+	for _, key := range []string{"verifier_pair_assessment"} {
+		if raw, present := fields[key]; present && string(raw) != "true" && string(raw) != "false" {
+			return false
 		}
 	}
 	if _, present := fields["resource_policy"]; present && h.ResourcePolicy == nil {
@@ -563,7 +617,7 @@ func validMeasurementVerifierHeader(raw []byte, h measurementHeader) bool {
 		}
 	}
 	output := int64(128)
-	if h.VerifierSourceThink || h.VerifierPairThink {
+	if h.VerifierSourceThink || h.VerifierPairThink || h.VerifierPairAssessment {
 		output = 0
 	}
 	if _, present := fields["verifier_max_output_tokens"]; present {
@@ -582,7 +636,7 @@ func validMeasurementVerifierHeader(raw []byte, h measurementHeader) bool {
 		}
 		timeout = h.VerifierTimeoutMS
 	}
-	config, err := measurementVerifierConfig(h.VerifierModel, h.VerifierSourceThink, h.VerifierPairThink, output, timeout, h.MinSimilarity)
+	config, err := measurementVerifierConfigWithAssessment(h.VerifierModel, h.VerifierSourceThink, h.VerifierPairThink, h.VerifierPairAssessment, output, timeout, h.MinSimilarity)
 	if err != nil {
 		return false
 	}
@@ -699,6 +753,11 @@ func strictRecord(data []byte, dst any) error {
 	}
 	var required func(json.RawMessage, reflect.Type) error
 	required = func(raw json.RawMessage, typ reflect.Type) error {
+		// RawMessage is an embedded JSON value, not a JSON array of bytes.
+		// The token walk above already checked its duplicate keys/depth.
+		if typ == reflect.TypeOf(json.RawMessage{}) {
+			return nil
+		}
 		if typ.Kind() == reflect.Pointer {
 			if bytes.Equal(raw, []byte("null")) {
 				return nil

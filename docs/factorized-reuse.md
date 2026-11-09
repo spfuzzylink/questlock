@@ -1,12 +1,13 @@
 # Check the answer once. Check each new question separately.
 
-**Release gate: still open.** The four-minute-budget development pilot passed
-all 20 requests, but the same profile failed the larger 144-request regression.
-Two invalid answers were served. A contradictory complete verdict was withheld
-as protocol `unknown`; a later call exhausted its output cap and stopped the run,
-leaving 107 requests unattempted. Fresh independent qualification and matched
-cost measurements have not run. These checks use fixed source answers; they do
-not measure fresh answer generation or alias publication.
+**Release gate: still open.** The assessment-enabled pilot stopped under critical
+memory pressure before making a semantic decision. All 24 requests remain
+unscored; one source attempt is uncertain and the other 23 requests were not run.
+The earlier nonthinking pilot reused only six of 12 valid answers and served one
+stale answer after the facts changed. An older thinking pilot passed 20 requests,
+then failed its larger regression. Fresh independent qualification and matched
+cost measurements have not run. These fixed-source checks do not measure fresh
+answer generation or alias publication.
 
 The successor checks whether the unchanged answer covers the new request.
 Source bindings describe the saved task; they cannot substitute its old target
@@ -24,10 +25,24 @@ failed work. Its 42 embedding calls reported 1,068 input tokens. These were
 explicit shared four-minute verifier budgets with fixed context and output caps;
 the two-minute thinking default stays unchanged.
 
-[Retained development runs](benchmarks/factorized-reuse/README.md) preserve nine
-failed runs and the passing pilot, including all 144 rows of the stopped larger
-regression. The audited boundary is 586 native attempts: 556 complete with known
-usage, 24 incomplete with known usage, and six with unknown usage. All 30
+The latest nonthinking run used 11 source checks (7,996 input and 154 output
+tokens), 20 question checks (14,738 input and 710 output), and 36 embedding calls
+with 1,040 input tokens. Eleven source lookups reused completed receipts with no
+new generation. All 31 native calls completed with known usage. A scorer encoding
+mismatch was reviewed separately; correcting it in an offline copy did not change
+the failed quality result.
+
+The assessment-enabled attempt added two embedding calls (72 input tokens) and
+one unconfirmed source attempt. The watchdog stopped and waited for its child
+group after critical memory pressure; it returned no native response or token
+usage. That unknown work remains fenced. Stopping safely does not prove model
+completion or qualification, and its unknown usage is not valued at zero.
+
+[Retained development runs](benchmarks/factorized-reuse/README.md) preserve ten
+failed quality runs, one passing pilot and the unscored operational stop. They
+include all 144 rows of the stopped larger regression. The audited boundary is
+618 native claim/attempt records: 587 complete with known usage, 24 incomplete
+with known usage, and seven with unknown usage. All 31
 unfinished fences remain. A new result cannot recover an older unconfirmed call.
 The evidence's offline check runs in `make check`.
 
@@ -131,6 +146,28 @@ output in the selected stage too: hiding its text does not make that work free.
 With both settings omitted or false, the existing smaller limits and identities
 stay unchanged. A larger budget is an option to test, not evidence of better
 answers or lower cost.
+
+There is also an opt-in short assessment: `verifier_pair_assessment: true`
+(CLI `--verifier-pair-assessment`). The applicability model writes a bounded
+comparison before its decisions, with native pair thinking disabled. This is an
+experiment to give the model room to check a narrower question without spending
+thousands of hidden reasoning tokens. It is not proof that the answer is safe.
+The note stays in the private inference artifact; public result metadata contains
+only the decision and usage. Invalid or contradictory output is withheld.
+
+Assessment requires `factorized-v1` and cannot be combined with
+`verifier_pair_think`. If output allowance is omitted, it selects 512 tokens
+total, split equally between stages; an explicit smaller allowance still wins.
+Source thinking, if selected separately, keeps its existing limits. Assessment
+does not extend deadlines. With assessment omitted or false, the existing pair
+prompt and output schema stay unchanged. Check MCP discovery's
+`semantic_reuse_optional_reasoning_fields` for `verifier_pair_assessment` before
+sending it to a worker. The installed worker may need a deliberate upgrade.
+
+An explicitly adopted new snapshot or policy can also be rejected before the
+verifier runs. Asking about a change or quoting one does not adopt it. This guard
+only catches recognizable cases; passing it still requires the full validity
+check. Neither option has passed fresh workload qualification yet.
 
 Before enabling pair reasoning through MCP, check that
 `questlock_status.request_schemas.semantic_reuse_optional_reasoning_fields`

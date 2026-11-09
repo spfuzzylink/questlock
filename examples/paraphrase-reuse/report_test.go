@@ -19,9 +19,13 @@ import (
 )
 
 func fixtureDigest(s string) string { v := sha256.Sum256([]byte(s)); return hex.EncodeToString(v[:]) }
+func fixtureDailyBudget() inference.TokenBudget {
+	return inference.TokenBudget{InputTokens: 524288, OutputTokens: 16384, TotalTokens: 540672}
+}
+
 func fixtureMeasurement(t *testing.T, rows []row, complete bool) string {
 	t.Helper()
-	h := measurementHeader{Schema: "questlock.paraphrase-measurement.v1", CasesSHA256: fixtureDigest(string(casesJSON)), Model: "fixture", VerifierModel: "other-tokenizer", VerifierPolicy: "factorized-v1", MinSimilarity: .25}
+	h := measurementHeader{Schema: "questlock.paraphrase-measurement.v1", CasesSHA256: fixtureDigest(string(casesJSON)), Model: "fixture", VerifierModel: "other-tokenizer", VerifierPolicy: "factorized-v1", MinSimilarity: .25, DailyBudget: inference.TokenBudget{InputTokens: 524288, OutputTokens: 16384, TotalTokens: 540672}}
 	h.FreshBaseline = true
 	for _, r := range rows {
 		h.FreshRepeatBaseline = h.FreshRepeatBaseline || r.Phase == "baseline_repeat"
