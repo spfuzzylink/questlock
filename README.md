@@ -92,6 +92,11 @@ Read-only by default, with no imported provider credentials or paid fallback.
 
 [Put a local agent team to work on your own machines](docs/use-cases.md#a-local-agent-team-using-the-machines-you-already-have).
 
+Busy machine? [Wait for capacity or let a ready worker pick up the work](docs/capacity-routing.md).
+Read the exact result first. Wait or use a ready worker when new inference is
+needed. A smaller model is an explicit profile choice; memory pressure doesn't
+quietly weaken reuse checks.
+
 **OpenRouter routes the model. Questlock coordinates the work.** We build alongside
 OpenRouter: shared task admission, checked revisions, reusable results and human
 feedback around your chosen route. An independent companion, with credit to the

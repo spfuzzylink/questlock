@@ -1,6 +1,6 @@
 # Check the answer once. Check each new question separately.
 
-**Release gate: still open.** The assessment-enabled pilot stopped under critical
+**Experimental policy: not qualified for production reuse.** The assessment-enabled pilot stopped under critical
 memory pressure before making a semantic decision. All 24 requests remain
 unscored; one source attempt is uncertain and the other 23 requests were not run.
 The earlier nonthinking pilot reused only six of 12 valid answers and served one
@@ -8,6 +8,13 @@ stale answer after the facts changed. An older thinking pilot passed 20 requests
 then failed its larger regression. Fresh independent qualification and matched
 cost measurements have not run. These fixed-source checks do not measure fresh
 answer generation or alias publication.
+
+This optional verifier ships for evaluation alongside the independently tested
+[capacity dispatcher](capacity-routing.md). Its remaining accuracy and whole-task
+savings work is tracked in [#44](https://github.com/spfuzzylink/questlock/issues/44).
+Shipping coordination controls does not establish that this policy is safe to
+serve arbitrary paraphrases. The standalone verifier and exact-reuse defaults
+are unchanged.
 
 The successor checks whether the unchanged answer covers the new request.
 Source bindings describe the saved task; they cannot substitute its old target

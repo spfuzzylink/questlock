@@ -7,6 +7,8 @@ import tempfile
 import unittest
 import json
 import stat
+import subprocess
+import sys
 import zipfile
 
 
@@ -146,6 +148,39 @@ class PackageTests(unittest.TestCase):
             package.archive(output, b"binary fixture", {"THIRD_PARTY_NOTICES.md": notice}, {"version": "0.1.1"})
             with tarfile.open(output) as bundle:
                 self.assertEqual(bundle.extractfile("THIRD_PARTY_NOTICES.md").read(), notice)
+
+    def test_archived_examples_and_linked_factorized_evidence_are_complete(self):
+        documents = {name: package.public_file(package.ROOT, name)
+                     for name in package.PUBLIC_FILES}
+        with tempfile.TemporaryDirectory() as temp:
+            output, unpacked = Path(temp) / "release.tar.gz", Path(temp) / "unpacked"
+            package.archive(output, b"binary fixture", documents, {"version": "0.17.0"})
+            with tarfile.open(output) as bundle:
+                names = set(bundle.getnames())
+                self.assertIn("docs/capacity-routing.md", names)
+                self.assertIn("docs/benchmarks/factorized-reuse/README.md", names)
+                self.assertIn("examples/paraphrase-reuse/cases.json", names)
+                # Shipping main.go alone can omit helpers required by an example.
+                for directory in ("examples/capacity-dispatch", "examples/paraphrase-reuse",
+                                  "examples/approved-questions"):
+                    self.assertIn(f"{directory}/README.md", names)
+                    for source in (package.ROOT / directory).iterdir():
+                        if source.suffix == ".go" and not source.name.endswith("_test.go"):
+                            name = f"{directory}/{source.name}"
+                            self.assertIn(name, names)
+                            self.assertEqual(bundle.extractfile(name).read(), source.read_bytes())
+                # Exercise the published verifier from archived files only. It
+                # follows index/derivation references and checks all twelve reports.
+                for name in names:
+                    if name.startswith("docs/benchmarks/factorized-reuse/"):
+                        path = unpacked / name
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        path.write_bytes(bundle.extractfile(name).read())
+            result = subprocess.run(
+                [sys.executable, str(unpacked / "docs/benchmarks/factorized-reuse/verify.py")],
+                cwd=unpacked, capture_output=True, text=True, timeout=30,
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_archive_has_only_explicit_inputs_and_normalized_ownership(self):
         with tempfile.TemporaryDirectory() as temp:

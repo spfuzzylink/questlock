@@ -187,6 +187,13 @@ already checked results needs no model admission.
 
 ## Share work across nodes
 
+The whole team doesn't have to fit on one machine. Put the master and reviewers
+on workers that can carry their approved models, sharing claims and results
+through the broker below. For Go applications, the
+[capacity dispatcher](capacity-routing.md) adds bounded waiting and read-only
+peer-result polling. Capacity changes where or when work runs; it doesn't change
+the approved model or reviewer requirements.
+
 Run one authoritative broker. Every worker keeps its own private files and calls
 the broker over authenticated HTTPS. Only the broker owns SQLite; never mount
 its database into workers or share that file over NFS.

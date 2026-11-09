@@ -8,6 +8,11 @@ The `execution` package wires together the existing `inference.Runner`, bounded
 `admission` queue and optional Langfuse exporter. Your app supplies the broker,
 provider and approved task. There is no new gateway to deploy.
 
+For bounded waiting, pre-claim node selection and read-only peer-result polling,
+use the [capacity dispatcher](capacity-routing.md). It is additive to this
+coordinator: keep your approved model and quality checks, and choose when or
+where new work can start.
+
 ## Wire it once in your service
 
 From your application module, with Go 1.26 or newer:
