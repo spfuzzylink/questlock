@@ -8,12 +8,16 @@
 
 </div>
 
-You already paid for the answer. Why generate it again to change a sentence?
+Your AI team shouldn't repeat work or get stuck on one busy machine.
 
-**Questlock** helps agents reuse completed work, make checked literal edits without
-a model, and run bounded tasks through local or hosted models. Add CPU/memory-aware
-admission and cache-aware SGLang integration when you need them. A Go library and
-CLI, with a shared SQLite broker underneath.
+**Questlock** helps agents share completed work and coordinate new inference
+across one machine or several. Reuse exact results and make checked text edits
+without a model. Fresh self-hosted work can wait for capacity or be picked up by
+an eligible worker before it starts, keeping the approved model and quality
+checks intact during dispatch.
+
+A Go library and CLI with one shared SQLite broker. Use local models or explicit
+hosted routes, with optional SGLang and Langfuse integration.
 
 **The mission: lower cost per accepted task, including the work a person has to redo.**
 

@@ -1,5 +1,21 @@
 # Model cost-control architecture: what, why, how
 
+## Share the work, then choose where fresh inference can start
+
+**Questlock** coordinates agent work as well as completed answers. An exact hit
+returns before fresh capacity admission. Otherwise, the
+[capacity dispatcher](capacity-routing.md) can wait or try an eligible node
+without changing the approved model, task or quality checks. Once a worker owns
+generation, other workers may observe its result; they cannot regenerate it to
+escape an uncertain outcome.
+
+Put agent roles on machines that can carry their declared models and let them
+share one broker. Smaller machines can coordinate or read completed work without
+running the whole team. CPU/memory admission is local to each worker; the broker
+does not allocate cluster RAM or GPU memory. More machines add capacity, while
+accuracy still needs a measured model/reviewer profile. Experimental fuzzy
+reuse qualification is tracked in [#44](https://github.com/spfuzzylink/questlock/issues/44).
+
 ## Semantic shadow observation
 
 **Questlock** can now observe related inputs after an approved task has already
@@ -9,8 +25,9 @@ in the same bound partition, then indexes the source. The observation records
 embedding usage and time separately from generation. Missing token counts stay
 unknown.
 
-Only shadow mode is supported. A candidate serves no answer, avoids no generation
-and changes no claim or result. Existing exact reuse runs first without embedding
+The shadow observer serves no candidate answer, avoids no generation
+and changes no claim or result. [Controlled reuse](controlled-reuse.md) is a
+separate, experimental opt-in. Existing exact reuse runs first without embedding
 calls. Scope, evidence, facts, constraints, checks, model tier and pinned runtime
 remain boundaries; a high score cannot override them. Model or index failures are
 diagnostic, with no speculative or verifier generation and no fallback.

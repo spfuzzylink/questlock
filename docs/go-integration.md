@@ -18,7 +18,7 @@ where new work can start.
 From your application module, with Go 1.26 or newer:
 
 ```sh
-go get github.com/spfuzzylink/questlock@v0.10.0
+go get github.com/spfuzzylink/questlock@v0.17.0
 ```
 
 
@@ -53,6 +53,27 @@ samples are warming up or current CPU/memory headroom is unsafe. Inspect
 `coordinator.Status()` and let your application decide when to submit again.
 No model call is made for a rejected submission. Avoid putting an unbounded
 list of goroutines in front of the bounded queue.
+
+## Let capacity recover or let a peer finish
+
+For self-hosted work, build a `delegation.NewResourceAdmission` callback from
+your measured memory/CPU policy, then pass it and the explicit provider to
+`execution.NewDispatcher`. Set `MaxPending`, `MaxWait` and `PollInterval` to bound
+waiting. Add only nodes with the same captured runtime identity; don't erase
+endpoint or model identity to force a shared cache hit.
+
+`pool.Run(ctx, approvedSpec)` checks exact results before the admission callback.
+It can try the next node only after verified pre-claim deferral. Set
+`WaitForPeer: true` to observe a pending result read-only within the wait bound;
+it cannot regenerate a missing or uncertain peer job. The capacity wait budget
+doesn't cancel generation that was already admitted; the original caller
+deadline still applies.
+
+The [copyable Go setup](capacity-routing.md) includes the constructor and policy.
+To spread real roles across machines, give each worker its own token in the same
+broker scope and use the [team deployment commands](local-agent-teams.md#share-work-across-nodes).
+The dispatcher supplies no RPC server or automatic node discovery. Keep your
+existing answer checks; a resource decision is not a quality verdict.
 
 ## Give repeated work a proper snapshot
 

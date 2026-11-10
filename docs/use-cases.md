@@ -1,5 +1,25 @@
 # Use cases
 
+## One busy laptop shouldn't hold up the whole team
+
+Your development machine is short on memory while another worker has room for
+the approved model. Check for an exact completed result first. If fresh work is
+needed, a bounded capacity wait or an eligible worker can handle it before any
+new claim or generation. A busy worker doesn't need a smaller, unqualified
+verifier just to keep moving.
+
+For example, put a support-summary master on one machine and independent
+reviewers on others. Give them the same approved request and scoped HTTPS access
+to one broker. Each machine runs only the roles it can support; completed roles
+and exact results remain shared. No worker takes over an uncertain call.
+
+Start with the [model-free walkthrough](../examples/capacity-dispatch/README.md),
+then follow the [Go capacity setup](capacity-routing.md) or
+[multi-machine role commands](local-agent-teams.md#share-work-across-nodes).
+Measure waiting time, calls avoided, task quality and rework separately. The
+walkthrough uses scripted providers on one host, not a physical-cluster or
+fuzzy-accuracy benchmark.
+
 ## Several workers need the same answer
 
 Your support agents need a handoff for the same ticket revision. Give them the

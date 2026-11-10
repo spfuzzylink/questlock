@@ -1,5 +1,35 @@
 # Architecture
 
+## Coordinate work before starting inference
+
+Workers share claims and completed results through one authoritative broker.
+Each machine keeps its own runtime, credentials and CPU/memory admission policy;
+SQLite stays on the broker host.
+
+The additive `execution.Dispatcher` checks exact results before admission. On a
+miss, it can wait for capacity or try the next explicitly configured same-runtime
+node after a proven pre-claim deferral. A pending or uncertain call cannot move
+to another node. Optional peer waiting polls read-only, even if the original
+artifact disappears. Queues, snapshots and per-node counters stay bounded.
+
+```mermaid
+flowchart LR
+    A[Approved task] --> B{Shared result or claim?}
+    B -->|valid exact result| C[Return with no new generation]
+    B -->|pending or uncertain| D[Stop or wait read-only]
+    B -->|missing| E{Worker has capacity?}
+    E -->|no| F[Bounded wait or next eligible node]
+    F --> B
+    E -->|yes| G[Claim through broker]
+    G -->|claim won| H[Run approved model once]
+    G -->|claim lost| D
+```
+
+This selects when or where unchanged work starts; it neither certifies a fuzzy
+answer nor changes the model. See the [capacity guide](capacity-routing.md) for
+Go wiring, deadlines, headroom and quality-profile choices. The existing
+`execution.Coordinator` and multi-machine team-role APIs remain available.
+
 ## Controlled answer reuse
 
 An approved read-only delegation can opt into a separate controlled path. Exact
