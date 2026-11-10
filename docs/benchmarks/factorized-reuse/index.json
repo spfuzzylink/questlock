@@ -1,0 +1,756 @@
+{
+  "schema": 1,
+  "meaning": "Consumed development diagnostics: ten failed quality runs, one passing pilot and one operational stop with no semantic decisions. Independent fresh qualification and matched economics remain unmeasured. This is not an answer-generation, alias-publication, savings or general model-correctness claim.",
+  "paid_fallback_enabled": false,
+  "provider_api_charge_usd": 0,
+  "runs": [
+    {
+      "name": "guard4-r3",
+      "file": "guard4-r3.json",
+      "sha256": "2b53e0b23b3ebecddfba95fa218af2b7a880b5e01a7689050ad007766fbf076e",
+      "fixture": "r3-cases.json",
+      "fixture_sha256": "acee755756623aa2f4a947b2d898d5fb00700f1dec095dcab3fdd238dd1b84db",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "520397afb2a2893a2e3c6cf4961845a46b0ea763f03acb8c5a4c2a268e2394df",
+        "manifest_sha256": "9b846b408d184e0e640b51866f72933ab779f9c667f67c0de50153f212a395d4",
+        "binary_sha256": "ee826a4e2915d34078d9298ec3692e45d0d5155b282109778594d767b042c5a0",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "7ae4ebb901b6377042f50b83440349eea95de7c25e1911cc29fda74e1d630cb9",
+          "policy_version": "questlock-factorized-validity-v16"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "002076a029e9ed25363c5940ccf2c596d01557637f4487383ce57f3b25147e71",
+          "semantic/reuse.go": "0134ff28a9418f7f2257d3f02ed3ba4465a59dda6c12bade0c0d8c660d1ff32f",
+          "inference/ollama.go": "3518c039856e4973bc47aa98a8dc6f25646c834cc2e96c013cf793cbddcaf883"
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        }
+      }
+    },
+    {
+      "name": "compact-pilot",
+      "file": "compact-pilot.json",
+      "sha256": "4225119ade3a31e74947cc855b01050a5772170b83a727227a1bf3c94fe0cba0",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "a16348198c5bfcd281d51bc4a402144a7d24bb69541cf8f7d667ff4ad0f1fb04",
+        "manifest_sha256": "783c659aadfb213a738f58a8e1d264ddc7ae1541678ba45e32df11f0839ae387",
+        "binary_sha256": "dc28f77259137347c6d97af8ce917242b8968c8645c0395c475569500c9cd1eb",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "f78b5c6c979c756f8dd08a765470aa6f5fa84c1f94400211719efd163a7bd18d",
+          "policy_version": "questlock-factorized-validity-v17"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "9ed598bd55de1e2c81322b0256c6ea00bd0cc303f573b3ca8c884c47cafccbe1",
+          "semantic/reuse.go": "0134ff28a9418f7f2257d3f02ed3ba4465a59dda6c12bade0c0d8c660d1ff32f",
+          "inference/ollama.go": "3518c039856e4973bc47aa98a8dc6f25646c834cc2e96c013cf793cbddcaf883"
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        }
+      }
+    },
+    {
+      "name": "evidence-pilot-discarded",
+      "file": "evidence-pilot-discarded.json",
+      "sha256": "bc72ec618525a14e1534cc3d73a9e44827f494fe008bcd9bc24b144b5416b121",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "a14e749a23e96ab2f5f384193e5021bc9f06afcfc71a93015881bb0504d42ca5",
+        "manifest_sha256": "8fd7b414757ed2d86ed9397456fd9f314218f06ccdd6f21c56d5143007ad25e4",
+        "binary_sha256": "72dae579f6637363bed5f691b368d151040c871e1ebcb259b8ade8d4c20ca278",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "7a640d651c49a04b8f68c42454352a299e672a5a054eaa1663ea907cbed5935a",
+          "policy_version": "questlock-factorized-validity-v18"
+        },
+        "pair_protocol": "five evidence/relation/decision strings; Go-derived verdict; discarded prototype",
+        "report_schema": 1,
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "dd28d7e2bab4ff0e18ee31d9618bd34551822a7d5eb8197013b0befa7ff47698",
+          "semantic/reuse.go": "0134ff28a9418f7f2257d3f02ed3ba4465a59dda6c12bade0c0d8c660d1ff32f",
+          "inference/ollama.go": "3518c039856e4973bc47aa98a8dc6f25646c834cc2e96c013cf793cbddcaf883"
+        },
+        "pair_schema": {
+          "answer_basis_quote": "exact UTF-8 substring, at most160bytes",
+          "answer_basis_relation": "direct|negative|conditional|insufficient|contradictory|unknown",
+          "coverage": "complete|partial|absent|unknown",
+          "facts": "valid|changed|unsupported|unknown",
+          "format": "same|changed|unknown",
+          "extra_fields_allowed": false
+        }
+      }
+    },
+    {
+      "name": "same-model-pilot",
+      "file": "same-model-pilot.json",
+      "sha256": "978fe8b1161d46811998cccbef8a16506c78ba5f91acc061a4e4cf142e1da08c",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "1eff2de7cb6410e72135a9cae66082d09aee30df4090bd2cd665ab813f37879e",
+        "manifest_sha256": "e70d04f054b683ec195156170e46b61a2b00c26ac714b3529e9b6f1880eaf9c4",
+        "binary_sha256": "dc28f77259137347c6d97af8ce917242b8968c8645c0395c475569500c9cd1eb",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "f78b5c6c979c756f8dd08a765470aa6f5fa84c1f94400211719efd163a7bd18d",
+          "policy_version": "questlock-factorized-validity-v17"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "9ed598bd55de1e2c81322b0256c6ea00bd0cc303f573b3ca8c884c47cafccbe1",
+          "semantic/reuse.go": "0134ff28a9418f7f2257d3f02ed3ba4465a59dda6c12bade0c0d8c660d1ff32f",
+          "inference/ollama.go": "3518c039856e4973bc47aa98a8dc6f25646c834cc2e96c013cf793cbddcaf883"
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        }
+      }
+    },
+    {
+      "name": "thinking-pilot",
+      "file": "thinking-pilot.json",
+      "sha256": "f9c2b33c03fb45ce86a30075a058b10ac37bd3520c214857c66321fb73f2d426",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "c453c8e8ba844769d81438ffed90c9a4bab6f6270c69499e76722649dade26f6",
+        "manifest_sha256": "a10ace9c3d9c53d5ea98c630f6569553798cda1214b6dc97dd4323beb48f11dd",
+        "binary_sha256": "213501d2d1c58efaa0598ce7345f0733196523dfa9805d379ecbcf746d568c00",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "f78b5c6c979c756f8dd08a765470aa6f5fa84c1f94400211719efd163a7bd18d",
+          "policy_version": "questlock-factorized-validity-v17"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "fea9787a9f09d74c8957d8b85856dde9439cf6ae4ecd94ceda6382df13743175",
+          "semantic/reuse.go": "10a8aed45d2076e98884861bfb1e1d4c352416eed0fcdac4fa863971b9ce7055",
+          "inference/ollama.go": "3518c039856e4973bc47aa98a8dc6f25646c834cc2e96c013cf793cbddcaf883"
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        }
+      }
+    },
+    {
+      "name": "sampled-thinking-pilot",
+      "file": "sampled-thinking-pilot.json",
+      "sha256": "0ebf8add9c0a02384401f6ec442792c7e6973ee655c20b4d34867cce080a14e2",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "03e4d4ba421844dc09b3c9da2dde8ea205934bc8615a8d6a34e1ac0ab517bf91",
+        "manifest_sha256": "59905c88850a8169d4e5d8629b9f7f0afda66a20ab71c27e41dd25e4428e3027",
+        "binary_sha256": "9b02167c49b5bdcc073cb0207a8b5cee993395d24ac007344defd5bf554cb0af",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "f78b5c6c979c756f8dd08a765470aa6f5fa84c1f94400211719efd163a7bd18d",
+          "policy_version": "questlock-factorized-validity-v17"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "d090612b776e0f5fb9e709c9c7d165a4a952631e2e298194148de163235e0a4a",
+          "semantic/reuse.go": "d6a92781c3f2a0f7d31588e5ba0349602725e0ccc1a30fd3c0dc28d76804711c",
+          "inference/ollama.go": "a6c1bfcedf4636b1acdec81c15c9bdcb4b158b451ac4a007cef529e21319e919"
+        },
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        },
+        "explicit_pair_temperature": 1,
+        "explicit_pair_seed": 42,
+        "stop_on_execution_error": true
+      }
+    },
+    {
+      "name": "pair14-thinking-pilot",
+      "file": "pair14-thinking-pilot.json",
+      "sha256": "a55fa9a3387121b1af06772620e9b7ab2b4dc582ba1c45409b648eeb04f896db",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "cbc70e9dd448898552e9ce99f2394d07a6387df24ff06deb5ee0d52c4d9fc061",
+        "manifest_sha256": "52428c80e49d193bee638c92042e7b22deebd82384b9fb05ea26547515fea4a6",
+        "binary_sha256": "9b02167c49b5bdcc073cb0207a8b5cee993395d24ac007344defd5bf554cb0af",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "f78b5c6c979c756f8dd08a765470aa6f5fa84c1f94400211719efd163a7bd18d",
+          "policy_version": "questlock-factorized-validity-v17"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "report_schema": 1,
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "d090612b776e0f5fb9e709c9c7d165a4a952631e2e298194148de163235e0a4a",
+          "semantic/reuse.go": "d6a92781c3f2a0f7d31588e5ba0349602725e0ccc1a30fd3c0dc28d76804711c",
+          "inference/ollama.go": "a6c1bfcedf4636b1acdec81c15c9bdcb4b158b451ac4a007cef529e21319e919"
+        },
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        },
+        "explicit_pair_temperature": 0.6,
+        "explicit_pair_seed": 42,
+        "stop_on_execution_error": true
+      }
+    },
+    {
+      "name": "relation-deadline-pilot",
+      "file": "relation-deadline-pilot.json",
+      "sha256": "71d2ba9476c577bd66515cab0d1229c46ec18e3c216492d3dff471024f9dba2b",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "c5c46b6592afb2de3945a4e114efa3b4d8583e2f12816beb275a73b279ee7730",
+        "manifest_sha256": "9f7388af6243ef68014ac07a57d6f620ad508ceeb953215dbda0da33c0b936ff",
+        "binary_sha256": "f6f19c6f78f14fa21010450f9c92c9cad833fa3b666b2095d3df888da07c6af4",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "a8c5e831d22a4b9ef2e9964063bafdcb574d18e5229a63b8bda977c9825fd05a",
+          "policy_version": "questlock-factorized-validity-v19"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "pair_input_binding_key": "source_bindings",
+        "report_schema": 1,
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "a541650e3d9855912aa484d76827ab60e0991d842035036d0c1d8dc91a82030a",
+          "semantic/reuse.go": "d6a92781c3f2a0f7d31588e5ba0349602725e0ccc1a30fd3c0dc28d76804711c",
+          "inference/ollama.go": "a6c1bfcedf4636b1acdec81c15c9bdcb4b158b451ac4a007cef529e21319e919",
+          "semantic/target_operation_object.go": "6d57f8e2bf51ab54e2518d94855e8505d0bf8f4b85430966a15b7741d572bbf6",
+          "semantic/target_risks.go": "660e47a4a02286cac42828846d81e96d992f03b76d41b79864a0ce54c8b341ba"
+        },
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        },
+        "explicit_pair_temperature": 0.6,
+        "explicit_pair_seed": 42,
+        "stop_on_execution_error": true,
+        "independent_audit_sha256": "720e7de264cebe05c1cd0e63f25f4da47ec5924dc132a0b508e13bea0bcfa660"
+      }
+    },
+    {
+      "name": "explicit-deadline-pilot",
+      "file": "explicit-deadline-pilot.json",
+      "sha256": "af04f6eaf2f07224ecd7586e085ea554970f6cdae14fe5aedcd8870425460752",
+      "fixture": "pilot-cases.json",
+      "fixture_sha256": "8ed623de919cc0e365bc9180be09e70b5b07e9397e3741ef96c897b2be7bfcab",
+      "development_gate": "passed_pilot_only",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "5d260449ae8e51c7256713d7598b48ba7ffbcc940af598dd4bacb98cb2a6fa2e",
+        "manifest_sha256": "4aa74f69c4d4e2d422272fb27458e203c7c8e75af9ca1c007bc222a50678354a",
+        "binary_sha256": "c1154feea76d66fb39b9e18b87f6f80f5f27d91ba78a9ca2f33af0ac2b1951bc",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "a8c5e831d22a4b9ef2e9964063bafdcb574d18e5229a63b8bda977c9825fd05a",
+          "policy_version": "questlock-factorized-validity-v19"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "pair_input_binding_key": "source_bindings",
+        "report_schema": 1,
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "a541650e3d9855912aa484d76827ab60e0991d842035036d0c1d8dc91a82030a",
+          "semantic/reuse.go": "03c641e17fc49d7d94f6aec0e21a804496332599ab6a6a867e0d3d8254d44363",
+          "inference/ollama.go": "a6c1bfcedf4636b1acdec81c15c9bdcb4b158b451ac4a007cef529e21319e919",
+          "semantic/target_operation_object.go": "6d57f8e2bf51ab54e2518d94855e8505d0bf8f4b85430966a15b7741d572bbf6",
+          "semantic/target_risks.go": "660e47a4a02286cac42828846d81e96d992f03b76d41b79864a0ce54c8b341ba"
+        },
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        },
+        "explicit_pair_temperature": 0.6,
+        "explicit_pair_seed": 42,
+        "verifier_timeout_ms": 240000,
+        "effective_resolver_timeout_ms": 240000,
+        "stop_on_execution_error": true,
+        "independent_audit_sha256": "a483a10464ab5a1e737d861d5738151c520a413d0da35e6aa8a669a4059a20e0"
+      }
+    },
+    {
+      "name": "explicit-deadline-r3",
+      "file": "explicit-deadline-r3.json",
+      "sha256": "efd83b7b0d6b1d717d929dae4b2870a0faaa253a318fe9dc55b454dac3ee6e53",
+      "fixture": "r3-cases.json",
+      "fixture_sha256": "acee755756623aa2f4a947b2d898d5fb00700f1dec095dcab3fdd238dd1b84db",
+      "development_gate": "failed_r3",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "5d260449ae8e51c7256713d7598b48ba7ffbcc940af598dd4bacb98cb2a6fa2e",
+        "manifest_sha256": "4aa74f69c4d4e2d422272fb27458e203c7c8e75af9ca1c007bc222a50678354a",
+        "binary_sha256": "c1154feea76d66fb39b9e18b87f6f80f5f27d91ba78a9ca2f33af0ac2b1951bc",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "a8c5e831d22a4b9ef2e9964063bafdcb574d18e5229a63b8bda977c9825fd05a",
+          "policy_version": "questlock-factorized-validity-v19"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "pair_input_binding_key": "source_bindings",
+        "report_schema": 1,
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "a541650e3d9855912aa484d76827ab60e0991d842035036d0c1d8dc91a82030a",
+          "semantic/reuse.go": "03c641e17fc49d7d94f6aec0e21a804496332599ab6a6a867e0d3d8254d44363",
+          "inference/ollama.go": "a6c1bfcedf4636b1acdec81c15c9bdcb4b158b451ac4a007cef529e21319e919",
+          "semantic/target_operation_object.go": "6d57f8e2bf51ab54e2518d94855e8505d0bf8f4b85430966a15b7741d572bbf6",
+          "semantic/target_risks.go": "660e47a4a02286cac42828846d81e96d992f03b76d41b79864a0ce54c8b341ba"
+        },
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        },
+        "explicit_pair_temperature": 0.6,
+        "explicit_pair_seed": 42,
+        "verifier_timeout_ms": 240000,
+        "effective_resolver_timeout_ms": 240000,
+        "stop_on_execution_error": true,
+        "independent_audit_sha256": "3aae154718ca7829dee322e5950504813de794bd576cb13fd6311e2d358d1f41"
+      },
+      "audit_summary": {
+        "evidence_audit_passed": true,
+        "semantic_qualification_passed": false,
+        "native_attempts": 39,
+        "complete_known_usage": 38,
+        "incomplete_known_usage": 1,
+        "usage_unknown": 0,
+        "cached_source_checks": 30,
+        "false_positives": 2,
+        "complete_contradictory_protocol_unknown": 1,
+        "length_incomplete": 1,
+        "not_run": 107,
+        "unscored": 108,
+        "new_unfinished_fences": 1,
+        "holds": 0,
+        "old_16c3_still_unconfirmed": true,
+        "answer_generation_or_alias_publication_measured": false,
+        "inclusive_reasoning_output_counted_once": true
+      }
+    },
+    {
+      "name": "target-contract-pilot24",
+      "file": "target-contract-pilot24.json",
+      "sha256": "5b26233eac151e71b40449a486f28a2ec8105ec97621db15be8bad10112e36f2",
+      "fixture": "pilot24-cases.json",
+      "fixture_sha256": "2c89a3616c1d6fc8fa0833f8df09c31e590bafe09db45568b51a9c8d2239e428",
+      "development_gate": "failed_pilot24",
+      "qualified": false,
+      "provenance": {
+        "frozen_plan_sha256": "01da49c82571f47ed1ae0de0e0aa24889e76e7f368f9bc731c5842ac29c60f75",
+        "manifest_sha256": "b5d6f3be0c29226dcad0442eb705b8425171a39872a8960204e49ebf3a1ed017",
+        "binary_sha256": "ed7bc2196fc3d47142fb40fd39791dd62902e2d4fd60d649448cdc792b85f445",
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "a9a7ffc20ac2c08285fdcf3cc98a3565afeb4740f363375dedc9bc9d627ba8c8",
+          "policy_version": "questlock-factorized-validity-v20"
+        },
+        "pair_protocol": "verdict plus three Boolean coverage/fact/format checks",
+        "pair_input_binding_key": "source_bindings",
+        "report_schema": 1,
+        "runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "ollama_version": "0.40.3",
+        "physical_hosts": 1,
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "ed85a56b4bb4d6d187aa4ed6289e93f75a66a8aef7ca45ef1bc28b9677c83d65",
+          "semantic/reuse.go": "03c641e17fc49d7d94f6aec0e21a804496332599ab6a6a867e0d3d8254d44363",
+          "inference/ollama.go": "a6c1bfcedf4636b1acdec81c15c9bdcb4b158b451ac4a007cef529e21319e919",
+          "semantic/target_operation_object.go": "6d57f8e2bf51ab54e2518d94855e8505d0bf8f4b85430966a15b7741d572bbf6",
+          "semantic/target_risks.go": "660e47a4a02286cac42828846d81e96d992f03b76d41b79864a0ce54c8b341ba"
+        },
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        },
+        "explicit_pair_temperature": 0.6,
+        "explicit_pair_seed": 42,
+        "verifier_timeout_ms": 60000,
+        "effective_resolver_timeout_ms": 60000,
+        "stop_on_execution_error": true,
+        "independent_audit_sha256": "7eea17b0916b5e02296e955304d720117267a35b4524b8f46ec25f2800fef539",
+        "encoding_addendum_sha256": "92f81c2e5d7eb1c3682e25d8d1218c5263a32d44af46872c3de9c7b665e08210",
+        "declared_verifier_pair_think": false
+      },
+      "audit_summary": {
+        "evidence_audit_passed": true,
+        "semantic_qualification_passed": false,
+        "native_attempts": 31,
+        "complete_known_usage": 31,
+        "incomplete_known_usage": 0,
+        "usage_unknown": 0,
+        "cached_source_checks": 11,
+        "false_positives": 1,
+        "false_negatives": 6,
+        "not_run": 0,
+        "unscored": 0,
+        "new_unfinished_fences": 0,
+        "holds": 0,
+        "old_16c3_still_unconfirmed": true,
+        "answer_generation_or_alias_publication_measured": false,
+        "original_scorer_error": "report config verifier_pair_think",
+        "original_raw_unchanged": true,
+        "encoding_only_replay_gate": "failed"
+      },
+      "encoding_note": "The original scorer required a present false verifier_pair_think field. Go omitted it through omitempty. The raw report remains unchanged. Independent replay normalized only that absent declared-false field in a separate copy; the same semantic gate still failed with six false negatives and one false positive.",
+      "fixture_derivation": {
+        "file": "pilot24-derivation.json",
+        "sha256": "088e02d3f462c7c995761fcbdc52a710904ea4679b90a45698b351eacf20d0c2"
+      }
+    },
+    {
+      "name": "assessment-memory-stop-pilot24",
+      "file": "assessment-memory-stop-pilot24.json",
+      "sha256": "762def657da1c3c168c6729f29330499faa97e4325f055c387ec9ee3513f2a8e",
+      "fixture": "pilot24-cases.json",
+      "fixture_sha256": "2c89a3616c1d6fc8fa0833f8df09c31e590bafe09db45568b51a9c8d2239e428",
+      "development_gate": "operational_stop_no_semantic_estimate",
+      "qualified": false,
+      "provenance": {
+        "report_schema": 1,
+        "physical_hosts": 1,
+        "verifier_pair_assessment": true,
+        "declared_verifier_source_think": false,
+        "declared_verifier_pair_think": false,
+        "explicit_pair_temperature": 0.6,
+        "explicit_pair_seed": 42,
+        "verifier_max_input_tokens": 16384,
+        "verifier_source_max_input_tokens": 5376,
+        "verifier_pair_max_input_tokens": 8192,
+        "verifier_max_output_tokens": 512,
+        "verifier_timeout_ms": 60000,
+        "effective_resolver_timeout_ms": 60000,
+        "stop_on_execution_error": true,
+        "independent_audit_sha256": "e60f8896629da086f0176d48c3b6d35166399db2f25c17724fa30e7718ac78d4",
+        "snapshot_proof_sha256": "2f356acd790c74dfaf33b2207c592677e8c4e6eaa53448168c055d0dd4082699",
+        "count_profile_sha256": "e3d77e2ef24f605eca52a181ab606bc9a6f4c8156c4ad976382a3fc593f16600",
+        "binary_sha256": "5315823a3ce11cf0ac7471b3c244e68d6aaa5d0ca3fcfce144735604007d4614",
+        "source_file_sha256": {
+          "delegation/factorized_verifier.go": "e5cb90179dd5e5436aeeb2813416a83a0f2c6fc2f2495869ad2e8cd9f817728b"
+        },
+        "prompt_pins": {
+          "source_sha256": "6b49234e307e9072c827c3a05e530ada6219b94bc930745bf468314016dd7141",
+          "pair_sha256": "1854c2a9de247b1034eab2bcbe60de5438e652d7912aa0c57692474f3959a537"
+        },
+        "native_full_input_count_sha256": "3e470db276a431915c89f8c34fd386fad59d301a860a4fd161b34938eec4c541",
+        "native_full_input_frames": 198,
+        "one_pilot_approval_sha256": "c9d5b6675f1ccd18dc7e75befcecfa0ae2071c49e77d5765d027d10d74611c71",
+        "count_profile_is_not_live_generation_authority": true,
+        "declared_runtime_models": [
+          {
+            "model": "qwen3.5:9b",
+            "runtime_identity": "29ae2e526e9dfe86e9f9e56cc5d063cac748b67283bc9ac489cfb2ed50d57174"
+          },
+          {
+            "model": "qwen3:14b",
+            "runtime_identity": "59ba1a6357828aafaba3359aee154bc9b4fe783f59f8e4c4c73ea119bb4ac1f3"
+          }
+        ],
+        "pair_protocol": "Optional bounded assessment string before the same strict verdict and three Boolean checks; assessment prose is untrusted diagnostics, never proof.",
+        "source_schema": {
+          "verdict": "accept|reject|unknown",
+          "supported": "boolean",
+          "complete": "boolean",
+          "extra_fields_allowed": false
+        },
+        "pair_schema": {
+          "answer_assessment": "first field; nonempty bounded UTF-8 string; untrusted diagnostic",
+          "verdict": "accept|reject|unknown",
+          "answer_covers_current": "boolean",
+          "unchanged_facts": "boolean",
+          "same_output_contract": "boolean",
+          "extra_fields_allowed": false
+        }
+      },
+      "audit_summary": {
+        "evidence_inventory_complete": true,
+        "semantic_qualification_passed": false,
+        "native_claim_attempts": 1,
+        "client_reported_generate_calls": 1,
+        "actual_server_delivery_or_execution_completion_proved": false,
+        "complete_known_usage": 0,
+        "incomplete_known_usage": 0,
+        "usage_unknown": 1,
+        "cached_source_checks": 0,
+        "semantic_decisions": 0,
+        "scored": 0,
+        "not_run": 23,
+        "unscored": 24,
+        "source_execution_errors": 1,
+        "new_unfinished_fences": 1,
+        "holds": 0,
+        "old_617_and30_fences_retained": true,
+        "old_16c3_still_unconfirmed": true,
+        "answer_generation_or_alias_publication_measured": false,
+        "after_child_sample_present": false,
+        "child_finished_event_present": false,
+        "forensic_inventory_only": true,
+        "api_ps_empty_is_not_completion_or_usage_proof": true
+      },
+      "resource_stop": {
+        "before_child_memory_pressure": "high",
+        "before_child_available_memory_bytes": 185335808,
+        "hard_event_reason": "memory_pressure",
+        "critical_memory_pressure": "critical",
+        "parent_elapsed_seconds": 4.609871864318848,
+        "child_and_watchdog_returned": true,
+        "abort_path_wait_proof": "Pinned watchdog stop() waits for its child before returning; the parent subprocess returned and recorded its exit.",
+        "after_child_sample_present": false,
+        "child_finished_event_present": false
+      },
+      "accounting_meaning": "One durable native claim and client-reported generation attempt became uncertain, without response or usage. Neither delivery to the model server nor completion is proved. Known native usage subtotals are zero because none was confirmed; the unknown attempt is not valued at zero. Two embedding calls reported72 input tokens. This is a forensic inventory of an operational stop, not a completed qualification or model-quality result."
+    }
+  ],
+  "retained_prior_native_attempts": 201,
+  "retained_prior_usage_unknown": 5,
+  "retained_prior_incomplete_known": 1,
+  "retained_prior_complete_known": 195,
+  "prior_boundary_basis": "Independent prior-scope audit boundary preserved in the frozen pre-run plan. Prior jobs are not recomputed from these recent report files.",
+  "prior_boundary_source_sha256": "520397afb2a2893a2e3c6cf4961845a46b0ea763f03acb8c5a4c2a268e2394df",
+  "recent_unknown_usage_job_keys": [
+    "inference/v1/jobs/16c3ce324f8325f9c3b1d960083f4ae6f1eaf4d39db330ab2bc27f4f2877c498",
+    "inference/v1/jobs/e7a136610252bc6d9fe63b63d7f4d64df6892184246c5a0421803e0391931ab7"
+  ],
+  "closed_boundary": {
+    "native_attempts": 618,
+    "complete_known_usage": 587,
+    "incomplete_known_usage": 24,
+    "usage_unknown": 7,
+    "unfinished_execution_fences": 31,
+    "recent_cached_source_checks": 222
+  }
+}

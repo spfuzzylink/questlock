@@ -46,10 +46,14 @@ func (router Router) Run(ctx context.Context, request Request) (Result, error) {
 		if request.SemanticReuse != nil {
 			controlled, err = router.Reuse.resolver(ctx, request, tier, runner)
 			if err != nil {
+				if errors.Is(err, ErrResourceAdmissionConfig) {
+					result.Attempts = append(result.Attempts, Attempt{TierID: tier.ID, ErrorCategory: "resource_policy_invalid", Checks: evaluation.NotEvaluated(request.Checks)})
+					return result, errors.Join(ErrStopped, ErrResourceAdmissionConfig)
+				}
 				return result, ErrStopped
 			}
 			defer controlled.close()
-			answer, runErr = controlled.runner.RunWithResolver(ctx, spec, controlled)
+			answer, runErr = controlled.run(ctx, spec)
 			result.SemanticReuse = controlled.observation
 		} else {
 			answer, runErr = runner.Run(ctx, spec)
@@ -75,6 +79,9 @@ func (router Router) Run(ctx context.Context, request Request) (Result, error) {
 		if runErr != nil {
 			result.BudgetDiagnostic = diagnostic
 			attempt.ErrorCategory = errorCategory(runErr)
+			if inference.PreClaimDeferred(answer, runErr) {
+				attempt.ErrorCategory = "resource_deferred"
+			}
 			result.Attempts = append(result.Attempts, attempt)
 			return result, stoppedError(runErr)
 		}
@@ -152,7 +159,7 @@ func finiteNonnegative(value float64) bool {
 // that might embed secrets, raw response bodies, or request text.
 func stoppedError(err error) error {
 	causes := []error{ErrStopped}
-	for _, safe := range []error{context.Canceled, context.DeadlineExceeded, inference.ErrInFlight, inference.ErrIncomplete, inference.ErrBudgetExceeded} {
+	for _, safe := range []error{context.Canceled, context.DeadlineExceeded, inference.ErrInFlight, inference.ErrIncomplete, inference.ErrBudgetExceeded, inference.ErrAdmissionDeferred, ErrResourceAdmissionConfig} {
 		if errors.Is(err, safe) {
 			if safe == inference.ErrBudgetExceeded {
 				if diagnostic := inference.BudgetDiagnosticFromError(err); diagnostic != nil {
@@ -171,6 +178,8 @@ func stoppedError(err error) error {
 
 func errorCategory(err error) string {
 	switch {
+	case errors.Is(err, ErrResourceAdmissionConfig):
+		return "resource_policy_invalid"
 	case errors.Is(err, context.Canceled):
 		return "canceled"
 	case errors.Is(err, context.DeadlineExceeded):

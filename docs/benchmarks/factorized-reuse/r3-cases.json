@@ -1,0 +1,1189 @@
+{
+  "schema_version": 1,
+  "population": "Independent fictional business answer-reuse snapshots: three records in each of six specified families; eight authored request variants per record.",
+  "label_rule": "Reuse only when the unchanged saved answer fully satisfies the variant under its source instructions and evidence. Extra required-contract detail is permitted for a narrower request; changed facts, authority, time, operation, language, or output contracts require a new answer.",
+  "cases": [
+    {
+      "id": "fresh3-support-01",
+      "family": "support_faq",
+      "instructions": "Answer from the policy snapshot only. Use exactly three lines beginning Eligibility:, Owner step:, and Link lifetime:. Explain policy; do not perform account actions. Retain all three lines even for a question focused on one policy detail.",
+      "evidence": "VellumNest policy snapshot dated 2032-04-12: Maple-7 is on the Studio plan. A workspace owner can request a ZIP archive of an archived notebook from Settings > Archives. Editors can view archived notebooks but cannot request ZIP archives. Studio includes archive export at no charge. A completed export link expires 48 hours after generation. The notebook called Fern Ledger is archived in Maple-7; its requester currently has the editor role. An owner can request the archive directly; changing the editor role is not required. This snapshot describes eligibility and contains no generated export link.",
+      "answer": "Eligibility: You cannot request the ZIP as an editor; Studio includes the export at no charge for an owner.\nOwner step: A Maple-7 owner must request Fern Ledger from Settings > Archives; your role need not change.\nLink lifetime: A generated download link lasts 48 hours.",
+      "original_question": "As the editor of Fern Ledger in Maple-7, can I request its archive ZIP, what must an owner do, and how long would the download link last?",
+      "bindings": {
+        "product": "VellumNest",
+        "workspace": "Maple-7",
+        "role": "editor",
+        "plan": "Studio",
+        "operation": "archive_export"
+      },
+      "intent": "explain_archive_export_eligibility",
+      "variants": [
+        {
+          "id": "fresh3-support-01-p1",
+          "question": "For Fern Ledger, explain my editor export rights, the owner procedure, and the expiry period in the required format.",
+          "should_reuse": true,
+          "reason": "Same notebook, role, plan, operation, and three-line contract."
+        },
+        {
+          "id": "fresh3-support-01-p2",
+          "question": "I mean the archived notebook in Maple-7: who can request the ZIP and when does its link expire? Keep all three policy lines.",
+          "should_reuse": true,
+          "reason": "Context identifies the same record and requests the same policy facts."
+        },
+        {
+          "id": "fresh3-support-01-p3",
+          "question": "Does my editor role block the archive request? Include the usual owner-step and link-lifetime lines too.",
+          "should_reuse": true,
+          "reason": "The narrower eligibility question is completely answered with the required accompanying lines."
+        },
+        {
+          "id": "fresh3-support-01-p4",
+          "question": "Would an owner have to promote me before exporting Fern Ledger? Retain the eligibility and expiry details.",
+          "should_reuse": true,
+          "reason": "The answer explicitly says an owner can export without changing the editor role."
+        },
+        {
+          "id": "fresh3-support-01-n1",
+          "question": "I am now a Maple-7 owner rather than an editor. Explain whether I can request Fern Ledger and include the owner step and link lifetime.",
+          "should_reuse": false,
+          "reason": "The saved answer denies requester eligibility based on the old editor role."
+        },
+        {
+          "id": "fresh3-support-01-n2",
+          "question": "Request the Fern Ledger archive ZIP now using the owner account and return its actual download link.",
+          "should_reuse": false,
+          "reason": "An execution request and actual generated link cannot be satisfied by a policy explanation."
+        },
+        {
+          "id": "fresh3-support-01-n3",
+          "question": "For Fern Ledger, provide the same policy explanation in Spanish using Spanish field labels.",
+          "should_reuse": false,
+          "reason": "The required language and labels differ from the English saved response."
+        },
+        {
+          "id": "fresh3-support-01-n4",
+          "question": "A revised policy makes archive links expire after 12 hours. Under that revision, explain eligibility, owner procedure, and expiry.",
+          "should_reuse": false,
+          "reason": "The revised lifetime is 12 hours, whereas the answer states 48 hours."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-support-02",
+      "family": "support_faq",
+      "instructions": "Return one JSON object with exactly the keys can_edit, can_read, charge_while_paused, and resume_actor. Booleans must be JSON booleans. Answer the supplied snapshot, without changing the project.",
+      "evidence": "{\"product\": \"CopperCanopy\", \"project\": \"HarborTiles\", \"snapshot_date\": \"2032-05-03\", \"billing_cycle\": \"quarterly\", \"state\": \"paused\", \"requester_role\": \"contributor\", \"paused_project_policy\": {\"contributor_can_edit\": false, \"contributor_can_read\": true, \"seat_charge_while_paused\": \"none\", \"resume_actor\": \"workspace owner\"}, \"note\": \"A pause stops new seat charges immediately. Existing paid invoices are not refunded by pausing. Resuming requires a workspace owner.\"}",
+      "answer": "{\"can_edit\":false,\"can_read\":true,\"charge_while_paused\":\"none\",\"resume_actor\":\"workspace owner\"}",
+      "original_question": "What access and ongoing seat billing apply to me as a contributor while HarborTiles is paused, and who can resume it?",
+      "bindings": {
+        "product": "CopperCanopy",
+        "project": "HarborTiles",
+        "state": "paused",
+        "role": "contributor",
+        "billing": "quarterly"
+      },
+      "intent": "explain_pause_seat_access",
+      "variants": [
+        {
+          "id": "fresh3-support-02-p1",
+          "question": "Describe my contributor editing, reading, new seat charges, and resumption authority for paused HarborTiles in the required JSON.",
+          "should_reuse": true,
+          "reason": "All requested facts and the JSON contract are unchanged."
+        },
+        {
+          "id": "fresh3-support-02-p2",
+          "question": "For this paused CopperCanopy project, can I still read it? Preserve the full four-key response.",
+          "should_reuse": true,
+          "reason": "The reading detail and the full required object are already provided."
+        },
+        {
+          "id": "fresh3-support-02-p3",
+          "question": "Does a paused HarborTiles contributor retain editing access? Use the standard access-and-billing object.",
+          "should_reuse": true,
+          "reason": "The object answers the narrowed editing question while retaining the required fields."
+        },
+        {
+          "id": "fresh3-support-02-p4",
+          "question": "Who is allowed to unpause HarborTiles, and are new seat charges running during the pause? Keep all standard keys.",
+          "should_reuse": true,
+          "reason": "Same pause state, authority, billing scope, and output schema."
+        },
+        {
+          "id": "fresh3-support-02-n1",
+          "question": "HarborTiles has been resumed and contributors can now edit. Return the four-key access-and-billing object for that resumed state.",
+          "should_reuse": false,
+          "reason": "The answer describes a paused state and denies editing; it does not describe the new resumed state."
+        },
+        {
+          "id": "fresh3-support-02-n2",
+          "question": "Refund the already-paid quarterly invoice for HarborTiles and confirm the money was returned.",
+          "should_reuse": false,
+          "reason": "A refund action is outside a read-only pause-policy response and pausing does not itself refund invoices."
+        },
+        {
+          "id": "fresh3-support-02-n3",
+          "question": "Return the paused-project facts as a two-column Markdown table, not JSON.",
+          "should_reuse": false,
+          "reason": "The requested output representation changes."
+        },
+        {
+          "id": "fresh3-support-02-n4",
+          "question": "A policy update lets project maintainers resume paused projects instead of workspace owners. Use that policy for the four-key object.",
+          "should_reuse": false,
+          "reason": "The actor field would need to change to project maintainer."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-support-03",
+      "family": "support_faq",
+      "instructions": "Respond in exactly three bullets, covering automatic retries, retained payload availability, and the manual redelivery actor. Do not attempt redelivery. The configured mode and HTTP status govern the answer.",
+      "evidence": "| TernLoom setting or policy | Value |\n|---|---|\n| Snapshot | 2032-06-07 08:00 UTC |\n| Endpoint | orchard-hook |\n| Region | West |\n| Delivery mode | standard |\n| Last response | HTTP 503 |\n| Standard-mode 5xx retry times after initial attempt | 1 minute, 5 minutes, 30 minutes |\n| Standard-mode 4xx retry policy | no automatic retry |\n| Payload retention | 72 hours after initial attempt |\n| Manual redelivery actor during retention | workspace administrator |\n| Actual manual redelivery performed in this snapshot | none |",
+      "answer": "- Automatic retries for this standard-mode HTTP 503 occur 1, 5, and 30 minutes after the initial attempt.\n- The payload remains available for 72 hours after the initial attempt.\n- A workspace administrator can manually redeliver it during that retention window.",
+      "original_question": "For orchard-hook in standard mode after HTTP 503, what automatic retry schedule applies, how long is the payload retained, and who can manually redeliver it?",
+      "bindings": {
+        "product": "TernLoom",
+        "endpoint": "orchard-hook",
+        "response_code": "503",
+        "mode": "standard",
+        "region": "West"
+      },
+      "intent": "explain_webhook_retry_window",
+      "variants": [
+        {
+          "id": "fresh3-support-03-p1",
+          "question": "Summarize the retry offsets, payload window, and manual-redelivery permission for orchard-hook after its 503.",
+          "should_reuse": true,
+          "reason": "Same endpoint, status, mode, and three-bullet contract."
+        },
+        {
+          "id": "fresh3-support-03-p2",
+          "question": "For the failed standard delivery shown in the table, when will TernLoom retry and how long can an admin redeliver?",
+          "should_reuse": true,
+          "reason": "The context refers to the same 503 and retention policy."
+        },
+        {
+          "id": "fresh3-support-03-p3",
+          "question": "Is the payload still available to an administrator 48 hours after the initial 503? Include all three standard bullets.",
+          "should_reuse": true,
+          "reason": "The 72-hour retention statement fully establishes availability at hour 48 and the actor permission."
+        },
+        {
+          "id": "fresh3-support-03-p4",
+          "question": "Who may manually redeliver orchard-hook during retention? Preserve the retry and retention bullets.",
+          "should_reuse": true,
+          "reason": "The narrower authority question is answered by the unchanged three bullets."
+        },
+        {
+          "id": "fresh3-support-03-n1",
+          "question": "The last status was HTTP 404, not 503. Explain standard-mode retries, retention, and manual-redelivery authority for that status.",
+          "should_reuse": false,
+          "reason": "HTTP 404 has no automatic retry; the saved 5xx retry schedule is incorrect for it."
+        },
+        {
+          "id": "fresh3-support-03-n2",
+          "question": "Manually redeliver the orchard-hook payload now and report the new HTTP response.",
+          "should_reuse": false,
+          "reason": "The answer supplies policy without performing a redelivery or obtaining a new response."
+        },
+        {
+          "id": "fresh3-support-03-n3",
+          "question": "After retention was shortened to 24 hours, give the retry, payload, and redelivery summary for orchard-hook.",
+          "should_reuse": false,
+          "reason": "The saved answer incorrectly retains the 72-hour window."
+        },
+        {
+          "id": "fresh3-support-03-n4",
+          "question": "List the exact UTC timestamps of retries for an initial attempt at 08:17 UTC, with no relative offsets.",
+          "should_reuse": false,
+          "reason": "The saved answer has relative offsets and omits the requested exact timestamps."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-onboard-01",
+      "family": "onboarding",
+      "instructions": "Provide exactly four numbered steps in policy order, naming the responsible role for each. This is a read-only onboarding checklist. Do not imply that any step has already been performed.",
+      "evidence": "MossQuarry Cedar-cohort onboarding policy: a new analyst using a managed device receives staging access only. First, the analyst completes the Data Basics course. Second, the analyst files a staging-access request and attaches that course certificate. Third, the team lead approves that request. Fourth, the identity administrator grants the staging-analyst group after approval. Production access is not part of this onboarding flow and requires a separate security review. No course completion, request, approval, or grant has occurred for the fictional new starter described here.",
+      "answer": "1. Analyst: Complete the Data Basics course.\n2. Analyst: File a staging-access request with the course certificate attached.\n3. Team lead: Approve the staging-access request.\n4. Identity administrator: Grant the staging-analyst group after approval.",
+      "original_question": "Give the ordered onboarding checklist for a Cedar-cohort analyst on a managed device who needs staging access, including who owns each step.",
+      "bindings": {
+        "organization": "MossQuarry",
+        "cohort": "Cedar",
+        "role": "analyst",
+        "environment": "staging",
+        "device": "managed"
+      },
+      "intent": "explain_analyst_staging_onboarding",
+      "variants": [
+        {
+          "id": "fresh3-onboard-01-p1",
+          "question": "What are the four policy steps and owners to onboard this Cedar analyst into staging?",
+          "should_reuse": true,
+          "reason": "Same cohort, device, access target, order, and owners."
+        },
+        {
+          "id": "fresh3-onboard-01-p2",
+          "question": "For the managed-device new starter described here, lay out the staging checklist from training through group grant.",
+          "should_reuse": true,
+          "reason": "The contextual reference resolves to the same analyst onboarding flow."
+        },
+        {
+          "id": "fresh3-onboard-01-p3",
+          "question": "What must happen before the administrator grants staging-analyst? Keep the full ordered checklist.",
+          "should_reuse": true,
+          "reason": "The full answer contains every prerequisite and the grant step."
+        },
+        {
+          "id": "fresh3-onboard-01-p4",
+          "question": "Does the team lead act before or after the access request? Show the standard four-step onboarding list.",
+          "should_reuse": true,
+          "reason": "The existing numbered order completely answers this narrower ordering request."
+        },
+        {
+          "id": "fresh3-onboard-01-n1",
+          "question": "Use the checklist to grant staging-analyst to the new starter now, then confirm successful access.",
+          "should_reuse": false,
+          "reason": "Executing a group grant and confirming access are not accomplished by a checklist."
+        },
+        {
+          "id": "fresh3-onboard-01-n2",
+          "question": "Give the onboarding checklist for production access, including the separate security-review process.",
+          "should_reuse": false,
+          "reason": "The saved staging flow does not supply the production process requested."
+        },
+        {
+          "id": "fresh3-onboard-01-n3",
+          "question": "The new policy requires security approval before team-lead approval. Give all steps in the updated order.",
+          "should_reuse": false,
+          "reason": "A new required approval is missing from the saved four steps."
+        },
+        {
+          "id": "fresh3-onboard-01-n4",
+          "question": "Give the checklist with one CSV row per step and columns step_number, owner, action.",
+          "should_reuse": false,
+          "reason": "The saved numbered prose does not satisfy the CSV output contract."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-onboard-02",
+      "family": "onboarding",
+      "instructions": "Return exactly three labeled lines: Prerequisites:, Approver:, and Pickup:. Include every prerequisite listed for the selected badge type. Do not create or approve a badge request.",
+      "evidence": "{\"organization\": \"CinderAtlas\", \"cohort\": \"Larch\", \"worker_type\": \"contractor\", \"site\": \"South Annex\", \"badge_type\": \"daytime\", \"daytime_badge\": {\"prerequisites\": [\"signed visitor terms\", \"completed fire-safety module\", \"sponsor-submitted badge request\"], \"approver\": \"site operations coordinator\", \"pickup\": \"South Annex reception, weekdays 09:00-16:00, after approval, with the request reference\"}, \"overnight_badge\": {\"extra_prerequisite\": \"security interview\", \"approver\": \"security duty manager\"}, \"state\": \"No request has yet been submitted.\"}",
+      "answer": "Prerequisites: Sign the visitor terms, complete the fire-safety module, and have the sponsor submit a badge request.\nApprover: The site operations coordinator approves the daytime badge.\nPickup: After approval, collect it at South Annex reception on a weekday from 09:00 to 16:00 with the request reference.",
+      "original_question": "For a Larch contractor needing a daytime badge at South Annex, what prerequisites, approver, and pickup instructions apply?",
+      "bindings": {
+        "organization": "CinderAtlas",
+        "cohort": "Larch",
+        "worker_type": "contractor",
+        "worksite": "South Annex",
+        "badge_type": "daytime"
+      },
+      "intent": "explain_contractor_badge_prerequisites",
+      "variants": [
+        {
+          "id": "fresh3-onboard-02-p1",
+          "question": "Explain the requirements, approval owner, and collection arrangements for this contractor daytime badge.",
+          "should_reuse": true,
+          "reason": "Same worker category, site, badge type, and three-line format."
+        },
+        {
+          "id": "fresh3-onboard-02-p2",
+          "question": "At South Annex, how does a Larch contractor get a daytime badge ready for pickup? Use the required three lines.",
+          "should_reuse": true,
+          "reason": "The wording requests the same prerequisite-to-pickup procedure."
+        },
+        {
+          "id": "fresh3-onboard-02-p3",
+          "question": "Who submits and who approves the daytime badge request? Include the full prerequisite and pickup lines.",
+          "should_reuse": true,
+          "reason": "The unchanged response names the sponsor and coordinator with all required details."
+        },
+        {
+          "id": "fresh3-onboard-02-p4",
+          "question": "Can pickup occur before approval, and what should the contractor bring? Retain the standard response fields.",
+          "should_reuse": true,
+          "reason": "The answer states pickup is after approval and requires the request reference."
+        },
+        {
+          "id": "fresh3-onboard-02-n1",
+          "question": "For an overnight badge at South Annex, give all prerequisites, approver, and pickup instructions.",
+          "should_reuse": false,
+          "reason": "Overnight requires a security interview and a different approver, absent from the saved answer."
+        },
+        {
+          "id": "fresh3-onboard-02-n2",
+          "question": "Submit the sponsor badge request for this contractor now and give its new reference.",
+          "should_reuse": false,
+          "reason": "The saved explanation does not submit a request or produce a real reference."
+        },
+        {
+          "id": "fresh3-onboard-02-n3",
+          "question": "Reception hours change to weekdays 11:00-14:00 for this cohort. Give the updated daytime badge instructions.",
+          "should_reuse": false,
+          "reason": "The pickup hours must change from the saved 09:00-16:00."
+        },
+        {
+          "id": "fresh3-onboard-02-n4",
+          "question": "Translate the complete daytime-badge instructions into French, including the three labels.",
+          "should_reuse": false,
+          "reason": "The English saved output does not satisfy the French-language contract."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-onboard-03",
+      "family": "onboarding",
+      "instructions": "Use exactly three bullets labeled Template, Validation, and Enablement. Describe the sandbox procedure only. Include the exact required CSV header and distinguish validating a file from enabling imports.",
+      "evidence": "| PaperHarbor sandbox import rule | Value |\n|---|---|\n| Partner | Ash Meridian |\n| Workspace | demo-ash |\n| Required source format | CSV encoded as UTF-8 |\n| Required header, exact order | item_code,title,quantity |\n| Required sample | 5 data rows |\n| Validator | partner engineer runs the sandbox validator |\n| Validation success criterion | zero schema errors |\n| Enablement actor | partner success owner |\n| Enablement prerequisite | validation report showing zero schema errors |\n| Production imports | require a separate production review |",
+      "answer": "- Template: Prepare a UTF-8 CSV with the exact header item_code,title,quantity and 5 data rows.\n- Validation: The partner engineer runs the sandbox validator; the report must show zero schema errors.\n- Enablement: The partner success owner enables sandbox imports after receiving that successful validation report.",
+      "original_question": "What must Ash Meridian prepare and validate before imports are enabled in demo-ash, and who enables them?",
+      "bindings": {
+        "product": "PaperHarbor",
+        "partner": "Ash Meridian",
+        "workspace": "demo-ash",
+        "source_format": "CSV",
+        "tier": "sandbox"
+      },
+      "intent": "explain_partner_import_readiness",
+      "variants": [
+        {
+          "id": "fresh3-onboard-03-p1",
+          "question": "Give the file requirements, validation responsibility, and enablement handoff for Ash Meridian in demo-ash.",
+          "should_reuse": true,
+          "reason": "Same partner, sandbox workspace, CSV schema, and enablement flow."
+        },
+        {
+          "id": "fresh3-onboard-03-p2",
+          "question": "For the sandbox partner in the table, how does a five-row sample become ready for import enablement?",
+          "should_reuse": true,
+          "reason": "The same record supplies all preparation and approval facts."
+        },
+        {
+          "id": "fresh3-onboard-03-p3",
+          "question": "What is the exact CSV header for demo-ash? Preserve the Validation and Enablement bullets too.",
+          "should_reuse": true,
+          "reason": "The narrower header request is fully satisfied in the mandatory full response."
+        },
+        {
+          "id": "fresh3-onboard-03-p4",
+          "question": "Does a successful validator run itself enable imports, or does someone else act? Keep all standard bullets.",
+          "should_reuse": true,
+          "reason": "The saved answer distinguishes validation from enablement and identifies the actor."
+        },
+        {
+          "id": "fresh3-onboard-03-n1",
+          "question": "Prepare the instructions for a JSON Lines import instead of a CSV import, including its required schema.",
+          "should_reuse": false,
+          "reason": "The saved CSV template and header do not describe JSON Lines."
+        },
+        {
+          "id": "fresh3-onboard-03-n2",
+          "question": "Enable imports in demo-ash now and confirm the workspace setting changed.",
+          "should_reuse": false,
+          "reason": "A read-only procedure does not perform or verify an enablement mutation."
+        },
+        {
+          "id": "fresh3-onboard-03-n3",
+          "question": "The new template requires item_code,title,quantity,unit_price in that order. Give the updated three-bullet procedure.",
+          "should_reuse": false,
+          "reason": "The saved header omits unit_price."
+        },
+        {
+          "id": "fresh3-onboard-03-n4",
+          "question": "Give the procedure for enabling production imports for Ash Meridian, including production-review requirements.",
+          "should_reuse": false,
+          "reason": "The sandbox-only answer lacks the separate production procedure."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-incident-01",
+      "family": "incident_handoff",
+      "instructions": "Return exactly four lines labeled Impact, Mitigation, Owner, and Next update. Summarize only the timestamped snapshot; do not claim a recovery or execute operational changes.",
+      "evidence": "LanternDock incident LD-214, North Basin, snapshot 2032-07-18 09:42 UTC: Batch ingestion is delayed for the North Basin paid tier; queries and the free tier are unaffected. The queue has 1,800 batches and the oldest batch is 12 minutes old. At 09:35 UTC the on-call engineer limited new batch submissions to 40 per minute. The queue is still growing at 09:42 UTC, so the incident remains open. The current incident owner is the ingestion on-call engineer. The next status update is due at 09:55 UTC. Restoring normal submission limits requires the incident owner to observe a falling queue for ten continuous minutes; that condition has not been met.",
+      "answer": "Impact: North Basin paid-tier batch ingestion is delayed; queries and the free tier are unaffected. The queue contains 1,800 batches, with the oldest 12 minutes old, and is still growing.\nMitigation: New batch submissions are limited to 40 per minute since 09:35 UTC; the incident remains open.\nOwner: The ingestion on-call engineer owns LD-214.\nNext update: 09:55 UTC on 2032-07-18.",
+      "original_question": "Give the LD-214 handoff at 09:42 UTC, including customer impact, the current mitigation, accountable owner, and next update time.",
+      "bindings": {
+        "service": "LanternDock",
+        "incident": "LD-214",
+        "region": "North Basin",
+        "snapshot": "2032-07-18T09:42Z"
+      },
+      "intent": "summarize_ingest_incident_handoff",
+      "variants": [
+        {
+          "id": "fresh3-incident-01-p1",
+          "question": "Summarize the 09:42 LD-214 snapshot for the next on-call person using the four required lines.",
+          "should_reuse": true,
+          "reason": "Same incident, timestamp, and handoff fields."
+        },
+        {
+          "id": "fresh3-incident-01-p2",
+          "question": "For the North Basin ingestion incident described here, state affected users, active throttle, owner, and update deadline.",
+          "should_reuse": true,
+          "reason": "Context identifies the same snapshot and required handoff facts."
+        },
+        {
+          "id": "fresh3-incident-01-p3",
+          "question": "Were queries affected at 09:42? Include the full standard incident handoff.",
+          "should_reuse": true,
+          "reason": "The impact line explicitly states queries are unaffected, and all required fields remain covered."
+        },
+        {
+          "id": "fresh3-incident-01-p4",
+          "question": "Who currently owns LD-214 and when is their next update due? Retain impact and mitigation as well.",
+          "should_reuse": true,
+          "reason": "The existing owner and next-update lines fully answer the narrower request."
+        },
+        {
+          "id": "fresh3-incident-01-n1",
+          "question": "At 10:05 UTC the queue is empty and submissions have returned to normal. Give the LD-214 handoff for 10:05.",
+          "should_reuse": false,
+          "reason": "The updated recovered state and mitigation differ from the 09:42 snapshot."
+        },
+        {
+          "id": "fresh3-incident-01-n2",
+          "question": "Remove the submission limit now and confirm normal throughput is restored.",
+          "should_reuse": false,
+          "reason": "The saved handoff neither changes a limit nor verifies throughput."
+        },
+        {
+          "id": "fresh3-incident-01-n3",
+          "question": "LD-214 now affects free-tier queries instead of paid-tier batch ingestion. Produce the corrected handoff.",
+          "should_reuse": false,
+          "reason": "The impact and unaffected populations in the saved response are reversed by the new facts."
+        },
+        {
+          "id": "fresh3-incident-01-n4",
+          "question": "Give a five-field JSON handoff with incident_id, impact, mitigation, owner, and next_update.",
+          "should_reuse": false,
+          "reason": "The saved four-line text lacks the requested JSON representation and incident_id field."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-incident-02",
+      "family": "incident_handoff",
+      "instructions": "Return one JSON object with exactly status, customer_effect, mitigation, owner, and next_update_utc. Use the supplied snapshot only. Do not perform failover or send a status message.",
+      "evidence": "{\"service\": \"KiteSpindle\", \"incident\": \"KS-088\", \"snapshot_utc\": \"2032-08-02T14:20:00Z\", \"status\": \"monitoring\", \"queue\": \"receipts\", \"customer_effect\": \"receipt emails delayed up to 6 minutes; password-reset emails unaffected\", \"mitigation\": \"receipt traffic routed to secondary mail relay at 14:12 UTC\", \"owner\": \"messaging on-call\", \"next_update_utc\": \"2032-08-02T14:35:00Z\", \"observation\": \"backlog falling for eight minutes; primary relay not yet restored\", \"close_rule\": \"close only after backlog is zero for 15 consecutive minutes\"}",
+      "answer": "{\"status\":\"monitoring\",\"customer_effect\":\"receipt emails delayed up to 6 minutes; password-reset emails unaffected\",\"mitigation\":\"receipt traffic routed to secondary mail relay at 14:12 UTC\",\"owner\":\"messaging on-call\",\"next_update_utc\":\"2032-08-02T14:35:00Z\"}",
+      "original_question": "Provide the KS-088 receipt-delivery handoff as of 14:20 UTC with status, customer effect, mitigation, owner, and next update.",
+      "bindings": {
+        "service": "KiteSpindle",
+        "incident": "KS-088",
+        "queue": "receipts",
+        "snapshot": "2032-08-02T14:20Z"
+      },
+      "intent": "summarize_delivery_incident_handoff",
+      "variants": [
+        {
+          "id": "fresh3-incident-02-p1",
+          "question": "Give the JSON shift handoff for KS-088 at the recorded 14:20 snapshot.",
+          "should_reuse": true,
+          "reason": "Same incident, snapshot, and exact five-key contract."
+        },
+        {
+          "id": "fresh3-incident-02-p2",
+          "question": "For the receipt queue in the supplied incident record, what should the incoming responder know? Use the standard JSON fields.",
+          "should_reuse": true,
+          "reason": "Context resolves to the same receipt incident and full handoff."
+        },
+        {
+          "id": "fresh3-incident-02-p3",
+          "question": "Are password-reset messages affected at 14:20? Preserve all five handoff fields.",
+          "should_reuse": true,
+          "reason": "The customer_effect field directly answers the narrower impact question."
+        },
+        {
+          "id": "fresh3-incident-02-p4",
+          "question": "Who owns the monitoring phase and when is the next update? Include the rest of the required JSON object.",
+          "should_reuse": true,
+          "reason": "The saved owner and next-update fields satisfy the focused request and full contract."
+        },
+        {
+          "id": "fresh3-incident-02-n1",
+          "question": "At 14:40 the backlog has been zero for 15 minutes and the incident is closed. Give the 14:40 handoff.",
+          "should_reuse": false,
+          "reason": "The status and timestamped state changed from monitoring to closed."
+        },
+        {
+          "id": "fresh3-incident-02-n2",
+          "question": "Switch receipt traffic back to the primary relay now and confirm the route.",
+          "should_reuse": false,
+          "reason": "The saved record is an explanation of an existing mitigation, not an executed route change."
+        },
+        {
+          "id": "fresh3-incident-02-n3",
+          "question": "The next update has been rescheduled to 15:00 UTC. Return the handoff with that deadline.",
+          "should_reuse": false,
+          "reason": "The saved next_update_utc is 14:35, which would be stale."
+        },
+        {
+          "id": "fresh3-incident-02-n4",
+          "question": "For the separate password-reset queue incident, summarize its failure, mitigation, and owner.",
+          "should_reuse": false,
+          "reason": "The supplied answer is for receipt delays and explicitly says password resets are unaffected; it does not answer a separate incident."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-incident-03",
+      "family": "incident_handoff",
+      "instructions": "Use exactly four bullets labeled Scope, Workaround, Blocker, and Next owner. Distinguish verified observations from a recovery claim. Report the snapshot without taking action.",
+      "evidence": "| PebbleRelay PR-307 at 2032-09-06 22:10 UTC | Detail |\n|---|---|\n| Cluster | bay-east |\n| Symptom | New mutual-TLS client handshakes fail |\n| Existing sessions | Continue normally |\n| Cause confirmed | Expired server certificate on gateway pair A |\n| Workaround active | New clients routed to gateway pair B since 22:04 UTC |\n| Verification | Pair B accepts new handshakes; pair A remains unhealthy |\n| Blocker | Replacement certificate awaits security signer approval |\n| Next owner | Night network engineer |\n| Owner first task | Check signer approval at 22:20 UTC |\n| Incident status | Open |",
+      "answer": "- Scope: New mutual-TLS client handshakes fail on bay-east gateway pair A because its server certificate expired; existing sessions continue normally. The incident remains open.\n- Workaround: New clients have been routed to pair B since 22:04 UTC; pair B accepts new handshakes, while pair A remains unhealthy.\n- Blocker: The replacement certificate awaits security signer approval.\n- Next owner: The night network engineer must check signer approval at 22:20 UTC.",
+      "original_question": "Prepare the 22:10 PR-307 handoff for the night shift: scope, active workaround, blocker, and next owner with their first task.",
+      "bindings": {
+        "service": "PebbleRelay",
+        "incident": "PR-307",
+        "cluster": "bay-east",
+        "snapshot": "2032-09-06T22:10Z"
+      },
+      "intent": "summarize_certificate_incident_handoff",
+      "variants": [
+        {
+          "id": "fresh3-incident-03-p1",
+          "question": "Summarize PR-307 at 22:10 for the incoming night network engineer using the required four bullets.",
+          "should_reuse": true,
+          "reason": "Same snapshot and complete shift-handoff contract."
+        },
+        {
+          "id": "fresh3-incident-03-p2",
+          "question": "For the bay-east certificate incident in the table, explain current impact, routing workaround, approval blocker, and handoff task.",
+          "should_reuse": true,
+          "reason": "The contextual request preserves all facts and requested fields."
+        },
+        {
+          "id": "fresh3-incident-03-p3",
+          "question": "Are established sessions broken too? Keep the standard scope, workaround, blocker, and owner bullets.",
+          "should_reuse": true,
+          "reason": "The scope bullet explicitly states existing sessions continue normally."
+        },
+        {
+          "id": "fresh3-incident-03-p4",
+          "question": "What must the night engineer check at 22:20, and why is that the blocker? Include the full handoff.",
+          "should_reuse": true,
+          "reason": "The saved blocker and next-owner bullets answer the focused question completely."
+        },
+        {
+          "id": "fresh3-incident-03-n1",
+          "question": "Security approval arrived at 22:18 and pair A was replaced and verified healthy at 22:25. Prepare the 22:25 handoff.",
+          "should_reuse": false,
+          "reason": "The old blocker and unhealthy state no longer describe the new snapshot."
+        },
+        {
+          "id": "fresh3-incident-03-n2",
+          "question": "Approve and install the replacement certificate on pair A now, then report the handshake test result.",
+          "should_reuse": false,
+          "reason": "The saved handoff performs neither approval, installation, nor testing."
+        },
+        {
+          "id": "fresh3-incident-03-n3",
+          "question": "Prepare a handoff stating existing sessions fail while new handshakes succeed on pair A under the revised observation.",
+          "should_reuse": false,
+          "reason": "The revised affected operations and pair A health contradict the saved scope and workaround."
+        },
+        {
+          "id": "fresh3-incident-03-n4",
+          "question": "Write the complete handoff in German, including all bullet labels.",
+          "should_reuse": false,
+          "reason": "The saved English bullets do not meet the requested language."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-release-01",
+      "family": "release_readiness",
+      "instructions": "Use exactly three lines labeled Decision, Blocking gates, and Recheck. A production release is READY only if every named blocking gate passes. A scheduled deployment is not authorization to deploy. Give a read-only readiness assessment.",
+      "evidence": "JuniperSpoke 2.8.0-rc2 readiness snapshot at 2032-10-04 15:00 UTC for a proposed 17:00 UTC production release: integration tests pass; migration rehearsal passes; rollback rehearsal has not run; security review is approved. All four are blocking gates. Documentation polish is a nonblocking follow-up. The release captain owns the missing rollback rehearsal and will provide its result at 16:15 UTC. No production deployment has been started. A gate lacking a result counts as not passed.",
+      "answer": "Decision: HOLD for the proposed 17:00 UTC production release of 2.8.0-rc2.\nBlocking gates: The rollback rehearsal has not run; integration tests, migration rehearsal, and security review have passed. Documentation polish is nonblocking.\nRecheck: Ask the release captain for the rollback rehearsal result at 16:15 UTC on 2032-10-04.",
+      "original_question": "Is JuniperSpoke 2.8.0-rc2 ready for the proposed 17:00 production release at the 15:00 snapshot, what blocks it, and when should we recheck?",
+      "bindings": {
+        "product": "JuniperSpoke",
+        "release": "2.8.0-rc2",
+        "target": "2032-10-04T17:00Z",
+        "environment": "production"
+      },
+      "intent": "assess_release_gate_snapshot",
+      "variants": [
+        {
+          "id": "fresh3-release-01-p1",
+          "question": "Assess the 15:00 rc2 production-readiness snapshot and identify the unresolved gate and recheck time.",
+          "should_reuse": true,
+          "reason": "Same version, time, target, blocking policy, and response contract."
+        },
+        {
+          "id": "fresh3-release-01-p2",
+          "question": "For the release candidate described here, can the 17:00 production plan proceed based on the recorded gates? Include all standard lines.",
+          "should_reuse": true,
+          "reason": "The same all-gates rule leads to the same hold and follow-up."
+        },
+        {
+          "id": "fresh3-release-01-p3",
+          "question": "Is documentation polish the reason to hold rc2? Retain the complete readiness assessment.",
+          "should_reuse": true,
+          "reason": "The saved answer identifies the real blocker and labels documentation nonblocking."
+        },
+        {
+          "id": "fresh3-release-01-p4",
+          "question": "Who must supply the outstanding readiness evidence, and when? Keep the Decision and Blocking gates lines.",
+          "should_reuse": true,
+          "reason": "The release captain and 16:15 follow-up already satisfy the focused question."
+        },
+        {
+          "id": "fresh3-release-01-n1",
+          "question": "At 16:15 the rollback rehearsal passed and all other gates remain passed. Assess readiness under that updated snapshot.",
+          "should_reuse": false,
+          "reason": "Every blocking gate now passes, so the saved HOLD and missing-rehearsal blocker are wrong."
+        },
+        {
+          "id": "fresh3-release-01-n2",
+          "question": "Deploy 2.8.0-rc2 to production at 17:00 and confirm the deployment completed.",
+          "should_reuse": false,
+          "reason": "A read-only assessment does not execute or verify a production release."
+        },
+        {
+          "id": "fresh3-release-01-n3",
+          "question": "Under a revised policy, rollback rehearsal is advisory and all other gates remain passed. Assess readiness.",
+          "should_reuse": false,
+          "reason": "Changing the gate authority removes the only saved blocking condition."
+        },
+        {
+          "id": "fresh3-release-01-n4",
+          "question": "Give the readiness assessment for JuniperSpoke 2.8.1-rc1 using its own gate results.",
+          "should_reuse": false,
+          "reason": "The saved answer is specifically for 2.8.0-rc2 and supplies no evidence for the different candidate."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-release-02",
+      "family": "release_readiness",
+      "instructions": "Return exactly one JSON object with keys decision, blockers, nonblocking_followup, and next_review_utc. blockers must be an array of strings. Apply the recorded gate classifications. Do not publish the API.",
+      "evidence": "{\"product\": \"FableCrate\", \"candidate\": \"api-5.3-rc1\", \"schema_version\": \"v5\", \"snapshot_utc\": \"2032-10-08T11:30:00Z\", \"gates\": [{\"name\": \"v5 compatibility tests\", \"blocking\": true, \"status\": \"pass\"}, {\"name\": \"rate-limit soak\", \"blocking\": true, \"status\": \"fail\"}, {\"name\": \"consumer signoff\", \"blocking\": true, \"status\": \"pass\"}, {\"name\": \"sample client refresh\", \"blocking\": false, \"status\": \"pending\"}], \"rate_limit_soak_detail\": \"retry budget exceeded the 2 percent ceiling\", \"gate_owner\": \"API reliability lead\", \"next_review_utc\": \"2032-10-08T13:00:00Z\", \"rule\": \"HOLD if any blocking gate is not pass; otherwise READY\"}",
+      "answer": "{\"decision\":\"HOLD\",\"blockers\":[\"rate-limit soak failed: retry budget exceeded the 2 percent ceiling\"],\"nonblocking_followup\":\"sample client refresh is pending\",\"next_review_utc\":\"2032-10-08T13:00:00Z\"}",
+      "original_question": "Assess FableCrate api-5.3-rc1 at 11:30 using the recorded v5 gate classifications, with blockers, nonblocking follow-up, and next review.",
+      "bindings": {
+        "product": "FableCrate",
+        "release": "api-5.3-rc1",
+        "schema": "v5",
+        "snapshot": "2032-10-08T11:30Z"
+      },
+      "intent": "assess_api_schema_release",
+      "variants": [
+        {
+          "id": "fresh3-release-02-p1",
+          "question": "Return the standard readiness JSON for the 11:30 api-5.3-rc1 snapshot.",
+          "should_reuse": true,
+          "reason": "Same candidate, schema, time, policy, and exact JSON keys."
+        },
+        {
+          "id": "fresh3-release-02-p2",
+          "question": "For the FableCrate v5 candidate in this record, identify the release decision and failed gate while retaining every standard field.",
+          "should_reuse": true,
+          "reason": "The same failed blocking soak determines the same assessment."
+        },
+        {
+          "id": "fresh3-release-02-p3",
+          "question": "Does the pending sample client refresh itself block this candidate? Include the complete readiness object.",
+          "should_reuse": true,
+          "reason": "The object identifies that refresh as nonblocking and names the actual blocker."
+        },
+        {
+          "id": "fresh3-release-02-p4",
+          "question": "When should the team review api-5.3-rc1 again, and what issue needs attention then? Preserve the full JSON.",
+          "should_reuse": true,
+          "reason": "The unchanged next-review and blockers fields directly answer this focused request."
+        },
+        {
+          "id": "fresh3-release-02-n1",
+          "question": "The rate-limit soak has now passed with the other gate results unchanged. Return the updated readiness object.",
+          "should_reuse": false,
+          "reason": "The sole blocking failure is resolved; the saved HOLD would be wrong."
+        },
+        {
+          "id": "fresh3-release-02-n2",
+          "question": "Publish api-5.3-rc1 now and return the live production schema URL.",
+          "should_reuse": false,
+          "reason": "The answer neither publishes the API nor provides a resulting URL."
+        },
+        {
+          "id": "fresh3-release-02-n3",
+          "question": "The mandatory schema is v6, so report whether v6 compatibility tests passed and assess v6 readiness.",
+          "should_reuse": false,
+          "reason": "Evidence and saved answer concern v5 and cannot establish the requested v6 gate."
+        },
+        {
+          "id": "fresh3-release-02-n4",
+          "question": "Represent the same assessment as XML with a readiness root and blocker elements.",
+          "should_reuse": false,
+          "reason": "The requested output schema and encoding differ from the saved JSON."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-release-03",
+      "family": "release_readiness",
+      "instructions": "Use exactly three bullets labeled Decision, Gate evidence, and Follow-up. READY requires all blocking gates to pass. Explain readiness without submitting anything to a store. Include the nonblocking issue in the gate evidence.",
+      "evidence": "| OrbitThimble mobile-1.6.4 tablet release at 2032-10-12 18:00 UTC | Result | Class |\n|---|---|---|\n| Offline bundle signature | pass | blocking |\n| Restore-from-backup test | pass | blocking |\n| Accessibility signoff | pass | blocking |\n| Screenshot localization | pending | nonblocking |\n| Decision rule | all blocking gates must pass | policy |\n| Follow-up owner | localization coordinator | ownership |\n| Follow-up due | 2032-10-13 09:00 UTC | schedule |\n| Store submission | not started | action state |",
+      "answer": "- Decision: READY for tablet mobile-1.6.4 at the 18:00 UTC snapshot.\n- Gate evidence: Offline bundle signature, restore-from-backup test, and accessibility signoff all pass. Screenshot localization is pending but nonblocking.\n- Follow-up: The localization coordinator owns screenshot localization, due at 09:00 UTC on 2032-10-13.",
+      "original_question": "Is the tablet mobile-1.6.4 release ready at 18:00, what evidence supports that decision, and who owns the remaining follow-up?",
+      "bindings": {
+        "product": "OrbitThimble",
+        "release": "mobile-1.6.4",
+        "platform": "tablet",
+        "snapshot": "2032-10-12T18:00Z"
+      },
+      "intent": "assess_mobile_bundle_readiness",
+      "variants": [
+        {
+          "id": "fresh3-release-03-p1",
+          "question": "Assess OrbitThimble tablet mobile-1.6.4 at the recorded 18:00 snapshot in the required three bullets.",
+          "should_reuse": true,
+          "reason": "Same candidate, platform, timestamp, and gate policy."
+        },
+        {
+          "id": "fresh3-release-03-p2",
+          "question": "For the tablet release in the table, do the gates allow readiness despite the pending screenshots? Include the owner and due time.",
+          "should_reuse": true,
+          "reason": "The saved assessment explicitly handles the nonblocking screenshot issue."
+        },
+        {
+          "id": "fresh3-release-03-p3",
+          "question": "Which evidence makes the tablet candidate ready? Keep the decision and follow-up bullets too.",
+          "should_reuse": true,
+          "reason": "The three passed blocking gates and remaining follow-up are all supplied."
+        },
+        {
+          "id": "fresh3-release-03-p4",
+          "question": "Who will finish the remaining localization work and when? Retain the standard readiness bullets.",
+          "should_reuse": true,
+          "reason": "The saved follow-up names the owner and exact due time."
+        },
+        {
+          "id": "fresh3-release-03-n1",
+          "question": "Accessibility signoff has been revoked and now fails. Assess the revised 18:30 snapshot.",
+          "should_reuse": false,
+          "reason": "A failed blocking gate changes the decision from READY to HOLD."
+        },
+        {
+          "id": "fresh3-release-03-n2",
+          "question": "Submit mobile-1.6.4 to the store now and report its submission identifier.",
+          "should_reuse": false,
+          "reason": "A readiness assessment does not execute a store submission or produce its identifier."
+        },
+        {
+          "id": "fresh3-release-03-n3",
+          "question": "A new release policy makes screenshot localization a blocking gate. Assess this release with its current results.",
+          "should_reuse": false,
+          "reason": "The pending localization would become a blocker, unlike the saved READY assessment."
+        },
+        {
+          "id": "fresh3-release-03-n4",
+          "question": "Assess the phone build mobile-1.6.4-phone using phone-specific gate evidence.",
+          "should_reuse": false,
+          "reason": "The saved tablet evidence and decision do not establish phone-build readiness."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-refund-01",
+      "family": "refund_arithmetic",
+      "instructions": "Give exactly four lines labeled Item base, Tax, Total, and Exclusions. Use USD with two decimals. Compute the eligible refund only; do not issue it. Apply the discount before tax and round each item tax to cents using ordinary half-up rounding.",
+      "evidence": "FrostPetal order FP-602 contains a desk tray at USD 48.00 and a lamp at USD 72.00. A 25% promotion applied separately to both item prices. Sales tax is 8% of each discounted item price. Shipping was USD 9.00, is nonrefundable, and was not taxed. The customer returns only the desk tray within the 30-day return window, unused, so its discounted price and its original item tax are refundable with no restocking fee. The lamp is kept. There are no other discounts, fees, or refunds.",
+      "answer": "Item base: USD 36.00 (48.00 minus 25%).\nTax: USD 2.88 (36.00 times 8%).\nTotal: USD 38.88.\nExclusions: The kept lamp and USD 9.00 shipping are not refunded; no restocking fee applies.",
+      "original_question": "For FP-602, calculate the eligible refund for returning only the desk tray, showing the discounted item base, tax, total, and exclusions.",
+      "bindings": {
+        "merchant": "FrostPetal",
+        "order": "FP-602",
+        "currency": "USD",
+        "returned_item": "desk tray",
+        "refund_basis": "discounted_item_plus_tax"
+      },
+      "intent": "calculate_partial_item_refund",
+      "variants": [
+        {
+          "id": "fresh3-refund-01-p1",
+          "question": "What is the refund arithmetic for the unused desk tray in FP-602, including base, tax, total, and exclusions?",
+          "should_reuse": true,
+          "reason": "Same returned item, promotion, tax, eligibility, and output contract."
+        },
+        {
+          "id": "fresh3-refund-01-p2",
+          "question": "For the returned item in this order, apply the 25% promotion before the 8% tax and show the required breakdown.",
+          "should_reuse": true,
+          "reason": "Context resolves to the desk tray and preserves the calculation basis."
+        },
+        {
+          "id": "fresh3-refund-01-p3",
+          "question": "How much tax belongs in the desk-tray refund? Keep all four standard lines.",
+          "should_reuse": true,
+          "reason": "The unchanged answer contains the correct tax and full required breakdown."
+        },
+        {
+          "id": "fresh3-refund-01-p4",
+          "question": "Is shipping included in the desk-tray refund? Include the base, tax, total, and exclusions.",
+          "should_reuse": true,
+          "reason": "The answer states shipping is excluded and gives the complete same refund."
+        },
+        {
+          "id": "fresh3-refund-01-n1",
+          "question": "Calculate the refund for returning only the lamp while keeping the desk tray, with the same policy.",
+          "should_reuse": false,
+          "reason": "The returned item changes; the eligible total would be USD 58.32, not USD 38.88."
+        },
+        {
+          "id": "fresh3-refund-01-n2",
+          "question": "The desk-tray promotion was 10%, not 25%. Calculate the corrected refund at 8% tax.",
+          "should_reuse": false,
+          "reason": "The corrected base is USD 43.20 and total USD 46.66 after item-tax rounding."
+        },
+        {
+          "id": "fresh3-refund-01-n3",
+          "question": "Issue the USD 38.88 refund to the original payment method now and confirm the transaction.",
+          "should_reuse": false,
+          "reason": "A calculation does not execute or verify a payment refund."
+        },
+        {
+          "id": "fresh3-refund-01-n4",
+          "question": "For the desk tray, calculate the eligible refund after a newly applicable USD 5.00 restocking fee deducted after tax.",
+          "should_reuse": false,
+          "reason": "The new fee changes the total from USD 38.88 to USD 33.88."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-refund-02",
+      "family": "refund_arithmetic",
+      "instructions": "Return one JSON object with exactly refundable_plan_amount, refundable_tax, total_refund, and excluded_fee, each as a USD amount string with two decimals and no currency symbol. Calculate eligibility only. Prorate plan charges and their tax by unused days divided by period days; do not include the setup fee.",
+      "evidence": "{\"merchant\": \"AmberFinch\", \"subscription\": \"AF-91\", \"currency\": \"USD\", \"annual_plan_charge\": \"720.00\", \"plan_tax_paid\": \"36.00\", \"period_days\": 360, \"unused_days_at_cancellation\": 90, \"setup_fee\": \"40.00\", \"setup_fee_refundable\": false, \"policy\": \"Refund unused plan days and the matching proportion of plan tax. No penalty. Setup fee is nonrefundable.\", \"state\": \"Cancellation date is established; no refund transaction has been issued.\"}",
+      "answer": "{\"refundable_plan_amount\":\"180.00\",\"refundable_tax\":\"9.00\",\"total_refund\":\"189.00\",\"excluded_fee\":\"40.00\"}",
+      "original_question": "What is the eligible prorated refund for AF-91 with 90 of its 360 plan days unused, including the plan amount, proportional tax, total, and excluded setup fee?",
+      "bindings": {
+        "merchant": "AmberFinch",
+        "subscription": "AF-91",
+        "currency": "USD",
+        "period_days": "360",
+        "unused_days": "90"
+      },
+      "intent": "calculate_annual_plan_proration",
+      "variants": [
+        {
+          "id": "fresh3-refund-02-p1",
+          "question": "Calculate the AF-91 refund from the recorded 90 unused days using the required four-key JSON.",
+          "should_reuse": true,
+          "reason": "Same day basis, charges, tax proration, fee exclusion, and schema."
+        },
+        {
+          "id": "fresh3-refund-02-p2",
+          "question": "For this AmberFinch cancellation, show the unused quarter of the plan and its corresponding tax refund. Keep every standard field.",
+          "should_reuse": true,
+          "reason": "Ninety of 360 days is exactly one quarter; the requested values match."
+        },
+        {
+          "id": "fresh3-refund-02-p3",
+          "question": "How much of the USD 36.00 plan tax is refundable? Include the complete standard refund object.",
+          "should_reuse": true,
+          "reason": "The object gives USD 9.00 proportional tax and the accompanying required values."
+        },
+        {
+          "id": "fresh3-refund-02-p4",
+          "question": "Does the setup fee enter the AF-91 refund total? Return the standard breakdown.",
+          "should_reuse": true,
+          "reason": "The object excludes the USD 40.00 setup fee and correctly totals plan plus tax."
+        },
+        {
+          "id": "fresh3-refund-02-n1",
+          "question": "AF-91 has 120 unused days rather than 90. Calculate its prorated refund with the same charges and policy.",
+          "should_reuse": false,
+          "reason": "The fraction changes to one third, giving plan USD 240.00, tax USD 12.00, total USD 252.00."
+        },
+        {
+          "id": "fresh3-refund-02-n2",
+          "question": "Use a 365-day period with 90 days unused for AF-91 and round each refundable component half-up to cents.",
+          "should_reuse": false,
+          "reason": "The period basis changes, producing plan USD 177.53, tax USD 8.88, total USD 186.41."
+        },
+        {
+          "id": "fresh3-refund-02-n3",
+          "question": "Issue the eligible AF-91 refund now and return the payment processor confirmation code.",
+          "should_reuse": false,
+          "reason": "A JSON calculation contains no executed transaction or confirmation code."
+        },
+        {
+          "id": "fresh3-refund-02-n4",
+          "question": "A new policy refunds the full USD 40.00 setup fee too. Calculate the new total and set excluded_fee to 0.00.",
+          "should_reuse": false,
+          "reason": "The fee policy and resulting total change; the old object excludes the fee and totals only USD 189.00."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-refund-03",
+      "family": "refund_arithmetic",
+      "instructions": "Use exactly four bullets labeled Net item, Tax reversal, Fee, and Refund. Show USD to two decimals. Use the recorded item coupon allocation rather than reallocating the order coupon. The restocking fee is deducted after reversing original item tax and is not itself taxable. Calculate only.",
+      "evidence": "| PlumeKiln order PK-413 | Amount or rule |\n|---|---|\n| Canister list price | USD 64.00 |\n| Scoop list price | USD 36.00 |\n| Order coupon | USD 20.00 |\n| Recorded coupon allocated to canister | USD 12.80 |\n| Recorded coupon allocated to scoop | USD 7.20 |\n| Tax rate on each net item | 6.25% |\n| Returned item | canister only; scoop kept |\n| Return eligibility | eligible within window |\n| Canister restocking fee | USD 4.00 after tax reversal |\n| Shipping | USD 0.00 |\n| Prior refunds | none |",
+      "answer": "- Net item: USD 51.20 (64.00 minus the recorded 12.80 coupon share).\n- Tax reversal: USD 3.20 (51.20 times 6.25%).\n- Fee: USD 4.00 deducted after tax reversal; the fee is not taxable.\n- Refund: USD 50.40 (51.20 plus 3.20 minus 4.00).",
+      "original_question": "Calculate the eligible refund for returning only the canister in PK-413, using its recorded coupon share, original tax reversal, and the restocking fee.",
+      "bindings": {
+        "merchant": "PlumeKiln",
+        "order": "PK-413",
+        "currency": "USD",
+        "returned_item": "canister",
+        "coupon_allocation": "per_item_recorded"
+      },
+      "intent": "calculate_return_after_allocated_coupon",
+      "variants": [
+        {
+          "id": "fresh3-refund-03-p1",
+          "question": "Show the canister return calculation for PK-413 with the allocated discount, tax, fee, and final refund.",
+          "should_reuse": true,
+          "reason": "Same item, coupon allocation, tax rate, and fee basis."
+        },
+        {
+          "id": "fresh3-refund-03-p2",
+          "question": "For the returned canister in the table, use its recorded coupon allocation and give the four required bullets.",
+          "should_reuse": true,
+          "reason": "The contextual reference preserves the exact calculation inputs."
+        },
+        {
+          "id": "fresh3-refund-03-p3",
+          "question": "What is the original item tax being reversed for this canister return? Include the standard complete breakdown.",
+          "should_reuse": true,
+          "reason": "The unchanged answer contains the USD 3.20 tax reversal and full refund arithmetic."
+        },
+        {
+          "id": "fresh3-refund-03-p4",
+          "question": "Is the restocking charge subtracted before or after tax reversal? Keep every refund bullet.",
+          "should_reuse": true,
+          "reason": "The answer explicitly deducts the fee after tax reversal and gives the complete same result."
+        },
+        {
+          "id": "fresh3-refund-03-n1",
+          "question": "The recorded coupon allocation to the canister is corrected to USD 10.00. Calculate its refund with the same tax and fee rules.",
+          "should_reuse": false,
+          "reason": "The net item becomes USD 54.00, tax USD 3.38, and refund USD 53.38 with half-up cent rounding."
+        },
+        {
+          "id": "fresh3-refund-03-n2",
+          "question": "Waive the canister restocking fee for this calculation, leaving all other inputs the same.",
+          "should_reuse": false,
+          "reason": "Without the USD 4.00 fee the eligible refund becomes USD 54.40."
+        },
+        {
+          "id": "fresh3-refund-03-n3",
+          "question": "Send the USD 50.40 refund to the customer now and confirm payment completion.",
+          "should_reuse": false,
+          "reason": "The saved arithmetic does not transfer funds or verify payment."
+        },
+        {
+          "id": "fresh3-refund-03-n4",
+          "question": "Return a JSON object with net_item, tax_reversal, fee, and refund as numeric values instead of bullets.",
+          "should_reuse": false,
+          "reason": "The saved text bullets do not satisfy the newly requested JSON schema or numeric types."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-broker-01",
+      "family": "broker_lifecycle",
+      "instructions": "Use exactly three lines labeled Current state, Next transition, and Allowed actor. Describe the deterministic lifecycle from this snapshot. Do not acknowledge, renew, or requeue the job. A lease is valid strictly before its expiry time.",
+      "evidence": "AlderQueue job J-804 is leased to worker-amber on attempt 2. Snapshot time is 2032-11-03 10:02:00 UTC; the lease expires at 10:05:00 UTC. No acknowledgment has been recorded. Only the lease owner may acknowledge or renew before expiry. On expiry without acknowledgment, the broker automatically places the job into ready state if attempt count is below 4; otherwise it puts the job in dead-letter state. The current attempt count is 2. Automatic expiry requeue does not itself increment the attempt count; the next lease acquisition does. There is no manual requeue request in this record.",
+      "answer": "Current state: J-804 is leased to worker-amber on attempt 2 at 10:02 UTC; its lease remains valid until, but not including, 10:05 UTC.\nNext transition: Without acknowledgment by expiry, the broker automatically returns J-804 to ready at 10:05 because attempt 2 is below 4; the count stays 2 until the next lease acquisition.\nAllowed actor: Only worker-amber may acknowledge or renew before 10:05 UTC.",
+      "original_question": "At 10:02 UTC, what is J-804 current state, what happens at 10:05 if it remains unacknowledged, and who can act before expiry?",
+      "bindings": {
+        "service": "AlderQueue",
+        "job": "J-804",
+        "lease_owner": "worker-amber",
+        "snapshot": "2032-11-03T10:02Z",
+        "attempt": "2"
+      },
+      "intent": "explain_job_lease_expiry_transition",
+      "variants": [
+        {
+          "id": "fresh3-broker-01-p1",
+          "question": "Explain the 10:02 J-804 lease, expiry path without acknowledgment, and authorized actor in the required three lines.",
+          "should_reuse": true,
+          "reason": "Same job, owner, count, timing, and lifecycle conditions."
+        },
+        {
+          "id": "fresh3-broker-01-p2",
+          "question": "For the leased job in this snapshot, describe what the broker does if the owner stays silent until expiry. Include current state and actor.",
+          "should_reuse": true,
+          "reason": "The contextual and conditional request matches the saved expiry transition."
+        },
+        {
+          "id": "fresh3-broker-01-p3",
+          "question": "Does attempt 2 go to ready or dead-letter on this unacknowledged expiry? Retain the full lifecycle response.",
+          "should_reuse": true,
+          "reason": "The saved next-transition line directly gives ready and explains the count threshold."
+        },
+        {
+          "id": "fresh3-broker-01-p4",
+          "question": "Can someone besides worker-amber renew this lease before 10:05? Include the standard current-state and transition lines.",
+          "should_reuse": true,
+          "reason": "The allowed-actor line explicitly limits renewal to the same owner."
+        },
+        {
+          "id": "fresh3-broker-01-n1",
+          "question": "J-804 is on attempt 4 rather than attempt 2. Explain its unacknowledged expiry transition under the same threshold.",
+          "should_reuse": false,
+          "reason": "Attempt 4 reaches the dead-letter branch rather than the saved ready branch."
+        },
+        {
+          "id": "fresh3-broker-01-n2",
+          "question": "Acknowledge J-804 as worker-amber now and confirm the broker marked it completed.",
+          "should_reuse": false,
+          "reason": "A lifecycle explanation does not execute an acknowledgment or confirm broker state."
+        },
+        {
+          "id": "fresh3-broker-01-n3",
+          "question": "The lease is transferred to worker-blue before 10:02. Explain the current owner and authorized actor.",
+          "should_reuse": false,
+          "reason": "The owner and actor must change from worker-amber to worker-blue."
+        },
+        {
+          "id": "fresh3-broker-01-n4",
+          "question": "At exactly 10:05 with no acknowledgment or renewal, state only the job current state after the expiry transition.",
+          "should_reuse": false,
+          "reason": "The current-state claim leased at 10:02 is not the requested ready state at expiry, and the output contract changes to a single current state."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-broker-02",
+      "family": "broker_lifecycle",
+      "instructions": "Return exactly one JSON object with keys state, new_deliveries, pending_ack_count, close_condition, and forced_close_at_utc. Describe the snapshot and lifecycle rule. Do not close the connection or acknowledge messages.",
+      "evidence": "{\"service\": \"MarbleBus\", \"tenant\": \"Spruce Circle\", \"connection\": \"C-62\", \"snapshot_utc\": \"2032-11-05T16:10:00Z\", \"state\": \"draining\", \"new_deliveries_allowed\": false, \"pending_ack_count\": 3, \"drain_started_utc\": \"2032-11-05T16:08:00Z\", \"forced_close_at_utc\": \"2032-11-05T16:13:00Z\", \"rules\": {\"clean_close\": \"close when pending acknowledgment count reaches zero before deadline\", \"deadline_close\": \"at deadline, force close and requeue each unacknowledged message\", \"ack_during_drain\": \"existing consumer may acknowledge already delivered messages\"}, \"observed_acks_since_snapshot\": 0}",
+      "answer": "{\"state\":\"draining\",\"new_deliveries\":false,\"pending_ack_count\":3,\"close_condition\":\"clean close when pending acknowledgments reach zero before deadline; otherwise force close at deadline and requeue unacknowledged messages\",\"forced_close_at_utc\":\"2032-11-05T16:13:00Z\"}",
+      "original_question": "Describe C-62 at 16:10 UTC: its state, whether new deliveries are allowed, pending acknowledgments, and how or when draining ends.",
+      "bindings": {
+        "service": "MarbleBus",
+        "connection": "C-62",
+        "tenant": "Spruce Circle",
+        "snapshot": "2032-11-05T16:10Z",
+        "mode": "draining"
+      },
+      "intent": "explain_connection_drain_lifecycle",
+      "variants": [
+        {
+          "id": "fresh3-broker-02-p1",
+          "question": "Give the standard lifecycle JSON for MarbleBus C-62 at the recorded 16:10 snapshot.",
+          "should_reuse": true,
+          "reason": "Same connection, snapshot, pending count, and five-key schema."
+        },
+        {
+          "id": "fresh3-broker-02-p2",
+          "question": "For the Spruce Circle connection shown here, explain what draining permits and what ends it. Include every required field.",
+          "should_reuse": false,
+          "reason": "The broad request asks what draining permits; the saved answer omits the stated permission for the existing consumer to acknowledge delivered messages."
+        },
+        {
+          "id": "fresh3-broker-02-p3",
+          "question": "Can C-62 receive new messages while it is in this state? Keep the pending-count and closure fields too.",
+          "should_reuse": true,
+          "reason": "The new_deliveries false value completely answers this narrower question."
+        },
+        {
+          "id": "fresh3-broker-02-p4",
+          "question": "What happens if the three messages are still unacknowledged at 16:13? Retain the full standard object.",
+          "should_reuse": true,
+          "reason": "The close_condition states forced closure and requeue at the recorded deadline."
+        },
+        {
+          "id": "fresh3-broker-02-n1",
+          "question": "All three messages were acknowledged at 16:11 and C-62 closed cleanly. Give its state at 16:12.",
+          "should_reuse": false,
+          "reason": "The current state and pending count have changed from draining with three pending to closed with zero pending."
+        },
+        {
+          "id": "fresh3-broker-02-n2",
+          "question": "Force-close C-62 now and report which three messages were requeued.",
+          "should_reuse": false,
+          "reason": "The saved object does not close the connection or identify actual requeued messages."
+        },
+        {
+          "id": "fresh3-broker-02-n3",
+          "question": "The drain deadline has been extended to 16:20 UTC. Return the revised lifecycle object.",
+          "should_reuse": false,
+          "reason": "The forced_close_at_utc field must change from 16:13 to 16:20."
+        },
+        {
+          "id": "fresh3-broker-02-n4",
+          "question": "The broker policy now permits new deliveries during draining. Return the lifecycle object under that policy.",
+          "should_reuse": false,
+          "reason": "The new_deliveries field must change from false to true."
+        }
+      ]
+    },
+    {
+      "id": "fresh3-broker-03",
+      "family": "broker_lifecycle",
+      "instructions": "Use exactly three bullets labeled Active grant, Expiry behavior, and Renewal authority. State the recorded scope exactly. This is an explanation of broker policy; do not mint, revoke, renew, or broaden a grant. Validity is start-inclusive and expiry-exclusive.",
+      "evidence": "| BirchGrant delegated token record | Value |\n|---|---|\n| Grant ID | G-119 |\n| Subject | batch-worker |\n| Scope | reports:read |\n| Starts | 2032-11-07 12:00 UTC |\n| Expires | 2032-11-07 12:30 UTC |\n| Snapshot | 2032-11-07 12:12 UTC |\n| Revoked | no |\n| Refresh token | none |\n| On expiry | Reject further use; no automatic renewal |\n| New-grant authority | tenant access administrator after a new approval |\n| Subject self-renewal | prohibited |",
+      "answer": "- Active grant: G-119 is active for batch-worker at 12:12 UTC with scope reports:read; its validity runs from 12:00 inclusive to 12:30 UTC exclusive on 2032-11-07.\n- Expiry behavior: Further use is rejected at 12:30 UTC; there is no refresh token or automatic renewal.\n- Renewal authority: A tenant access administrator may obtain a new grant after a new approval; batch-worker cannot self-renew.",
+      "original_question": "At 12:12 UTC, explain whether G-119 is active, its exact scope, what happens at expiry, and who may obtain a replacement grant.",
+      "bindings": {
+        "service": "BirchGrant",
+        "grant": "G-119",
+        "subject": "batch-worker",
+        "scope": "reports:read",
+        "snapshot": "2032-11-07T12:12Z"
+      },
+      "intent": "explain_delegated_token_lifecycle",
+      "variants": [
+        {
+          "id": "fresh3-broker-03-p1",
+          "question": "Explain G-119 validity, scope, expiry, and replacement authority at the recorded 12:12 snapshot.",
+          "should_reuse": true,
+          "reason": "Same grant, subject, exact scope, timestamp, and three-bullet contract."
+        },
+        {
+          "id": "fresh3-broker-03-p2",
+          "question": "For the batch-worker grant in the table, summarize its current permissions and how its lifecycle ends. Keep every standard bullet.",
+          "should_reuse": true,
+          "reason": "The contextual reference resolves to the same active read-only grant and expiry rules."
+        },
+        {
+          "id": "fresh3-broker-03-p3",
+          "question": "Does G-119 automatically refresh at 12:30? Include active scope and replacement authority as well.",
+          "should_reuse": true,
+          "reason": "The saved response explicitly rules out refresh and automatic renewal."
+        },
+        {
+          "id": "fresh3-broker-03-p4",
+          "question": "Can batch-worker renew its own grant? Retain all three required lifecycle bullets.",
+          "should_reuse": true,
+          "reason": "The saved renewal-authority bullet completely answers the focused actor question."
+        },
+        {
+          "id": "fresh3-broker-03-n1",
+          "question": "G-119 was revoked at 12:10 UTC. Explain whether it is active at 12:12 and its subsequent lifecycle.",
+          "should_reuse": false,
+          "reason": "The revocation changes active status; the saved answer incorrectly calls it active."
+        },
+        {
+          "id": "fresh3-broker-03-n2",
+          "question": "Mint a replacement grant for batch-worker now and return the actual token.",
+          "should_reuse": false,
+          "reason": "The saved explanation neither creates a grant nor provides a token."
+        },
+        {
+          "id": "fresh3-broker-03-n3",
+          "question": "A new approval changes the grant scope to reports:write. Explain the grant with that exact scope.",
+          "should_reuse": false,
+          "reason": "The requested scope differs from the saved reports:read permission."
+        },
+        {
+          "id": "fresh3-broker-03-n4",
+          "question": "At exactly 12:30 UTC, is G-119 currently active? Answer only yes or no.",
+          "should_reuse": false,
+          "reason": "At the expiry-exclusive boundary the correct single answer is no; the saved answer instead contains an active-at-12:12 statement and three bullets."
+        }
+      ]
+    }
+  ]
+}

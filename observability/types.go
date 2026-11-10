@@ -16,6 +16,7 @@ const (
 	Reused        Outcome = "reused"
 	Pending       Outcome = "pending"
 	BudgetBlocked Outcome = "budget_blocked"
+	Deferred      Outcome = "deferred"
 	Incomplete    Outcome = "incomplete"
 	LimitExceeded Outcome = "limit_exceeded"
 	Uncertain     Outcome = "uncertain"

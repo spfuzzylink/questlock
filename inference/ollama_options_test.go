@@ -71,7 +71,7 @@ func TestOllamaOptionsPinPlanIdentityWithoutChangingPrompt(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if p.Request.Ollama != options || p.Request.Prefix != baseline.Request.Prefix || p.Request.Input != baseline.Request.Input {
+		if !reflect.DeepEqual(p.Request.Ollama, options) || p.Request.Ollama == options || p.Request.Prefix != baseline.Request.Prefix || p.Request.Input != baseline.Request.Input {
 			t.Fatal("options lost or planned prompt changed")
 		}
 		if seen[p.Fingerprint] {

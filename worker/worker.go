@@ -273,6 +273,7 @@ func (w *worker) loadBytes(path string) ([]byte, error) {
 
 func safeOutput(result delegation.Result, err error) toolOutput {
 	// Copy before stripping: callers may reuse their durable result in memory.
+	resourceDeferred := len(result.Attempts) == 1 && inference.PreClaimDeferred(result.Attempts[0].Result, err)
 	diagnostic := inference.BudgetDiagnosticFromError(err)
 	if diagnostic == nil {
 		diagnostic = safeBudgetDiagnostic(result.BudgetDiagnostic)
@@ -288,6 +289,14 @@ func safeOutput(result delegation.Result, err error) toolOutput {
 	}
 	result.Attempts = append([]delegation.Attempt{}, result.Attempts...)
 	for i := range result.Attempts {
+		switch result.Attempts[i].ErrorCategory {
+		case "", "runner_initialization_failed", "unconfirmed_complete_outcome", "canceled", "deadline_exceeded", "pending_or_uncertain", "incomplete", "budget_exceeded", "run_failed", "resource_deferred", "resource_policy_invalid":
+		default:
+			result.Attempts[i].ErrorCategory = "run_failed"
+		}
+		if result.Attempts[i].ErrorCategory == "resource_deferred" && !resourceDeferred {
+			result.Attempts[i].ErrorCategory = "run_failed"
+		}
 		// Upstream response identifiers/model/stop labels are not needed to
 		// account for attempts, and could carry arbitrary provider text.
 		result.Attempts[i].Result.Response = inference.Response{}
@@ -298,7 +307,7 @@ func safeOutput(result delegation.Result, err error) toolOutput {
 			resolution := *original
 			resolution.Response = inference.Response{}
 			resolution.PolicyID = safeDigest(resolution.PolicyID)
-			resolution.VerificationKey = safeJobReference(resolution.VerificationKey)
+			resolution.VerificationKey = safeVerificationReference(resolution.VerificationKey)
 			resolution.Source.Key = safeJobReference(resolution.Source.Key)
 			resolution.Source.SHA256 = safeDigest(resolution.Source.SHA256)
 			resolution.Source.OutputSHA256 = safeDigest(resolution.Source.OutputSHA256)
@@ -313,6 +322,10 @@ func safeOutput(result delegation.Result, err error) toolOutput {
 		output.Response, output.SelectedTier = nil, ""
 		output.ErrorCategory = "stopped"
 		switch {
+		case resourceDeferred:
+			output.Status, output.ErrorCategory = "stopped", "resource_deferred"
+		case errors.Is(err, delegation.ErrResourceAdmissionConfig):
+			output.Status, output.ErrorCategory = "stopped", "resource_policy_invalid"
 		case errors.Is(err, context.Canceled):
 			output.Status, output.ErrorCategory = "stopped", "canceled"
 		case errors.Is(err, context.DeadlineExceeded):
@@ -352,7 +365,7 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 		observation.Mode = "controlled"
 	}
 	switch observation.Status {
-	case "not_called", "wait_canceled", "verifier_unavailable", "busy", "resource_pressure", "embedding_unavailable", "embedding_failed", "search_failed", "miss_or_rejected", "provenance_unavailable", "invalid_provenance", "source_unavailable", "verification_failed", "verification_unconfirmed", "source_changed", "verified_candidate", "reused", "skipped_exact", "index_source_unavailable", "index_plan_invalid", "index_provenance_conflict", "index_provenance_unavailable", "index_provenance_unconfirmed", "index_failed":
+	case "not_called", "wait_canceled", "verifier_unavailable", "busy", "resource_pressure", "resource_deferred", "embedding_unavailable", "embedding_failed", "search_failed", "miss_or_rejected", "provenance_unavailable", "invalid_provenance", "source_unavailable", "verification_failed", "verification_unconfirmed", "source_changed", "verified_candidate", "reused", "skipped_exact", "index_source_unavailable", "index_plan_invalid", "index_provenance_conflict", "index_provenance_unavailable", "index_provenance_unconfirmed", "index_failed":
 	default:
 		observation.Status = "unavailable"
 	}
@@ -361,7 +374,7 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 	if original.ResourceAdmission != nil {
 		diagnostic := *original.ResourceAdmission
 		switch diagnostic.Reason {
-		case "sample_unavailable", "sample_invalid", "sample_expired", "memory_pressure", "insufficient_memory", "cpu_stall", "load", "ready":
+		case "sample_unavailable", "sample_invalid", "sample_expired", "memory_pressure", "insufficient_memory", "cpu_stall", "memory_stall", "load", "busy", "ready":
 		default:
 			diagnostic.Reason = "sample_unavailable"
 		}
@@ -369,6 +382,25 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 		case admission.Normal, admission.High, admission.Critical:
 		default:
 			diagnostic.MemoryPressure = ""
+		}
+		switch diagnostic.Outcome {
+		case "", "admitted", "deferred":
+		default:
+			diagnostic.Outcome = ""
+		}
+		switch diagnostic.DeferredReason {
+		case "", "busy", "queue_full", "queue_wait_expired", "admission_wait_expired", "resource_not_ready":
+		default:
+			diagnostic.DeferredReason = ""
+		}
+		if !(diagnostic.WaitMS >= 0 && diagnostic.WaitMS <= 24*60*60*1000) {
+			diagnostic.WaitMS = 0
+		}
+		if !(diagnostic.QueueWaitMS >= 0 && diagnostic.QueueWaitMS <= 24*60*60*1000) {
+			diagnostic.QueueWaitMS = 0
+		}
+		if diagnostic.Samples < 0 || diagnostic.Samples > 10000000 {
+			diagnostic.Samples = 0
 		}
 		diagnostic.AvailableMemoryBytes = copyCount(diagnostic.AvailableMemoryBytes)
 		if diagnostic.AvailableMemoryBytes != nil && *diagnostic.AvailableMemoryBytes < 0 {
@@ -391,15 +423,38 @@ func safeSemanticReuse(original *delegation.ReuseObservation) *delegation.ReuseO
 		default:
 			verdict.Verdict = "unknown"
 		}
-		verdict.ReceiptKey = safeJobReference(verdict.ReceiptKey)
+		verdict.ReceiptKey = safeVerificationReference(verdict.ReceiptKey)
 		verdict.OutputSHA256 = safeDigest(verdict.OutputSHA256)
 		verdict.InputTokens, verdict.OutputTokens = copyCount(verdict.InputTokens), copyCount(verdict.OutputTokens)
+		verdict.Work = nil
+		if len(original.Verifications[i].Work) <= 2 {
+			for _, w := range original.Verifications[i].Work {
+				if w.Stage != "source" && w.Stage != "equivalence" {
+					continue
+				}
+				w.ReceiptKey = safeJobReference(w.ReceiptKey)
+				w.OutputSHA256 = safeDigest(w.OutputSHA256)
+				// Declared model names stay in the caller's configuration; like
+				// Response.Model, a string supplied by an executor is not a second
+				// provider-text channel. Opaque runtime hashes retain attribution.
+				w.Model = ""
+				w.RuntimeIdentity = safeDigest(w.RuntimeIdentity)
+				w.InputTokens, w.OutputTokens = copyCount(w.InputTokens), copyCount(w.OutputTokens)
+				if w.AdmissionDeferred && (w.GenerationCalled || w.Reused || w.Complete || w.Durable || w.ReceiptKey != "" || w.OutputSHA256 != "" || w.InputTokens == nil || w.OutputTokens == nil || *w.InputTokens != 0 || *w.OutputTokens != 0) {
+					w.AdmissionDeferred = false
+				}
+				verdict.Work = append(verdict.Work, w)
+			}
+		}
 		observation.Verifications[i] = verdict
 	}
 	observation.Rejections = []string{}
 	for _, code := range original.Rejections {
 		switch code {
-		case "missing_provenance", "source_not_eligible", "current_checks_failed", "verifier_rejected_or_abstained", "invalid_protected_text", "invalid_protected_quotes", "protected_numbers_changed", "protected_identifiers_changed", "protected_urls_changed", "protected_quotes_changed", "protected_negations_changed", "protected_operators_changed", "protected_units_changed":
+		case "missing_provenance", "source_not_eligible", "current_checks_failed", "verifier_rejected_or_abstained", "invalid_protected_text", "invalid_protected_quotes", "protected_numbers_changed", "protected_identifiers_changed", "protected_urls_changed", "protected_quotes_changed", "protected_negations_changed", "protected_operators_changed", "protected_units_changed",
+			"invalid_output_contract_text", "output_contract_conflict", "output_numeric_contract_mismatch", "output_json_contract_mismatch", "output_csv_contract_mismatch", "output_tsv_contract_mismatch", "output_table_contract_mismatch", "output_prose_contract_mismatch", "output_no_json_contract_mismatch",
+			"invalid_language_contract_text", "output_language_changed", "output_language_unknown", "output_language_source_unknown", "output_language_ambiguous",
+			"target_risk_invalid_text", "target_risk_binary_orientation", "target_risk_scope_expansion", "target_risk_authority_change", "target_risk_operation_object_change", "target_risk_adopted_update":
 			observation.Rejections = append(observation.Rejections, code)
 		}
 	}
@@ -462,3 +517,11 @@ func resultContent(output toolOutput) *mcp.CallToolResult {
 type writerWithoutClose struct{ io.Writer }
 
 func (writerWithoutClose) Close() error { return nil }
+
+func safeVerificationReference(value string) string {
+	const prefix = "semantic/v1/decisions/"
+	if strings.HasPrefix(value, prefix) && safeDigest(strings.TrimPrefix(value, prefix)) != "" {
+		return value
+	}
+	return safeJobReference(value)
+}

@@ -280,7 +280,13 @@ def protocol_check(plugin, client, home, env, version):
                 and contract.get("request_root") == str(home / ".local/share/questlock/plugins/requests")
                 and contract.get("profile") == {"id": "managed-" + client, "kind": "managed"}
                 and contract.get("policy", {}).get("allow_paid") is False
-                and contract.get("request_schemas") == {"delegation": ["unversioned"], "revision": [1], "semantic_shadow_modes": ["shadow"], "semantic_reuse_modes": ["controlled"]}
+                and contract.get("request_schemas") == {
+                    "delegation": ["unversioned"], "revision": [1],
+                    "semantic_shadow_modes": ["shadow"], "semantic_reuse_modes": ["controlled"],
+                    "semantic_reuse_optional_verifier_policies": ["factorized-v1"],
+                    "semantic_reuse_optional_reasoning_fields": ["verifier_source_think", "verifier_pair_think", "verifier_pair_assessment"],
+                    "semantic_reuse_optional_sampling_fields": ["verifier_pair_temperature", "verifier_pair_seed"],
+                    "semantic_reuse_factorized_thinking_max_timeout_ms": 600000}
                 and set(contract.get("tools", [])) == TOOLS
                 and contract.get("read_only") is True and contract.get("model_calls") == 0,
                 "worker status did not identify the connected runtime contract")

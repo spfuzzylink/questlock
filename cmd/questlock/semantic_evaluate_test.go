@@ -193,10 +193,10 @@ func TestSemanticEvaluationMetricsKeepMissesErrorsAndCachedUsage(t *testing.T) {
 	}
 	sources := []semanticEvalSourceEmbedding{{Attempted: true, InputTokens: &two}}
 	totals, usage := semanticEvalSummarize(pairs, sources)
-	if totals.Total != 6 || totals.TP != 1 || totals.FP != 1 || totals.TN != 2 || totals.FN != 2 || totals.Errors != 2 || totals.Abstentions != 2 || totals.Unattempted != 1 || totals.RetrievalMisses != 1 || totals.GuardRejections != 1 || totals.UnknownVerdicts != 1 {
+	if totals.Total != 6 || totals.TP != 1 || totals.FP != 1 || totals.TN != 1 || totals.FN != 1 || totals.Unscored != 2 || totals.UnscoredPositiveLabels != 1 || totals.UnscoredNegativeLabels != 1 || totals.ConfusionPairs == nil || *totals.ConfusionPairs != 4 || totals.Errors != 2 || totals.Abstentions != 2 || totals.Unattempted != 1 || totals.RetrievalMisses != 1 || totals.GuardRejections != 1 || totals.UnknownVerdicts != 1 {
 		t.Fatalf("lost outcome categories: %+v", totals)
 	}
-	if totals.Precision == nil || *totals.Precision != 0.5 || math.Abs(*totals.Recall-1.0/3) > 1e-12 || *totals.Accuracy != 0.5 || math.Abs(*totals.Coverage-1.0/3) > 1e-12 {
+	if totals.Precision == nil || *totals.Precision != 0.5 || math.Abs(*totals.Recall-0.5) > 1e-12 || *totals.Accuracy != 0.5 || math.Abs(*totals.Coverage-1.0/3) > 1e-12 {
 		t.Fatalf("wrong population metrics: %+v", totals)
 	}
 	if usage.EmbeddingCalls != 3 || usage.EmbeddingKnownUsageCalls != 2 || usage.EmbeddingUnknownUsageCalls != 1 || usage.EmbeddingInputTokens != 3 || usage.VerificationAttempts != 3 || usage.VerifierGenerationCalls != 2 || usage.CachedVerifications != 1 || usage.VerifierInputTokens != 2 || usage.VerifierOutputTokens != 1 || usage.VerifierUnknownUsageCalls != 1 || usage.LogicalModelCalls != 5 {

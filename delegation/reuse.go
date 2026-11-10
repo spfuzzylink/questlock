@@ -27,8 +27,16 @@ type ControlledReuser struct {
 	EmbedderFactory func(context.Context, semantic.Config) (semantic.Embedder, error)
 	VerifierFactory func(context.Context, semantic.ReuseConfig) (semantic.Verifier, error)
 	Resources       admission.Source
+	// AdmissionPolicy is an optional process-local backpressure policy. Set it
+	// before sharing this reuser; changing limits requires a new reuser. It is
+	// independent of semantic/exact task identity. Nil preserves legacy skips.
+	AdmissionPolicy *ReuseAdmissionPolicy
 	once            sync.Once
 	gate            chan struct{}
+	admissionOnce   sync.Once
+	admissionConfig ReuseAdmissionPolicy
+	admissionSlots  chan struct{}
+	admissionQueue  chan struct{}
 }
 
 type ReuseObservation struct {
@@ -56,6 +64,11 @@ type ReuseResourceAdmission struct {
 	Reason               string             `json:"reason"`
 	MemoryPressure       admission.Pressure `json:"memory_pressure,omitempty"`
 	AvailableMemoryBytes *int64             `json:"available_memory_bytes"`
+	Outcome              string             `json:"outcome,omitempty"`
+	WaitMS               float64            `json:"wait_ms,omitempty"`
+	QueueWaitMS          float64            `json:"queue_wait_ms,omitempty"`
+	Samples              int                `json:"samples,omitempty"`
+	DeferredReason       string             `json:"deferred_reason,omitempty"`
 }
 
 func reuseResourceAdmission(s admission.Snapshot, err error, now time.Time) *ReuseResourceAdmission {
@@ -103,17 +116,19 @@ type reuseRunner interface {
 }
 
 type controlledResolver struct {
-	owner       *ControlledReuser
-	parent      context.Context
-	request     Request
-	tier        Tier
-	runner      reuseRunner
-	config      semantic.ReuseConfig
-	observation *ReuseObservation
-	verifier    semantic.Verifier
-	initialized bool
-	initErr     error
-	embedding   *semantic.Embedding
+	owner           *ControlledReuser
+	parent          context.Context
+	request         Request
+	tier            Tier
+	runner          reuseRunner
+	config          semantic.ReuseConfig
+	observation     *ReuseObservation
+	verifier        semantic.Verifier
+	initialized     bool
+	initErr         error
+	embedding       *semantic.Embedding
+	admissionPolicy *ReuseAdmissionPolicy
+	admitted        bool
 }
 
 func (r *controlledResolver) close() {
@@ -135,10 +150,7 @@ func ReusePartition(request Request, tier Tier, runtimeID string) (string, error
 	if err != nil {
 		return "", err
 	}
-	base := request
-	c.Config.Mode = "shadow"
-	base.SemanticShadow = &c.Config
-	partition, err := ShadowPartition(base, tier, runtimeID)
+	partition, err := normalizedSemanticPartition(request, tier, runtimeID, c.Config)
 	if err != nil {
 		return "", err
 	}
@@ -158,7 +170,15 @@ func (o *ControlledReuser) resolver(ctx context.Context, request Request, tier T
 	if err != nil {
 		return nil, err
 	}
-	return &controlledResolver{owner: o, parent: ctx, request: request, tier: tier, runner: r, config: c, observation: &ReuseObservation{Mode: "controlled", Status: "not_called", Partition: partition, Verifications: []semantic.ValidityResult{}, Rejections: []string{}}}, nil
+	resolved := &controlledResolver{owner: o, parent: ctx, request: request, tier: tier, runner: r, config: c, observation: &ReuseObservation{Mode: "controlled", Status: "not_called", Partition: partition, Verifications: []semantic.ValidityResult{}, Rejections: []string{}}}
+	if o.AdmissionPolicy != nil {
+		if _, ok := r.(admissionReuseRunner); !ok {
+			return nil, ErrResourceAdmissionConfig
+		}
+		copy := *o.AdmissionPolicy
+		resolved.admissionPolicy = &copy
+	}
+	return resolved, nil
 }
 
 func (r *controlledResolver) Identity() string {
@@ -192,15 +212,19 @@ func (r *controlledResolver) Resolve(ctx context.Context, spec inference.Spec) (
 	obs := r.observation
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(r.config.TimeoutMS)*time.Millisecond)
 	defer cancel()
-	o.once.Do(func() { o.gate = make(chan struct{}, 1) })
-	select {
-	case o.gate <- struct{}{}:
-		defer func() { <-o.gate }()
-	default:
-		obs.Status = "busy"
-		return nil, nil
+	if r.admissionPolicy == nil {
+		o.once.Do(func() { o.gate = make(chan struct{}, 1) })
+		select {
+		case o.gate <- struct{}{}:
+			defer func() { <-o.gate }()
+		default:
+			obs.Status = "busy"
+			return nil, nil
+		}
+	} else if !r.admitted {
+		return nil, inference.ErrAdmissionDeferred
 	}
-	if o.Resources != nil {
+	if r.admissionPolicy == nil && o.Resources != nil {
 		s, err := o.Resources.Sample(ctx)
 		obs.ResourceAdmission = reuseResourceAdmission(s, err, time.Now())
 		if obs.ResourceAdmission.Reason != "ready" {
@@ -316,7 +340,12 @@ func (r *controlledResolver) candidate(ctx context.Context, candidate semantic.C
 		obs.Rejections = append(obs.Rejections, "source_not_eligible")
 		return nil, false, nil
 	}
-	guards := semantic.CheckProtectedTerms(proof.Question, r.request.Spec.Input)
+	guards := semantic.CheckReuseProtectedTerms(proof.Question, r.request.Spec.Input, r.config.VerifierPolicy)
+	if r.config.VerifierPolicy == "factorized-v1" {
+		guards = append(guards, semantic.CheckReuseAnswerContract(r.request.Spec.Input, source.Response.Text)...)
+		guards = append(guards, semantic.CheckReuseLanguageContract(proof.Question, r.request.Spec.Instructions, r.request.Spec.Input)...)
+		guards = append(guards, semantic.CheckReuseTargetRisks(proof.Question, r.request.Spec.Instructions, r.request.Spec.Input, source.Response.Text)...)
+	}
 	if len(guards) > 0 {
 		obs.Rejections = append(obs.Rejections, guards...)
 		return nil, false, nil
@@ -329,7 +358,11 @@ func (r *controlledResolver) candidate(ctx context.Context, candidate semantic.C
 	for _, c := range r.request.Spec.Context {
 		contextText += c.ID + "\n" + c.Text + "\n"
 	}
-	verdict, err := r.verifier.Verify(ctx, semantic.ValidityRequest{OriginalQuestion: proof.Question, Question: r.request.Spec.Input, Instructions: r.request.Spec.Instructions, Context: contextText, CachedAnswer: source.Response.Text, Bindings: r.config.Bindings, Intent: r.config.Intent})
+	validity := semantic.ValidityRequest{OriginalQuestion: proof.Question, Question: r.request.Spec.Input, Instructions: r.request.Spec.Instructions, Context: contextText, CachedAnswer: source.Response.Text, Bindings: r.config.Bindings, Intent: r.config.Intent}
+	if r.config.VerifierPolicy == "factorized-v1" {
+		validity.Source = &semantic.ValiditySource{Key: proof.Source.Key, Version: proof.Source.Version, SHA256: proof.Source.SHA256, OutputSHA256: proof.Source.OutputSHA256, RequestFingerprint: proof.Source.RequestFingerprint}
+	}
+	verdict, err := r.verifier.Verify(ctx, validity)
 	obs.Verifications = append(obs.Verifications, verdict)
 	if err != nil {
 		obs.Status = "verification_failed"
@@ -338,6 +371,10 @@ func (r *controlledResolver) candidate(ctx context.Context, candidate semantic.C
 	if verdict.SharedWork {
 		obs.Status = "verification_unconfirmed"
 		return nil, false, errors.Join(inference.ErrReuseUncertain, errors.New("shared diagnostic verification is unavailable for answer reuse"))
+	}
+	if semantic.ValidateVerifierWork(verdict, r.config) != nil {
+		obs.Status = "verification_unconfirmed"
+		return nil, false, errors.Join(inference.ErrReuseUncertain, errors.New("controlled verification work is not confirmed"))
 	}
 	if !verdict.Complete || !verdict.Durable || verdict.InputTokens == nil || verdict.OutputTokens == nil || *verdict.InputTokens < 0 || *verdict.OutputTokens < 0 || *verdict.InputTokens > r.config.VerifierMaxInputTokens || *verdict.OutputTokens > r.config.VerifierMaxOutputTokens || verdict.ReceiptKey == "" {
 		obs.Status = "verification_unconfirmed"

@@ -30,6 +30,13 @@ const (
 // NormalizeConfig fills bounded defaults and rejects modes that could serve an
 // answer. The returned bindings are a copy so later caller edits cannot alter it.
 func NormalizeConfig(c Config) (Config, error) {
+	return normalizeConfig(c, MaxTimeoutMS)
+}
+
+// The caller selects the operation's timeout ceiling. Ordinary shadow work
+// retains its published ceiling; explicit controlled source reasoning has a
+// separately bounded envelope after its policy has been checked.
+func normalizeConfig(c Config, maxTimeout int) (Config, error) {
 	if c.Mode != "shadow" {
 		return Config{}, errors.New("semantic mode must be shadow")
 	}
@@ -75,7 +82,7 @@ func NormalizeConfig(c Config) (Config, error) {
 	if c.TimeoutMS == 0 {
 		c.TimeoutMS = DefaultTimeoutMS
 	}
-	if !validSimilarity(c.MinSimilarity) || c.TopK < 1 || c.TopK > MaxTopK || c.MaxScan < 1 || c.MaxScan > MaxScan || c.MaxEntries < 1 || c.MaxEntries > MaxEntries || c.MaxInputBytes < 1 || c.MaxInputBytes > MaxInputBytes || c.TimeoutMS < 1 || c.TimeoutMS > MaxTimeoutMS {
+	if !validSimilarity(c.MinSimilarity) || c.TopK < 1 || c.TopK > MaxTopK || c.MaxScan < 1 || c.MaxScan > MaxScan || c.MaxEntries < 1 || c.MaxEntries > MaxEntries || c.MaxInputBytes < 1 || c.MaxInputBytes > MaxInputBytes || c.TimeoutMS < 1 || c.TimeoutMS > maxTimeout {
 		return Config{}, errors.New("semantic limits exceed supported bounds")
 	}
 	return c, nil
