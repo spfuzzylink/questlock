@@ -68,3 +68,11 @@ services, see the [USPTO's trademark overview](https://www.uspto.gov/trademarks/
 from the permanent banner, in a square viewport for native plugin listings.
 It adds no release number or provider identity. Both plugin copies must match
 this file. Keep the original banner unchanged.
+
+## Stacked catalog logo
+
+[`assets/questlock-stacked.svg`](assets/questlock-stacked.svg) places the same
+hexagon-lock geometry above the Questlock wordmark on a transparent canvas for
+directories that require a named, stacked logo. It reuses the existing palette
+and leaves the canonical banner and square plugin icon unchanged. This is a
+layout variant, not a new project identity or a foundation affiliation mark.

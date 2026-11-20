@@ -21,6 +21,10 @@ hosted routes, with optional SGLang and Langfuse integration.
 
 **The mission: lower cost per accepted task, including the work a person has to redo.**
 
+[Contribute](CONTRIBUTING.md) · [Roadmap](ROADMAP.md) ·
+[Maintainers](MAINTAINERS.md) · [Governance](GOVERNANCE.md) ·
+[Code of Conduct](CODE_OF_CONDUCT.md) · [Adopters](ADOPTERS.md)
+
 ## Get going
 
 Already use Codex or Claude Code? Install **Questlock** as a plugin:

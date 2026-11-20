@@ -7,6 +7,10 @@ shared text-artifact publication on one host. Start with the
 [model architecture](docs/model-architecture.md), and
 [security boundaries](SECURITY.md).
 
+Read the [Code of Conduct](CODE_OF_CONDUCT.md),
+[governance](GOVERNANCE.md), [maintainer list](MAINTAINERS.md) and
+[roadmap](ROADMAP.md) for community expectations and current priorities.
+
 ## Useful first contributions
 
 - A reproducible bug with the version, OS/CPU, commands, expected result, and
