@@ -169,9 +169,12 @@ Deleting a line or rewriting Git history does not revoke the credential.
 
 ## Reporting a vulnerability
 
-If GitHub displays **Security → Report a vulnerability** for this repository,
-use that private channel. If private reporting is unavailable, open an issue
-requesting a private contact route without including exploit details, credentials,
-private data, or a working attack against a real deployment.
+Report privately through GitHub's
+[Report a vulnerability](https://github.com/spfuzzylink/questlock/security/advisories/new)
+feature, also available under **Security → Report a vulnerability**. Private
+vulnerability reporting is enabled for this repository. If that route is
+unavailable, open an issue requesting a private contact route without including
+exploit details, credentials, private data, or a working attack against a real
+deployment.
 
 This is an experimental project with no response-time or production-support SLA.
